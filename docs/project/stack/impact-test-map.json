@@ -1,0 +1,521 @@
+{
+  "version": 2,
+  "rules": [
+    {
+      "paths": [
+        "app/Models/User.php",
+        "app/Actions/Fortify/**",
+        "app/Http/Middleware/EnsureUserIsActive.php",
+        "routes/web.php"
+      ],
+      "required_tests": [
+        "tests/Feature/AuthenticationAccountShellTest.php",
+        "tests/Feature/Authentication/PrivilegedOperationsHardeningTest.php",
+        "tests/Feature/AdminDashboardTest.php"
+      ]
+    },
+    {
+      "paths": [
+        "app/Extensions/**",
+        "app/Actions/Admin/Extensions/**",
+        "app/Http/Controllers/Admin/ExtensionController.php"
+      ],
+      "required_tests": [
+        "tests/Unit/Extensions/ExtensionManifestTest.php",
+        "tests/Feature/AdminDashboardTest.php"
+      ]
+    },
+    {
+      "paths": [
+        "app/Support/Providers/**",
+        "app/Domain/Providers/**",
+        "app/Actions/Providers/**",
+        "app/Models/Providers/**"
+      ],
+      "required_tests": [
+        "tests/Unit/Providers",
+        "tests/Feature/Providers",
+        "tests/Architecture/Provider*Test.php",
+        "tests/Feature/ProviderMutationRecoveryControlsTest.php"
+      ]
+    },
+    {
+      "paths": [
+        "app/Support/DomainContracts/**",
+        "docs/project/domain/**",
+        "scripts/verify-domain-contracts.php",
+        "scripts/verify-operational-contracts.php",
+        "scripts/verify-use-case-contracts.php",
+        "scripts/verify-type-guardrails.php"
+      ],
+      "required_tests": [
+        "tests/Architecture/ExecutableContractTypeGuardrailsTest.php",
+        "tests/Architecture/RepositoryStateGovernanceTest.php",
+        "composer domain-contracts:verify",
+        "composer operational-contracts:verify",
+        "composer use-case-contracts:verify",
+        "composer type-guardrails:verify",
+        "tests/Architecture/RepositoryRuntimeAuthorityClosureTest.php",
+        "composer schema-ownership:verify"
+      ]
+    },
+    {
+      "paths": [
+        "app/Support/Admin/**",
+        "app/Http/Controllers/Admin/CatalogController.php",
+        "app/Http/Controllers/Admin/OperationsController.php",
+        "resources/views/admin/**",
+        "app/Http/Controllers/Admin/ProviderMutationController.php"
+      ],
+      "required_tests": [
+        "tests/Feature/AdminInformationArchitectureTest.php",
+        "tests/Feature/CatalogAdministrationTest.php",
+        "tests/Architecture/RepositoryRuntimeAuthorityClosureTest.php",
+        "tests/Feature/ProviderMutationRecoveryControlsTest.php",
+        "tests/Feature/AdminOperationsUxTest.php"
+      ]
+    },
+    {
+      "paths": [
+        "database/migrations/**"
+      ],
+      "required_tests": [
+        "composer test:postgres"
+      ]
+    },
+    {
+      "paths": [
+        "app/Providers/AppServiceProvider.php",
+        "bootstrap/app.php"
+      ],
+      "required_tests": [
+        "composer test:architecture",
+        "composer test:feature"
+      ]
+    },
+    {
+      "paths": [
+        "composer.json",
+        ".github/workflows/**",
+        "scripts/**",
+        "docs/project/stack/impact-test-map.json"
+      ],
+      "required_tests": [
+        "composer quality:verify"
+      ]
+    },
+    {
+      "paths": [
+        "tests/**",
+        "docs/foundation/CODE_GENERATION_RULES.md",
+        "scripts/verify-code-generation-guardrails.php",
+        "composer.json",
+        ".github/workflows/tests.yml"
+      ],
+      "required_tests": [
+        "composer code-generation:verify",
+        "composer database:verify",
+        "composer test:postgres"
+      ]
+    },
+    {
+      "paths": [
+        "docs/project/governance/authority-dependencies.json",
+        "scripts/verify-authority-dependencies.php",
+        "composer.json",
+        ".github/workflows/tests.yml",
+        "resources/views/admin/dashboard.blade.php",
+        "docs/ui/admin/SONGCHART_ADMIN_DASHBOARD_DESIGN_CONTRACT.md"
+      ],
+      "required_tests": [
+        "composer authority-dependencies:verify",
+        "tests/Architecture/AuthorityDependencyClosureTest.php",
+        "tests/Architecture/PostgresFirstDatabaseAuthorityTest.php",
+        "tests/Architecture/RepositoryRuntimeAuthorityClosureTest.php",
+        "tests/Architecture/TestingAndCiGatesTest.php",
+        "tests/Feature/AdminDashboardTest.php"
+      ]
+    },
+    {
+      "name": "discovery-domain-contracts",
+      "paths": [
+        "app/Domain/Discovery/**",
+        "app/Application/Discovery/**",
+        "database/migrations/*discovery*",
+        "docs/discovery/**",
+        "scripts/verify-discovery-domain-contracts.php",
+        "app/Support/Discovery/**",
+        "scripts/verify-discovery-rule-engine.php",
+        "scripts/verify-discovery-projection-pipeline.php",
+        "app/Jobs/Discovery/**",
+        "app/Console/Commands/RebuildDiscoveryProjectionsCommand.php",
+        "routes/console.php",
+        "config/songchart.php"
+      ],
+      "required_tests": [
+        "tests/Unit/DiscoveryDomainContractsTest.php",
+        "tests/Architecture/DiscoveryDomainBoundaryTest.php",
+        "tests/Unit/DiscoveryRuleEngineTest.php",
+        "tests/Architecture/DiscoveryRuleEngineBoundaryTest.php",
+        "tests/Unit/DiscoveryProjectionPipelineTest.php",
+        "tests/Architecture/DiscoveryProjectionBoundaryTest.php",
+        "composer discovery-projection:verify"
+      ]
+    },
+    {
+      "name": "queue-infrastructure",
+      "paths": [
+        "config/queue.php",
+        "config/horizon.php",
+        "app/Jobs/**",
+        "bootstrap/providers.php",
+        "docs/operations/queue-infrastructure.md",
+        "scripts/verify-queue-infrastructure.php",
+        "app/Providers/AppServiceProvider.php"
+      ],
+      "required_tests": [
+        "tests/Unit/QueueInfrastructureContractTest.php",
+        "tests/Architecture/QueueInfrastructureBoundaryTest.php",
+        "composer queue-infrastructure:verify"
+      ]
+    },
+    {
+      "name": "pulse-observability",
+      "paths": [
+        "config/pulse.php",
+        "database/migrations/*pulse*",
+        "app/Providers/AppServiceProvider.php",
+        "docs/operations/pulse-observability.md",
+        "scripts/verify-pulse-observability.php",
+        "composer.json"
+      ],
+      "required_tests": [
+        "tests/Unit/PulseObservabilityContractTest.php",
+        "tests/Architecture/PulseObservabilityBoundaryTest.php",
+        "composer pulse-observability:verify",
+        "composer schema-ownership:verify"
+      ]
+    },
+    {
+      "name": "engineering-toolchain-governance",
+      "paths": [
+        "PROJECT_AUTHORITY.md",
+        "docs/project/stack/package-registry.json",
+        "docs/project/stack/candidate-verification-contract.json",
+        "candidate-verification.json",
+        "app/Console/Commands/SongChartDoctorCommand.php",
+        "scripts/verify-package-governance.php",
+        "scripts/verify-test-taxonomy.php",
+        "scripts/verify-candidate-contract.php",
+        "scripts/verify-engineering-toolchain-governance.php",
+        "composer.json"
+      ],
+      "required_tests": [
+        "tests/Architecture/EngineeringToolchainGovernanceTest.php",
+        "tests/Feature/EngineeringToolchainGovernanceTest.php",
+        "composer package-governance:verify",
+        "composer test-taxonomy:verify",
+        "composer candidate-contract:verify",
+        "composer quality:verify"
+      ]
+    },
+    {
+      "name": "reproducible-verification-environment",
+      "paths": [
+        "compose.verify.yml",
+        "docker/verify/**",
+        "verify-songchart.bat",
+        "scripts/canonical-verify.sh",
+        "scripts/verify-canonical.ps1",
+        "scripts/verify-canonical-host.sh",
+        "scripts/verify-reproducible-environment.php",
+        "scripts/verify-postgres-major.php",
+        "scripts/record-canonical-verification.php",
+        ".github/workflows/tests.yml",
+        "PROJECT_AUTHORITY.md",
+        "docs/project/stack/package-registry.json"
+      ],
+      "required_tests": [
+        "tests/Architecture/ReproducibleVerificationEnvironmentTest.php",
+        "tests/Architecture/Postgres18AuthorityTest.php",
+        "composer reproducible-environment:verify",
+        "composer postgres-major:verify",
+        "composer release:verify"
+      ]
+    },
+    {
+      "name": "docker-local-development",
+      "paths": [
+        "compose.dev.yml",
+        ".env.docker.example",
+        "docker/dev/**",
+        "docker-dev-setup.bat",
+        "docker-dev-up.bat",
+        "docker-dev-down.bat",
+        "scripts/setup-docker-dev.ps1",
+        "scripts/docker-dev-up.ps1",
+        "scripts/docker-dev-down.ps1",
+        "scripts/verify-docker-local-development.php",
+        "bootstrap/app.php",
+        ".gitignore"
+      ],
+      "required_tests": [
+        "tests/Architecture/DockerLocalDevelopmentTest.php",
+        "composer docker-local:verify",
+        "composer quality:verify"
+      ]
+    },
+    {
+      "name": "privileged-operations-audit",
+      "paths": [
+        "app/Domain/Audit/**",
+        "app/Support/Audit/**",
+        "app/Support/Admin/PrivilegedAuditConsole.php",
+        "app/Support/Admin/PrivilegedUserAdministration.php",
+        "app/Http/Controllers/Admin/PrivilegedAuditController.php",
+        "app/Console/Commands/SetUser*Command.php",
+        "config/activitylog.php",
+        "database/migrations/*activity_log*",
+        "resources/views/admin/audit/**",
+        "scripts/verify-privileged-audit.php",
+        "composer.json",
+        "scripts/verify-stage-16.5-focused.ps1",
+        "scripts/verify-stage-16.5-focused-lane.php"
+      ],
+      "required_tests": [
+        "tests/Architecture/PrivilegedAuditGovernanceTest.php",
+        "tests/Feature/PrivilegedAuditTest.php",
+        "composer privileged-audit:verify",
+        "composer schema-ownership:verify",
+        "composer stage-16.5-focused-lane:verify"
+      ]
+    },
+    {
+      "name": "repository-contract-runtime-release-safety",
+      "paths": [
+        "docs/project/engineering/**",
+        "docs/project/stack/package-schema-contracts.json",
+        "docs/project/domain/model-schema-contracts.json",
+        "docs/project/stack/runtime-environments.json",
+        "scripts/verify-regression-ledger.php",
+        "scripts/verify-package-schema-contracts.php",
+        "scripts/verify-model-schema-contracts.php",
+        "scripts/verify-database-test-isolation.php",
+        "scripts/verify-lockfile-authority.php",
+        "scripts/verify-runtime-contracts.php",
+        "scripts/verify-release-orchestration.php",
+        "scripts/verify-migration-runtime-contract.php",
+        "scripts/run-database-tests.php",
+        "scripts/canonical-verify.sh",
+        "composer.json",
+        "docs/project/stack/database-test-contract.json",
+        "docs/project/stack/release-pipeline-contract.json",
+        "scripts/verify-performance-baseline.php"
+      ],
+      "required_tests": [
+        "tests/Architecture/RepositoryContractSafetyClosureTest.php",
+        "tests/Feature/RepositoryDatabaseContractTest.php",
+        "composer repository-contracts:verify",
+        "composer test:postgres-clean",
+        "composer release:verify",
+        "composer database:verify",
+        "composer runtime-authority:verify",
+        "composer performance:verify"
+      ]
+    },
+    {
+      "name": "executable-repository-authority-contract-compiler",
+      "paths": [
+        "app/Support/Engineering/**",
+        "app/Console/Commands/SongChartDoctorCommand.php",
+        "docs/project/engineering/repository-contract-compiler.json",
+        "docs/project/generated/repository-contract-manifest.json",
+        "docs/project/stack/database-test-contract.json",
+        "docs/project/stack/release-pipeline-contract.json",
+        "docs/project/stack/runtime-environments.json",
+        "docs/project/stack/package-schema-contracts.json",
+        "docs/project/domain/model-schema-contracts.json",
+        "docs/project/stack/candidate-verification-contract.json",
+        "scripts/compile-repository-contracts.php",
+        "scripts/verify-repository-contract-compiler.php",
+        "scripts/resolve-repository-impact.php",
+        "scripts/verify-artifact-provenance.php",
+        "scripts/package-verified-source.php",
+        "scripts/snapshot-postgres-schema.php",
+        "scripts/verify-package-upstream-adaptations.php",
+        "scripts/record-canonical-verification.php",
+        "app/Support/Engineering/LaravelMigrationColumnExtractor.php",
+        "tests/Unit/LaravelMigrationColumnExtractorTest.php"
+      ],
+      "required_tests": [
+        "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
+        "tests/Architecture/RepositoryContractSafetyClosureTest.php",
+        "composer repository-compiler:verify",
+        "composer repository-contracts:verify",
+        "composer test:architecture",
+        "composer release:verify",
+        "tests/Unit/LaravelMigrationColumnExtractorTest.php"
+      ]
+    },
+    {
+      "name": "verification-workflow-ai-protocol",
+      "paths": [
+        "composer.json",
+        "scripts/canonical-verify.sh",
+        "docs/project/engineering/verification-topology.json",
+        "docs/project/engineering/ai-development-contract.json",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "PROJECT_AUTHORITY.md",
+        "docs/templates/TASK_CONTRACT_TEMPLATE.md",
+        "scripts/verify-verification-topology.php",
+        "scripts/verify-ai-development-protocol.php"
+      ],
+      "required_tests": [
+        "composer verification-topology:verify",
+        "composer ai-protocol:verify",
+        "tests/Architecture/VerificationWorkflowTopologyTest.php",
+        "tests/Architecture/AiDevelopmentProtocolTest.php",
+        "composer stage:verify",
+        "composer canonical:verify"
+      ]
+    },
+    {
+      "name": "docker-first-development",
+      "paths": [
+        "docs/project/stack/docker-development-contract.json",
+        "docs/project/stack/runtime-environments.json",
+        "compose.dev.yml",
+        "compose.verify.yml",
+        "scripts/songchart.ps1",
+        "songchart.bat",
+        "scripts/docker-stage-verify.sh",
+        "scripts/setup-docker-dev.ps1",
+        "scripts/docker-dev-*.ps1",
+        "docker-dev-*.bat",
+        "verify-songchart.bat",
+        "scripts/verify-docker-first-development.php",
+        "PROJECT_AUTHORITY.md",
+        "README.md"
+      ],
+      "required_tests": [
+        "composer docker-first:verify",
+        "composer docker-local:verify",
+        "composer runtime-contracts:verify",
+        "tests/Architecture/DockerFirstDevelopmentEnvironmentTest.php",
+        "songchart test",
+        "songchart verify"
+      ]
+    },
+    {
+      "name": "verification-surface-reduction",
+      "paths": [
+        "composer.json",
+        "docs/project/engineering/verification-command-surface.json",
+        "docs/project/engineering/verification-topology.json",
+        "docs/project/stack/release-pipeline-contract.json",
+        "scripts/verify-verification-command-surface.php",
+        "PROJECT_AUTHORITY.md",
+        "README.md",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md"
+      ],
+      "required_tests": [
+        "composer verification-surface:verify",
+        "composer verification-topology:verify",
+        "tests/Architecture/VerificationWorkflowTopologyTest.php",
+        "tests/Architecture/ContractCoverageReleaseBaselineTest.php",
+        "composer stage:verify",
+        "composer canonical:verify"
+      ]
+    },
+    {
+      "name": "migration-lifecycle-upgrade-safety",
+      "paths": [
+        "database/migrations/**",
+        "docs/project/stack/migration-lifecycle-contract.json",
+        "docs/project/stack/package-schema-contracts.json",
+        "scripts/verify-migration-lifecycle.php",
+        "scripts/run-migration-upgrade-test.php",
+        "app/Support/Engineering/PhpSemanticFingerprint.php",
+        "tests/Unit/PhpSemanticFingerprintTest.php",
+        "scripts/seal-migration-lifecycle.php"
+      ],
+      "required_tests": [
+        "composer migration-lifecycle:verify",
+        "composer migration-lifecycle:seal",
+        "tests/Unit/PhpSemanticFingerprintTest.php",
+        "composer migration-upgrade:verify",
+        "tests/Architecture/MigrationLifecycleUpgradeSafetyTest.php",
+        "tests/Feature/RepositoryDatabaseContractTest.php",
+        "composer canonical:verify"
+      ]
+    },
+    {
+      "name": "verification-consumer-graph-closure",
+      "paths": [
+        "docs/project/engineering/verification-consumer-graph.json",
+        "docs/project/engineering/repository-contract-compiler.json",
+        "app/Support/Engineering/RepositoryContractResolver.php",
+        "scripts/verify-repository-contract-compiler.php",
+        "scripts/resolve-repository-impact.php",
+        "scripts/verify-*.php",
+        "tests/Architecture/*.php"
+      ],
+      "required_tests": [
+        "composer repository-compiler:verify",
+        "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
+        "composer verification-topology:verify",
+        "composer stage:verify",
+        "composer canonical:verify"
+      ]
+    },
+    {
+      "name": "authorization-consolidation",
+      "paths": [
+        "docs/project/security/authorization-contract.json",
+        "app/Enums/Capability.php",
+        "app/Enums/UserRole.php",
+        "app/Models/User.php",
+        "app/Support/Auth/AuthorizationMatrix.php",
+        "app/Providers/AppServiceProvider.php",
+        "app/Support/Admin/PrivilegedUserAdministration.php",
+        "app/Console/Commands/CreateAdminCommand.php",
+        "app/Console/Commands/EnsureLocalAdminCommand.php"
+      ],
+      "required_tests": [
+        "composer auth:verify",
+        "tests/Unit/AuthorizationMatrixTest.php",
+        "tests/Feature/AuthorizationGateTest.php",
+        "tests/Feature/PrivilegedAuditTest.php",
+        "tests/Architecture/AuthenticationHardeningBoundaryTest.php",
+        "composer repository-compiler:verify",
+        "composer stage:verify",
+        "composer canonical:verify"
+      ]
+    },
+    {
+      "name": "application-data-boundary",
+      "paths": [
+        "docs/project/domain/application-data-boundary.json",
+        "docs/project/performance/query-budget-contract.json",
+        "app/Http/Controllers/**/*.php",
+        "app/Application/Admin/Queries/*.php",
+        "app/Support/Admin/*.php",
+        "scripts/verify-architecture-conformance.php",
+        "tests/Architecture/ArchitectureConformanceTest.php"
+      ],
+      "required_tests": [
+        "composer architecture:verify",
+        "tests/Architecture/ArchitectureConformanceTest.php",
+        "tests/Feature/AdminDashboardTest.php",
+        "tests/Feature/CatalogAdministrationTest.php",
+        "tests/Feature/ProviderOperationsConsoleTest.php",
+        "composer repository-compiler:verify",
+        "composer stage:verify",
+        "composer canonical:verify"
+      ]
+    }
+  ]
+}

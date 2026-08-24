@@ -1,0 +1,142 @@
+<?php
+
+declare(strict_types=1);
+
+$root = dirname(__DIR__);
+$errors = [];
+$required = [
+    'app/Support/Search/EloquentSearchCatalog.php',
+    'app/Providers/SearchServiceProvider.php',
+    'app/Support/Catalog/CatalogEntityResolver.php',
+    'app/Domain/Providers/Enums/ProviderSyncStatus.php',
+    'app/Domain/Providers/Enums/ProviderSyncOperation.php',
+    'tests/Architecture/ArchitectureConformanceTest.php',
+    'docs/project/domain/application-data-boundary.json',
+    'docs/project/performance/query-budget-contract.json',
+    'app/Application/Admin/Queries/ExtensionReadModel.php',
+];
+foreach ($required as $file) {
+    if (! is_file($root.'/'.$file)) {
+        $errors[] = "Missing {$file}";
+    }
+}
+$provider = file_get_contents($root.'/app/Providers/SearchServiceProvider.php') ?: '';
+if (! str_contains($provider, 'EloquentSearchCatalog::class') || ! str_contains(file_get_contents($root.'/config/songchart.php') ?: '', 'SONGCHART_DEMO_SEARCH')) {
+    $errors[] = 'Search binding is not production-safe.';
+}
+$composer = json_decode(file_get_contents($root.'/composer.json') ?: '', true);
+if (($composer['scripts']['setup'][3] ?? null) !== 'npm ci') {
+    $errors[] = 'composer setup must use npm ci.';
+}
+$routes = file_get_contents($root.'/routes/web.php') ?: '';
+if (str_contains($routes, "Route::middleware('web')->group")) {
+    $errors[] = 'routes/web.php contains redundant web middleware.';
+}
+if (str_contains(file_get_contents($root.'/resources/views/ui-preview/sections/patterns.blade.php') ?: '', 'href="#"')) {
+    $errors[] = 'UI preview contains dead href.';
+}
+
+$dataBoundary = json_decode(
+    (string) file_get_contents($root.'/docs/project/domain/application-data-boundary.json'),
+    true,
+    512,
+    JSON_THROW_ON_ERROR,
+);
+
+if (($dataBoundary['principles']['controllers_are_transport_adapters'] ?? false) !== true
+    || ($dataBoundary['principles']['read_side_may_use_eloquent_or_query_builder'] ?? false) !== true
+    || ($dataBoundary['principles']['write_side_may_use_transactions_and_persistence'] ?? false) !== true
+) {
+    $errors[] = 'Application data boundary contract is invalid.';
+}
+
+/** @return list<string> */
+function recursivePhpFiles(string $directory): array
+{
+    if (! is_dir($directory)) {
+        return [];
+    }
+
+    $files = [];
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
+    );
+
+    /** @var SplFileInfo $file */
+    foreach ($iterator as $file) {
+        if ($file->isFile() && strtolower($file->getExtension()) === 'php') {
+            $files[] = $file->getPathname();
+        }
+    }
+
+    sort($files);
+
+    return $files;
+}
+
+$controllerForbidden = array_values(array_filter(
+    array_merge(
+        (array) ($dataBoundary['controller_boundary']['forbidden_write_signals'] ?? []),
+        (array) ($dataBoundary['controller_boundary']['forbidden_direct_read_signals'] ?? []),
+    ),
+    'is_string',
+));
+$controllerReadAllow = array_fill_keys(
+    array_values(array_filter((array) ($dataBoundary['controller_boundary']['allowed_direct_read_files'] ?? []), 'is_string')),
+    true,
+);
+
+foreach (recursivePhpFiles($root.'/app/Http/Controllers') as $path) {
+    $relative = str_replace('\\', '/', substr($path, strlen($root) + 1));
+    $contents = (string) file_get_contents($path);
+
+    foreach ($controllerForbidden as $signal) {
+        if ($signal === '' || ! str_contains($contents, $signal)) {
+            continue;
+        }
+
+        if (isset($controllerReadAllow[$relative])
+            && in_array($signal, (array) ($dataBoundary['controller_boundary']['forbidden_direct_read_signals'] ?? []), true)
+        ) {
+            continue;
+        }
+
+        $errors[] = "Controller data boundary violation [{$relative}] contains [{$signal}].";
+    }
+}
+
+$readModelForbidden = array_values(array_filter(
+    (array) ($dataBoundary['read_model_forbidden_signals'] ?? []),
+    'is_string',
+));
+
+foreach ((array) ($dataBoundary['read_models'] ?? []) as $relative) {
+    if (! is_string($relative) || ! is_file($root.'/'.$relative)) {
+        $errors[] = "Registered read model is missing [{$relative}].";
+
+        continue;
+    }
+
+    $contents = (string) file_get_contents($root.'/'.$relative);
+    foreach ($readModelForbidden as $signal) {
+        if ($signal !== '' && str_contains($contents, $signal)) {
+            $errors[] = "Read model [{$relative}] must not mutate persistence via [{$signal}].";
+        }
+    }
+}
+
+$queryBudget = json_decode(
+    (string) file_get_contents($root.'/docs/project/performance/query-budget-contract.json'),
+    true,
+    512,
+    JSON_THROW_ON_ERROR,
+);
+if (($queryBudget['policy']['do_not_guess_hard_limits_without_representative_fixture'] ?? false) !== true) {
+    $errors[] = 'Query budget authority must prohibit guessed limits without representative PostgreSQL fixtures.';
+}
+
+if ($errors !== []) {
+    fwrite(STDERR, implode(PHP_EOL, $errors).PHP_EOL);
+    exit(1);
+}
+echo "Architecture conformance verification passed.\n";

@@ -1,0 +1,25 @@
+{
+  "type": "plugin",
+  "name": "SongChart Example Plugin",
+  "slug": "songchart/example-plugin",
+  "version": "0.1.0",
+  "requires": {
+    "core": "^1.0",
+    "php": "^8.3",
+    "extensions": [
+      "json",
+      "mbstring"
+    ]
+  },
+  "service_provider": "SongChart\\ExamplePlugin\\PluginServiceProvider",
+  "autoload": {
+    "namespace": "SongChart\\ExamplePlugin\\",
+    "path": "src"
+  },
+  "capabilities": [],
+  "permissions": [],
+  "external_services": [],
+  "uninstall": {
+    "preserve_data_by_default": true
+  }
+}

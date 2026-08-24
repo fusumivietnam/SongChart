@@ -1,0 +1,410 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "every_verifier_must_match_exactly_one_rule": true,
+    "every_architecture_test_must_match_exactly_one_rule": true,
+    "declarative_verifiers_require_machine_authority_owner": true,
+    "behavioral_verifiers_may_execute_runtime_but_must_still_route_to_machine_authority": true,
+    "execution_owner_is_resolved_from_composer": true,
+    "new_unowned_consumers_fail_before_stage_tests": true,
+    "cross_layer_literal_assertions_forbidden": true
+  },
+  "inventory": {
+    "verifier_glob": "scripts/verify-*.php",
+    "architecture_glob": "tests/Architecture/*.php"
+  },
+  "rules": [
+    {
+      "id": "provider",
+      "targets": [
+        "scripts/verify-provider-*.php",
+        "tests/Architecture/Provider*.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "domain-contracts",
+        "operational-contracts",
+        "use-case-contracts"
+      ]
+    },
+    {
+      "id": "discovery",
+      "targets": [
+        "scripts/verify-discovery-*.php",
+        "tests/Architecture/Discovery*.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "domain-contracts",
+        "operational-contracts"
+      ]
+    },
+    {
+      "id": "database",
+      "targets": [
+        "scripts/verify-database-*.php",
+        "scripts/verify-test-database-safety.php",
+        "tests/Architecture/PostgresFirstDatabaseAuthorityTest.php",
+        "tests/Architecture/TestingAndCiGatesTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "database-test",
+        "runtime-environment"
+      ]
+    },
+    {
+      "id": "migration",
+      "targets": [
+        "scripts/verify-migration-*.php",
+        "tests/Architecture/MigrationLifecycleUpgradeSafetyTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "migration-lifecycle",
+        "package-schema"
+      ]
+    },
+    {
+      "id": "runtime-stack",
+      "targets": [
+        "scripts/verify-runtime-*.php",
+        "scripts/verify-canonical-php-extensions.php",
+        "scripts/verify-postgres-major.php",
+        "scripts/verify-reproducible-environment.php",
+        "scripts/verify-stack-baseline.php",
+        "tests/Architecture/Postgres18AuthorityTest.php",
+        "tests/Architecture/RepositoryRuntimeAuthorityClosureTest.php",
+        "tests/Architecture/ReproducibleVerificationEnvironmentTest.php",
+        "tests/Architecture/TechnologyStackAuthorityTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "runtime-environment",
+        "stack-manifest"
+      ]
+    },
+    {
+      "id": "docker",
+      "targets": [
+        "scripts/verify-docker-*.php",
+        "tests/Architecture/Docker*.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "docker-development",
+        "runtime-environment"
+      ]
+    },
+    {
+      "id": "release",
+      "targets": [
+        "scripts/verify-release-*.php",
+        "scripts/verify-lockfile-authority.php",
+        "scripts/verify-artifact-provenance.php",
+        "scripts/verify-candidate-contract.php",
+        "scripts/verify-source-package.php",
+        "tests/Architecture/ContractCoverageReleaseBaselineTest.php",
+        "tests/Architecture/FoundationReleaseClosureTest.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "release-pipeline",
+        "candidate-verification",
+        "verification-command-surface"
+      ]
+    },
+    {
+      "id": "repository-governance",
+      "targets": [
+        "scripts/verify-repository-*.php",
+        "scripts/verify-authority-dependencies.php",
+        "scripts/verify-regression-ledger.php",
+        "scripts/verify-impact-test-map.php",
+        "scripts/verify-change-surface.php",
+        "tests/Architecture/AuthorityDependencyClosureTest.php",
+        "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
+        "tests/Architecture/RepositoryContractSafetyClosureTest.php",
+        "tests/Architecture/RepositoryStateGovernanceTest.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "repository-compiler",
+        "regression-ledger",
+        "impact-test-map"
+      ]
+    },
+    {
+      "id": "verification-governance",
+      "targets": [
+        "scripts/verify-verification-*.php",
+        "scripts/verify-stage-16.5-focused-lane.php",
+        "scripts/verify-test-taxonomy.php",
+        "scripts/verify-code-generation-guardrails.php",
+        "tests/Architecture/Verification*.php",
+        "tests/Architecture/TestAuthorityCodeGenerationGuardrailsTest.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "verification-topology",
+        "verification-command-surface",
+        "impact-test-map"
+      ]
+    },
+    {
+      "id": "ai-doc-governance",
+      "targets": [
+        "scripts/verify-ai-*.php",
+        "scripts/verify-documentation.php",
+        "scripts/verify-official-sources.php",
+        "scripts/verify-engineering-toolchain-governance.php",
+        "scripts/verify-no-placeholders.php",
+        "tests/Architecture/AIWorkflowGovernanceTest.php",
+        "tests/Architecture/AiDevelopmentProtocolTest.php",
+        "tests/Architecture/Documentation*.php",
+        "tests/Architecture/EngineeringToolchainGovernanceTest.php",
+        "tests/Architecture/OfficialSourceGovernanceTest.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "ai-development-protocol",
+        "repository-compiler"
+      ]
+    },
+    {
+      "id": "schema-domain",
+      "targets": [
+        "scripts/verify-domain-contracts.php",
+        "scripts/verify-operational-contracts.php",
+        "scripts/verify-use-case-contracts.php",
+        "scripts/verify-model-schema-contracts.php",
+        "scripts/verify-schema-ownership.php",
+        "scripts/verify-type-guardrails.php",
+        "tests/Architecture/DomainContractRegistryTest.php",
+        "tests/Architecture/ExecutableContractTypeGuardrailsTest.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "domain-contracts",
+        "operational-contracts",
+        "use-case-contracts",
+        "model-schema",
+        "schema-ownership"
+      ]
+    },
+    {
+      "id": "package",
+      "targets": [
+        "scripts/verify-package-*.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "package-registry",
+        "package-schema"
+      ]
+    },
+    {
+      "id": "performance",
+      "targets": [
+        "scripts/verify-performance-*.php",
+        "scripts/verify-postgres-query-plan-baseline.php",
+        "tests/Architecture/PostgresQueryPlanBaselineTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "performance-contracts",
+        "postgres-query-plan"
+      ]
+    },
+    {
+      "id": "catalog",
+      "targets": [
+        "scripts/verify-catalog-model.php",
+        "tests/Architecture/CatalogModelGuardrailTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "domain-contracts",
+        "schema-ownership"
+      ]
+    },
+    {
+      "id": "auth-audit",
+      "targets": [
+        "scripts/verify-authentication-hardening.php",
+        "scripts/verify-privileged-audit.php",
+        "tests/Architecture/AuthenticationHardeningBoundaryTest.php",
+        "tests/Architecture/PrivilegedAuditGovernanceTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "operational-contracts",
+        "use-case-contracts",
+        "migration-lifecycle",
+        "package-schema",
+        "authorization"
+      ]
+    },
+    {
+      "id": "admin-ui",
+      "targets": [
+        "scripts/verify-admin-operations-ux.php",
+        "scripts/verify-identity-conflict-review-ui.php",
+        "tests/Architecture/IdentityConflictReviewUiArchitectureTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "operational-contracts",
+        "use-case-contracts",
+        "authorization",
+        "application-data-boundary"
+      ]
+    },
+    {
+      "id": "queue-observability",
+      "targets": [
+        "scripts/verify-queue-infrastructure.php",
+        "scripts/verify-pulse-observability.php",
+        "tests/Architecture/QueueInfrastructureBoundaryTest.php",
+        "tests/Architecture/PulseObservabilityBoundaryTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "operational-contracts",
+        "runtime-environment",
+        "authorization"
+      ]
+    },
+    {
+      "id": "foundation-alignment",
+      "targets": [
+        "scripts/verify-foundation-closure.php",
+        "scripts/verify-laravel-alignment.php",
+        "tests/Architecture/FoundationAlignmentTest.php",
+        "tests/Architecture/FoundationClosureAuditTest.php",
+        "tests/Architecture/LaravelFeatureAlignmentTest.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "stack-manifest",
+        "repository-compiler",
+        "authorization"
+      ]
+    },
+    {
+      "id": "local-safety",
+      "targets": [
+        "scripts/verify-local-*.php",
+        "tests/Architecture/LocalDataSafetyArchitectureTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "runtime-environment",
+        "database-test"
+      ]
+    },
+    {
+      "id": "architecture-core",
+      "targets": [
+        "scripts/verify-architecture-conformance.php",
+        "tests/Architecture/ArchitectureConformanceTest.php",
+        "tests/Architecture/DataFusionFoundationTest.php",
+        "tests/Architecture/PublicCanonicalUrlArchitectureTest.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "domain-contracts",
+        "schema-ownership",
+        "stack-manifest",
+        "application-data-boundary",
+        "query-budget"
+      ]
+    },
+    {
+      "id": "ci",
+      "targets": [
+        "scripts/verify-ci-configuration.php"
+      ],
+      "classification": "declarative",
+      "semantic_authorities": [
+        "verification-command-surface",
+        "verification-topology",
+        "database-test"
+      ]
+    }
+  ],
+  "literal_boundaries": [
+    {
+      "id": "migration-history-column-ownership",
+      "scan": [
+        "scripts/verify-*.php",
+        "tests/Architecture/*.php"
+      ],
+      "forbidden_when_combined": [
+        "2026_08_13_000100_create_activity_log_table.php",
+        "json('attribute_changes')"
+      ],
+      "allowed": [
+        "scripts/verify-migration-lifecycle.php",
+        "tests/Architecture/MigrationLifecycleUpgradeSafetyTest.php"
+      ]
+    },
+    {
+      "id": "removed-verification-aliases",
+      "scan": [
+        "scripts/verify-*.php",
+        "tests/Architecture/*.php"
+      ],
+      "forbidden_literals": [
+        "@release:verify",
+        "@test:all",
+        "@test:postgres-clean",
+        "@delivery:verify",
+        "@release-contract:verify"
+      ],
+      "allowed": [
+        "scripts/verify-verification-command-surface.php",
+        "scripts/verify-verification-topology.php"
+      ]
+    },
+    {
+      "id": "legacy-role-capability-methods",
+      "scan": [
+        "app/Enums/*.php",
+        "app/Models/*.php",
+        "app/Providers/*.php",
+        "app/Support/Admin/*.php",
+        "app/Support/Auth/*.php",
+        "app/Console/Commands/*.php",
+        "scripts/verify-*.php",
+        "tests/Architecture/*.php"
+      ],
+      "forbidden_literals": [
+        "canAccessAdmin",
+        "canManageExtensions",
+        "canManageProviders",
+        "canReviewIdentityConflicts",
+        "canViewOperations"
+      ],
+      "allowed": [
+        "scripts/verify-authentication-hardening.php",
+        "tests/Architecture/AuthenticationHardeningBoundaryTest.php"
+      ]
+    },
+    {
+      "id": "direct-named-gate-registration-assertion",
+      "scan": [
+        "scripts/verify-*.php",
+        "tests/Architecture/*.php"
+      ],
+      "forbidden_literals": [
+        "Gate::define('access-admin'",
+        "Gate::define('manage-extensions'",
+        "Gate::define('manage-providers'",
+        "Gate::define('viewPulse'",
+        "Gate::define('viewHorizon'"
+      ],
+      "allowed": []
+    }
+  ]
+}

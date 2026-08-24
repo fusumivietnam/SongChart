@@ -1,0 +1,465 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "closure_rule": "A regression is closed only when the fix and a permanent machine-enforced guard both exist.",
+    "new_entries_required_for_repeated_failure": true,
+    "phpstan_baseline_widening_allowed": false
+  },
+  "regressions": [
+    {
+      "id": "REG-001",
+      "class": "model-property-drift",
+      "example": "Extension::$version referenced while canonical field is active_version",
+      "permanent_guards": [
+        "model-schema-contract:verify",
+        "phpstan"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-002",
+      "class": "partial-model-security-state",
+      "example": "User security view accessed two_factor_secret on a model that had not retrieved the attribute",
+      "permanent_guards": [
+        "model-schema-contract:verify",
+        "auth:verify",
+        "phpstan"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-003",
+      "class": "package-schema-drift",
+      "example": "Spatie Activitylog v5 required attribute_changes but adapted migration omitted it",
+      "permanent_guards": [
+        "package-schema-contract:verify",
+        "migration-runtime-contract:verify",
+        "privileged-audit:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-004",
+      "class": "ambient-test-database",
+      "example": "Focused Feature test inherited 127.0.0.1/songchart instead of canonical PostgreSQL test authority",
+      "permanent_guards": [
+        "database-test-isolation:verify",
+        "runtime-contracts:verify",
+        "test-database:safety"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-005",
+      "class": "empty-test-schema",
+      "example": "Canonical test database was correct but migrations had not run before focused tests",
+      "permanent_guards": [
+        "test:postgres",
+        "migration-runtime-contract:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-006",
+      "class": "focused-test-contamination",
+      "example": "PrivilegedAuditTest left an enabled provider fixture for the subsequent full suite",
+      "permanent_guards": [
+        "database-test-isolation:verify",
+        "test:postgres"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-007",
+      "class": "php-base-image-extension-rebuild",
+      "example": "PHP 8.5 Docker build recompiled DOM/curl/mbstring/xml and failed around Lexbor headers",
+      "permanent_guards": [
+        "runtime-contracts:verify",
+        "canonical-php-extensions:verify",
+        "reproducible-environment:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-008",
+      "class": "installer-composer-path",
+      "example": "PowerShell installer assumed php composer.phar although composer.phar was absent",
+      "permanent_guards": [
+        "release-orchestration:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-009",
+      "class": "postgres-environment-drift",
+      "example": "PostgreSQL host/database/auth configuration diverged between development and tests",
+      "permanent_guards": [
+        "runtime-contracts:verify",
+        "test-database:safety",
+        "postgres-major:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-010",
+      "class": "strict-static-analysis-late",
+      "example": "PHPStan/Larastan errors were first discovered by the target installer",
+      "permanent_guards": [
+        "candidate-contract:verify",
+        "canonical:verify",
+        "phpstan"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-011",
+      "class": "lockfile-reproducibility",
+      "example": "Historical full-source candidates omitted dependency lockfiles and target had to resolve packages",
+      "permanent_guards": [
+        "lockfile-authority:verify",
+        "release:package"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-012",
+      "class": "laravel-native-boundary-drift",
+      "example": "Validation/authorization/queue concerns risked moving out of Laravel-native boundaries",
+      "permanent_guards": [
+        "alignment:verify",
+        "architecture:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-013",
+      "class": "verifier-authority-drift",
+      "example": "verify-runtime-authority-closure.php retained the pre-clean-schema test:feature alias after database authority changed",
+      "permanent_guards": [
+        "database:verify",
+        "runtime-authority:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-014",
+      "class": "release-pipeline-order-verifier-drift",
+      "example": "Performance verifier assumed environment preflight must be release:verify[0] after lockfile authority was intentionally added before it",
+      "permanent_guards": [
+        "performance:verify",
+        "release-orchestration:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-015",
+      "class": "test-failure-evidence-loss",
+      "example": "Composer/canonical wrapper was visible but the actual failing Pest assertion was not present in the supplied tail",
+      "permanent_guards": [
+        "database-test-isolation:verify",
+        "test:postgres"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-016",
+      "class": "architecture-test-authority-drift",
+      "example": "PostgresFirstDatabaseAuthorityTest hard-coded the old test:postgres command after shared DB authority added --prepare-schema",
+      "permanent_guards": [
+        "database:verify",
+        "runtime-authority:verify",
+        "test:architecture",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-017",
+      "class": "derived-artifact-cross-environment-drift",
+      "example": "v20 installer checked a packaged repository-contract-manifest before recompiling it from the exact target authority tree",
+      "permanent_guards": [
+        "repository-compiler:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-018",
+      "class": "static-analysis-contract-gap",
+      "example": "v20.1 executable authority APIs omitted iterable value types and used redundant null-coalescing on a shaped array",
+      "permanent_guards": [
+        "phpstan",
+        "repository-compiler:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-019",
+      "class": "upstream-migration-helper-semantics",
+      "example": "v20.2 parsed only literal Blueprint column arguments, missing nullableMorphs-generated *_type columns and misclassifying SongChart batch_uuid as upstream-required",
+      "permanent_guards": [
+        "package-upstream:verify",
+        "package-schema-contract:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-020",
+      "class": "nested-verification-and-ai-instruction-drift",
+      "example": "Installer/canonical/release layers independently repeated quality/test/build gates while AGENTS/CLAUDE/GEMINI duplicated workflow rules.",
+      "permanent_guards": [
+        "verification-topology:verify",
+        "ai-protocol:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-021",
+      "class": "legacy-verifier-topology-assumption",
+      "example": "v21 reproducible-environment verifier still searched for composer release:verify after canonical ownership moved to composer canonical:verify",
+      "permanent_guards": [
+        "reproducible-environment:verify",
+        "verification-topology:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-022",
+      "class": "local-data-safety-legacy-release-assumption",
+      "example": "v21.1 local-data-safety verifier still required test-database:safety inside release:verify after release became an alias and safety moved to canonical before stage/postgres.",
+      "permanent_guards": [
+        "local-data-safety:verify",
+        "verification-topology:verify",
+        "database:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-023",
+      "class": "thin-bootstrap-stack-authority-assumption",
+      "example": "v21.2 stack verifier required AGENTS.md to duplicate STACK_OVERVIEW/CAPABILITY_OWNERSHIP after AI instructions were consolidated into one protocol authority.",
+      "permanent_guards": [
+        "stack:verify",
+        "ai-protocol:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-024",
+      "class": "foundation-legacy-verify-pipeline-assumption",
+      "example": "v21.3 foundation closure required verify to directly contain quality/test/build after verify became a compatibility alias to stage:verify.",
+      "permanent_guards": [
+        "foundation:audit",
+        "verification-topology:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-025",
+      "class": "database-test-evidence-tail-ordering",
+      "example": "v21.4 preserved exact Pest failure output but printed it before DB diagnostics, so copied terminal tails could omit the actual failing test while retaining only database state.",
+      "permanent_guards": [
+        "database-test-isolation:verify",
+        "test:postgres"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-026",
+      "class": "architecture-test-verification-topology-drift",
+      "example": "v21.5 full PostgreSQL suite exposed ten Architecture assertions that still treated verify/release:verify as copied pipelines and referenced removed preflight_order.",
+      "permanent_guards": [
+        "verification-topology:verify",
+        "test:architecture",
+        "test:postgres"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-027",
+      "class": "dual-local-runtime-authority",
+      "example": "Laragon and Docker were both described as local development owners, allowing host toolchain drift from canonical Docker.",
+      "permanent_guards": [
+        "docker-first:verify",
+        "runtime-contracts:verify",
+        "docker-local:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-028",
+      "class": "architecture-contract-schema-version-ownership-drift",
+      "example": "v22 architecture safety test assumed every machine-readable repository contract remained schema_version 1 after runtime-environments legitimately advanced to schema_version 2.",
+      "permanent_guards": [
+        "architecture:verify",
+        "runtime-contracts:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-029",
+      "class": "verification-command-surface-sprawl",
+      "example": "Multiple compatibility aliases and historical release scripts exposed equivalent verification/release entrypoints and allowed active docs/tests to drift between them.",
+      "permanent_guards": [
+        "verification-surface:verify",
+        "verification-topology:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-030",
+      "class": "retired-alias-consumer-drift",
+      "example": "v23 runtime authority closure still required test:all after verification surface reduction removed that alias.",
+      "permanent_guards": [
+        "runtime-authority:verify",
+        "verification-surface:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-031",
+      "class": "cross-layer-packaging-assertion",
+      "example": "v23.1 Architecture test required package-verified-source.php to contain closure_ready even though canonical closure ownership belongs to verify-artifact-provenance.php.",
+      "permanent_guards": [
+        "artifact-provenance:verify",
+        "verification-surface:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-032",
+      "class": "historical-migration-mutation-upgrade-gap",
+      "example": "Activitylog attribute_changes was once added by editing an already-applied historical create migration, allowing migrate:fresh to pass while existing databases remained unchanged.",
+      "permanent_guards": [
+        "migration-lifecycle:verify",
+        "migration-upgrade:verify",
+        "migration-runtime-contract:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-033",
+      "class": "privileged-audit-historical-migration-consumer-drift",
+      "example": "v24 privileged audit verifier and Architecture test still required attribute_changes in the frozen Activitylog create migration after migration lifecycle authority moved that repair to a forward migration.",
+      "permanent_guards": [
+        "privileged-audit:verify",
+        "migration-lifecycle:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-034",
+      "class": "raw-byte-migration-fingerprint-drift",
+      "example": "v24.1 froze historical migrations with raw SHA-256, so canonical Pint/line-ending normalization changed bytes without changing migration semantics and produced false immutability failures.",
+      "permanent_guards": [
+        "migration-lifecycle:verify",
+        "repository-contracts:verify",
+        "code-generation:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-035",
+      "class": "non-canonical-retroactive-migration-baseline",
+      "example": "v24.2 froze historical migrations from a packaging-side full-source artifact instead of the exact v23.2 canonical target, causing Pulse migration fingerprint drift.",
+      "permanent_guards": [
+        "migration-lifecycle:seal",
+        "migration-lifecycle:verify",
+        "artifact-provenance:verify",
+        "repository-contracts:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-036",
+      "class": "verification-consumer-ownership-drift",
+      "example": "Authority changes repeatedly reached canonical verification with stale verifier/Architecture consumers because no executable graph required every verification consumer to route to exactly one semantic owner.",
+      "permanent_guards": [
+        "repository-compiler:verify",
+        "impact-map:verify",
+        "verification-topology:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-037",
+      "class": "authorization-capability-duplication",
+      "example": "Role capability checks were duplicated across UserRole, User, AppServiceProvider Gates, privileged services and observability verifiers, allowing authorization semantics to drift.",
+      "permanent_guards": [
+        "auth:verify",
+        "repository-compiler:verify",
+        "code-generation:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-038",
+      "class": "alignment-authorization-consumer-drift",
+      "example": "v26 Laravel alignment still required a direct Gate::define('access-admin') literal after authorization moved to Capability::cases() + AuthorizationMatrix.",
+      "permanent_guards": [
+        "repository-compiler:verify",
+        "alignment:verify",
+        "code-generation:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-039",
+      "class": "identity-conflict-ui-authorization-consumer-drift",
+      "example": "v26.1 identity conflict UI verification still required a direct Gate::define(manage-identity-conflicts) literal after authorization moved to Capability + AuthorizationMatrix.",
+      "permanent_guards": [
+        "identity-conflict-ui:verify",
+        "repository-compiler:verify",
+        "code-generation:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-040",
+      "class": "authorization-removed-symbol-target-inventory-drift",
+      "example": "v26.2 removed User::isAdmin() from the packaged authorization refactor but the exact target still contained orphan app/Http/Middleware/EnsureUserIsAdmin.php, so PHPStan found a consumer absent from the packaging-side source reconstruction.",
+      "permanent_guards": [
+        "auth:verify",
+        "quality:verify",
+        "repository-compiler:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-041",
+      "class": "application-data-boundary-drift",
+      "example": "Controllers or read-model support classes may bypass the application boundary by directly opening transactions, mutating Eloquent models, or accumulating unclassified persistence queries.",
+      "permanent_guards": [
+        "architecture:verify",
+        "repository-compiler:verify",
+        "code-generation:verify"
+      ],
+      "status": "guarded"
+    },
+    {
+      "id": "REG-042",
+      "class": "stage-contract-path-collision",
+      "example": "A historical Identity Conflict Review UI task had already occupied STAGE_16_7_* paths; reusing the same filenames for Application Data Boundary would overwrite historical verification evidence.",
+      "permanent_guards": [
+        "docs:verify",
+        "identity-conflict-ui:verify",
+        "authority-dependencies:verify"
+      ],
+      "status": "guarded"
+    }
+  ]
+}

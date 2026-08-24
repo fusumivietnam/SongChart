@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "no_unbounded_relations": true,
+    "budgets_are_measured_on_postgresql": true,
+    "do_not_guess_hard_limits_without_representative_fixture": true,
+    "n_plus_one_regressions_require_request_level_query_evidence": true
+  },
+  "surfaces": {
+    "admin.extensions.index": {
+      "read_model": "app/Application/Admin/Queries/ExtensionReadModel.php",
+      "status": "registered-awaiting-representative-baseline"
+    },
+    "admin.extensions.show": {
+      "read_model": "app/Application/Admin/Queries/ExtensionReadModel.php",
+      "status": "registered-awaiting-representative-baseline"
+    },
+    "admin.dashboard": {
+      "read_model": "app/Support/Admin/AdminDashboardSnapshot.php",
+      "status": "registered-awaiting-representative-baseline"
+    },
+    "admin.catalog": {
+      "read_model": "app/Support/Admin/CatalogAdministration.php",
+      "status": "registered-awaiting-representative-baseline"
+    },
+    "admin.providers": {
+      "read_model": "app/Support/Admin/ProviderOperationsConsole.php",
+      "status": "registered-awaiting-representative-baseline"
+    }
+  }
+}

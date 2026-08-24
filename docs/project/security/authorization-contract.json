@@ -1,0 +1,75 @@
+{
+  "schema_version": 2,
+  "runtime_owner": "app/Support/Auth/AuthorizationMatrix.php",
+  "capability_enum": "app/Enums/Capability.php",
+  "roles": {
+    "user": [],
+    "reviewer": [
+      "access-admin",
+      "manage-identity-conflicts"
+    ],
+    "editor": [
+      "access-admin",
+      "manage-catalog",
+      "manage-identity-conflicts"
+    ],
+    "provider_manager": [
+      "access-admin",
+      "manage-catalog",
+      "manage-providers",
+      "manage-identity-conflicts"
+    ],
+    "system_operator": [
+      "access-admin",
+      "manage-extensions",
+      "manage-providers",
+      "view-operations",
+      "view-audit",
+      "viewHorizon",
+      "viewPulse",
+      "manage-user-activation"
+    ],
+    "super_admin": [
+      "access-admin",
+      "manage-catalog",
+      "manage-extensions",
+      "manage-providers",
+      "manage-identity-conflicts",
+      "view-operations",
+      "view-audit",
+      "viewHorizon",
+      "viewPulse",
+      "manage-user-roles",
+      "manage-user-activation"
+    ]
+  },
+  "rules": {
+    "inactive_users_have_no_capabilities": true,
+    "role_matrix_is_single_source_of_truth": true,
+    "gates_are_registered_from_capability_enum": true,
+    "controllers_services_views_use_gates_not_role_comparisons": true,
+    "role_mutation_requires_manage_user_roles": true,
+    "activation_mutation_requires_manage_user_activation": true,
+    "last_active_super_admin_protection_is_business_invariant_not_authorization": true,
+    "legacy_admin_middleware_forbidden": true,
+    "all_route_and_blade_gate_names_must_resolve_to_capability_enum": true,
+    "removed_authorization_methods_must_not_exist_outside_governance_assertions": true
+  },
+  "native_assessment": {
+    "framework": "Laravel Gates",
+    "package_added": false,
+    "spatie_permission_required": false,
+    "reason": "Current roles and capabilities are static product governance; Laravel Gates are sufficient. Dynamic tenant/custom-role RBAC is not yet required."
+  },
+  "forbidden_legacy_surfaces": [
+    "app/Http/Middleware/EnsureUserIsAdmin.php"
+  ],
+  "forbidden_legacy_methods": [
+    "canAccessAdmin",
+    "canManageExtensions",
+    "canManageProviders",
+    "canReviewIdentityConflicts",
+    "canViewOperations",
+    "isAdmin"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "theme",
+  "name": "SongChart Default",
+  "slug": "songchart/default",
+  "version": "1.0.0",
+  "core": {"constraint": "^1.0"},
+  "supports": ["light", "dark", "responsive"]
+}

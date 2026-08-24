@@ -1,0 +1,1003 @@
+{
+    "schema_version": 1,
+    "generated_from_repository": true,
+    "source_fingerprint": "12f32eb3fb19cde609975f3c5b7fd4dfc54970b6e9e49dd27c910aa5489476a3",
+    "candidate": {
+        "stage": "17.10",
+        "candidate": "v5",
+        "informational_not_fingerprinted": true
+    },
+    "runtime_authority": {
+        "php": "8.5",
+        "postgres_major": 18,
+        "database": "pgsql",
+        "primary_development_profile": "docker-development"
+    },
+    "installed_versions": {
+        "larastan/larastan": "v3.10.0",
+        "laravel/framework": "v13.25.0",
+        "laravel/pulse": "v1.8.0",
+        "livewire/livewire": "v4.3.5",
+        "pestphp/pest": "v4.7.7",
+        "spatie/laravel-activitylog": "5.1.0"
+    },
+    "docker": {
+        "development_compose": "compose.dev.yml",
+        "development_services": [
+            "app",
+            "caddy",
+            "postgres",
+            "queue",
+            "redis"
+        ],
+        "verification_compose": "compose.verify.yml",
+        "verification_services": [
+            "postgres",
+            "redis",
+            "verify"
+        ],
+        "canonical_project": "songchart-verify",
+        "https_url": "https://docker.songchart.test:8443"
+    },
+    "command_surface": {
+        "dev": [
+            "setup",
+            "up",
+            "down",
+            "status",
+            "logs",
+            "shell",
+            "ready",
+            "test",
+            "cycle"
+        ],
+        "canonical_verify": ".\\songchart.bat verify",
+        "context": ".\\songchart.bat context --json"
+    },
+    "seeders": {
+        "CatalogFixtureSeeder": {
+            "file": "database/seeders/CatalogFixtureSeeder.php",
+            "class": "Database\\Seeders\\CatalogFixtureSeeder"
+        },
+        "DatabaseSeeder": {
+            "file": "database/seeders/DatabaseSeeder.php",
+            "class": "Database\\Seeders\\DatabaseSeeder"
+        },
+        "ProviderRegistrySeeder": {
+            "file": "database/seeders/ProviderRegistrySeeder.php",
+            "class": "Database\\Seeders\\ProviderRegistrySeeder"
+        }
+    },
+    "database": {
+        "authority": "postgresql",
+        "tables": {
+            "activity_log": {
+                "migration": "2026_08_13_000100_create_activity_log_table.php",
+                "columns": [
+                    "id",
+                    "log_name",
+                    "description",
+                    "subject_type",
+                    "subject_id",
+                    "event",
+                    "causer_type",
+                    "causer_id",
+                    "properties",
+                    "batch_uuid",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "spatie-laravel-activitylog"
+            },
+            "artist_recording": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "artist_id",
+                    "recording_id",
+                    "credit_role",
+                    "position",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "artist_release": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "artist_id",
+                    "release_id",
+                    "credit_role",
+                    "position",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "artists": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "name",
+                    "sort_name",
+                    "slug",
+                    "artist_type",
+                    "country_code",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "cache": {
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "columns": [
+                    "key",
+                    "value",
+                    "expiration"
+                ],
+                "owner": "framework"
+            },
+            "cache_locks": {
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "columns": [
+                    "key",
+                    "owner",
+                    "expiration"
+                ],
+                "owner": "framework"
+            },
+            "collection_items": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "collection_id",
+                    "entity_type",
+                    "entity_id",
+                    "position",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "collections": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "title",
+                    "slug",
+                    "description",
+                    "visibility",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "discovery_channel_exclusions": {
+                "migration": "2026_08_10_000200_create_discovery_domain_tables.php",
+                "columns": [
+                    "id",
+                    "channel_id",
+                    "entity_type",
+                    "entity_id",
+                    "reason",
+                    "expires_at",
+                    "created_by",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "discovery_channel_items": {
+                "migration": "2026_08_10_000200_create_discovery_domain_tables.php",
+                "columns": [
+                    "id",
+                    "channel_id",
+                    "entity_type",
+                    "entity_id",
+                    "position",
+                    "pinned",
+                    "starts_at",
+                    "ends_at",
+                    "metadata",
+                    "created_by",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "discovery_channels": {
+                "migration": "2026_08_10_000200_create_discovery_domain_tables.php",
+                "columns": [
+                    "id",
+                    "key",
+                    "slug",
+                    "name",
+                    "description",
+                    "entity_type",
+                    "mode",
+                    "status",
+                    "rule_schema_version",
+                    "rules",
+                    "sorts",
+                    "presentation",
+                    "default_limit",
+                    "publish_from",
+                    "publish_until",
+                    "publication_timezone",
+                    "revision",
+                    "created_by",
+                    "updated_by",
+                    "archived_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "discovery_placements": {
+                "migration": "2026_08_10_000200_create_discovery_domain_tables.php",
+                "columns": [
+                    "id",
+                    "channel_id",
+                    "surface",
+                    "slot",
+                    "scope_type",
+                    "scope_key",
+                    "position",
+                    "visible",
+                    "starts_at",
+                    "ends_at",
+                    "created_by",
+                    "updated_by",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "discovery_projections": {
+                "migration": "2026_08_10_000200_create_discovery_domain_tables.php",
+                "columns": [
+                    "id",
+                    "channel_id",
+                    "channel_revision",
+                    "projection_revision",
+                    "rule_schema_version",
+                    "source_version",
+                    "item_count",
+                    "payload",
+                    "generated_at",
+                    "expires_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "enrichment_attempts": {
+                "migration": "2026_08_24_000100_create_enrichment_attempts_table.php",
+                "columns": [
+                    "id",
+                    "entity_type",
+                    "entity_id",
+                    "need_kind",
+                    "need_key",
+                    "provider",
+                    "priority",
+                    "cost_class",
+                    "reason",
+                    "idempotency_key",
+                    "status",
+                    "attempt_count",
+                    "last_error"
+                ],
+                "owner": "operational-contracts"
+            },
+            "entity_matches": {
+                "migration": "2026_08_04_000200_create_catalog_provenance_mapping_tables.php",
+                "columns": [
+                    "id",
+                    "provider_entity_id",
+                    "entity_type",
+                    "entity_id",
+                    "status",
+                    "match_method",
+                    "confidence",
+                    "evidence",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "entity_relationships": {
+                "migration": "2026_08_04_000200_create_catalog_provenance_mapping_tables.php",
+                "columns": [
+                    "id",
+                    "subject_type",
+                    "subject_id",
+                    "relationship_type",
+                    "object_type",
+                    "object_id",
+                    "metadata_source_id",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "extension_operations": {
+                "migration": "2026_08_03_000200_create_extension_runtime_tables.php",
+                "columns": [
+                    "id",
+                    "extension_id",
+                    "type",
+                    "status",
+                    "actor_id",
+                    "source",
+                    "checksum_sha256",
+                    "details",
+                    "started_at",
+                    "finished_at",
+                    "error_summary",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "extension-runtime-schema"
+            },
+            "extension_releases": {
+                "migration": "2026_08_03_000200_create_extension_runtime_tables.php",
+                "columns": [
+                    "id",
+                    "extension_id",
+                    "version",
+                    "path",
+                    "checksum_sha256",
+                    "signature_status",
+                    "status",
+                    "manifest",
+                    "installed_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "extension-runtime-schema"
+            },
+            "extension_snapshots": {
+                "migration": "2026_08_03_000300_add_extension_e2_tables.php",
+                "columns": [
+                    "id",
+                    "extension_id",
+                    "reason",
+                    "active_version",
+                    "active_path",
+                    "enabled",
+                    "manifest",
+                    "configuration",
+                    "created_by",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "extension-runtime-schema"
+            },
+            "extensions": {
+                "migration": "2026_08_03_000200_create_extension_runtime_tables.php",
+                "columns": [
+                    "id",
+                    "type",
+                    "slug",
+                    "name",
+                    "state",
+                    "active_version",
+                    "active_path",
+                    "enabled",
+                    "manifest",
+                    "installed_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "extension-runtime-schema"
+            },
+            "external_identifiers": {
+                "migration": "2026_08_04_000200_create_catalog_provenance_mapping_tables.php",
+                "columns": [
+                    "id",
+                    "entity_type",
+                    "entity_id",
+                    "namespace",
+                    "value",
+                    "metadata_source_id",
+                    "is_primary",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "failed_jobs": {
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "columns": [
+                    "id",
+                    "uuid",
+                    "connection",
+                    "queue",
+                    "payload",
+                    "exception",
+                    "failed_at"
+                ],
+                "owner": "framework"
+            },
+            "identity_conflict_decisions": {
+                "migration": "2026_08_05_000100_create_identity_conflict_review_tables.php",
+                "columns": [
+                    "id",
+                    "identity_conflict_review_id",
+                    "actor_id",
+                    "action",
+                    "selected_entity_id",
+                    "rationale",
+                    "before_snapshot",
+                    "after_snapshot",
+                    "created_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "identity_conflict_reviews": {
+                "migration": "2026_08_05_000100_create_identity_conflict_review_tables.php",
+                "columns": [
+                    "id",
+                    "provider_entity_id",
+                    "entity_type",
+                    "status",
+                    "candidate_entity_ids",
+                    "evidence",
+                    "opened_at",
+                    "resolved_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "job_batches": {
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "columns": [
+                    "id",
+                    "name",
+                    "total_jobs",
+                    "pending_jobs",
+                    "failed_jobs",
+                    "failed_job_ids",
+                    "options",
+                    "cancelled_at",
+                    "created_at",
+                    "finished_at"
+                ],
+                "owner": "framework"
+            },
+            "jobs": {
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "columns": [
+                    "id",
+                    "queue",
+                    "payload",
+                    "attempts",
+                    "reserved_at",
+                    "available_at",
+                    "created_at"
+                ],
+                "owner": "framework"
+            },
+            "metadata_assertions": {
+                "migration": "2026_08_04_000200_create_catalog_provenance_mapping_tables.php",
+                "columns": [
+                    "id",
+                    "entity_type",
+                    "entity_id",
+                    "field_name",
+                    "value",
+                    "value_fingerprint",
+                    "metadata_source_id",
+                    "verification_state",
+                    "confidence",
+                    "observed_at",
+                    "expires_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "provenance-schema"
+            },
+            "metadata_conflicts": {
+                "migration": "2026_08_04_000200_create_catalog_provenance_mapping_tables.php",
+                "columns": [
+                    "id",
+                    "entity_type",
+                    "entity_id",
+                    "field_name",
+                    "left_assertion_id",
+                    "right_assertion_id",
+                    "status",
+                    "resolution_note",
+                    "resolved_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "metadata_sources": {
+                "migration": "2026_08_04_000200_create_catalog_provenance_mapping_tables.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "key",
+                    "name",
+                    "source_type",
+                    "reference_url",
+                    "license_name",
+                    "retention_policy",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "provenance-schema"
+            },
+            "password_reset_tokens": {
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "columns": [
+                    "email",
+                    "token",
+                    "created_at"
+                ],
+                "owner": "framework"
+            },
+            "provider_capabilities": {
+                "migration": "2026_08_03_000100_create_provider_registry_tables.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "capability",
+                    "status",
+                    "requires_user_consent",
+                    "market_dependent",
+                    "cache_ttl_seconds",
+                    "configuration",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_destinations": {
+                "migration": "2026_08_18_000100_create_provider_destinations.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "entity_type",
+                    "entity_id",
+                    "provider_resource_id",
+                    "url",
+                    "title",
+                    "channel_id",
+                    "channel_title",
+                    "duration_ms",
+                    "is_embeddable",
+                    "privacy_status",
+                    "match_score",
+                    "review_state",
+                    "evidence",
+                    "verified_at",
+                    "last_checked_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_entities": {
+                "migration": "2026_08_03_000100_create_provider_registry_tables.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "entity_type",
+                    "external_id",
+                    "canonical_url",
+                    "market",
+                    "raw_fingerprint",
+                    "fetched_at",
+                    "expires_at",
+                    "status",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_import_checkpoints": {
+                "migration": "2026_08_04_001000_create_provider_import_ledger_tables.php",
+                "columns": [
+                    "id",
+                    "provider_import_run_id",
+                    "checkpoint_key",
+                    "cursor",
+                    "state",
+                    "committed_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_import_failures": {
+                "migration": "2026_08_04_001000_create_provider_import_ledger_tables.php",
+                "columns": [
+                    "id",
+                    "provider_import_run_id",
+                    "provider_import_item_id",
+                    "provider_import_request_id",
+                    "stage",
+                    "kind",
+                    "error_code",
+                    "message",
+                    "context",
+                    "retryable",
+                    "occurred_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_import_items": {
+                "migration": "2026_08_04_001000_create_provider_import_ledger_tables.php",
+                "columns": [
+                    "id",
+                    "provider_import_run_id",
+                    "provider_import_payload_id",
+                    "provider_entity_type",
+                    "provider_entity_id",
+                    "status",
+                    "canonical_entity_type",
+                    "canonical_entity_id",
+                    "normalizer_version",
+                    "attempts",
+                    "result",
+                    "processed_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_import_payloads": {
+                "migration": "2026_08_04_001000_create_provider_import_ledger_tables.php",
+                "columns": [
+                    "id",
+                    "provider_import_run_id",
+                    "provider_import_request_id",
+                    "provider_entity_type",
+                    "provider_entity_id",
+                    "payload_hash",
+                    "payload",
+                    "schema_version",
+                    "received_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_import_requests": {
+                "migration": "2026_08_04_001000_create_provider_import_ledger_tables.php",
+                "columns": [
+                    "id",
+                    "provider_import_run_id",
+                    "sequence",
+                    "method",
+                    "endpoint",
+                    "query",
+                    "request_headers",
+                    "response_status",
+                    "response_headers",
+                    "duration_ms",
+                    "attempt",
+                    "requested_at",
+                    "responded_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_import_runs": {
+                "migration": "2026_08_04_001000_create_provider_import_ledger_tables.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "requested_by_type",
+                    "requested_by_id",
+                    "cursor_start",
+                    "cursor_end",
+                    "configuration_hash",
+                    "configuration",
+                    "statistics",
+                    "error_summary",
+                    "started_at",
+                    "finished_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_operation_audits": {
+                "migration": "2026_08_10_000100_create_provider_operation_audits_table.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "provider_import_run_id",
+                    "actor_user_id",
+                    "action",
+                    "idempotency_key",
+                    "before_state",
+                    "after_state",
+                    "rationale",
+                    "occurred_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "provider_sync_runs": {
+                "migration": "2026_08_03_000100_create_provider_registry_tables.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "started_at",
+                    "finished_at",
+                    "processed_count",
+                    "failed_count",
+                    "error_summary",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "providers": {
+                "migration": "2026_08_03_000100_create_provider_registry_tables.php",
+                "columns": [
+                    "id",
+                    "slug",
+                    "name",
+                    "category",
+                    "status",
+                    "is_enabled",
+                    "feature_flag",
+                    "official_docs_url",
+                    "policy_reviewed_at",
+                    "configuration",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "pulse_aggregates": {
+                "migration": "2026_08_11_000100_create_pulse_tables.php",
+                "columns": [
+                    "id",
+                    "bucket",
+                    "period",
+                    "type",
+                    "key",
+                    "key_hash",
+                    "aggregate",
+                    "value",
+                    "count"
+                ],
+                "owner": "laravel-pulse"
+            },
+            "pulse_entries": {
+                "migration": "2026_08_11_000100_create_pulse_tables.php",
+                "columns": [
+                    "id",
+                    "timestamp",
+                    "type",
+                    "key",
+                    "key_hash",
+                    "value"
+                ],
+                "owner": "laravel-pulse"
+            },
+            "pulse_values": {
+                "migration": "2026_08_11_000100_create_pulse_tables.php",
+                "columns": [
+                    "id",
+                    "timestamp",
+                    "type",
+                    "key",
+                    "key_hash",
+                    "value"
+                ],
+                "owner": "laravel-pulse"
+            },
+            "recording_versions": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "recording_id",
+                    "name",
+                    "slug",
+                    "version_type",
+                    "duration_ms",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "recordings": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "work_id",
+                    "title",
+                    "slug",
+                    "duration_ms",
+                    "is_explicit",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "release_groups": {
+                "migration": "2026_08_17_000100_create_release_groups_and_link_releases.php",
+                "columns": [
+                    "id",
+                    "title",
+                    "slug",
+                    "primary_type",
+                    "secondary_types",
+                    "first_release_date",
+                    "disambiguation",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "release_tracks": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "release_id",
+                    "recording_id",
+                    "disc_number",
+                    "track_number",
+                    "title_override",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "releases": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "title",
+                    "slug",
+                    "release_type",
+                    "released_on",
+                    "country_code",
+                    "barcode",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            },
+            "sessions": {
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "columns": [
+                    "id",
+                    "user_id",
+                    "ip_address",
+                    "user_agent",
+                    "payload",
+                    "last_activity"
+                ],
+                "owner": "framework"
+            },
+            "songchart_environment_guard": {
+                "migration": "2026_08_09_000100_create_songchart_environment_guard_table.php",
+                "columns": [
+                    "marker",
+                    "environment",
+                    "database_role",
+                    "created_at"
+                ],
+                "owner": "infrastructure-schema"
+            },
+            "trusted_publishers": {
+                "migration": "2026_08_03_000300_add_extension_e2_tables.php",
+                "columns": [
+                    "id",
+                    "name",
+                    "slug",
+                    "public_key",
+                    "fingerprint",
+                    "status",
+                    "valid_from",
+                    "valid_until",
+                    "revoked_at",
+                    "metadata",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "extension-runtime-schema"
+            },
+            "users": {
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "columns": [
+                    "id",
+                    "name",
+                    "email",
+                    "email_verified_at",
+                    "password",
+                    "role",
+                    "is_active",
+                    "two_factor_secret",
+                    "two_factor_recovery_codes",
+                    "two_factor_confirmed_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "operational-contracts"
+            },
+            "works": {
+                "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
+                "columns": [
+                    "id",
+                    "title",
+                    "slug",
+                    "work_type",
+                    "language_code",
+                    "verification_state",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
+            }
+        },
+        "ownership_complete": true
+    },
+    "source_hashes": {
+        "compose.dev.yml": "374ea07efb3cf928ed76cff5c05c79192ed962bff41c628eb2a0a681ff2ec9da",
+        "compose.verify.yml": "a4b784b741e0900d7d8e67c2b06d9c88fea82b735a0565672307059f7e53e326",
+        "composer.json": "c31dfe5894a9f51ee6b58c06b26d7dd9ac3212c0816870b261ba8651ac935829",
+        "composer.lock": "21f1b62cb8159ec964ee3f0d381965ae07bab1150cf20ab04dab254d4c3c44e9",
+        "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
+        "database/migrations/0001_01_01_000001_create_cache_table.php": "2c938a40dd1bdd0f99455359a1369df0b46352276e1549bddb8cdcd483bcdfe7",
+        "database/migrations/0001_01_01_000002_create_jobs_table.php": "5cdfae12c862dc18e1f865182aa8467afb9abe8f1a6a3045a085df6a89c41d01",
+        "database/migrations/2026_08_03_000100_create_provider_registry_tables.php": "ac142bf6089a9d59e15a828b3986d0813976920ae3bcb6f274fe506a848a41e0",
+        "database/migrations/2026_08_03_000200_create_extension_runtime_tables.php": "d522bb08a18e4cfac7a29102e079623ff3ec9e33c56f0150c6cedb19b7fbb9ff",
+        "database/migrations/2026_08_03_000300_add_extension_e2_tables.php": "9995b7c67bb2bf64769c3a5199d826c4af9d8ca93fc21c8adf50bc7dd68857a6",
+        "database/migrations/2026_08_04_000100_create_canonical_catalog_tables.php": "14aacc5c1dfd4ec9aa0d95576a418dc7aaa3aaa9dd831a25d6519c9c630f04a5",
+        "database/migrations/2026_08_04_000200_create_catalog_provenance_mapping_tables.php": "120eada206cd7155d5de278ff31f4922c1ed527e9da8ffd96f8c7cde8ecf2202",
+        "database/migrations/2026_08_04_000300_harden_catalog_identity_invariants.php": "5bb45c04a9f179061e6f894cc91d37afeb65c4446079a269ef3b343828e9b087",
+        "database/migrations/2026_08_04_001000_create_provider_import_ledger_tables.php": "d070d845bd7061e5ed30ad4049327732971e5c5fae0d0e3b44e2d1382177e393",
+        "database/migrations/2026_08_04_001100_add_provider_import_orchestration_fields.php": "0ff3dcec07a414898b6348a05de3837bdee04ff253cb34b9270ddfd4e22506b0",
+        "database/migrations/2026_08_05_000100_create_identity_conflict_review_tables.php": "302ae07c17f03ec9d4b0a7c426ecd8e1a7d5c7ddd1072940978d8a1d5c498467",
+        "database/migrations/2026_08_09_000100_create_songchart_environment_guard_table.php": "cf927d755fc92f2a471525a79c56688de90178651e0e723ed76aa1eb9ce78250",
+        "database/migrations/2026_08_10_000100_create_provider_operation_audits_table.php": "53068ba7bb6c3aa9e842ed056f7d47287b99852e6ef48c46c2f639a60876e654",
+        "database/migrations/2026_08_10_000200_create_discovery_domain_tables.php": "e6a7c87f062f3e02235644571f969e6a3c0abe780e554469bcb09284db526412",
+        "database/migrations/2026_08_11_000100_create_pulse_tables.php": "9cc18db34fb4b89d0b1b4fc15822c67320ce07979309a4b7459550cd6888eebb",
+        "database/migrations/2026_08_13_000100_create_activity_log_table.php": "d76b18b30420d08c441653fdbfa0c96070e1aa9543cf14d863e35aad05823816",
+        "database/migrations/2026_08_16_000100_add_attribute_changes_to_activity_log_if_missing.php": "74458094bbadf34b80252f4efa9f3afc5e1fb8479f5eb307a86831ebd999703e",
+        "database/migrations/2026_08_17_000100_create_release_groups_and_link_releases.php": "3d849dbfaf94de2857ad2667fed8215f8f1f5ecfc8c4426988a778027c68a924",
+        "database/migrations/2026_08_17_000200_add_essential_relationship_metadata.php": "240255ccc7e7ec21cd42d11b56348c5e68b5ae617f7ac164d39e89d12eb9f5d7",
+        "database/migrations/2026_08_18_000100_create_provider_destinations.php": "9cb563ac61f14740c23e3e710c08f7a822f51d688d7b6977add202fc4582749f",
+        "database/migrations/2026_08_24_000100_create_enrichment_attempts_table.php": "ddba94e6a180a817c9b2b8ffadb9f0a4ce5f2ac603326aaa21850d1b2244019c",
+        "database/migrations/2026_08_24_000200_add_execution_outcomes_to_enrichment_attempts.php": "b129a152f69ff877c73052662efba1179d070bc14a1ca18af425374f3e4218bd",
+        "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
+        "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
+        "database/seeders/ProviderRegistrySeeder.php": "f7517aa8ab1ff83ae14957839c536d088d9d9f3531ddd988d5dfa7095d098e66",
+        "docs/project/domain/schema-ownership.json": "59f17fac75d5ecfde8ed8b2aac8d09ff720d79b5a5d81a21992cc89c4f9e8560",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "afd32b4f34e555262fb688d4ed18e81bd9949a7d95864346796c8d4621d913a5",
+        "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "e816f2ec8ed7ea713d35f1b8e9e4391ff587647633b783b691ccaf13814f09a0",
+        "docs/project/engineering/ai-development-contract.json": "a69fdd6b0f1a92102bdc7b4f075a7bc7c3c338f3b22fb297602b394414546958",
+        "docs/project/engineering/verification-command-surface.json": "c1f959dc2739d91df801429e89d04f07dad83e938a19610e27c9f1392541fa41",
+        "docs/project/engineering/verification-topology.json": "244d296b60b28c3f6b71e6054ff9296a0f005fc1128ce2aa6c0207f41702e78c",
+        "docs/project/stack/release-pipeline-contract.json": "01bde2fe82477ba8574340146606140b8d4854006ec17ce79a47f678f997eb5c",
+        "docs/project/stack/runtime-environments.json": "2d60cd1584106cb08a46e9904a4cd575feacd60d5657e4d9215ec29c5f6e9480",
+        "scripts/songchart.ps1": "53b2bbceb1a5882820e4c53d8a845d7386cd1d1d2fdd70c800f8aa8b66a318d6"
+    }
+}

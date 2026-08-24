@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "rules": {
+    "composer_entrypoint": "composer executable from PATH",
+    "forbidden": [
+      "php composer.phar",
+      "direct ambient-host database Feature tests",
+      "dependency update during normal release apply",
+      "--force as normal path"
+    ],
+    "database_tests": "scripts/run-database-tests.php postgres",
+    "canonical_closure": "verify-songchart.bat / scripts/verify-canonical.ps1",
+    "resume_marker_required_for_interrupted_stage": true
+  }
+}

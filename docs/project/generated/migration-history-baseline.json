@@ -1,0 +1,24 @@
+{
+    "schema_version": 1,
+    "algorithm": "php-token-semantic-v1",
+    "sealed_from": "exact-canonical-target-after-locked-pint-normalization",
+    "historical_migrations": {
+        "database/migrations/0001_01_01_000000_create_users_table.php": "41d1273d05378a943c8a1b7e165ca1117eef113ade406e2f916e6259a36a1c67",
+        "database/migrations/0001_01_01_000001_create_cache_table.php": "07d7a54dbec741c492148efa46799918dcd2e64f77b4881c8cc159be069517d3",
+        "database/migrations/0001_01_01_000002_create_jobs_table.php": "de3d57c34a3b655e1f47ff3ee6d5c686d8e8d56f53beb1140b0f75eb73276bad",
+        "database/migrations/2026_08_03_000100_create_provider_registry_tables.php": "77ed6bf1037939e51166553101a97607f00c7ae83f1d291565fadcc462ac61f6",
+        "database/migrations/2026_08_03_000200_create_extension_runtime_tables.php": "83c0892389a6c196e28c126d2874c2bf210f5e7a4ceec68b06c9c338c4e69fa7",
+        "database/migrations/2026_08_03_000300_add_extension_e2_tables.php": "79f39b76ce85698c2fc4feb32d7e8b8c1755c706ca866d0496ff509019fd2555",
+        "database/migrations/2026_08_04_000100_create_canonical_catalog_tables.php": "7181a05e5768cb8bf555847394cd951bd34fb422cf3fe5fa2719583ce735fc36",
+        "database/migrations/2026_08_04_000200_create_catalog_provenance_mapping_tables.php": "bb80628c020948a2ade414aba4973e0ba967dcaae83b29f6894c24b67cf04727",
+        "database/migrations/2026_08_04_000300_harden_catalog_identity_invariants.php": "c59561c13ced9759c448e7650725c2d7f030fd8cd80d0a7cc689f1aace162e8d",
+        "database/migrations/2026_08_04_001000_create_provider_import_ledger_tables.php": "f5f02c216a8beb45156bbd4ee5304d63d49322989aa29449bdd0990d275bb0ad",
+        "database/migrations/2026_08_04_001100_add_provider_import_orchestration_fields.php": "8e582611cedb60c94af9336e1ca6d2d6ee25e994efb06c43e01215f548e9d831",
+        "database/migrations/2026_08_05_000100_create_identity_conflict_review_tables.php": "cd44ce68f7f2ccff345997a6b4c29f1e86ad58d7603934820ab8ed30b819f4c3",
+        "database/migrations/2026_08_09_000100_create_songchart_environment_guard_table.php": "0f1ca841a4e020d34b2f351af9a0c47d1b62c115c5e7ef1792161668c53fc4b2",
+        "database/migrations/2026_08_10_000100_create_provider_operation_audits_table.php": "7dcc5acc8163db8a89b749043a494c12bbe768b6435599e0de43b2046a8d5dea",
+        "database/migrations/2026_08_10_000200_create_discovery_domain_tables.php": "0a894bb8c383aaa77731248911ed3f54bb3d8c10b9130a0562b0d28f409ca34a",
+        "database/migrations/2026_08_11_000100_create_pulse_tables.php": "f27159a50f92fee2bd01c9e844b1a7e064660cf641d7466fd959429964c1123a",
+        "database/migrations/2026_08_13_000100_create_activity_log_table.php": "8b9e3ff42279156b34d8090349ae95fb630f5466486ed2482e5bfafb12d48de1"
+    }
+}

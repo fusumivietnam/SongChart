@@ -1,0 +1,51 @@
+{
+    "schema_version":  5,
+    "owner":  "composer canonical:verify",
+    "stage_owner":  "composer stage:verify",
+    "stage_steps":  [
+                        "@php artisan optimize:clear --ansi",
+                        "@php artisan route:list --except-vendor --ansi",
+                        "@quality:verify",
+                        "@test:postgres",
+                        "npm run build"
+                    ],
+    "canonical_steps":  [
+                            "@lockfile-authority:release",
+                            "@environment:verify",
+                            "@postgres-major:verify",
+                            "@test-database:safety",
+                            "@locks:verify",
+                            "@package-upstream:verify",
+                            "@stage:verify",
+                            "@migration-lifecycle:seal",
+                            "@migration-lifecycle:verify",
+                            "@migration-upgrade:verify",
+                            "@migration-runtime-contract:verify",
+                            "@postgres-schema:snapshot",
+                            "@project-context:runtime-verify",
+                            "@foundation:release",
+                            "@candidate-evidence:record",
+                            "@candidate-contract:verify"
+                        ],
+    "rules":  {
+                  "quality_runs_once_via_stage":  true,
+                  "postgres_suite_runs_once_via_stage":  true,
+                  "frontend_build_runs_once_via_stage":  true,
+                  "stage_runs_once_via_canonical":  true,
+                  "canonical_shell_must_not_repeat_stage_gates":  true,
+                  "installer_must_delegate_to_stage_or_canonical":  true,
+                  "legacy_verify_aliases_removed":  true,
+                  "previous_release_upgrade_lane_required":  true,
+                  "historical_migration_mutation_forbidden":  true,
+                  "migration_history_baseline_sealed_from_exact_target":  true
+              },
+    "post_canonical_packaging":  {
+                                     "provenance_gate":  "@artifact-provenance:verify",
+                                     "package_command":  "@release:package",
+                                     "requires_closure_ready":  true
+                                 },
+    "removed_compatibility_aliases":  [
+                                          "verify",
+                                          "release:verify"
+                                      ]
+}

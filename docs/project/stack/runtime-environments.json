@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "release_authority": {
+    "php_major_minor": "8.5",
+    "postgres_major": 18,
+    "database": "pgsql"
+  },
+  "profiles": {
+    "canonical-test": {
+      "app_env": "testing",
+      "db_connection": "pgsql",
+      "db_host": "postgres",
+      "db_database": "songchart_verify_test",
+      "redis_host": "redis",
+      "destructive_database_role": "testing",
+      "authority": "release-verification",
+      "compose_file": "compose.verify.yml"
+    },
+    "docker-development": {
+      "app_env": "local",
+      "db_connection": "pgsql",
+      "db_host": "postgres",
+      "db_database": "songchart_docker",
+      "redis_host": "redis",
+      "destructive_database_role": "development",
+      "authority": "primary-development",
+      "compose_file": "compose.dev.yml"
+    },
+    "laragon-development": {
+      "app_env": "local",
+      "db_connection": "pgsql",
+      "db_host": "127.0.0.1",
+      "destructive_database_role": "development",
+      "authority": "compatibility-only",
+      "release_claims_allowed": false
+    }
+  },
+  "php_extensions": {
+    "base_image": [
+      "curl",
+      "dom",
+      "mbstring",
+      "xml"
+    ],
+    "compiled": [
+      "bcmath",
+      "intl",
+      "pcntl",
+      "pdo_pgsql",
+      "zip"
+    ],
+    "pecl": [
+      "redis"
+    ],
+    "required": [
+      "bcmath",
+      "curl",
+      "dom",
+      "intl",
+      "mbstring",
+      "pcntl",
+      "pdo_pgsql",
+      "redis",
+      "xml",
+      "zip"
+    ]
+  },
+  "primary_development_profile": "docker-development"
+}

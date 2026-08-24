@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "stage": "16.4.3",
+  "sources": {
+    "php": "composer.json",
+    "php_lock": "composer.lock",
+    "javascript": "package.json",
+    "javascript_lock": "package-lock.json"
+  },
+  "policies": {
+    "laravel_native_first": true,
+    "new_packages_require_review": true,
+    "architecture_changes_require_adr": true,
+    "provider_ids_may_be_primary_keys": false,
+    "parallel_capability_owners_allowed": false,
+    "release_database_major": 18
+  },
+  "required_php_packages": [
+    "laravel/framework",
+    "laravel/fortify",
+    "livewire/livewire",
+    "larastan/larastan",
+    "laravel/pint",
+    "pestphp/pest",
+    "pestphp/pest-plugin-laravel",
+    "laravel/pulse"
+  ],
+  "required_node_packages": [
+    "vite",
+    "laravel-vite-plugin",
+    "tailwindcss",
+    "@tailwindcss/vite",
+    "alpinejs"
+  ],
+  "restricted_packages": [
+    "axios"
+  ],
+  "forbidden_packages": [
+    "guzzlehttp/guzzle-direct-provider-client",
+    "symfony/http-client-parallel-owner"
+  ],
+  "capabilities": {
+    "authentication": "laravel/fortify",
+    "authorization": "laravel-gates-policies",
+    "validation": "laravel-form-requests",
+    "queue": "laravel-queue",
+    "scheduler": "laravel-scheduler",
+    "provider_transport": "laravel-http-client",
+    "catalog_identity": "songchart-canonical-catalog",
+    "frontend_build": "vite",
+    "styling": "tailwindcss",
+    "testing": "pest-phpunit",
+    "formatting": "laravel-pint",
+    "static_analysis": "larastan-phpstan",
+    "observability": "laravel/pulse",
+    "package_governance": "songchart-package-registry",
+    "canonical_verification": "docker-compose",
+    "release_database": "postgresql-18",
+    "docker_local_development": "docker-compose",
+    "local_https": "caddy-mkcert"
+  }
+}

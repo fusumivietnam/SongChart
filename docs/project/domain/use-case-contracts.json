@@ -1,0 +1,1704 @@
+{
+  "schema_version": 1,
+  "use_cases": {
+    "public.search": {
+      "method": "GET",
+      "route_name": "search",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array{query:string,type:string,sort:string,page:int,result:array<string,mixed>}",
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "work": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "recording": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "version": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "release": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "released_on",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "collection": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "description",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/search",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/SearchController.php"
+    },
+    "admin.catalog.index": {
+      "method": "GET",
+      "route_name": "admin.catalog.entities.index",
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "verification_state",
+            "updated_at"
+          ],
+          "write_fields": []
+        },
+        "work": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state",
+            "updated_at"
+          ],
+          "write_fields": []
+        },
+        "recording": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state",
+            "updated_at"
+          ],
+          "write_fields": []
+        },
+        "version": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "verification_state",
+            "updated_at"
+          ],
+          "write_fields": []
+        },
+        "release": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state",
+            "updated_at"
+          ],
+          "write_fields": []
+        },
+        "collection": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state",
+            "updated_at"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/admin/catalog/{type}",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "implementation": "app/Http/Controllers/Admin/CatalogController.php",
+      "route_parameters": {
+        "type": "entity_type"
+      }
+    },
+    "admin.catalog.show": {
+      "method": "GET",
+      "route_name": "admin.catalog.entities.show",
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "sort_name",
+            "slug",
+            "artist_type",
+            "country_code",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        },
+        "work": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "work_type",
+            "language_code",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        },
+        "recording": {
+          "read_fields": [
+            "id",
+            "work_id",
+            "title",
+            "slug",
+            "duration_ms",
+            "is_explicit",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        },
+        "version": {
+          "read_fields": [
+            "id",
+            "recording_id",
+            "name",
+            "slug",
+            "version_type",
+            "duration_ms",
+            "verification_state",
+            "created_at",
+            "updated_at"
+          ],
+          "write_fields": []
+        },
+        "release": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "release_type",
+            "released_on",
+            "country_code",
+            "barcode",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        },
+        "collection": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "description",
+            "visibility",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/admin/catalog/{type}/{id}",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "implementation": "app/Http/Controllers/Admin/CatalogController.php",
+      "route_parameters": {
+        "type": "entity_type",
+        "id": "ulid"
+      },
+      "support_surfaces": {
+        "catalog.external_identifiers": [
+          "entity_type",
+          "entity_id",
+          "namespace",
+          "value",
+          "is_primary",
+          "verification_state"
+        ],
+        "catalog.entity_relationships": [
+          "subject_type",
+          "subject_id",
+          "relationship_type",
+          "object_type",
+          "object_id",
+          "verification_state"
+        ],
+        "catalog.metadata_conflicts": [
+          "entity_type",
+          "entity_id",
+          "field_name",
+          "status",
+          "resolution_note",
+          "resolved_at"
+        ]
+      }
+    },
+    "admin.providers.index": {
+      "method": "GET",
+      "route_name": "admin.providers.index",
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {},
+      "uri": "/admin/providers",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "slug",
+          "name",
+          "category",
+          "status",
+          "is_enabled",
+          "policy_reviewed_at"
+        ],
+        "provider.provider_capabilities": [
+          "provider_id",
+          "capability"
+        ],
+        "provider.provider_entities": [
+          "provider_id"
+        ],
+        "provider.provider_sync_runs": [
+          "provider_id",
+          "status"
+        ]
+      }
+    },
+    "admin.imports.index": {
+      "method": "GET",
+      "route_name": "admin.imports.index",
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {},
+      "uri": "/admin/imports",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+      "support_surfaces": {
+        "ingestion.provider_import_runs": [
+          "id",
+          "provider_id",
+          "operation",
+          "status",
+          "attempts",
+          "started_at",
+          "error_summary",
+          "created_at"
+        ],
+        "provider.providers": [
+          "id",
+          "name",
+          "slug"
+        ]
+      }
+    },
+    "admin.quarantine.index": {
+      "method": "GET",
+      "route_name": "admin.quarantine.index",
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {},
+      "uri": "/admin/quarantine",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+      "support_surfaces": {
+        "ingestion.provider_import_items": [
+          "id",
+          "provider_import_run_id",
+          "provider_entity_type",
+          "provider_entity_id",
+          "status",
+          "attempts",
+          "processed_at"
+        ],
+        "ingestion.provider_import_runs": [
+          "id",
+          "provider_id"
+        ],
+        "provider.providers": [
+          "id",
+          "name",
+          "slug"
+        ],
+        "ingestion.provider_import_failures": [
+          "retryable"
+        ]
+      }
+    },
+    "admin.identity-conflicts.index": {
+      "method": "GET",
+      "route_name": "admin.identity-conflicts.index",
+      "uri": "/admin/identity-conflicts",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "implementation": "app/Http/Controllers/Admin/IdentityConflictReviewController.php",
+      "data_surfaces": {},
+      "support_surfaces": {
+        "identity.identity_conflict_reviews": [
+          "id",
+          "provider_entity_id",
+          "entity_type",
+          "status",
+          "candidate_entity_ids",
+          "opened_at"
+        ],
+        "identity.identity_conflict_decisions": [
+          "identity_conflict_review_id"
+        ],
+        "provider.provider_entities": [
+          "id",
+          "provider_id",
+          "external_id"
+        ],
+        "provider.providers": [
+          "id",
+          "name",
+          "slug"
+        ]
+      }
+    },
+    "admin.users.index": {
+      "method": "GET",
+      "route_name": "admin.users.index",
+      "uri": "/admin/users",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+      "data_surfaces": {},
+      "support_surfaces": {
+        "auth.users": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "is_active",
+          "email_verified_at",
+          "created_at"
+        ]
+      }
+    },
+    "admin.providers.show": {
+      "method": "GET",
+      "route_name": "admin.providers.show",
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {},
+      "uri": "/admin/providers/{provider}",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "slug",
+          "name",
+          "category",
+          "status",
+          "is_enabled",
+          "feature_flag",
+          "official_docs_url",
+          "policy_reviewed_at",
+          "configuration"
+        ],
+        "provider.provider_capabilities": [
+          "provider_id",
+          "capability",
+          "status",
+          "requires_user_consent",
+          "market_dependent",
+          "cache_ttl_seconds"
+        ],
+        "provider.provider_entities": [
+          "provider_id"
+        ],
+        "provider.provider_sync_runs": [
+          "provider_id",
+          "operation",
+          "status",
+          "processed_count",
+          "failed_count",
+          "error_summary",
+          "created_at"
+        ],
+        "ingestion.provider_import_runs": [
+          "id",
+          "provider_id",
+          "operation",
+          "status",
+          "created_at"
+        ]
+      },
+      "route_parameters": {
+        "provider": "ulid"
+      }
+    },
+    "admin.imports.show": {
+      "method": "GET",
+      "route_name": "admin.imports.show",
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {},
+      "uri": "/admin/imports/{run}",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+      "support_surfaces": {
+        "ingestion.provider_import_runs": [
+          "id",
+          "provider_id",
+          "operation",
+          "status",
+          "attempts",
+          "heartbeat_at",
+          "resume_after",
+          "started_at",
+          "finished_at",
+          "error_summary"
+        ],
+        "provider.providers": [
+          "id",
+          "name",
+          "slug"
+        ],
+        "ingestion.provider_import_items": [
+          "id",
+          "provider_import_run_id",
+          "provider_entity_type",
+          "provider_entity_id",
+          "status",
+          "canonical_entity_type",
+          "canonical_entity_id",
+          "attempts"
+        ],
+        "ingestion.provider_import_failures": [
+          "provider_import_run_id",
+          "stage",
+          "kind",
+          "error_code",
+          "message",
+          "retryable",
+          "occurred_at"
+        ],
+        "ingestion.provider_import_checkpoints": [
+          "provider_import_run_id",
+          "checkpoint_key",
+          "cursor",
+          "committed_at"
+        ],
+        "ingestion.provider_import_requests": [
+          "provider_import_run_id",
+          "sequence",
+          "method",
+          "endpoint",
+          "response_status",
+          "duration_ms"
+        ]
+      },
+      "route_parameters": {
+        "run": "ulid"
+      }
+    },
+    "admin.identity-conflicts.show": {
+      "method": "GET",
+      "route_name": "admin.identity-conflicts.show",
+      "uri": "/admin/identity-conflicts/{review}",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed"
+      ],
+      "actors": [
+        "active_verified_admin_with_confirmed_2fa"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "implementation": "app/Http/Controllers/Admin/IdentityConflictReviewController.php",
+      "route_parameters": {
+        "review": "ulid"
+      },
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "work": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "recording": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "version": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "release": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        },
+        "collection": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "support_surfaces": {
+        "identity.identity_conflict_reviews": [
+          "id",
+          "provider_entity_id",
+          "entity_type",
+          "status",
+          "candidate_entity_ids",
+          "evidence",
+          "opened_at",
+          "resolved_at"
+        ],
+        "identity.identity_conflict_decisions": [
+          "id",
+          "identity_conflict_review_id",
+          "actor_id",
+          "action",
+          "selected_entity_id",
+          "rationale",
+          "created_at"
+        ],
+        "provider.provider_entities": [
+          "id",
+          "provider_id",
+          "external_id"
+        ],
+        "provider.providers": [
+          "id",
+          "name",
+          "slug"
+        ],
+        "auth.users": [
+          "id",
+          "name",
+          "email"
+        ],
+        "catalog.entity_matches": [
+          "provider_entity_id",
+          "entity_type",
+          "entity_id",
+          "status",
+          "match_method",
+          "confidence",
+          "evidence"
+        ]
+      }
+    },
+    "admin.identity-conflicts.decide": {
+      "method": "POST",
+      "route_name": "admin.identity-conflicts.decide",
+      "uri": "/admin/identity-conflicts/{review}/decisions",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-identity-conflicts",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_identity_reviewer_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/IdentityConflictReviewController.php",
+      "route_parameters": {
+        "review": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "identity.identity_conflict_reviews": [
+          "id",
+          "provider_entity_id",
+          "entity_type",
+          "status",
+          "candidate_entity_ids",
+          "opened_at",
+          "resolved_at"
+        ],
+        "catalog.entity_matches": [
+          "provider_entity_id",
+          "entity_type",
+          "entity_id",
+          "status",
+          "match_method",
+          "confidence",
+          "active_match_key"
+        ]
+      },
+      "support_surface_writes": {
+        "identity.identity_conflict_reviews": [
+          "status",
+          "resolved_at",
+          "updated_at"
+        ],
+        "identity.identity_conflict_decisions": [
+          "identity_conflict_review_id",
+          "actor_id",
+          "action",
+          "selected_entity_id",
+          "rationale",
+          "before_snapshot",
+          "after_snapshot",
+          "created_at"
+        ],
+        "catalog.entity_matches": [
+          "status",
+          "match_method",
+          "confidence",
+          "active_match_key",
+          "updated_at"
+        ]
+      }
+    },
+    "admin.providers.mutate": {
+      "method": "POST",
+      "route_name": "admin.providers.mutate",
+      "uri": "/admin/providers/{provider}/operations",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-providers",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/ProviderMutationController.php",
+      "route_parameters": {
+        "provider": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "status",
+          "is_enabled"
+        ]
+      },
+      "support_surface_writes": {
+        "provider.providers": [
+          "status",
+          "is_enabled",
+          "updated_at"
+        ],
+        "provider.provider_operation_audits": [
+          "provider_id",
+          "actor_user_id",
+          "action",
+          "idempotency_key",
+          "before_state",
+          "after_state",
+          "rationale",
+          "occurred_at",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "admin.imports.recover": {
+      "method": "POST",
+      "route_name": "admin.imports.recover",
+      "uri": "/admin/imports/{run}/operations",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-providers",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/ProviderMutationController.php",
+      "route_parameters": {
+        "run": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "ingestion.provider_import_runs": [
+          "id",
+          "provider_id",
+          "status",
+          "attempts",
+          "cancellation_requested_at",
+          "resume_after",
+          "finished_at",
+          "error_summary"
+        ],
+        "ingestion.provider_import_checkpoints": [
+          "provider_import_run_id",
+          "checkpoint_key",
+          "cursor"
+        ]
+      },
+      "support_surface_writes": {
+        "ingestion.provider_import_runs": [
+          "status",
+          "attempts",
+          "cancellation_requested_at",
+          "resume_after",
+          "finished_at",
+          "error_summary",
+          "updated_at"
+        ],
+        "provider.provider_operation_audits": [
+          "provider_id",
+          "provider_import_run_id",
+          "actor_user_id",
+          "action",
+          "idempotency_key",
+          "before_state",
+          "after_state",
+          "rationale",
+          "occurred_at",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "public.artists.index": {
+      "method": "GET",
+      "route_name": "artists.index",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "artist_type",
+            "country_code",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/artists",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+    },
+    "public.releases.index": {
+      "method": "GET",
+      "route_name": "releases.index",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "release": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "release_type",
+            "released_on",
+            "country_code",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/releases",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+    },
+    "public.collections.index": {
+      "method": "GET",
+      "route_name": "collections.index",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "collection": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "description",
+            "visibility",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/collections",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+    },
+    "admin.providers.musicbrainz.artists.import": {
+      "method": "POST",
+      "route_name": "admin.providers.musicbrainz.artists.import",
+      "uri": "/admin/providers/{provider}/musicbrainz/artists/import",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-providers",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/MusicBrainzArtistImportController.php",
+      "route_parameters": {
+        "provider": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "slug",
+          "status",
+          "is_enabled"
+        ]
+      },
+      "support_surface_writes": {
+        "ingestion.provider_import_runs": [
+          "provider_id",
+          "operation",
+          "status",
+          "configuration",
+          "created_at",
+          "updated_at"
+        ],
+        "ingestion.provider_import_checkpoints": [
+          "provider_import_run_id",
+          "checkpoint_key",
+          "cursor",
+          "state",
+          "committed_at",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "admin.providers.musicbrainz.releases.import": {
+      "method": "POST",
+      "route_name": "admin.providers.musicbrainz.releases.import",
+      "uri": "/admin/providers/{provider}/musicbrainz/releases/import",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-providers",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/MusicBrainzReleaseImportController.php",
+      "route_parameters": {
+        "provider": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "slug",
+          "status",
+          "is_enabled"
+        ]
+      },
+      "support_surface_writes": {
+        "ingestion.provider_import_runs": [
+          "provider_id",
+          "operation",
+          "status",
+          "configuration",
+          "created_at",
+          "updated_at"
+        ],
+        "ingestion.provider_import_checkpoints": [
+          "provider_import_run_id",
+          "checkpoint_key",
+          "cursor",
+          "state",
+          "committed_at",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "public.releases.show": {
+      "method": "GET",
+      "route_name": "releases.show",
+      "uri": "/releases/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "release": {
+          "read_fields": [
+            "id",
+            "release_group_id",
+            "title",
+            "slug",
+            "release_type",
+            "released_on",
+            "country_code",
+            "barcode",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      }
+    },
+    "public.recordings.index": {
+      "method": "GET",
+      "route_name": "recordings.index",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "recording": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "duration_ms",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/recordings",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+    },
+    "public.recordings.show": {
+      "method": "GET",
+      "route_name": "recordings.show",
+      "uri": "/recordings/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "recording": {
+          "read_fields": [
+            "id",
+            "work_id",
+            "title",
+            "slug",
+            "duration_ms",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      }
+    },
+    "admin.providers.musicbrainz.recordings.import": {
+      "method": "POST",
+      "route_name": "admin.providers.musicbrainz.recordings.import",
+      "uri": "/admin/providers/{provider}/musicbrainz/recordings/import",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-providers",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/MusicBrainzRecordingImportController.php",
+      "route_parameters": {
+        "provider": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "slug",
+          "status",
+          "is_enabled"
+        ]
+      },
+      "support_surface_writes": {
+        "ingestion.provider_import_runs": [
+          "provider_id",
+          "operation",
+          "status",
+          "configuration",
+          "created_at",
+          "updated_at"
+        ],
+        "ingestion.provider_import_checkpoints": [
+          "provider_import_run_id",
+          "checkpoint_key",
+          "cursor",
+          "state",
+          "committed_at",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "admin.providers.musicbrainz.works.import": {
+      "method": "POST",
+      "route_name": "admin.providers.musicbrainz.works.import",
+      "uri": "/admin/providers/{provider}/musicbrainz/works/import",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-providers",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/MusicBrainzWorkImportController.php",
+      "route_parameters": {
+        "provider": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "slug",
+          "status",
+          "is_enabled"
+        ]
+      },
+      "support_surface_writes": {
+        "ingestion.provider_import_runs": [
+          "provider_id",
+          "operation",
+          "status",
+          "configuration",
+          "created_at",
+          "updated_at"
+        ],
+        "ingestion.provider_import_checkpoints": [
+          "provider_import_run_id",
+          "checkpoint_key",
+          "cursor",
+          "state",
+          "committed_at",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "public.works.index": {
+      "method": "GET",
+      "route_name": "works.index",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "work": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "work_type",
+            "language_code",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/works",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+    },
+    "admin.providers.youtube.destinations.approve": {
+      "method": "POST",
+      "uri": "/admin/providers/{provider}/youtube/destinations/approve",
+      "route_name": "admin.providers.youtube.destinations.approve",
+      "middleware": [
+        "web",
+        "auth",
+        "active",
+        "verified",
+        "can:access-admin",
+        "two-factor.confirmed",
+        "can:manage-providers",
+        "password.confirm"
+      ],
+      "actors": [
+        "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+      ],
+      "read_only": false,
+      "output_type": "redirect",
+      "implementation": "app/Http/Controllers/Admin/YouTubeDestinationController.php",
+      "route_parameters": {
+        "provider": "ulid"
+      },
+      "data_surfaces": {},
+      "support_surfaces": {
+        "provider.providers": [
+          "id",
+          "slug",
+          "status",
+          "is_enabled"
+        ],
+        "provider.provider_destinations": [
+          "id",
+          "provider_id",
+          "entity_type",
+          "entity_id",
+          "provider_resource_id",
+          "url",
+          "review_state",
+          "verified_at"
+        ]
+      },
+      "support_surface_writes": {
+        "provider.provider_destinations": [
+          "provider_id",
+          "entity_type",
+          "entity_id",
+          "provider_resource_id",
+          "url",
+          "title",
+          "channel_id",
+          "channel_title",
+          "duration_ms",
+          "is_embeddable",
+          "privacy_status",
+          "match_score",
+          "review_state",
+          "evidence",
+          "verified_at",
+          "last_checked_at",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "public.artists.show": {
+      "method": "GET",
+      "route_name": "artists.show",
+      "uri": "/artists/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "sort_name",
+            "slug",
+            "artist_type",
+            "country_code",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        }
+      }
+    },
+    "public.release-groups.show": {
+      "method": "GET",
+      "route_name": "release-groups.show",
+      "uri": "/release-groups/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "release_group": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "primary_type",
+            "secondary_types",
+            "first_release_date",
+            "disambiguation",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        }
+      }
+    },
+    "public.works.show": {
+      "method": "GET",
+      "route_name": "works.show",
+      "uri": "/works/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "work": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "work_type",
+            "language_code",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        }
+      }
+    },
+    "public.versions.show": {
+      "method": "GET",
+      "route_name": "versions.show",
+      "uri": "/versions/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "version": {
+          "read_fields": [
+            "id",
+            "recording_id",
+            "name",
+            "slug",
+            "version_type",
+            "duration_ms",
+            "verification_state",
+            "created_at",
+            "updated_at"
+          ],
+          "write_fields": []
+        }
+      }
+    },
+    "public.collections.show": {
+      "method": "GET",
+      "route_name": "collections.show",
+      "uri": "/collections/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "collection": {
+          "read_fields": [
+            "id",
+            "title",
+            "slug",
+            "description",
+            "visibility",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        }
+      }
+    },
+    "public.groups.index": {
+      "method": "GET",
+      "route_name": "groups.index",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "slug",
+            "artist_type",
+            "country_code",
+            "verification_state"
+          ],
+          "write_fields": []
+        }
+      },
+      "uri": "/groups",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+    },
+    "public.groups.show": {
+      "method": "GET",
+      "route_name": "groups.show",
+      "uri": "/groups/{slug}",
+      "middleware": [
+        "web"
+      ],
+      "implementation": "app/Http/Controllers/Search/EntityController.php",
+      "actors": [
+        "guest",
+        "authenticated_user"
+      ],
+      "read_only": true,
+      "output_type": "array<string,mixed>",
+      "route_parameters": {
+        "slug": "slug"
+      },
+      "data_surfaces": {
+        "artist": {
+          "read_fields": [
+            "id",
+            "name",
+            "sort_name",
+            "slug",
+            "artist_type",
+            "country_code",
+            "verification_state",
+            "created_at",
+            "updated_at",
+            "deleted_at"
+          ],
+          "write_fields": []
+        }
+      }
+    }
+  },
+  "admin.catalog.artist.update": {
+    "method": "PATCH",
+    "route_name": "admin.catalog.artists.update",
+    "actors": [
+      "active_verified_catalog_editor_with_confirmed_2fa_and_recent_password_confirmation"
+    ],
+    "read_only": false,
+    "output_type": "redirect",
+    "data_surfaces": {
+      "artist": {
+        "read_fields": [
+          "id",
+          "name",
+          "sort_name",
+          "slug",
+          "artist_type",
+          "country_code",
+          "verification_state"
+        ],
+        "write_fields": [
+          "name",
+          "sort_name",
+          "slug",
+          "artist_type",
+          "country_code",
+          "verification_state"
+        ]
+      }
+    },
+    "uri": "/admin/catalog/artist/{id}",
+    "middleware": [
+      "web",
+      "auth",
+      "active",
+      "verified",
+      "can:access-admin",
+      "two-factor.confirmed",
+      "can:manage-catalog",
+      "password.confirm"
+    ],
+    "implementation": "app/Http/Controllers/Admin/CatalogController.php",
+    "route_parameters": {
+      "id": "ulid"
+    }
+  }
+}

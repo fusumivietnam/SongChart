@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "contracts": {
+    "App\\\\Models\\\\Extension": {
+      "file": "app/Models/Extension.php",
+      "table": "extensions",
+      "required_columns": [
+        "id",
+        "type",
+        "slug",
+        "name",
+        "state",
+        "active_version",
+        "active_path",
+        "enabled",
+        "manifest",
+        "configuration",
+        "health_status",
+        "last_health_checked_at",
+        "installed_at"
+      ],
+      "required_casts": [
+        "state",
+        "enabled",
+        "manifest",
+        "configuration",
+        "last_health_checked_at",
+        "installed_at"
+      ],
+      "forbidden_property_references": {
+        "version": [
+          "app/Http/Controllers/Admin/ExtensionController.php",
+          "app/Actions/Admin/Extensions"
+        ]
+      }
+    },
+    "App\\\\Models\\\\User": {
+      "file": "app/Models/User.php",
+      "table": "users",
+      "required_columns": [
+        "id",
+        "name",
+        "email",
+        "password",
+        "role",
+        "is_active",
+        "two_factor_secret",
+        "two_factor_recovery_codes",
+        "two_factor_confirmed_at"
+      ],
+      "required_casts": [
+        "email_verified_at",
+        "password",
+        "is_active",
+        "role",
+        "two_factor_confirmed_at"
+      ],
+      "security_state_attributes": [
+        "role",
+        "is_active",
+        "two_factor_secret",
+        "two_factor_confirmed_at"
+      ]
+    },
+    "App\\\\Models\\\\Provider": {
+      "file": "app/Models/Provider.php",
+      "table": "providers",
+      "required_columns": [
+        "id",
+        "slug",
+        "name",
+        "category",
+        "status",
+        "is_enabled",
+        "feature_flag",
+        "official_docs_url",
+        "policy_reviewed_at",
+        "configuration"
+      ],
+      "required_casts": [
+        "status",
+        "is_enabled",
+        "policy_reviewed_at",
+        "configuration"
+      ]
+    },
+    "App\\\\Models\\\\ProviderSyncRun": {
+      "file": "app/Models/ProviderSyncRun.php",
+      "table": "provider_sync_runs",
+      "required_columns": [
+        "id",
+        "provider_id",
+        "operation",
+        "status",
+        "started_at",
+        "finished_at",
+        "processed_count",
+        "failed_count",
+        "error_summary"
+      ],
+      "required_casts": [
+        "operation",
+        "status",
+        "started_at",
+        "finished_at",
+        "processed_count",
+        "failed_count"
+      ]
+    },
+    "App\\Models\\ProviderDestination": {
+      "file": "app/Models/ProviderDestination.php",
+      "table": "provider_destinations",
+      "required_columns": [
+        "id",
+        "provider_id",
+        "entity_type",
+        "entity_id",
+        "provider_resource_id",
+        "url",
+        "title",
+        "channel_id",
+        "channel_title",
+        "duration_ms",
+        "is_embeddable",
+        "privacy_status",
+        "match_score",
+        "review_state",
+        "evidence",
+        "verified_at",
+        "last_checked_at"
+      ],
+      "required_casts": [
+        "entity_type",
+        "is_embeddable",
+        "match_score",
+        "evidence",
+        "verified_at",
+        "last_checked_at"
+      ]
+    }
+  }
+}

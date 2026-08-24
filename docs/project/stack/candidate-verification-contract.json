@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "required_gates": [
+    "composer_validate",
+    "package_governance",
+    "test_taxonomy",
+    "pint",
+    "phpstan",
+    "pest",
+    "postgresql",
+    "frontend_build",
+    "release_verify",
+    "canonical_environment",
+    "postgresql_major_18",
+    "repository_contracts",
+    "lockfile_authority",
+    "database_test_isolation",
+    "migration_runtime_contract",
+    "executable_repository_authority",
+    "package_upstream_adaptation",
+    "postgres_schema_snapshot",
+    "verification_topology",
+    "ai_development_protocol",
+    "docker_first_development",
+    "verification_command_surface",
+    "migration_lifecycle",
+    "migration_upgrade",
+    "verification_consumer_graph",
+    "authorization_consolidation",
+    "application_data_boundary"
+  ],
+  "allowed_status": [
+    "passed",
+    "failed",
+    "not_run"
+  ],
+  "closure_rule": "all required gates must be passed in the canonical verification environment",
+  "packaging_rule": "candidate manifest must describe only gates actually executed"
+}

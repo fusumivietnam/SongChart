@@ -1,0 +1,6 @@
+*
+!.gitignore
+!registry.php
+!songchart/
+!songchart/example-plugin/
+!songchart/example-plugin/**

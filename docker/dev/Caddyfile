@@ -1,0 +1,11 @@
+http://docker.songchart.test {
+    redir https://docker.songchart.test:8443{uri} permanent
+}
+
+https://docker.songchart.test {
+    tls /certs/docker.songchart.test.pem /certs/docker.songchart.test-key.pem
+
+    encode zstd gzip
+
+    reverse_proxy app:8000
+}

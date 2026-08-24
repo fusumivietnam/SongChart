@@ -1,0 +1,89 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, xml, zip
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: composer validate --strict
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: npm ci --no-audit --no-fund
+      - run: composer quality:verify
+
+  tests-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4-bookworm
+        env:
+          POSTGRES_DB: songchart_test
+          POSTGRES_USER: songchart_test
+          POSTGRES_PASSWORD: songchart_test_only
+        options: >-
+          --health-cmd "pg_isready -U songchart_test -d songchart_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7.4-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+        ports:
+          - 6379:6379
+    env:
+      APP_ENV: testing
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: songchart_test
+      DB_USERNAME: songchart_test
+      DB_PASSWORD: songchart_test_only
+      TEST_PGSQL_HOST: 127.0.0.1
+      TEST_PGSQL_PORT: 5432
+      TEST_PGSQL_DATABASE: songchart_test
+      TEST_PGSQL_USERNAME: songchart_test
+      TEST_PGSQL_PASSWORD: songchart_test_only
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, xml, zip
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer test:postgres
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build

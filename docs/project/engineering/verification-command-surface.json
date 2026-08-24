@@ -1,0 +1,57 @@
+{
+    "schema_version":  1,
+    "public_entrypoints":  {
+                               "development":  [
+                                                   "songchart dev setup",
+                                                   "songchart dev up",
+                                                   "songchart dev status",
+                                                   "songchart dev logs",
+                                                   "songchart dev shell",
+                                                   "songchart context"
+                                               ],
+                               "focused":  [
+                                               "songchart test"
+                                           ],
+                               "candidate_closure":  [
+                                                         "composer stage:verify"
+                                                     ],
+                               "canonical_closure":  [
+                                                         "songchart verify",
+                                                         "composer canonical:verify"
+                                                     ],
+                               "packaging":  [
+                                                 "composer release:package"
+                                             ]
+                           },
+    "internal_building_blocks":  [
+                                     "quality:normalize",
+                                     "quality:verify",
+                                     "test:postgres",
+                                     "repository-contracts:verify",
+                                     "verification-topology:verify",
+                                     "ai-protocol:verify",
+                                     "artifact-provenance:verify"
+                                 ],
+    "removed_aliases":  {
+                            "verify":  "Use composer stage:verify or songchart test.",
+                            "release:verify":  "Use composer canonical:verify or songchart verify.",
+                            "test:all":  "Use composer test:postgres or songchart test.",
+                            "test:postgres-clean":  "Use composer test:postgres; schema preparation is already authoritative.",
+                            "release-contract:verify":  "Repository/canonical closure owns these gates.",
+                            "delivery:verify":  "Use composer release:package after canonical/provenance PASS."
+                        },
+    "historical_orchestration":  {
+                                     "retired_files":  [
+                                                           "scripts/export-release-baseline.ps1",
+                                                           "scripts/finalize-stage-11-release.ps1",
+                                                           "scripts/finalize-stage-11-release.bat"
+                                                       ],
+                                     "reason":  "Superseded by Docker-first canonical closure and provenance-gated release:package."
+                                 },
+    "policy":  {
+                   "active_docs_must_use_public_entrypoints":  true,
+                   "removed_aliases_must_not_be_defined":  true,
+                   "historical_docs_may_reference_removed_commands":  true,
+                   "new_verifier_requires_registered_authority_owner":  true
+               }
+}

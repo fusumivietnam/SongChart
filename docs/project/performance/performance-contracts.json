@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "rules": {
+    "strict_eloquent_non_production": true,
+    "schema_probing_in_hot_paths": false,
+    "unbounded_collections_in_admin_read_models": false,
+    "select_star_in_admin_read_models": false
+  },
+  "use_cases": {
+    "admin.providers.index": {
+      "query_budget": 12,
+      "pagination": "length_aware",
+      "per_page": 25
+    },
+    "admin.providers.show": {
+      "query_budget": 12,
+      "bounded_collections": {
+        "sync_runs": 25,
+        "import_runs": 25
+      }
+    },
+    "admin.imports.index": {
+      "query_budget": 12,
+      "pagination": "length_aware",
+      "per_page": 25
+    },
+    "admin.imports.show": {
+      "query_budget": 14,
+      "pagination": "length_aware",
+      "per_page": 25,
+      "bounded_collections": {
+        "failures": 50,
+        "checkpoints": 50,
+        "requests": 50
+      }
+    },
+    "admin.quarantine.index": {
+      "query_budget": 12,
+      "pagination": "length_aware",
+      "per_page": 25
+    },
+    "admin.identity-conflicts.index": {
+      "query_budget": 10,
+      "pagination": "length_aware",
+      "per_page": 25
+    },
+    "admin.identity-conflicts.show": {
+      "query_budget": 12,
+      "bounded_collections": {
+        "candidate_ids": 100
+      }
+    },
+    "admin.dashboard": {
+      "query_budget": 12,
+      "bounded_collections": {
+        "provider_sync_runs": 10,
+        "extension_operations": 8
+      }
+    },
+    "admin.catalog.entities.index": {
+      "query_budget": 8,
+      "pagination": "length_aware",
+      "per_page": 25
+    },
+    "admin.catalog.entities.show": {
+      "query_budget": 10,
+      "bounded_collections": {
+        "external_identifiers": 100,
+        "relationships": 100,
+        "metadata_conflicts": 100
+      }
+    }
+  }
+}

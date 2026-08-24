@@ -1,0 +1,432 @@
+{
+  "version": 1,
+  "authorities": {
+    "database-test-authority": {
+      "state": "postgresql-only-release-authority",
+      "authority_files": [
+        "composer.json",
+        ".github/workflows/tests.yml",
+        "docs/project/stack/database-test-contract.json"
+      ],
+      "dependents": [
+        "scripts/verify-database-authority.php",
+        "scripts/verify-runtime-authority-closure.php",
+        "scripts/verify-foundation-closure.php",
+        "scripts/verify-code-generation-guardrails.php",
+        "tests/Architecture/PostgresFirstDatabaseAuthorityTest.php",
+        "tests/Architecture/RepositoryRuntimeAuthorityClosureTest.php",
+        "tests/Architecture/TestingAndCiGatesTest.php",
+        "tests/Architecture/TestAuthorityCodeGenerationGuardrailsTest.php",
+        "docs/setup/TEST_DATABASE_SETUP.md",
+        "docs/project/docs/TESTING.md",
+        "docs/project/stack/DATABASE_CONVENTIONS.md"
+      ],
+      "scan_paths": [
+        "composer.json",
+        ".github/workflows/tests.yml",
+        "scripts/*.php",
+        "tests/Architecture/*.php"
+      ],
+      "deprecated_patterns": [
+        {
+          "regex": "->toBe\\(['\\\"]@test:sqlite['\\\"]\\)",
+          "message": "Architecture tests must not assert SQLite as the official test alias."
+        },
+        {
+          "regex": "(?<!not)->toContain\\([^\\n]*['\\\"]@test:sqlite['\\\"]",
+          "message": "Architecture tests must not require SQLite in the release matrix."
+        },
+        {
+          "regex": "(?m)^\\s*tests-sqlite:\\s*$",
+          "message": "SQLite CI job is deprecated; PostgreSQL is the only release DB lane."
+        },
+        {
+          "regex": "(?m)^\\s*-\\s*run:\\s*composer\\s+test:sqlite(?:\\s|$)",
+          "message": "CI must not execute SQLite as a release test lane."
+        },
+        {
+          "regex": "->toContain\\(['\\\"]run-database-tests\\.php sqlite['\\\"]\\)",
+          "message": "Official database-backed test aliases must resolve to PostgreSQL."
+        }
+      ]
+    },
+    "admin-dashboard-mode": {
+      "state": "attention-first",
+      "authority_files": [
+        "docs/ui/admin/SONGCHART_ADMIN_DASHBOARD_DESIGN_CONTRACT.md",
+        "resources/views/admin/dashboard.blade.php"
+      ],
+      "dependents": [
+        "scripts/verify-admin-operations-ux.php",
+        "tests/Feature/AdminDashboardTest.php",
+        "tests/Feature/AdminOperationsUxTest.php",
+        "docs/ui/PHASE_10_ADMIN_DASHBOARD.md",
+        "docs/ui/PHASE_3_UI_PREVIEW.md"
+      ],
+      "scan_paths": [
+        "resources/views/admin/dashboard.blade.php",
+        "scripts/verify-admin-operations-ux.php",
+        "tests/Feature/AdminDashboardTest.php",
+        "tests/Feature/AdminOperationsUxTest.php",
+        "docs/ui/admin/SONGCHART_ADMIN_DASHBOARD_DESIGN_CONTRACT.md",
+        "docs/ui/PHASE_10_ADMIN_DASHBOARD.md",
+        "docs/ui/PHASE_3_UI_PREVIEW.md"
+      ],
+      "deprecated_patterns": [
+        {
+          "regex": "operations-first",
+          "message": "The current admin dashboard contract is attention-first."
+        },
+        {
+          "regex": "data-dashboard-section=\\\"work-queue\\\"",
+          "message": "Legacy work-queue marker was superseded by attention-center."
+        },
+        {
+          "regex": "data-dashboard-section=\\\"provider-health\\\"",
+          "message": "Provider health is no longer a required primary dashboard section."
+        },
+        {
+          "regex": "data-dashboard-section=\\\"recent-syncs\\\"",
+          "message": "Recent syncs are secondary technical detail, not a primary dashboard invariant."
+        },
+        {
+          "regex": "data-dashboard-section=\\\"recent-activity\\\"",
+          "message": "Recent activity is not a required primary dashboard section in the attention-first contract."
+        }
+      ]
+    },
+    "repository-contract-safety": {
+      "state": "contract-first-release-safety",
+      "authority_files": [
+        "docs/project/engineering/regression-ledger.json",
+        "docs/project/stack/package-schema-contracts.json",
+        "docs/project/domain/model-schema-contracts.json",
+        "docs/project/stack/runtime-environments.json",
+        "docs/project/engineering/installer-contract.json",
+        "composer.json",
+        "docs/project/stack/database-test-contract.json",
+        "docs/project/stack/release-pipeline-contract.json"
+      ],
+      "dependents": [
+        "scripts/verify-regression-ledger.php",
+        "scripts/verify-package-schema-contracts.php",
+        "scripts/verify-model-schema-contracts.php",
+        "scripts/verify-database-test-isolation.php",
+        "scripts/verify-lockfile-authority.php",
+        "scripts/verify-runtime-contracts.php",
+        "scripts/verify-release-orchestration.php",
+        "scripts/verify-migration-runtime-contract.php",
+        "tests/Architecture/RepositoryContractSafetyClosureTest.php",
+        "tests/Feature/RepositoryDatabaseContractTest.php",
+        "scripts/verify-performance-baseline.php"
+      ],
+      "scan_paths": [
+        "docs/project/engineering/*.json",
+        "docs/project/stack/*.json",
+        "docs/project/domain/*.json",
+        "scripts/*.php",
+        "scripts/*.ps1",
+        "scripts/*.sh",
+        "tests/Architecture/*.php",
+        "tests/Feature/*.php",
+        "composer.json"
+      ],
+      "deprecated_patterns": []
+    },
+    "executable-repository-authority": {
+      "state": "compiled-single-source-of-truth",
+      "authority_files": [
+        "docs/project/engineering/repository-contract-compiler.json",
+        "docs/project/generated/repository-contract-manifest.json",
+        "docs/project/stack/database-test-contract.json",
+        "docs/project/stack/release-pipeline-contract.json",
+        "docs/project/stack/runtime-environments.json",
+        "docs/project/stack/package-schema-contracts.json",
+        "docs/project/domain/model-schema-contracts.json",
+        "docs/project/stack/candidate-verification-contract.json"
+      ],
+      "dependents": [
+        "app/Support/Engineering/RepositoryContractResolver.php",
+        "app/Console/Commands/SongChartDoctorCommand.php",
+        "scripts/compile-repository-contracts.php",
+        "scripts/verify-repository-contract-compiler.php",
+        "scripts/resolve-repository-impact.php",
+        "scripts/verify-artifact-provenance.php",
+        "scripts/package-verified-source.php",
+        "scripts/snapshot-postgres-schema.php",
+        "scripts/verify-package-upstream-adaptations.php",
+        "scripts/record-canonical-verification.php",
+        "tests/Architecture/ExecutableRepositoryAuthorityTest.php"
+      ],
+      "scan_paths": [
+        "app/Support/Engineering/*.php",
+        "app/Console/Commands/SongChartDoctorCommand.php",
+        "scripts/*.php",
+        "tests/Architecture/*.php",
+        "docs/project/engineering/*.json",
+        "docs/project/stack/*.json",
+        "docs/project/generated/*.json"
+      ],
+      "deprecated_patterns": []
+    },
+    "verification-topology": {
+      "state": "single-owner-non-duplicative-verification",
+      "authority_files": [
+        "docs/project/engineering/verification-topology.json",
+        "docs/project/stack/release-pipeline-contract.json",
+        "composer.json"
+      ],
+      "dependents": [
+        "scripts/canonical-verify.sh",
+        "scripts/verify-verification-topology.php",
+        "scripts/verify-performance-baseline.php",
+        "scripts/verify-release-orchestration.php",
+        "tests/Architecture/VerificationWorkflowTopologyTest.php"
+      ],
+      "scan_paths": [
+        "composer.json",
+        "scripts/*.php",
+        "scripts/*.sh",
+        "tests/Architecture/*.php",
+        "docs/project/engineering/*.json"
+      ],
+      "deprecated_patterns": []
+    },
+    "ai-development-protocol": {
+      "state": "single-ai-workflow-authority",
+      "authority_files": [
+        "docs/project/engineering/ai-development-contract.json",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md"
+      ],
+      "dependents": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "PROJECT_AUTHORITY.md",
+        "docs/templates/TASK_CONTRACT_TEMPLATE.md",
+        "scripts/verify-ai-development-protocol.php",
+        "tests/Architecture/AiDevelopmentProtocolTest.php"
+      ],
+      "scan_paths": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "PROJECT_AUTHORITY.md",
+        "docs/project/engineering/*",
+        "docs/templates/TASK_CONTRACT_TEMPLATE.md",
+        "scripts/*.php",
+        "tests/Architecture/*.php"
+      ],
+      "deprecated_patterns": []
+    },
+    "docker-development": {
+      "state": "docker-first-primary-development",
+      "authority_files": [
+        "docs/project/stack/docker-development-contract.json",
+        "docs/project/stack/runtime-environments.json"
+      ],
+      "dependents": [
+        "compose.dev.yml",
+        "compose.verify.yml",
+        "scripts/songchart.ps1",
+        "songchart.bat",
+        "scripts/docker-stage-verify.sh",
+        "scripts/verify-docker-first-development.php",
+        "tests/Architecture/DockerFirstDevelopmentEnvironmentTest.php",
+        "PROJECT_AUTHORITY.md",
+        "README.md",
+        "docs/project/stack/STACK_OVERVIEW.md",
+        "docs/project/docs/LOCAL_SETUP.md"
+      ],
+      "scan_paths": [
+        "compose*.yml",
+        "scripts/*.ps1",
+        "scripts/*.sh",
+        "*.bat",
+        "docs/project/stack/*.json",
+        "tests/Architecture/*.php",
+        "PROJECT_AUTHORITY.md",
+        "README.md"
+      ],
+      "deprecated_patterns": []
+    },
+    "verification-command-surface": {
+      "state": "bounded-active-verification-entrypoints",
+      "authority_files": [
+        "docs/project/engineering/verification-command-surface.json"
+      ],
+      "dependents": [
+        "composer.json",
+        "PROJECT_AUTHORITY.md",
+        "README.md",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+        "scripts/verify-verification-command-surface.php",
+        "scripts/verify-verification-topology.php"
+      ],
+      "scan_paths": [
+        "composer.json",
+        "PROJECT_AUTHORITY.md",
+        "README.md",
+        "docs/project/engineering/*",
+        "docs/project/docs/TESTING.md",
+        "docs/project/stack/TESTING_TOOLCHAIN.md",
+        "docs/operations/canonical-verification.md",
+        "scripts/*.php",
+        "tests/Architecture/*.php"
+      ],
+      "deprecated_patterns": []
+    },
+    "migration-lifecycle": {
+      "state": "historical-migrations-frozen-forward-only-upgrades",
+      "authority_files": [
+        "docs/project/stack/migration-lifecycle-contract.json",
+        "docs/project/stack/package-schema-contracts.json"
+      ],
+      "dependents": [
+        "database/migrations/2026_08_13_000100_create_activity_log_table.php",
+        "database/migrations/2026_08_16_000100_add_attribute_changes_to_activity_log_if_missing.php",
+        "scripts/verify-migration-lifecycle.php",
+        "scripts/run-migration-upgrade-test.php",
+        "tests/Architecture/MigrationLifecycleUpgradeSafetyTest.php",
+        "composer.json",
+        "docs/project/engineering/verification-topology.json",
+        "docs/project/stack/release-pipeline-contract.json",
+        "app/Support/Engineering/PhpSemanticFingerprint.php",
+        "tests/Unit/PhpSemanticFingerprintTest.php",
+        "scripts/seal-migration-lifecycle.php"
+      ],
+      "scan_paths": [
+        "database/migrations/*.php",
+        "scripts/*.php",
+        "tests/Architecture/*.php",
+        "docs/project/stack/*.json",
+        "composer.json"
+      ],
+      "deprecated_patterns": []
+    },
+    "verification-consumer-graph": {
+      "state": "single-routing-authority-for-verifier-and-architecture-consumers",
+      "authority_files": [
+        "docs/project/engineering/verification-consumer-graph.json",
+        "docs/project/engineering/repository-contract-compiler.json"
+      ],
+      "dependents": [
+        "app/Support/Engineering/RepositoryContractResolver.php",
+        "scripts/verify-repository-contract-compiler.php",
+        "scripts/resolve-repository-impact.php",
+        "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
+        "PROJECT_AUTHORITY.md",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+        "docs/project/engineering/ai-development-contract.json",
+        "docs/project/generated/repository-contract-manifest.json"
+      ],
+      "scan_paths": [
+        "scripts/verify-*.php",
+        "tests/Architecture/*.php",
+        "docs/project/engineering/*.json",
+        "app/Support/Engineering/*.php",
+        "composer.json"
+      ],
+      "deprecated_patterns": []
+    },
+    "authorization": {
+      "state": "laravel-gate-capability-matrix",
+      "authority_files": [
+        "docs/project/security/authorization-contract.json"
+      ],
+      "dependents": [
+        "app/Enums/Capability.php",
+        "app/Enums/UserRole.php",
+        "app/Models/User.php",
+        "app/Support/Auth/AuthorizationMatrix.php",
+        "app/Providers/AppServiceProvider.php",
+        "app/Support/Admin/PrivilegedUserAdministration.php",
+        "app/Console/Commands/CreateAdminCommand.php",
+        "app/Console/Commands/EnsureLocalAdminCommand.php",
+        "scripts/verify-authentication-hardening.php",
+        "tests/Unit/AuthorizationMatrixTest.php",
+        "tests/Feature/AuthorizationGateTest.php",
+        "tests/Architecture/AuthenticationHardeningBoundaryTest.php",
+        "scripts/verify-queue-infrastructure.php",
+        "scripts/verify-pulse-observability.php",
+        "tests/Architecture/QueueInfrastructureBoundaryTest.php",
+        "tests/Unit/PulseObservabilityContractTest.php",
+        "routes/web.php",
+        "resources/views/components/shell/frontend-header.blade.php",
+        "resources/views/components/admin/sidebar.blade.php",
+        "app/Support/Admin/AdminInformationArchitecture.php",
+        "tests/Feature/AdminDashboardTest.php",
+        "tests/Feature/PrivilegedAuditTest.php",
+        "scripts/verify-laravel-alignment.php",
+        "tests/Architecture/LaravelFeatureAlignmentTest.php",
+        "scripts/verify-identity-conflict-review-ui.php",
+        "tests/Architecture/IdentityConflictReviewUiArchitectureTest.php",
+        "tests/Feature/IdentityConflictReviewUiTest.php"
+      ],
+      "scan_paths": [
+        "app/Enums/*.php",
+        "app/Models/User.php",
+        "app/Providers/AppServiceProvider.php",
+        "app/Support/Admin/*.php",
+        "app/Support/Auth/*.php",
+        "app/Console/Commands/*.php",
+        "scripts/verify-*.php",
+        "tests/Architecture/*.php",
+        "tests/Feature/*.php",
+        "tests/Unit/*.php"
+      ],
+      "deprecated_patterns": []
+    },
+    "application-data-boundary": {
+      "state": "controller-transport-read-model-write-service-boundary",
+      "authority_files": [
+        "docs/project/domain/application-data-boundary.json",
+        "docs/project/performance/query-budget-contract.json"
+      ],
+      "dependents": [
+        "app/Application/Admin/Queries/ExtensionReadModel.php",
+        "app/Http/Controllers/Admin/ExtensionController.php",
+        "app/Support/Admin/AdminDashboardSnapshot.php",
+        "app/Support/Admin/AdminInformationArchitecture.php",
+        "app/Support/Admin/CatalogAdministration.php",
+        "app/Support/Admin/IdentityConflictReviewConsole.php",
+        "app/Support/Admin/PrivilegedAuditConsole.php",
+        "app/Support/Admin/ProviderOperationsConsole.php",
+        "app/Support/Admin/PrivilegedUserAdministration.php",
+        "scripts/verify-architecture-conformance.php",
+        "tests/Architecture/ArchitectureConformanceTest.php",
+        "docs/project/performance/query-budget-contract.json",
+        "PROJECT_AUTHORITY.md",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md"
+      ],
+      "scan_paths": [
+        "app/Http/Controllers/**/*.php",
+        "app/Application/**/*.php",
+        "app/Support/Admin/*.php",
+        "scripts/verify-architecture-conformance.php",
+        "tests/Architecture/ArchitectureConformanceTest.php"
+      ],
+      "deprecated_patterns": []
+    },
+    "query-budget": {
+      "state": "registered-awaiting-representative-postgresql-baselines",
+      "authority_files": [
+        "docs/project/performance/query-budget-contract.json"
+      ],
+      "dependents": [
+        "docs/project/domain/application-data-boundary.json",
+        "scripts/verify-architecture-conformance.php",
+        "tests/Architecture/ArchitectureConformanceTest.php",
+        "docs/foundation/STAGE_16_7_TASK_CONTRACT.md",
+        "docs/foundation/STAGE_16_7_VALIDATION_REPORT.md"
+      ],
+      "scan_paths": [
+        "docs/project/performance/query-budget-contract.json",
+        "app/Application/Admin/Queries/*.php",
+        "app/Support/Admin/*.php",
+        "tests/Feature/*.php"
+      ],
+      "deprecated_patterns": []
+    }
+  }
+}

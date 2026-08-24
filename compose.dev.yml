@@ -1,0 +1,159 @@
+services:
+  postgres:
+    image: postgres:18.4-bookworm
+    environment:
+      POSTGRES_DB: songchart_docker
+      POSTGRES_USER: songchart_docker
+      POSTGRES_PASSWORD: songchart_docker_only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U songchart_docker -d songchart_docker"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    volumes:
+      - songchart_dev_pgdata:/var/lib/postgresql
+
+  redis:
+    image: redis:7.4-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    volumes:
+      - songchart_dev_redis:/data
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/verify/Dockerfile
+    working_dir: /workspace
+    env_file:
+      - .env.docker
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: https://docker.songchart.test:8443
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: songchart_docker
+      DB_USERNAME: songchart_docker
+      DB_PASSWORD: songchart_docker_only
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_CACHE_DB: "1"
+      REDIS_CACHE_CONNECTION: cache
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: database
+      SESSION_SECURE_COOKIE: "true"
+      SESSION_DOMAIN: docker.songchart.test
+      SONGCHART_TRUST_DOCKER_PROXY: "true"
+      MUSICBRAINZ_ENABLED: "${MUSICBRAINZ_ENABLED:-false}"
+      MUSICBRAINZ_BASE_URL: "${MUSICBRAINZ_BASE_URL:-https://musicbrainz.org/ws/2}"
+      MUSICBRAINZ_USER_AGENT: "${MUSICBRAINZ_USER_AGENT:-SongChartWeb/0.1 (contact@example.com)}"
+      MUSICBRAINZ_CONNECT_TIMEOUT_SECONDS: "${MUSICBRAINZ_CONNECT_TIMEOUT_SECONDS:-5}"
+      MUSICBRAINZ_TIMEOUT_SECONDS: "${MUSICBRAINZ_TIMEOUT_SECONDS:-15}"
+      MUSICBRAINZ_RATE_STRATEGY: "${MUSICBRAINZ_RATE_STRATEGY:-minimum_interval}"
+      MUSICBRAINZ_MINIMUM_INTERVAL_MS: "${MUSICBRAINZ_MINIMUM_INTERVAL_MS:-1100}"
+      MUSICBRAINZ_DEFAULT_COOLDOWN_SECONDS: "${MUSICBRAINZ_DEFAULT_COOLDOWN_SECONDS:-2}"
+      MUSICBRAINZ_MAXIMUM_COOLDOWN_SECONDS: "${MUSICBRAINZ_MAXIMUM_COOLDOWN_SECONDS:-900}"
+      MUSICBRAINZ_RATE_LOCK_WAIT_SECONDS: "${MUSICBRAINZ_RATE_LOCK_WAIT_SECONDS:-10}"
+      YOUTUBE_ENABLED: "${YOUTUBE_ENABLED:-false}"
+      YOUTUBE_API_KEY: "${YOUTUBE_API_KEY:-}"
+      YOUTUBE_BASE_URL: "${YOUTUBE_BASE_URL:-https://www.googleapis.com}"
+      YOUTUBE_CONNECT_TIMEOUT_SECONDS: "${YOUTUBE_CONNECT_TIMEOUT_SECONDS:-5}"
+      YOUTUBE_TIMEOUT_SECONDS: "${YOUTUBE_TIMEOUT_SECONDS:-15}"
+      YOUTUBE_SEARCH_DAILY_LIMIT: "${YOUTUBE_SEARCH_DAILY_LIMIT:-100}"
+      YOUTUBE_GENERAL_DAILY_UNITS: "${YOUTUBE_GENERAL_DAILY_UNITS:-10000}"
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+    command: ["sh", "-lc", "cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:8000/up >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - .:/workspace
+      - songchart_dev_vendor:/workspace/vendor
+      - songchart_dev_node_modules:/workspace/node_modules
+      - songchart_dev_composer_cache:/tmp/composer-cache
+
+  queue:
+    build:
+      context: .
+      dockerfile: docker/verify/Dockerfile
+    working_dir: /workspace
+    env_file:
+      - .env.docker
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: songchart_docker
+      DB_USERNAME: songchart_docker
+      DB_PASSWORD: songchart_docker_only
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_CACHE_DB: "1"
+      REDIS_CACHE_CONNECTION: cache
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: database
+      SONGCHART_TRUST_DOCKER_PROXY: "true"
+      MUSICBRAINZ_ENABLED: "${MUSICBRAINZ_ENABLED:-false}"
+      MUSICBRAINZ_BASE_URL: "${MUSICBRAINZ_BASE_URL:-https://musicbrainz.org/ws/2}"
+      MUSICBRAINZ_USER_AGENT: "${MUSICBRAINZ_USER_AGENT:-SongChartWeb/0.1 (contact@example.com)}"
+      MUSICBRAINZ_CONNECT_TIMEOUT_SECONDS: "${MUSICBRAINZ_CONNECT_TIMEOUT_SECONDS:-5}"
+      MUSICBRAINZ_TIMEOUT_SECONDS: "${MUSICBRAINZ_TIMEOUT_SECONDS:-15}"
+      MUSICBRAINZ_RATE_STRATEGY: "${MUSICBRAINZ_RATE_STRATEGY:-minimum_interval}"
+      MUSICBRAINZ_MINIMUM_INTERVAL_MS: "${MUSICBRAINZ_MINIMUM_INTERVAL_MS:-1100}"
+      MUSICBRAINZ_DEFAULT_COOLDOWN_SECONDS: "${MUSICBRAINZ_DEFAULT_COOLDOWN_SECONDS:-2}"
+      MUSICBRAINZ_MAXIMUM_COOLDOWN_SECONDS: "${MUSICBRAINZ_MAXIMUM_COOLDOWN_SECONDS:-900}"
+      MUSICBRAINZ_RATE_LOCK_WAIT_SECONDS: "${MUSICBRAINZ_RATE_LOCK_WAIT_SECONDS:-10}"
+      YOUTUBE_ENABLED: "${YOUTUBE_ENABLED:-false}"
+      YOUTUBE_API_KEY: "${YOUTUBE_API_KEY:-}"
+      YOUTUBE_BASE_URL: "${YOUTUBE_BASE_URL:-https://www.googleapis.com}"
+      YOUTUBE_CONNECT_TIMEOUT_SECONDS: "${YOUTUBE_CONNECT_TIMEOUT_SECONDS:-5}"
+      YOUTUBE_TIMEOUT_SECONDS: "${YOUTUBE_TIMEOUT_SECONDS:-15}"
+      YOUTUBE_SEARCH_DAILY_LIMIT: "${YOUTUBE_SEARCH_DAILY_LIMIT:-100}"
+      YOUTUBE_GENERAL_DAILY_UNITS: "${YOUTUBE_GENERAL_DAILY_UNITS:-10000}"
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+    command: ["php", "artisan", "queue:work", "redis", "--queue=critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default", "--sleep=1", "--tries=3", "--timeout=150"]
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - .:/workspace
+      - songchart_dev_vendor:/workspace/vendor
+      - songchart_dev_node_modules:/workspace/node_modules
+      - songchart_dev_composer_cache:/tmp/composer-cache
+
+  caddy:
+    image: caddy:2.11.3-alpine
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:80"
+      - "127.0.0.1:8443:443"
+    volumes:
+      - ./docker/dev/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./.certs:/certs:ro
+
+volumes:
+  songchart_dev_pgdata:
+  songchart_dev_redis:
+  songchart_dev_vendor:
+  songchart_dev_node_modules:
+  songchart_dev_composer_cache:

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "principles": {
+    "controllers_are_transport_adapters": true,
+    "controllers_must_not_open_transactions": true,
+    "controllers_must_not_persist_models": true,
+    "read_side_may_use_eloquent_or_query_builder": true,
+    "read_side_must_not_mutate_persistence": true,
+    "write_side_may_use_transactions_and_persistence": true,
+    "repository_abstraction_is_not_required_for_simple_reads": true,
+    "external_provider_access_must_remain_behind_provider_contracts": true
+  },
+  "controller_boundary": {
+    "scan": "app/Http/Controllers/**/*.php",
+    "forbidden_write_signals": [
+      "DB::transaction(",
+      "DB::table(",
+      "->save(",
+      "->delete(",
+      "->update(",
+      "::create(",
+      "::updateOrCreate(",
+      "::firstOrCreate("
+    ],
+    "forbidden_direct_read_signals": [
+      "::query(",
+      "->load("
+    ],
+    "allowed_direct_read_files": []
+  },
+  "read_models": [
+    "app/Application/Admin/Queries/ExtensionReadModel.php",
+    "app/Support/Admin/AdminDashboardSnapshot.php",
+    "app/Support/Admin/AdminInformationArchitecture.php",
+    "app/Support/Admin/CatalogAdministration.php",
+    "app/Support/Admin/IdentityConflictReviewConsole.php",
+    "app/Support/Admin/PrivilegedAuditConsole.php",
+    "app/Support/Admin/ProviderOperationsConsole.php"
+  ],
+  "read_model_forbidden_signals": [
+    "DB::transaction(",
+    "->save(",
+    "->delete(",
+    "->update(",
+    "::create(",
+    "::updateOrCreate(",
+    "::firstOrCreate(",
+    "forceFill("
+  ],
+  "write_services": [
+    "app/Support/Admin/PrivilegedUserAdministration.php",
+    "app/Support/Admin/CanonicalArtistAdministration.php",
+    "app/Actions/Admin/Extensions/*.php",
+    "app/Support/Providers/Mutation/*.php",
+    "app/Support/Providers/Identity/Review/*.php"
+  ],
+  "query_budget": {
+    "authority": "docs/project/performance/query-budget-contract.json",
+    "rule": "Query budgets are owned at request/read-model boundaries; Stage 16.7 registers surfaces, later representative-volume stages calibrate hard limits."
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "primary_local_runtime": "docker-development",
+  "compatibility_runtimes": [
+    "laragon-development"
+  ],
+  "host_requirements": {
+    "required": [
+      "Docker Desktop with WSL2 integration",
+      "Git",
+      "editor/browser"
+    ],
+    "optional": [
+      "mkcert for trusted docker.songchart.test HTTPS bootstrap"
+    ],
+    "not_required_for_primary_runtime": [
+      "host PHP",
+      "host Composer",
+      "host Node.js",
+      "host PostgreSQL",
+      "host Redis"
+    ]
+  },
+  "development": {
+    "compose_file": "compose.dev.yml",
+    "services": [
+      "postgres",
+      "redis",
+      "app",
+      "queue",
+      "caddy"
+    ],
+    "php_build": "docker/verify/Dockerfile",
+    "postgres_image": "postgres:18.4-bookworm",
+    "redis_image": "redis:7.4-alpine",
+    "caddy_image": "caddy:2.11.3-alpine",
+    "database": "songchart_docker",
+    "database_role": "development",
+    "https_url": "https://docker.songchart.test:8443",
+    "http_url": "http://docker.songchart.test:8080",
+    "persistent_volumes": [
+      "songchart_dev_pgdata",
+      "songchart_dev_redis",
+      "songchart_dev_vendor",
+      "songchart_dev_node_modules",
+      "songchart_dev_composer_cache"
+    ],
+    "postgres_volume_mount": "/var/lib/postgresql",
+    "postgres_pgdata": "/var/lib/postgresql/18/docker"
+  },
+  "verification": {
+    "compose_file": "compose.verify.yml",
+    "database": "songchart_verify_test",
+    "database_role": "testing",
+    "entrypoint": "songchart verify",
+    "stage_entrypoint": "songchart test",
+    "isolated_from_development_database": true,
+    "derived_manifest_refresh": "inside Docker before stage/canonical verification and after Pint normalization"
+  },
+  "cli": {
+    "windows_entrypoint": "songchart.bat",
+    "powershell_owner": "scripts/songchart.ps1",
+    "commands": [
+      "dev setup",
+      "dev up",
+      "dev down",
+      "dev status",
+      "dev logs",
+      "dev shell",
+      "artisan",
+      "composer",
+      "npm",
+      "test",
+      "verify"
+    ]
+  },
+  "compatibility": {
+    "laragon": {
+      "status": "compatibility-only",
+      "may_make_release_claims": false,
+      "may_define_runtime_authority": false
+    },
+    "legacy_docker_wrappers": {
+      "status": "compatibility-shims",
+      "owner": "scripts/songchart.ps1"
+    }
+  }
+}

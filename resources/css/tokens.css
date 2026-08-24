@@ -1,0 +1,114 @@
+@theme {
+    --font-sans: Inter, Manrope, "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+    --color-brand-50: #f5f3ff;
+    --color-brand-100: #ede9fe;
+    --color-brand-200: #ddd6fe;
+    --color-brand-300: #c4b5fd;
+    --color-brand-400: #8b7cf6;
+    --color-brand-500: #5b4ef7;
+    --color-brand-600: #4f35f5;
+    --color-brand-700: #4326e8;
+    --color-brand-800: #3822bd;
+    --color-brand-900: #2f217f;
+
+    --color-success-50: #eaf8ef;
+    --color-success-600: #16a34a;
+    --color-warning-50: #fff6e5;
+    --color-warning-600: #d97706;
+    --color-danger-50: #feecec;
+    --color-danger-600: #dc2626;
+    --color-info-50: #eaf2ff;
+    --color-info-600: #2563eb;
+
+    --radius-ui-sm: 0.5rem;
+    --radius-ui: 0.75rem;
+    --radius-card: 1rem;
+    --radius-panel: 1.25rem;
+
+    --shadow-card: 0 4px 16px rgb(15 23 42 / 0.06);
+    --shadow-float: 0 12px 32px rgb(15 23 42 / 0.10);
+}
+
+:root {
+    color-scheme: light;
+
+    /* Public frontend semantics. */
+    --sc-bg-page: #f8fafc;
+    --sc-bg-surface: #ffffff;
+    --sc-bg-subtle: #f3f4f6;
+    --sc-bg-inverse: #0f172a;
+
+    --sc-text-primary: #111827;
+    --sc-text-secondary: #64748b;
+    --sc-text-muted: #94a3b8;
+    --sc-text-inverse: #ffffff;
+
+    --sc-primary: #4f35f5;
+    --sc-primary-hover: #4326e8;
+    --sc-primary-soft: #f0edff;
+    --sc-primary-border: #cfc7ff;
+
+    --sc-success: #16a34a;
+    --sc-success-soft: #eaf8ef;
+    --sc-warning: #d97706;
+    --sc-warning-soft: #fff6e5;
+    --sc-danger: #dc2626;
+    --sc-danger-soft: #feecec;
+    --sc-info: #2563eb;
+    --sc-info-soft: #eaf2ff;
+
+    --sc-border: #e2e8f0;
+    --sc-border-strong: #cbd5e1;
+    --sc-focus: #6d5dfb;
+
+    /* Admin semantics are declared now so shared primitives can consume them. */
+    --admin-bg-page: #f6f8fc;
+    --admin-bg-surface: #ffffff;
+    --admin-bg-subtle: #f1f5f9;
+    --admin-text-primary: #0f172a;
+    --admin-text-secondary: #475569;
+    --admin-text-muted: #94a3b8;
+    --admin-sidebar-bg: #0b1328;
+    --admin-sidebar-bg-2: #101a36;
+    --admin-sidebar-text: rgb(255 255 255 / 0.84);
+    --admin-sidebar-muted: rgb(255 255 255 / 0.56);
+    --admin-sidebar-active: #4f46e5;
+    --admin-primary: #5b4ef7;
+    --admin-primary-hover: #4d3fea;
+    --admin-primary-soft: #eef0ff;
+
+    /* Shared geometry. */
+    --sc-radius-sm: 0.5rem;
+    --sc-radius-control: 0.75rem;
+    --sc-radius-card: 1rem;
+    --sc-radius-panel: 1.25rem;
+    --sc-radius-pill: 9999px;
+
+    --sc-shadow-card: 0 4px 16px rgb(15 23 42 / 0.06);
+    --sc-shadow-float: 0 12px 32px rgb(15 23 42 / 0.10);
+
+    --sc-space-1: 0.25rem;
+    --sc-space-2: 0.5rem;
+    --sc-space-3: 0.75rem;
+    --sc-space-4: 1rem;
+    --sc-space-5: 1.25rem;
+    --sc-space-6: 1.5rem;
+    --sc-space-8: 2rem;
+    --sc-space-10: 2.5rem;
+    --sc-space-12: 3rem;
+    --sc-space-16: 4rem;
+    --sc-space-20: 5rem;
+
+    --sc-container: 85rem;
+    --sc-content: 80rem;
+    --sc-header-height: 4.5rem;
+
+    /* Compatibility aliases while legacy views are migrated. */
+    --background: var(--sc-bg-page);
+    --surface: var(--sc-bg-surface);
+    --surface-muted: var(--sc-bg-subtle);
+    --text-primary: var(--sc-text-primary);
+    --text-secondary: var(--sc-text-secondary);
+    --border: var(--sc-border);
+}

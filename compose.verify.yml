@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:18.4-bookworm
+    environment:
+      POSTGRES_DB: songchart_verify_test
+      POSTGRES_USER: songchart_verify
+      POSTGRES_PASSWORD: songchart_verify_test_only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U songchart_verify -d songchart_verify_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+  redis:
+    image: redis:7.4-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  verify:
+    build:
+      context: .
+      dockerfile: docker/verify/Dockerfile
+    working_dir: /workspace
+    environment:
+      APP_ENV: testing
+      APP_DEBUG: "false"
+      APP_KEY: "base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: songchart_verify_test
+      DB_USERNAME: songchart_verify
+      DB_PASSWORD: songchart_verify_test_only
+      TEST_PGSQL_HOST: postgres
+      TEST_PGSQL_PORT: "5432"
+      TEST_PGSQL_DATABASE: songchart_verify_test
+      TEST_PGSQL_USERNAME: songchart_verify
+      TEST_PGSQL_PASSWORD: songchart_verify_test_only
+      SONGCHART_DEVELOPMENT_DATABASE: songchart_development
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/workspace
+      - songchart_verify_vendor:/workspace/vendor
+      - songchart_verify_node_modules:/workspace/node_modules
+      - songchart_verify_composer_cache:/tmp/composer-cache
+    command: ["bash", "scripts/canonical-verify.sh"]
+
+volumes:
+  songchart_verify_vendor:
+  songchart_verify_node_modules:
+  songchart_verify_composer_cache:

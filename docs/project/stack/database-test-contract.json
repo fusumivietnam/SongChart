@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "release_lane": "postgres",
+  "scripts": {
+    "test": "@test:postgres",
+    "test:feature": "@php scripts/run-database-tests.php postgres --prepare-schema --testsuite=Feature --ansi",
+    "test:postgres": "@php scripts/run-database-tests.php postgres --prepare-schema"
+  },
+  "clean_schema_required": [
+    "test:feature",
+    "test:postgres"
+  ],
+  "database_runner": "scripts/run-database-tests.php",
+  "database_safety_guard": "scripts/verify-test-database-safety.php",
+  "removed_aliases": [
+    "test:all",
+    "test:postgres-clean"
+  ]
+}

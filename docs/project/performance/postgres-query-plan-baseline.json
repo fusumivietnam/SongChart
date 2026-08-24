@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "engine": "postgresql",
+  "policy": {
+    "require_explain_before_new_index": true,
+    "analyze_requires_explicit_flag": true,
+    "production_analyze_forbidden": true,
+    "record_buffers": true,
+    "record_execution_time": true
+  },
+  "queries": {
+    "admin.providers.index": {
+      "table": "providers",
+      "shape": "filter status/is_enabled; order by name; paginate 25",
+      "existing_indexes": ["providers_status_index", "providers_is_enabled_index", "providers_slug_unique"],
+      "candidate_indexes": [
+        {"name": "providers_status_enabled_name_idx", "columns": ["status", "is_enabled", "name"], "evidence_required": true}
+      ]
+    },
+    "admin.providers.show.sync_runs": {
+      "table": "provider_sync_runs",
+      "shape": "where provider_id = ? order by created_at desc limit 25",
+      "existing_indexes": ["provider_sync_runs_status_index", "provider_sync_runs_started_at_index"],
+      "candidate_indexes": [
+        {"name": "provider_sync_runs_provider_created_idx", "columns": ["provider_id", "created_at"], "evidence_required": true}
+      ]
+    },
+    "admin.imports.index": {
+      "table": "provider_import_runs",
+      "shape": "optional provider/status/operation filters; order by created_at desc; paginate 25",
+      "existing_indexes": ["provider_import_run_lookup", "provider_import_runs_status_index", "provider_import_runs_operation_index"],
+      "candidate_indexes": [
+        {"name": "provider_import_runs_provider_status_created_idx", "columns": ["provider_id", "status", "created_at"], "evidence_required": true}
+      ]
+    },
+    "admin.imports.show.items": {
+      "table": "provider_import_items",
+      "shape": "where provider_import_run_id = ? order by created_at desc paginate 25",
+      "existing_indexes": ["provider_import_item_identity_unique", "provider_import_items_status_index"],
+      "candidate_indexes": [
+        {"name": "provider_import_items_run_created_idx", "columns": ["provider_import_run_id", "created_at"], "evidence_required": true}
+      ]
+    },
+    "admin.imports.show.failures": {
+      "table": "provider_import_failures",
+      "shape": "where provider_import_run_id = ? order by occurred_at desc limit 50",
+      "existing_indexes": ["provider_import_failures_occurred_at_index", "provider_import_failures_retryable_index"],
+      "candidate_indexes": [
+        {"name": "provider_import_failures_run_occurred_idx", "columns": ["provider_import_run_id", "occurred_at"], "evidence_required": true}
+      ]
+    },
+    "admin.imports.show.checkpoints": {
+      "table": "provider_import_checkpoints",
+      "shape": "where provider_import_run_id = ? order by committed_at desc limit 50",
+      "existing_indexes": ["provider_import_checkpoint_unique", "provider_import_checkpoints_committed_at_index"],
+      "candidate_indexes": [
+        {"name": "provider_import_checkpoints_run_committed_idx", "columns": ["provider_import_run_id", "committed_at"], "evidence_required": true}
+      ]
+    },
+    "admin.identity-conflicts.index": {
+      "table": "identity_conflict_reviews",
+      "shape": "optional status/entity_type/provider filters; order by opened_at desc; paginate 25",
+      "existing_indexes": ["identity_conflict_reviews_status_index", "identity_conflict_reviews_provider_entity_id_status_index"],
+      "candidate_indexes": [
+        {"name": "identity_conflict_reviews_status_opened_idx", "columns": ["status", "opened_at"], "evidence_required": true},
+        {"name": "identity_conflict_reviews_entity_opened_idx", "columns": ["entity_type", "opened_at"], "evidence_required": true}
+      ]
+    }
+  }
+}

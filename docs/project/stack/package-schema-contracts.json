@@ -1,0 +1,110 @@
+{
+  "schema_version": 2,
+  "contracts": {
+    "spatie/laravel-activitylog": {
+      "constraint": "^5.0",
+      "table": "activity_log",
+      "managed_by": "package-with-songchart-ulid-adaptation",
+      "required_columns": {
+        "id": {
+          "kind": "bigint",
+          "nullable": false
+        },
+        "log_name": {
+          "kind": "string",
+          "nullable": true
+        },
+        "description": {
+          "kind": "text",
+          "nullable": false
+        },
+        "subject_type": {
+          "kind": "string",
+          "nullable": true
+        },
+        "subject_id": {
+          "kind": "char",
+          "length": 26,
+          "nullable": true
+        },
+        "event": {
+          "kind": "string",
+          "nullable": true
+        },
+        "causer_type": {
+          "kind": "string",
+          "nullable": true
+        },
+        "causer_id": {
+          "kind": "char",
+          "length": 26,
+          "nullable": true
+        },
+        "attribute_changes": {
+          "kind": "json",
+          "nullable": true
+        },
+        "properties": {
+          "kind": "json",
+          "nullable": true
+        },
+        "batch_uuid": {
+          "kind": "uuid",
+          "nullable": true
+        }
+      },
+      "allowed_adaptations": {
+        "subject_id": "Upstream morph identifier adapted to SongChart ULID char(26).",
+        "causer_id": "Upstream morph identifier adapted to SongChart ULID char(26)."
+      },
+      "forbidden_adaptations": [
+        "removing upstream columns",
+        "changing package JSON payload columns to scalar types"
+      ],
+      "upstream_contract": {
+        "required_columns": [
+          "id",
+          "log_name",
+          "description",
+          "subject_type",
+          "subject_id",
+          "event",
+          "causer_type",
+          "causer_id",
+          "attribute_changes",
+          "properties",
+          "created_at",
+          "updated_at"
+        ],
+        "helper_expansions": {
+          "nullableMorphs:subject": [
+            "subject_type",
+            "subject_id"
+          ],
+          "nullableMorphs:causer": [
+            "causer_type",
+            "causer_id"
+          ],
+          "timestamps": [
+            "created_at",
+            "updated_at"
+          ]
+        }
+      },
+      "songchart_extensions": {
+        "batch_uuid": {
+          "kind": "uuid",
+          "nullable": true,
+          "reason": "SongChart audit correlation extension; not an upstream Spatie v5 column."
+        }
+      },
+      "migration_lifecycle": {
+        "historical_create_migration": "database/migrations/2026_08_13_000100_create_activity_log_table.php",
+        "forward_corrections": [
+          "database/migrations/2026_08_16_000100_add_attribute_changes_to_activity_log_if_missing.php"
+        ],
+        "policy": "Historical create migration is immutable; installed databases receive missing columns only through guarded forward migrations."
+      }
+    }
+  }
+}

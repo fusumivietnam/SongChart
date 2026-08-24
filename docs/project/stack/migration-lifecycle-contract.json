@@ -1,0 +1,63 @@
+{
+  "schema_version": 3,
+  "policy": {
+    "historical_migrations_are_immutable": true,
+    "schema_corrections_are_forward_only": true,
+    "destructive_upgrade_fixture_requires_isolated_test_database": true,
+    "fresh_install_and_upgrade_lanes_are_both_required": true,
+    "retroactive_packaging_artifact_fingerprints_forbidden": true,
+    "baseline_must_be_sealed_from_exact_canonical_target": true
+  },
+  "historical_migrations": [
+    "database/migrations/0001_01_01_000000_create_users_table.php",
+    "database/migrations/0001_01_01_000001_create_cache_table.php",
+    "database/migrations/0001_01_01_000002_create_jobs_table.php",
+    "database/migrations/2026_08_03_000100_create_provider_registry_tables.php",
+    "database/migrations/2026_08_03_000200_create_extension_runtime_tables.php",
+    "database/migrations/2026_08_03_000300_add_extension_e2_tables.php",
+    "database/migrations/2026_08_04_000100_create_canonical_catalog_tables.php",
+    "database/migrations/2026_08_04_000200_create_catalog_provenance_mapping_tables.php",
+    "database/migrations/2026_08_04_000300_harden_catalog_identity_invariants.php",
+    "database/migrations/2026_08_04_001000_create_provider_import_ledger_tables.php",
+    "database/migrations/2026_08_04_001100_add_provider_import_orchestration_fields.php",
+    "database/migrations/2026_08_05_000100_create_identity_conflict_review_tables.php",
+    "database/migrations/2026_08_09_000100_create_songchart_environment_guard_table.php",
+    "database/migrations/2026_08_10_000100_create_provider_operation_audits_table.php",
+    "database/migrations/2026_08_10_000200_create_discovery_domain_tables.php",
+    "database/migrations/2026_08_11_000100_create_pulse_tables.php",
+    "database/migrations/2026_08_13_000100_create_activity_log_table.php"
+  ],
+  "current_forward_migrations": [
+    {
+      "path": "database/migrations/2026_08_16_000100_add_attribute_changes_to_activity_log_if_missing.php",
+      "purpose": "Add the Spatie v5 attribute_changes JSON column for databases where the historical create migration was already recorded before the column was introduced.",
+      "idempotency": "Schema::hasTable + Schema::hasColumn guard",
+      "rollback": "no-op; forward-only repair must not remove a column that may have pre-existed before this migration was recorded"
+    }
+  ],
+  "upgrade_fixtures": {
+    "activity_log_pre_attribute_changes": {
+      "base_migration": "2026_08_13_000100_create_activity_log_table",
+      "missing_column": "attribute_changes",
+      "target_migration": "2026_08_16_000100_add_attribute_changes_to_activity_log_if_missing"
+    }
+  },
+  "fingerprint": {
+    "algorithm": "php-token-semantic-v1",
+    "implementation": "app/Support/Engineering/PhpSemanticFingerprint.php",
+    "ignores": [
+      "T_WHITESPACE",
+      "T_COMMENT",
+      "T_DOC_COMMENT",
+      "open/close tag formatting"
+    ],
+    "preserves": "PHP token identity/text and punctuation so schema/code semantic changes alter the fingerprint."
+  },
+  "baseline": {
+    "mode": "canonical-target-sealed",
+    "path": "docs/project/generated/migration-history-baseline.json",
+    "seal_command": "composer migration-lifecycle:seal",
+    "generated_at": "canonical-after-locked-pint-normalization",
+    "rule": "Created once from the exact Docker canonical target. Packaging-side artifacts must not invent or overwrite it."
+  }
+}

@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "runtime": {
+    "php": "^8.5",
+    "laravel": "^13.0",
+    "database": "postgresql-18",
+    "release_database": "pgsql",
+    "database_major": 18,
+    "database_minor_policy": "latest-supported-18.x",
+    "canonical_verification": "docker-compose"
+  },
+  "policies": {
+    "laravel_native_first": true,
+    "new_packages_require_registry_entry": true,
+    "new_stage_errors_may_enter_phpstan_baseline": false,
+    "vendor_derived_code_must_pass_project_gates": true,
+    "unit_tests_boot_laravel_application": false,
+    "release_database_major_exact": 18,
+    "package_schema_contract_required_for_package_owned_tables": true,
+    "database_feature_tests_require_explicit_isolation": true,
+    "release_candidates_require_lockfiles": true,
+    "normal_release_apply_may_update_dependencies": false,
+    "canonical_full_postgres_suite_starts_clean": true,
+    "repository_authorities_resolve_through_compiler": true,
+    "raw_authority_literals_outside_allowlist": false,
+    "canonical_verification_precedes_release_packaging": true,
+    "artifact_provenance_matches_canonical_tree": true,
+    "verification_topology_has_single_stage_and_canonical_owner": true,
+    "installer_delegates_to_verification_entrypoint": true,
+    "model_specific_ai_docs_are_thin_bootstraps": true,
+    "ai_workflow_has_single_protocol_authority": true,
+    "docker_desktop_is_primary_development_runtime": true,
+    "laragon_is_compatibility_only": true,
+    "host_language_toolchains_not_required_for_primary_development": true,
+    "verification_public_command_surface_is_bounded": true,
+    "legacy_verification_aliases_must_remain_removed": true
+  },
+  "packages": {
+    "composer/semver": {
+      "constraint": "^3.4",
+      "status": "required",
+      "capability_owner": "version-tooling",
+      "purpose": "Version constraint evaluation",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "fakerphp/faker": {
+      "constraint": "^1.24",
+      "status": "required-dev",
+      "capability_owner": "test-data",
+      "purpose": "Factories and fixtures",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "larastan/larastan": {
+      "constraint": "^3.8",
+      "status": "required-dev",
+      "capability_owner": "static-analysis",
+      "purpose": "Larastan/PHPStan integration",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "laravel/fortify": {
+      "constraint": "^1.30",
+      "status": "required",
+      "capability_owner": "authentication",
+      "purpose": "Authentication and 2FA",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "laravel/framework": {
+      "constraint": "^13.0",
+      "status": "required",
+      "capability_owner": "framework",
+      "purpose": "Application framework",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "laravel/pail": {
+      "constraint": "^1.2",
+      "status": "required-dev",
+      "capability_owner": "developer-tooling",
+      "purpose": "Local log inspection",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "laravel/pint": {
+      "constraint": "^1.24",
+      "status": "required-dev",
+      "capability_owner": "formatting",
+      "purpose": "PHP formatting",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "laravel/pulse": {
+      "constraint": "^1.7.4",
+      "status": "required",
+      "capability_owner": "observability",
+      "purpose": "Operational observability",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true,
+      "official_owner": "laravel",
+      "database_support": [
+        "pgsql"
+      ],
+      "published_assets": [
+        "config/pulse.php",
+        "database/migrations/*pulse*"
+      ],
+      "adaptation_policy": "vendor-derived files must pass SongChart Pint/Larastan/Pest; fail-closed adaptations allowed"
+    },
+    "laravel/tinker": {
+      "constraint": "^3.0",
+      "status": "required",
+      "capability_owner": "developer-tooling",
+      "purpose": "Local application console",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "livewire/livewire": {
+      "constraint": "^4.0",
+      "status": "required",
+      "capability_owner": "interactive-ui",
+      "purpose": "Server-driven interaction",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "mockery/mockery": {
+      "constraint": "^1.6",
+      "status": "required-dev",
+      "capability_owner": "testing",
+      "purpose": "Test doubles",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "nunomaduro/collision": {
+      "constraint": "^8.8",
+      "status": "required-dev",
+      "capability_owner": "developer-experience",
+      "purpose": "Console test output",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "pestphp/pest": {
+      "constraint": "^4.0",
+      "status": "required-dev",
+      "capability_owner": "testing",
+      "purpose": "Test runner",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "pestphp/pest-plugin-laravel": {
+      "constraint": "^4.1",
+      "status": "required-dev",
+      "capability_owner": "testing",
+      "purpose": "Laravel Pest integration",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true
+    },
+    "spatie/laravel-activitylog": {
+      "constraint": "^5.0",
+      "status": "required",
+      "capability_owner": "privileged-audit",
+      "purpose": "Business audit trail for privileged operations",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "review_required": true,
+      "official_owner": "spatie",
+      "database_support": [
+        "pgsql"
+      ],
+      "usage_policy": "Explicit privileged/business events only; automatic broad model-event logging is forbidden."
+    }
+  },
+  "deployment_profiles": {
+    "native-windows": {
+      "horizon": "forbidden-runtime-package-profile",
+      "queue": "laravel-redis-worker",
+      "pulse": "supported"
+    },
+    "linux-wsl": {
+      "horizon": "optional-approved",
+      "queue": "laravel-redis-horizon-ready",
+      "pulse": "supported"
+    }
+  },
+  "external_tools": {
+    "docker-desktop": {
+      "status": "development-host",
+      "purpose": "WSL2-backed canonical verification and optional local web development",
+      "platforms": [
+        "windows"
+      ],
+      "review_required": true
+    },
+    "caddy": {
+      "version": "2.11.3",
+      "status": "docker-development-only",
+      "purpose": "local HTTPS reverse proxy",
+      "platforms": [
+        "docker-linux"
+      ],
+      "review_required": true
+    },
+    "mkcert": {
+      "status": "host-development-only",
+      "purpose": "locally trusted development certificate generation",
+      "platforms": [
+        "windows"
+      ],
+      "review_required": true,
+      "private_key_must_not_be_committed": true
+    }
+  }
+}
