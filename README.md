@@ -1,6 +1,6 @@
 # SongChartWeb
 
-Current stage: **17.10 — Enrichment Orchestrator**
+Current stage: **17.10.2 — Development Map + Route Authority**
 
 Candidate delivery: **v1**
 
@@ -9,7 +9,7 @@ SongChartWeb is a Laravel 13 modular monolith for music discovery, canonical met
 ## Current development stage
 
 - Product: `SongChart 0.1.0-dev`
-- Stage: `17.10 — Enrichment Orchestrator`
+- Stage: `17.10.2 — Development Map + Route Authority`
 - Current-stage history: `docs/project/DEVELOPMENT_HISTORY.md`
 - Domain authorities: `docs/project/domain/`
 - Candidate closure: `composer stage:verify`

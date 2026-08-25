@@ -5,6 +5,18 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $errors = [];
 
+function canonicalSourceHash(string $path): ?string
+{
+    if (! is_file($path)) {
+        return null;
+    }
+
+    $content = (string) file_get_contents($path);
+    $content = str_replace(["\r\n", "\r"], "\n", $content);
+
+    return hash('sha256', $content);
+}
+
 $required = [
     'scripts/project-context.php',
     'docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md',
@@ -90,7 +102,7 @@ if (is_file($generatedPath)) {
         }
         sort($currentInputs);
         foreach (array_unique($currentInputs) as $relative) {
-            $actualHash = is_file($root.'/'.$relative) ? hash_file('sha256', $root.'/'.$relative) : null;
+            $actualHash = canonicalSourceHash($root.'/'.$relative);
             if (($generatedHashes[$relative] ?? null) !== $actualHash) {
                 $errors[] = "Generated project context is stale for [{$relative}]. Run: songchart context --refresh-source.";
             }

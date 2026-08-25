@@ -1,7 +1,7 @@
 <div class="sticky top-0 z-50 border-b border-black/10 bg-white/90 text-slate-900 shadow-sm backdrop-blur">
     <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-2 text-sm">
         <div class="flex min-w-0 items-center gap-3">
-            <a href="{{ route('design-lab.index') }}" class="font-bold">← Design Lab</a>
+            <a href="{{ route('development.design-system.concepts.index') }}" class="font-bold">← Design Lab</a>
             <span class="hidden text-slate-300 sm:inline">/</span>
             <span class="truncate text-slate-600">{{ $concept['name'] }}</span>
         </div>

@@ -244,7 +244,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "281a1795efc77722724c2cff85175374f5acded225ff4611ce16939adf2c457b",
+            "fingerprint": "8005b223750f40b3f46b9066112211445aac555101735836a278d9554e5ec8ba",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -925,6 +925,18 @@
             "semantic_authorities": [
                 "runtime-environment",
                 "stack-manifest"
+            ]
+        },
+        {
+            "target": "scripts/verify-route-authority.php",
+            "rule": "schema-domain",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "domain-contracts",
+                "operational-contracts",
+                "use-case-contracts",
+                "model-schema",
+                "schema-ownership"
             ]
         },
         {
@@ -1610,5 +1622,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "f9ae9ec1f8cc3887ba66f2156171dc0bbc40fcf870f06722fecd1b212a557c9c"
+    "graph_fingerprint": "4967525f8879d1330d25dfd5d730796a4256c178789ef419f359f9421cad5ffa"
 }

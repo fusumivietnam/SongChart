@@ -181,7 +181,8 @@
         "scripts/verify-schema-ownership.php",
         "scripts/verify-type-guardrails.php",
         "tests/Architecture/DomainContractRegistryTest.php",
-        "tests/Architecture/ExecutableContractTypeGuardrailsTest.php"
+        "tests/Architecture/ExecutableContractTypeGuardrailsTest.php",
+        "scripts/verify-route-authority.php"
       ],
       "classification": "declarative",
       "semantic_authorities": [

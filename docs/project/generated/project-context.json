@@ -1,10 +1,10 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "12f32eb3fb19cde609975f3c5b7fd4dfc54970b6e9e49dd27c910aa5489476a3",
+    "source_fingerprint": "30e3a6ded7a4e8f185e92e2be0c4c416a93a1e31e997d3121b37257e71442c12",
     "candidate": {
-        "stage": "17.10",
-        "candidate": "v5",
+        "stage": "17.10.2",
+        "candidate": "v1",
         "informational_not_fingerprinted": true
     },
     "runtime_authority": {
@@ -962,7 +962,7 @@
     "source_hashes": {
         "compose.dev.yml": "374ea07efb3cf928ed76cff5c05c79192ed962bff41c628eb2a0a681ff2ec9da",
         "compose.verify.yml": "a4b784b741e0900d7d8e67c2b06d9c88fea82b735a0565672307059f7e53e326",
-        "composer.json": "c31dfe5894a9f51ee6b58c06b26d7dd9ac3212c0816870b261ba8651ac935829",
+        "composer.json": "69495c54b35a7c69bb17eeb36c2ba30696d994fb641d2523dab5437a5dbb0654",
         "composer.lock": "21f1b62cb8159ec964ee3f0d381965ae07bab1150cf20ab04dab254d4c3c44e9",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
         "database/migrations/0001_01_01_000001_create_cache_table.php": "2c938a40dd1bdd0f99455359a1369df0b46352276e1549bddb8cdcd483bcdfe7",
@@ -990,14 +990,14 @@
         "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
         "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
         "database/seeders/ProviderRegistrySeeder.php": "f7517aa8ab1ff83ae14957839c536d088d9d9f3531ddd988d5dfa7095d098e66",
-        "docs/project/domain/schema-ownership.json": "59f17fac75d5ecfde8ed8b2aac8d09ff720d79b5a5d81a21992cc89c4f9e8560",
-        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "afd32b4f34e555262fb688d4ed18e81bd9949a7d95864346796c8d4621d913a5",
+        "docs/project/domain/schema-ownership.json": "b4f9097b516bd49c4c68cf0bee443703b529b6f9b991e9fc323fbf847d611184",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "e3777a46bfdd521b8f3f425cd9696a1f467fe7b879c84d082a8a9f2d75f080b8",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "e816f2ec8ed7ea713d35f1b8e9e4391ff587647633b783b691ccaf13814f09a0",
-        "docs/project/engineering/ai-development-contract.json": "a69fdd6b0f1a92102bdc7b4f075a7bc7c3c338f3b22fb297602b394414546958",
-        "docs/project/engineering/verification-command-surface.json": "c1f959dc2739d91df801429e89d04f07dad83e938a19610e27c9f1392541fa41",
-        "docs/project/engineering/verification-topology.json": "244d296b60b28c3f6b71e6054ff9296a0f005fc1128ce2aa6c0207f41702e78c",
-        "docs/project/stack/release-pipeline-contract.json": "01bde2fe82477ba8574340146606140b8d4854006ec17ce79a47f678f997eb5c",
+        "docs/project/engineering/ai-development-contract.json": "f4e1ebbcd9e27ba73707c73ac570e2c974873fc96a05f216a47d33a930084cd2",
+        "docs/project/engineering/verification-command-surface.json": "65bb0905d448e8ef445a0392689a7d9eda3b104b7d4c59ed795bc8ab70bc488e",
+        "docs/project/engineering/verification-topology.json": "782b43d094fc9a70ae10f40ebaaebb36e6f915f486e91f4f440edae0a4d84748",
+        "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "2d60cd1584106cb08a46e9904a4cd575feacd60d5657e4d9215ec29c5f6e9480",
-        "scripts/songchart.ps1": "53b2bbceb1a5882820e4c53d8a845d7386cd1d1d2fdd70c800f8aa8b66a318d6"
+        "scripts/songchart.ps1": "20d54e7ae68d9647cc75a30a6e510ecf83174140e9ddde39fefc24f1fe8ae0b2"
     }
 }
