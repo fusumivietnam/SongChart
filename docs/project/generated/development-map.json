@@ -1,0 +1,47 @@
+{
+    "schema_version": 1,
+    "generated_from_repository": true,
+    "stage": "17.10.2 \u2014 Development Map + Route Authority",
+    "candidate": "v1",
+    "git": {
+        "commit": null,
+        "branch": null,
+        "dirty": false
+    },
+    "modules": {
+        "domain": [
+            "Audit",
+            "Catalog",
+            "Discovery",
+            "Extensions",
+            "Providers"
+        ],
+        "controller_areas": [
+            "Account",
+            "Admin",
+            "Development",
+            "PublicCatalog",
+            "Search"
+        ]
+    },
+    "routes": {
+        "authority": "docs/project/domain/route-authority.json",
+        "canonical_families": {
+            "public_catalog": 9,
+            "account": 3,
+            "admin": 10,
+            "development": 7
+        },
+        "retired_alias_count": 5
+    },
+    "continuation": {
+        "authority_read_order": [
+            "PROJECT_AUTHORITY.md",
+            "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+            "README.md",
+            "docs/project/DEVELOPMENT_STATE.md",
+            "docs/project/generated/project-context.json"
+        ],
+        "operational_checkpoint_present": true
+    }
+}

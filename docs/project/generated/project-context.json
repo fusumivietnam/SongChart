@@ -1,10 +1,10 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "12f32eb3fb19cde609975f3c5b7fd4dfc54970b6e9e49dd27c910aa5489476a3",
+    "source_fingerprint": "e26286739896958c41628a20fbd61e05e998a4967991119f720dab6d9a84180d",
     "candidate": {
-        "stage": "17.10",
-        "candidate": "v5",
+        "stage": "17.10.2",
+        "candidate": "v1",
         "informational_not_fingerprinted": true
     },
     "runtime_authority": {
@@ -962,7 +962,7 @@
     "source_hashes": {
         "compose.dev.yml": "374ea07efb3cf928ed76cff5c05c79192ed962bff41c628eb2a0a681ff2ec9da",
         "compose.verify.yml": "a4b784b741e0900d7d8e67c2b06d9c88fea82b735a0565672307059f7e53e326",
-        "composer.json": "c31dfe5894a9f51ee6b58c06b26d7dd9ac3212c0816870b261ba8651ac935829",
+        "composer.json": "69495c54b35a7c69bb17eeb36c2ba30696d994fb641d2523dab5437a5dbb0654",
         "composer.lock": "21f1b62cb8159ec964ee3f0d381965ae07bab1150cf20ab04dab254d4c3c44e9",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
         "database/migrations/0001_01_01_000001_create_cache_table.php": "2c938a40dd1bdd0f99455359a1369df0b46352276e1549bddb8cdcd483bcdfe7",

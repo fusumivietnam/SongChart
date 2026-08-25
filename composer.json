@@ -223,6 +223,7 @@
                                                         "@database-test-isolation:verify",
                                                         "@lockfile-authority:verify",
                                                         "@runtime-contracts:verify",
+                                                        "@route-authority:verify",
                                                         "@release-orchestration:verify"
                                                     ],
                     "repository-compiler:compile":  "@php scripts/compile-repository-contracts.php",
@@ -264,6 +265,8 @@
                     "migration-upgrade:verify":  "@php scripts/run-migration-upgrade-test.php",
                     "migration-lifecycle:seal":  "@php scripts/seal-migration-lifecycle.php",
                     "project-context:verify":  "@php scripts/verify-ai-project-context.php",
+                    "development-map:refresh":  "@php scripts/development-map.php --write",
+                    "route-authority:verify":  "@php scripts/verify-route-authority.php",
                     "project-context:runtime-verify":  "@php scripts/verify-runtime-project-context.php"
                 },
     "extra":  {

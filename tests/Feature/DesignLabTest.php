@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 test('design lab index lists ten concepts', function (): void {
-    $this->get('/design-lab')
+    $this->get('/development/design-system/concepts')
         ->assertOk()
         ->assertSee('10 hướng giao diện')
         ->assertSee('Editorial Library')
@@ -11,7 +11,7 @@ test('design lab index lists ten concepts', function (): void {
 });
 
 test('each design concept is available', function (string $concept): void {
-    $this->get("/design-lab/{$concept}")->assertOk();
+    $this->get("/development/design-system/concepts/{$concept}")->assertOk();
 })->with([
     '01-editorial-library',
     '02-search-first',
@@ -31,4 +31,9 @@ test('design concepts are reachable from the consolidated development design-sys
         ->assertSee('Editorial Library');
 
     $this->get('/development/design-system/concepts/01-editorial-library')->assertOk();
+});
+
+test('retired design-lab aliases stay removed', function (): void {
+    $this->get('/design-lab')->assertNotFound();
+    $this->get('/design-lab/01-editorial-library')->assertNotFound();
 });

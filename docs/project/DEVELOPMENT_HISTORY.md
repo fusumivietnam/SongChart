@@ -94,6 +94,7 @@ Keep stage and hotfix chronology separate from the current-stage pointer. `READM
 
 | Stage | Delivery | Evidence |
 |---|---|---|
+| 17.10.2 | Development Map + Route Authority | Adds a repository-derived development map and machine route authority, removes obsolete design-preview compatibility aliases, and integrates route ownership into executable repository verification. |
 | 17.0 | Foundation Closure & Product-State Reconciliation | Reconciles delivered product state, reduces composition/presentation entropy, removes generated runtime cache artifacts, preserves Docker/Windows compatibility entrypoints, and establishes source-hygiene boundaries. Evidence: `docs/foundation/STAGE_17_0_TASK_CONTRACT.md`, `docs/foundation/STAGE_17_0_VALIDATION_REPORT.md`. |
 | 17.1.1 | Docker Compose Wrapper Corrective | Fixes PowerShell compose argument forwarding by replacing the reserved/automatic `$Args` helper parameter with explicit `-ComposeArgs`, and hardens Docker-first verification against regression. |
 | 17.1.3 | Official-Source Contract & Verification Workflow Corrective | Restores mandatory current-stage official-source evidence and clarifies that stage verification is the iterative subset while canonical verification is the self-contained superset that already executes the stage gate. |

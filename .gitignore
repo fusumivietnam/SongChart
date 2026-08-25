@@ -9,7 +9,7 @@
 
 /public/hot
 /public/build/
-/public/storage
+
 /storage/logs/*.log
 /storage/framework/cache/data/*
 !/storage/framework/cache/data/.gitignore
@@ -30,3 +30,5 @@ Thumbs.db
 .env.docker
 .certs/*
 !.certs/.gitignore
+
+/storage/upgrade-backups/

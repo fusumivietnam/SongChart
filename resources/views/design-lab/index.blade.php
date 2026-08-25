@@ -18,7 +18,7 @@
     <main class="mx-auto max-w-7xl px-5 py-10">
         <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             @foreach($concepts as $key => $item)
-                <a href="{{ route('design-lab.show', $key) }}"
+                <a href="{{ route('development.design-system.concepts.show', $key) }}"
                    class="group flex min-h-64 flex-col justify-between rounded-[1.75rem] border border-slate-300 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                     <div>
                         <div class="flex items-center justify-between">

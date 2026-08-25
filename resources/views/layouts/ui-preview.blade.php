@@ -13,7 +13,7 @@
         <div x-show="navigationOpen" x-cloak class="ui-preview-overlay lg:hidden" @click="navigationOpen = false"></div>
         <aside class="ui-preview-sidebar" :class="navigationOpen && 'is-open'" aria-label="Điều hướng UI Preview">
             <div class="ui-preview-brand">
-                <a href="{{ route('ui-preview') }}" class="sc-brand">
+                <a href="{{ route('development.design-system.index') }}" class="sc-brand">
                     <span class="sc-brand-mark">SC</span>
                     <span>UI Preview</span>
                 </a>
@@ -21,7 +21,7 @@
             </div>
             <nav class="ui-preview-nav">
                 @foreach($sections as $key => $meta)
-                    <a href="{{ route('ui-preview', ['section' => $key]) }}" class="ui-preview-nav-item {{ $activeSection === $key ? 'is-active' : '' }}" @click="navigationOpen = false">
+                    <a href="{{ route('development.design-system.index', ['section' => $key]) }}" class="ui-preview-nav-item {{ $activeSection === $key ? 'is-active' : '' }}" @click="navigationOpen = false">
                         <span>{{ $meta['label'] }}</span>
                         <small>{{ $meta['description'] }}</small>
                     </a>

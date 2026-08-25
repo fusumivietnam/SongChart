@@ -9,8 +9,8 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ## Current stage
 
-- `17.10 — Enrichment Orchestrator`
-- Candidate: `v5`, in development, not canonically accepted yet.
+- `17.10.2 — Development Map + Route Authority`
+- Candidate: `v1`, implementation candidate; canonical acceptance pending.
 
 ## Implemented slices
 

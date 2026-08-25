@@ -119,15 +119,4 @@ if (app()->environment(['local', 'testing']) || config('design-lab.enabled')) {
             ->name('index');
     });
 
-    // Compatibility aliases retained for bookmarks and existing feature tests.
-    Route::get('/ui-preview/{section?}', UiPreviewController::class)
-        ->where('section', 'foundations|components|patterns|states|admin')
-        ->name('ui-preview');
-    Route::get('/shell-preview/frontend', [ShellPreviewController::class, 'frontend'])->name('shell-preview.frontend');
-    Route::get('/shell-preview/admin', [ShellPreviewController::class, 'admin'])->middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor.confirmed'])->name('shell-preview.admin');
-
-    Route::get('/design-lab', [DesignLabController::class, 'index'])->name('design-lab.index');
-    Route::get('/design-lab/{concept}', [DesignLabController::class, 'show'])
-        ->where('concept', '[0-9]{2}-[a-z0-9-]+')
-        ->name('design-lab.show');
 }
