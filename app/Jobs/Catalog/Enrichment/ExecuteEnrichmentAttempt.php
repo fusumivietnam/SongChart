@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Catalog\Enrichment;
 
+use App\Application\Catalog\Admission\MaterializeProviderAdmissionEvidence;
 use App\Contracts\Catalog\EnrichmentAttemptStore;
 use App\Contracts\Catalog\EnrichmentEvidenceAdmissionPolicy;
 use App\Contracts\Catalog\EnrichmentExecutor;
@@ -29,6 +30,7 @@ final class ExecuteEnrichmentAttempt implements ShouldQueue
         EnrichmentAttemptStore $attempts,
         EnrichmentExecutor $executor,
         EnrichmentEvidenceAdmissionPolicy $admission,
+        MaterializeProviderAdmissionEvidence $materialize,
     ): void {
         $attempt = $attempts->beginExecution($this->attemptId);
         if ($attempt === null) {
@@ -45,8 +47,22 @@ final class ExecuteEnrichmentAttempt implements ShouldQueue
         if ($result->outcome === 'succeeded') {
             $decision = $admission->assess($attempt, $result->payload);
 
+            if ($decision->decision === 'admissible') {
+                try {
+                    $payload = $materialize->handle($attempt, $decision->payload);
+                    $attempts->markSucceeded($this->attemptId, $payload);
+                } catch (Throwable $exception) {
+                    $attempts->markReviewRequired(
+                        $this->attemptId,
+                        'Admissible provider evidence could not be materialized safely: '.$exception->getMessage(),
+                        $decision->payload,
+                    );
+                }
+
+                return;
+            }
+
             match ($decision->decision) {
-                'admissible' => $attempts->markSucceeded($this->attemptId, $decision->payload),
                 'review_required' => $attempts->markReviewRequired($this->attemptId, $decision->reason, $decision->payload),
                 'rejected' => $attempts->markRejected($this->attemptId, $decision->reason, $decision->payload),
                 default => $attempts->markFailed($this->attemptId, 'Unknown enrichment evidence admission decision.'),
