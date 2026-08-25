@@ -66,7 +66,9 @@ it('connects an admissible enrichment field result to the governed canonical adm
         'need_key' => 'country_code',
         'reason' => 'Missing country code.',
         'status' => 'ready',
-        'priority' => 50,
+        'priority' => 'high',
+        'cost_class' => 'low',
+        'idempotency_key' => hash('sha256', 'provider-admission-integration:'.$artist->getKey()),
         'attempt_count' => 1,
     ]);
 
