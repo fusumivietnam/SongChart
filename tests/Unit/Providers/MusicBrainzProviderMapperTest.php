@@ -28,7 +28,7 @@ it('maps MusicBrainz recording identity, ISRC and artist credits', function (): 
     expect($entity['provider_slug'])->toBe('musicbrainz')
         ->and($entity['identifiers'][0])->toBe(['namespace' => 'musicbrainz_recording', 'value' => 'recording-mbid'])
         ->and($entity['identifiers'][1])->toBe(['namespace' => 'isrc', 'value' => 'USAAA2600001'])
-        ->and($entity['relationships'][0]['relationship_type'])->toBe('performed-by')
+        ->and($entity['relationships'][0]['type'])->toBe('performed-by')
         ->and($entity['relationships'][0]['target_external_id'])->toBe('artist-mbid');
 });
 
