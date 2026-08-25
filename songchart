@@ -85,8 +85,8 @@ case "$cmd" in
   printf '[SongChart candidate] Refreshing compiled repository authority.\n'
   dev run --rm app php scripts/compile-repository-contracts.php --refresh-check
   git -C "$ROOT" diff --check
-  if ! git -C "$ROOT" diff --quiet -- docs/project/generated; then
-    printf '%s\n' '[SongChart candidate] Generated repository artifacts changed.' >&2
+  if ! git -C "$ROOT" diff --quiet -- docs/project/generated || ! git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
+    printf '%s\n' '[SongChart candidate] Generated repository artifacts are not committed.' >&2
     printf '%s\n' '[SongChart candidate] Review and commit docs/project/generated, then run ./songchart candidate again.' >&2
     exit 1
   fi
