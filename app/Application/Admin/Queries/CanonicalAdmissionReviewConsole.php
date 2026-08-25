@@ -9,12 +9,14 @@ use App\Models\Catalog\CanonicalAdmissionDecision;
 use App\Models\Catalog\MetadataAssertion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Schema;
 
 final class CanonicalAdmissionReviewConsole
 {
     /**
      * @return array{
-     *     decisions: LengthAwarePaginator<int, CanonicalAdmissionDecision>,
+     *     available: bool,
+     *     decisions: LengthAwarePaginator<int, CanonicalAdmissionDecision>|null,
      *     unstaged: Collection<int, MetadataAssertion>,
      *     status: string
      * }
@@ -24,6 +26,15 @@ final class CanonicalAdmissionReviewConsole
         $status = in_array($requestedStatus, array_column(CanonicalAdmissionStatus::cases(), 'value'), true)
             ? $requestedStatus
             : CanonicalAdmissionStatus::Pending->value;
+
+        if (! Schema::hasTable('canonical_admission_decisions')) {
+            return [
+                'available' => false,
+                'decisions' => null,
+                'unstaged' => new Collection,
+                'status' => $status,
+            ];
+        }
 
         $decisions = CanonicalAdmissionDecision::query()
             ->with(['assertion.source', 'reviewer'])
@@ -40,7 +51,12 @@ final class CanonicalAdmissionReviewConsole
             ->limit(50)
             ->get();
 
-        return compact('decisions', 'unstaged', 'status');
+        return [
+            'available' => true,
+            'decisions' => $decisions,
+            'unstaged' => $unstaged,
+            'status' => $status,
+        ];
     }
 
     public function show(CanonicalAdmissionDecision $admission): CanonicalAdmissionDecision

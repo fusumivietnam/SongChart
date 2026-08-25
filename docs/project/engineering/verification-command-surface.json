@@ -3,6 +3,7 @@
     "public_entrypoints": {
         "development": [
             "songchart dev setup",
+            "songchart dev ready",
             "songchart dev up",
             "songchart dev status",
             "songchart dev logs",
@@ -13,6 +14,7 @@
             "songchart test"
         ],
         "candidate_closure": [
+            "songchart candidate",
             "composer stage:verify"
         ],
         "canonical_closure": [

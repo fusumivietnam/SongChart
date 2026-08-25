@@ -47,6 +47,24 @@
         "updated_at"
       ]
     },
+    "catalog.canonical_admission_decisions": {
+      "table": "canonical_admission_decisions",
+      "fields": [
+        "id",
+        "metadata_assertion_id",
+        "entity_type",
+        "entity_id",
+        "field_name",
+        "status",
+        "canonical_value",
+        "decision_reason",
+        "reviewer_id",
+        "reviewed_at",
+        "applied_at",
+        "created_at",
+        "updated_at"
+      ]
+    },
     "provider.providers": {
       "table": "providers",
       "fields": [

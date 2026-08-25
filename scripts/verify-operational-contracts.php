@@ -57,8 +57,9 @@ foreach (($registry['surfaces'] ?? []) as $key => $surface) {
         }
 
         $declared = preg_match('/\\$table->\\w+\\(\\s*[\'\"]'.preg_quote($field, '/').'[\'\"]/', $tableSource) === 1;
-        if (! $declared && in_array($field, ['created_at', 'updated_at'], true) && str_contains($tableSource, '$table->timestamps()')) {
-            $declared = true;
+        if (! $declared && in_array($field, ['created_at', 'updated_at'], true)) {
+            $declared = str_contains($tableSource, '$table->timestamps()')
+                || str_contains($tableSource, '$table->timestampsTz()');
         }
         if (! $declared) {
             $errors[] = "Operational surface [{$key}] field [{$field}] is not declared for table [{$table}] in migrations.";
