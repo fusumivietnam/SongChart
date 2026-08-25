@@ -1,6 +1,6 @@
 # SongChartWeb
 
-Current stage: **17.10.2 — Development Map + Route Authority**
+Current stage: **17.10.3 — Linux-first CLI + Stable Docker Identity**
 
 Candidate delivery: **v1**
 
@@ -9,7 +9,7 @@ SongChartWeb is a Laravel 13 modular monolith for music discovery, canonical met
 ## Current development stage
 
 - Product: `SongChart 0.1.0-dev`
-- Stage: `17.10.2 — Development Map + Route Authority`
+- Stage: `17.10.3 — Linux-first CLI + Stable Docker Identity`
 - Current-stage history: `docs/project/DEVELOPMENT_HISTORY.md`
 - Domain authorities: `docs/project/domain/`
 - Candidate closure: `composer stage:verify`
@@ -24,7 +24,7 @@ Stage 17.10 now covers deterministic scheduling, database idempotency, queued ra
 - Composer 2
 - Node.js 22 or an approved LTS
 - PostgreSQL 18.x (major 18 required for release verification)
-- Docker Desktop + WSL2 is the primary development runtime
+- Linux/WSL2 source with Docker Engine + Compose v2 is the primary development runtime
 - Laragon is compatibility-only
 
 ## Read before implementation
@@ -39,6 +39,28 @@ Stage 17.10 now covers deterministic scheduling, database idempotency, queued ra
 6. the owning module authority and current task contract
 
 Do not invent database fields, route semantics, provider states, or cross-entity mappings. Update the relevant executable contract first.
+
+## Linux-first host workflow
+
+Primary working tree:
+
+```text
+~/src/songchart
+```
+
+Primary host CLI:
+
+```bash
+./songchart dev setup
+./songchart dev up
+./songchart artisan admin:create
+./songchart test
+./songchart verify
+```
+
+Stable Compose identities are `songchart-dev` for persistent development data and
+`songchart-verify` for isolated verification. Repository folder renames therefore
+do not silently create a new development database identity.
 
 ## Local setup
 

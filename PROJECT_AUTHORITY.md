@@ -8,7 +8,7 @@ Status: mandatory engineering entry point. Machine-readable authorities referenc
 - Laravel: `^13.0`
 - Database: PostgreSQL 18.x is the only release-authoritative database; release gates require major version 18 exactly.
 - Queue: Laravel Redis queue is the runtime baseline.
-- Primary local development: Docker Desktop + WSL2. Laragon is compatibility-only and may not define release/canonical authority.
+- Primary local development: Linux/WSL2 source with Docker Engine + Compose v2. Docker Desktop may provide the engine as a compatibility option; Laragon is compatibility-only and may not define release/canonical authority.
 - Horizon: Linux/WSL deployment profile only.
 - Pulse: first-party operational observability.
 - Node: approved LTS / repository lockfile authority.

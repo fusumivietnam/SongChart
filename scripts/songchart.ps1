@@ -9,6 +9,7 @@ Set-StrictMode -Version Latest
 $Root = Split-Path -Parent $PSScriptRoot
 $DevCompose = Join-Path $Root 'compose.dev.yml'
 $VerifyCompose = Join-Path $Root 'compose.verify.yml'
+$DevProject = 'songchart-dev'
 $CanonicalProject = 'songchart-verify'
 
 function Require-Docker {
@@ -17,13 +18,17 @@ function Require-Docker {
     if ($LASTEXITCODE -ne 0) { throw 'Docker Compose v2 is required.' }
 }
 function Dev {
-    param([Parameter(Mandatory=$true)] [string[]]$ComposeArgs)
-    & docker compose -f $DevCompose @ComposeArgs
+    param([Parameter(Mandatory=$true)] [AllowEmptyCollection()] [string[]]$ComposeArgs)
+    $ComposeArgs = @($ComposeArgs | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    if ($ComposeArgs.Count -eq 0) { throw 'Docker development command requires at least one Compose argument.' }
+    & docker compose -p $DevProject -f $DevCompose @ComposeArgs
     if ($LASTEXITCODE -ne 0) { throw "Docker development command failed: $($ComposeArgs -join ' ')" }
 }
 function VerifyCompose {
-    param([Parameter(Mandatory=$true)] [string[]]$ComposeArgs)
-    & docker compose -f $VerifyCompose @ComposeArgs
+    param([Parameter(Mandatory=$true)] [AllowEmptyCollection()] [string[]]$ComposeArgs)
+    $ComposeArgs = @($ComposeArgs | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    if ($ComposeArgs.Count -eq 0) { throw 'Docker verification command requires at least one Compose argument.' }
+    & docker compose -p $CanonicalProject -f $VerifyCompose @ComposeArgs
     if ($LASTEXITCODE -ne 0) { throw "Docker verification command failed: $($ComposeArgs -join ' ')" }
 }
 function Ensure-DevConfig {
