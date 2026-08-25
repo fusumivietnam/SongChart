@@ -3,7 +3,7 @@
 !/.env.example
 !/.env.testing.example
 !/.env.docker.example
-
+/.songchart-backups/*
 /vendor/
 /node_modules/
 

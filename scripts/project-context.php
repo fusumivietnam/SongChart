@@ -13,6 +13,18 @@ if ($writeSource) {
 }
 
 /** @return array<string,mixed> */
+function canonicalSourceHash(string $path): ?string
+{
+    if (! is_file($path)) {
+        return null;
+    }
+
+    $content = (string) file_get_contents($path);
+    $content = str_replace(["\r\n", "\r"], "\n", $content);
+
+    return hash('sha256', $content);
+}
+
 function readJson(string $path): array
 {
     if (! is_file($path)) {
@@ -266,7 +278,7 @@ try {
     foreach (array_unique($sourceFiles) as $relative) {
         $path = $root.'/'.$relative;
         if (is_file($path)) {
-            $hashes[$relative] = hash_file('sha256', $path);
+            $hashes[$relative] = canonicalSourceHash($path);
         }
     }
 
