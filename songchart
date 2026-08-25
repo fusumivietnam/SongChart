@@ -31,6 +31,7 @@ stage_verify(){
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart dev setup
+  ./songchart dev ready
   ./songchart dev up|down|status|logs|shell
   ./songchart artisan <args...>
   ./songchart composer <args...>
@@ -49,12 +50,20 @@ case "$cmd" in
   sub="${1:-}"; shift || true; require_docker
   case "$sub" in
    setup) exec bash "$ROOT/scripts/setup-docker-dev.sh" "$@" ;;
+   ready)
+    ensure_dev_config
+    printf '[SongChart dev] Starting development services.\n'
+    dev up -d postgres redis app queue caddy
+    printf '[SongChart dev] Applying pending development migrations.\n'
+    dev_exec_or_run php artisan migrate --force
+    printf '[SongChart dev] Development environment is ready.\n'
+    dev ps ;;
    up) ensure_dev_config; dev up -d postgres redis app queue caddy; dev ps ;;
    down) dev down --remove-orphans ;;
    status) dev ps ;;
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
    shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app bash; else exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" run --rm app bash; fi ;;
-   *) die 'Usage: ./songchart dev [setup|up|down|status|logs|shell]' ;;
+   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell]' ;;
   esac ;;
  artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
  composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
