@@ -13,6 +13,7 @@ use App\Contracts\Catalog\EntityIdentityBridge;
 use App\Contracts\Catalog\FieldAuthorityPolicy;
 use App\Contracts\HumanVerification\HumanVerification;
 use App\Domain\Audit\Contracts\PrivilegedAuditLogger;
+use App\Domain\Providers\Normalization\Validation\Contracts\NormalizedProviderEntityValidator;
 use App\Services\Analytics\NullProductAnalytics;
 use App\Services\HumanVerification\NullHumanVerification;
 use App\Support\Audit\SpatiePrivilegedAuditLogger;
@@ -23,6 +24,9 @@ use App\Support\Catalog\Enrichment\GovernedEnrichmentEvidenceAdmissionPolicy;
 use App\Support\Catalog\Enrichment\GovernedEnrichmentExecutor;
 use App\Support\Catalog\Fusion\CanonicalFieldResolver;
 use App\Support\Catalog\Fusion\ConfigFieldAuthorityPolicy;
+use App\Support\Providers\Normalization\DefaultNormalizedProviderEntityValidator;
+use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
+use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -39,6 +43,13 @@ final class AppServiceProvider extends ServiceProvider
         $this->app->singleton(EnrichmentAttemptStore::class, EloquentEnrichmentAttemptStore::class);
         $this->app->singleton(EnrichmentExecutor::class, GovernedEnrichmentExecutor::class);
         $this->app->singleton(EnrichmentEvidenceAdmissionPolicy::class, GovernedEnrichmentEvidenceAdmissionPolicy::class);
+        $this->app->singleton(NormalizedProviderEntityValidator::class, DefaultNormalizedProviderEntityValidator::class);
+        $this->app->singleton(
+            ProviderSpecificMapperRegistry::class,
+            static fn (): ProviderSpecificMapperRegistry => new ProviderSpecificMapperRegistry([
+                new MusicBrainzProviderMapper,
+            ]),
+        );
         $this->app->singleton(EnrichmentPlanner::class, fn (Application $app): EnrichmentPlanner => new ConfigEnrichmentPlanner(
             $app->make(CanonicalFieldResolver::class),
             (array) config('catalog-enrichment'),
