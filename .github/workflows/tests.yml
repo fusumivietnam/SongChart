@@ -54,7 +54,7 @@ jobs:
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
-      DB_DATABASE: songchart_test
+      DB_DATABASE: songchart_ci_development
       DB_USERNAME: songchart_test
       DB_PASSWORD: songchart_test_only
       TEST_PGSQL_HOST: 127.0.0.1
