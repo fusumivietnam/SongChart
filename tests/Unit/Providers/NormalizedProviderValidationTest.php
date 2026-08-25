@@ -52,8 +52,9 @@ it('fails closed for unsafe destinations and invalid markets', function (): void
     $result = (new DefaultNormalizedProviderEntityValidator)->validate($entity);
 
     expect($result->isValid())->toBeFalse()
-        ->and(array_map(static fn ($issue) => $issue->kind, $result->issues))
-        ->toContain(NormalizationFailureKind::UnsafeUrl, NormalizationFailureKind::InvalidValue);
+        ->and($result->issues)->toHaveCount(2)
+        ->and($result->issues[0]->kind)->toBe(NormalizationFailureKind::UnsafeUrl)
+        ->and($result->issues[1]->kind)->toBe(NormalizationFailureKind::InvalidValue);
 });
 
 function normalizedArtistForValidation(): NormalizedArtist
