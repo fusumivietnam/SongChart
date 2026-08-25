@@ -12,6 +12,22 @@ require_docker(){ command -v docker >/dev/null 2>&1 || die 'Docker CLI is requir
 ensure_dev_config(){ [[ -f "$ROOT/.env.docker" ]] || die '.env.docker is missing. Run: ./songchart dev setup'; }
 dev(){ docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" "$@"; }
 verify_compose(){ docker compose -p "$VERIFY_PROJECT" -f "$VERIFY_COMPOSE" "$@"; }
+dev_app_running(){ [[ "$(dev ps --status running --services 2>/dev/null | grep -x 'app' || true)" == 'app' ]]; }
+dev_exec_or_run(){
+  if dev_app_running; then
+    dev exec app "$@"
+  else
+    dev run --rm app "$@"
+  fi
+}
+stage_verify(){
+  trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' RETURN
+  verify_compose down --remove-orphans
+  verify_compose build verify
+  verify_compose run --rm verify bash scripts/docker-stage-verify.sh
+  verify_compose down --remove-orphans >/dev/null 2>&1 || true
+  trap - RETURN
+}
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart dev setup
@@ -20,6 +36,7 @@ SongChart Linux-first development CLI
   ./songchart composer <args...>
   ./songchart npm <args...>
   ./songchart context [args...]
+  ./songchart candidate
   ./songchart test
   ./songchart verify [--no-build] [--keep-services]
 Stable projects: songchart-dev / songchart-verify
@@ -36,14 +53,22 @@ case "$cmd" in
    down) dev down --remove-orphans ;;
    status) dev ps ;;
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
-   shell) ensure_dev_config; exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app bash ;;
+   shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app bash; else exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" run --rm app bash; fi ;;
    *) die 'Usage: ./songchart dev [setup|up|down|status|logs|shell]' ;;
   esac ;;
- artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app php artisan "$@" ;;
- composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app composer "$@" ;;
- npm) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart npm <args...>'; exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app npm "$@" ;;
+ artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
+ composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
+ npm) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart npm <args...>'; dev_exec_or_run npm "$@" ;;
  context) require_docker; ensure_dev_config; args=(); for a in "$@"; do [[ "$a" == '--refresh-source' ]] && args+=('--write-source') || args+=("$a"); done; dev run --rm app php scripts/project-context.php "${args[@]}" ;;
- test) require_docker; trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' EXIT; verify_compose down --remove-orphans; verify_compose build verify; verify_compose run --rm verify bash scripts/docker-stage-verify.sh; printf '[SongChart stage] PASSED.\n' ;;
+ candidate)
+  require_docker; ensure_dev_config
+  printf '[SongChart candidate] Refreshing generated source context.\n'
+  dev run --rm app php scripts/project-context.php --write-source
+  git -C "$ROOT" diff --check
+  printf '[SongChart candidate] Running candidate verification.\n'
+  stage_verify
+  printf '[SongChart candidate] PASSED.\n' ;;
+ test) require_docker; stage_verify; printf '[SongChart stage] PASSED.\n' ;;
  verify)
   require_docker; no_build=false; keep=false
   while [[ $# -gt 0 ]]; do case "$1" in --no-build) no_build=true;; --keep-services) keep=true;; *) die "Unknown verify option: $1";; esac; shift; done
