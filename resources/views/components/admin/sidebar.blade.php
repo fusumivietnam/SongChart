@@ -1,6 +1,7 @@
 @props(['active' => 'dashboard'])
 @php
 $user = auth()->user();
+$canManageCatalog = $user?->can('manage-catalog') ?? false;
 $canManageProviders = $user?->can('manage-providers') ?? false;
 $canReviewIdentity = $user?->can('manage-identity-conflicts') ?? false;
 $canManageSystem = $user?->can('manage-extensions') ?? false;
@@ -12,6 +13,7 @@ $groups = [
         ['key' => 'catalog', 'label' => 'Nội dung', 'icon' => 'database', 'href' => route('admin.catalog.index')],
     ]],
     ['label' => 'Vận hành dữ liệu', 'items' => array_values(array_filter([
+        $canManageCatalog ? ['key' => 'canonical-admissions', 'label' => 'Canonical admission', 'icon' => 'shield', 'href' => route('admin.canonical-admissions.index')] : null,
         $canManageProviders ? ['key' => 'providers', 'label' => 'Nguồn dữ liệu', 'icon' => 'external', 'href' => route('admin.providers.index')] : null,
         $canManageProviders ? ['key' => 'imports', 'label' => 'Tác vụ dữ liệu', 'icon' => 'collection', 'href' => route('admin.imports.index')] : null,
         $canManageProviders ? ['key' => 'quarantine', 'label' => 'Dữ liệu cần rà soát', 'icon' => 'shield', 'href' => route('admin.quarantine.index')] : null,

@@ -26,6 +26,7 @@
                    "metadata_conflicts":  "operational-contracts",
                    "identity_conflict_reviews":  "operational-contracts",
                    "identity_conflict_decisions":  "operational-contracts",
+                   "canonical_admission_decisions":  "operational-contracts",
                    "entity_matches":  "operational-contracts",
                    "artists":  "domain-contracts",
                    "works":  "domain-contracts",

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Catalog\Enums\EntityType;
 use App\Http\Controllers\Account\AccountController;
+use App\Http\Controllers\Admin\CanonicalAdmissionController;
 use App\Http\Controllers\Admin\CatalogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExtensionController;
@@ -63,6 +64,10 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::get('/catalog/{type}', [CatalogController::class, 'index'])->where('type', EntityType::routePattern())->name('catalog.entities.index');
         Route::get('/catalog/{type}/{id}', [CatalogController::class, 'show'])->where(['type' => EntityType::routePattern(), 'id' => app(DomainContractRegistry::class)->adminUlidPattern()])->name('catalog.entities.show');
         Route::patch('/catalog/artist/{id}', [CatalogController::class, 'updateArtist'])->where('id', app(DomainContractRegistry::class)->adminUlidPattern())->name('catalog.artists.update')->middleware(['can:manage-catalog', 'password.confirm']);
+        Route::get('/canonical-admissions', [CanonicalAdmissionController::class, 'index'])->name('canonical-admissions.index');
+        Route::get('/canonical-admissions/{admission}', [CanonicalAdmissionController::class, 'show'])->where('admission', app(DomainContractRegistry::class)->adminUlidPattern())->name('canonical-admissions.show');
+        Route::post('/canonical-admissions/assertions/{assertion}', [CanonicalAdmissionController::class, 'stage'])->where('assertion', app(DomainContractRegistry::class)->adminUlidPattern())->name('canonical-admissions.stage')->middleware(['can:manage-catalog', 'password.confirm']);
+        Route::post('/canonical-admissions/{admission}/decisions', [CanonicalAdmissionController::class, 'decide'])->where('admission', app(DomainContractRegistry::class)->adminUlidPattern())->name('canonical-admissions.decide')->middleware(['can:manage-catalog', 'password.confirm']);
         Route::get('/providers', [OperationsController::class, 'providers'])->name('providers.index');
         Route::get('/providers/{provider}', [OperationsController::class, 'provider'])->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.show');
         Route::post('/providers/{provider}/operations', [ProviderMutationController::class, 'provider'])->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.mutate')->middleware(['can:manage-providers', 'password.confirm']);
