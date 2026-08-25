@@ -30,7 +30,7 @@ final class ExecuteEnrichmentAttempt implements ShouldQueue
         EnrichmentAttemptStore $attempts,
         EnrichmentExecutor $executor,
         EnrichmentEvidenceAdmissionPolicy $admission,
-        MaterializeProviderAdmissionEvidence $materialize,
+        ?MaterializeProviderAdmissionEvidence $materialize = null,
     ): void {
         $attempt = $attempts->beginExecution($this->attemptId);
         if ($attempt === null) {
@@ -49,7 +49,8 @@ final class ExecuteEnrichmentAttempt implements ShouldQueue
 
             if ($decision->decision === 'admissible') {
                 try {
-                    $payload = $materialize->handle($attempt, $decision->payload);
+                    $materializer = $materialize ?? app(MaterializeProviderAdmissionEvidence::class);
+                    $payload = $materializer->handle($attempt, $decision->payload);
                     $attempts->markSucceeded($this->attemptId, $payload);
                 } catch (Throwable $exception) {
                     $attempts->markReviewRequired(
