@@ -1,3 +1,5 @@
+name: songchart-dev
+
 services:
   postgres:
     image: postgres:18.4-bookworm
@@ -26,6 +28,7 @@ services:
       - songchart_dev_redis:/data
 
   app:
+    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
     build:
       context: .
       dockerfile: docker/verify/Dockerfile
@@ -70,6 +73,8 @@ services:
       YOUTUBE_SEARCH_DAILY_LIMIT: "${YOUTUBE_SEARCH_DAILY_LIMIT:-100}"
       YOUTUBE_GENERAL_DAILY_UNITS: "${YOUTUBE_GENERAL_DAILY_UNITS:-10000}"
       COMPOSER_CACHE_DIR: /tmp/composer-cache
+      HOME: /tmp
+      NPM_CONFIG_CACHE: /tmp/npm-cache
     command: ["sh", "-lc", "cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
     depends_on:
       postgres:
@@ -87,8 +92,10 @@ services:
       - songchart_dev_vendor:/workspace/vendor
       - songchart_dev_node_modules:/workspace/node_modules
       - songchart_dev_composer_cache:/tmp/composer-cache
+      - songchart_dev_npm_cache:/tmp/npm-cache
 
   queue:
+    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
     build:
       context: .
       dockerfile: docker/verify/Dockerfile
@@ -129,6 +136,8 @@ services:
       YOUTUBE_SEARCH_DAILY_LIMIT: "${YOUTUBE_SEARCH_DAILY_LIMIT:-100}"
       YOUTUBE_GENERAL_DAILY_UNITS: "${YOUTUBE_GENERAL_DAILY_UNITS:-10000}"
       COMPOSER_CACHE_DIR: /tmp/composer-cache
+      HOME: /tmp
+      NPM_CONFIG_CACHE: /tmp/npm-cache
     command: ["php", "artisan", "queue:work", "redis", "--queue=critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default", "--sleep=1", "--tries=3", "--timeout=150"]
     depends_on:
       app:
@@ -138,6 +147,7 @@ services:
       - songchart_dev_vendor:/workspace/vendor
       - songchart_dev_node_modules:/workspace/node_modules
       - songchart_dev_composer_cache:/tmp/composer-cache
+      - songchart_dev_npm_cache:/tmp/npm-cache
 
   caddy:
     image: caddy:2.11.3-alpine
@@ -157,3 +167,4 @@ volumes:
   songchart_dev_vendor:
   songchart_dev_node_modules:
   songchart_dev_composer_cache:
+  songchart_dev_npm_cache:

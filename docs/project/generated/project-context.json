@@ -1,9 +1,9 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "30e3a6ded7a4e8f185e92e2be0c4c416a93a1e31e997d3121b37257e71442c12",
+    "source_fingerprint": "34a113854117f815cb5e646def76e09dd71a3c43374092ed4f78fdcdd7e6a790",
     "candidate": {
-        "stage": "17.10.2",
+        "stage": "17.10.3",
         "candidate": "v1",
         "informational_not_fingerprinted": true
     },
@@ -960,8 +960,8 @@
         "ownership_complete": true
     },
     "source_hashes": {
-        "compose.dev.yml": "374ea07efb3cf928ed76cff5c05c79192ed962bff41c628eb2a0a681ff2ec9da",
-        "compose.verify.yml": "a4b784b741e0900d7d8e67c2b06d9c88fea82b735a0565672307059f7e53e326",
+        "compose.dev.yml": "30237ae2eb72ca97f57593e7e60ede545901f8c213d1fbceb02b17ac6ebea397",
+        "compose.verify.yml": "5d0cdb601d85562d43350c5e5e355172a7d3954ef4e4e62d4c309abcfb3de44c",
         "composer.json": "69495c54b35a7c69bb17eeb36c2ba30696d994fb641d2523dab5437a5dbb0654",
         "composer.lock": "21f1b62cb8159ec964ee3f0d381965ae07bab1150cf20ab04dab254d4c3c44e9",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
@@ -994,10 +994,10 @@
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "e3777a46bfdd521b8f3f425cd9696a1f467fe7b879c84d082a8a9f2d75f080b8",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "e816f2ec8ed7ea713d35f1b8e9e4391ff587647633b783b691ccaf13814f09a0",
         "docs/project/engineering/ai-development-contract.json": "f4e1ebbcd9e27ba73707c73ac570e2c974873fc96a05f216a47d33a930084cd2",
-        "docs/project/engineering/verification-command-surface.json": "65bb0905d448e8ef445a0392689a7d9eda3b104b7d4c59ed795bc8ab70bc488e",
+        "docs/project/engineering/verification-command-surface.json": "4ca30b10536d17c8fd8b40b1ba2942febfe7ddc3be9cd43a6377c3ff5df8a4da",
         "docs/project/engineering/verification-topology.json": "782b43d094fc9a70ae10f40ebaaebb36e6f915f486e91f4f440edae0a4d84748",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "2d60cd1584106cb08a46e9904a4cd575feacd60d5657e4d9215ec29c5f6e9480",
-        "scripts/songchart.ps1": "20d54e7ae68d9647cc75a30a6e510ecf83174140e9ddde39fefc24f1fe8ae0b2"
+        "scripts/songchart.ps1": "9d637713b40a476ec751089745023d6fb7de56b7cee46480b93edceaad80205d"
     }
 }

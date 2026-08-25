@@ -158,7 +158,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "54c510e42516fa7a36435360883511a476a84950c4939b360afc7e7645406032",
+            "fingerprint": "869b2ac74bab170974c1079b479e4a43d91772365147eefb1c371496d118517b",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -1622,5 +1622,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "4967525f8879d1330d25dfd5d730796a4256c178789ef419f359f9421cad5ffa"
+    "graph_fingerprint": "a3013db0a7b329e1cc83d8dd31576f656e5a87924aec30144f3d0f6b32bfd631"
 }

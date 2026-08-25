@@ -5,11 +5,11 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 ## Accepted baseline
 
 - Stage `17.9.4 — Candidate Stage Consistency Closure`: **canonical Docker verification PASSED** on the developer target tree.
-- Development authority remains Docker/Compose through `songchart.bat`.
+- Development authority is Linux/WSL Docker/Compose through `./songchart`; Windows wrappers are compatibility-only.
 
 ## Current stage
 
-- `17.10.2 — Development Map + Route Authority`
+- `17.10.3 — Linux-first CLI + Stable Docker Identity`
 - Candidate: `v1`, implementation candidate; canonical acceptance pending.
 
 ## Implemented slices
@@ -92,3 +92,13 @@ Canonical closure is separate:
 - ledger status `succeeded` means admissible evidence only, while invalid/mismatched evidence becomes `rejected`;
 - `result_payload.evidence_admission` records the decision and always records `canonical_mutation=false`;
 - no canonical entity mutation or automatic evidence promotion occurs in this slice.
+
+
+### Stage 17.10.3 — Linux-first CLI + Stable Docker Identity
+
+- Linux/WSL source is the primary working tree;
+- `./songchart` is the primary host CLI;
+- development Compose identity is fixed to `songchart-dev`;
+- canonical verification identity remains fixed to `songchart-verify`;
+- `.bat` / PowerShell stay compatibility-only;
+- repository folder renames must not create a new development database identity.

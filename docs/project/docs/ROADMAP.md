@@ -66,6 +66,10 @@ Delivered implementation: provider-neutral identity bridge from external identif
 
 Current implementation stage. Deterministic provider-neutral scheduling now flows through a persisted `enrichment_attempts` ledger, database-enforced idempotency, the existing provider request/rate gate, and a provider-execution outcome boundary. Unsupported execution fails safe to review, retryable execution re-enters the rate gate, and successful evidence is persisted without canonical mutation. Subsequent slices add concrete governed provider executors plus quota/freshness-aware dispatch before any canonical admission.
 
+### 17.10.3 — Linux-first CLI + Stable Docker Identity
+
+Current corrective candidate: make Linux/WSL the primary host workflow, add a Bash `./songchart` entrypoint, and pin stable development/verification Compose project identities. Windows wrappers remain compatibility-only. No product/domain semantics change.
+
 ### 18.0 — YouTube media experience
 
 Future: verified YouTube iframe playback, outbound fallback, destination freshness jobs, quota observability and recording/artist media presentation.
