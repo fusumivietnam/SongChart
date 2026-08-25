@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Application\Admin\Queries\CanonicalAdmissionReviewConsole;
 use App\Application\Catalog\Admission\GovernedCanonicalAdmissionService;
 use App\Domain\Audit\Contracts\PrivilegedAuditLogger;
 use App\Domain\Catalog\Enums\CanonicalAdmissionStatus;
@@ -18,36 +19,18 @@ use Illuminate\Validation\Rule;
 
 final class CanonicalAdmissionController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, CanonicalAdmissionReviewConsole $console): View
     {
-        $status = (string) $request->query('status', CanonicalAdmissionStatus::Pending->value);
-        if (! in_array($status, array_column(CanonicalAdmissionStatus::cases(), 'value'), true)) {
-            $status = CanonicalAdmissionStatus::Pending->value;
-        }
+        $requestedStatus = (string) $request->query('status', CanonicalAdmissionStatus::Pending->value);
 
-        $decisions = CanonicalAdmissionDecision::query()
-            ->with(['assertion.source', 'reviewer'])
-            ->where('status', $status)
-            ->latest()
-            ->paginate(50)
-            ->withQueryString();
-
-        $unstaged = MetadataAssertion::query()
-            ->with('source')
-            ->where('verification_state', 'candidate')
-            ->whereDoesntHave('canonicalAdmissionDecision')
-            ->latest('observed_at')
-            ->limit(50)
-            ->get();
-
-        return view('admin.canonical-admissions.index', compact('decisions', 'unstaged', 'status'));
+        return view('admin.canonical-admissions.index', $console->index($requestedStatus));
     }
 
-    public function show(CanonicalAdmissionDecision $admission): View
+    public function show(CanonicalAdmissionDecision $admission, CanonicalAdmissionReviewConsole $console): View
     {
-        $admission->load(['assertion.source', 'reviewer']);
-
-        return view('admin.canonical-admissions.show', compact('admission'));
+        return view('admin.canonical-admissions.show', [
+            'admission' => $console->show($admission),
+        ]);
     }
 
     public function stage(MetadataAssertion $assertion, GovernedCanonicalAdmissionService $service): RedirectResponse
