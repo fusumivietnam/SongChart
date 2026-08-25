@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Search;
 
+use App\Application\Catalog\Queries\RecordingMediaExperience;
 use App\Domain\Catalog\Enums\EntityType;
 use App\Http\Controllers\Controller;
 use App\Support\Catalog\PublicEntityUrl;
@@ -55,9 +56,16 @@ final class EntityController extends Controller
         return $this->show(EntityType::Release, $slug, $catalog, $demo);
     }
 
-    public function recording(string $slug, EloquentSearchCatalog $catalog, DemoSearchCatalog $demo): View
+    public function recording(string $slug, EloquentSearchCatalog $catalog, DemoSearchCatalog $demo, RecordingMediaExperience $mediaExperience): View
     {
-        return $this->show(EntityType::Recording, $slug, $catalog, $demo);
+        $entity = $this->find(EntityType::Recording, $slug, $catalog, $demo);
+        abort_if($entity === null, 404);
+
+        $media = isset($entity['id']) && is_string($entity['id'])
+            ? $mediaExperience->for($entity['id'])
+            : null;
+
+        return view('entities.show', compact('entity', 'media'));
     }
 
     public function work(string $slug, EloquentSearchCatalog $catalog, DemoSearchCatalog $demo): View
