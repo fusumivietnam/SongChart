@@ -7,6 +7,7 @@ namespace App\Support\Providers\Ingestion;
 use App\Domain\Providers\Catalog\DTO\ProviderPayload;
 use App\Domain\Providers\Ingestion\DTO\ProviderImportPreview;
 use App\Domain\Providers\Normalization\Validation\Contracts\NormalizedProviderEntityValidator;
+use App\Domain\Providers\Normalization\Validation\DTO\NormalizationValidationIssue;
 use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
 
 final class ProviderImportPreviewBuilder
@@ -23,7 +24,7 @@ final class ProviderImportPreviewBuilder
         $normalized = $entity->toArray();
 
         $issues = array_map(
-            static fn ($issue): array => [
+            static fn (NormalizationValidationIssue $issue): array => [
                 'kind' => $issue->kind->value,
                 'path' => $issue->path,
                 'message' => $issue->message,
