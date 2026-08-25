@@ -20,6 +20,11 @@ dev_exec_or_run(){
     dev run --rm app "$@"
   fi
 }
+repair_dev_runtime_ownership(){
+  printf '[SongChart dev] Repairing generated runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
+  dev run --rm --user root app sh -lc \
+    "mkdir -p /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/bootstrap/cache /workspace/storage"
+}
 stage_verify(){
   trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' RETURN
   verify_compose down --remove-orphans
@@ -54,6 +59,9 @@ case "$cmd" in
     ensure_dev_config
     printf '[SongChart dev] Starting development services.\n'
     dev up -d postgres redis app queue caddy
+    repair_dev_runtime_ownership
+    printf '[SongChart dev] Clearing stale compiled views.\n'
+    dev_exec_or_run php artisan view:clear
     printf '[SongChart dev] Applying pending development migrations.\n'
     dev_exec_or_run php artisan migrate --force
     printf '[SongChart dev] Development environment is ready.\n'
