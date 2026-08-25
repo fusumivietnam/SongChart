@@ -9,6 +9,7 @@ use App\Domain\Catalog\Enums\VerificationState;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class MetadataAssertion extends Model
 {
@@ -22,6 +23,12 @@ final class MetadataAssertion extends Model
     public function source(): BelongsTo
     {
         return $this->belongsTo(MetadataSource::class, 'metadata_source_id');
+    }
+
+    /** @return HasOne<CanonicalAdmissionDecision, $this> */
+    public function canonicalAdmissionDecision(): HasOne
+    {
+        return $this->hasOne(CanonicalAdmissionDecision::class, 'metadata_assertion_id');
     }
 
     protected function casts(): array
