@@ -26,12 +26,13 @@ repair_dev_runtime_ownership(){
     "mkdir -p /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/bootstrap/cache /workspace/storage"
 }
 stage_verify(){
-  trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' RETURN
-  verify_compose down --remove-orphans
-  verify_compose build verify
-  verify_compose run --rm verify bash scripts/docker-stage-verify.sh
-  verify_compose down --remove-orphans >/dev/null 2>&1 || true
-  trap - RETURN
+  (
+    set -e
+    trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' EXIT
+    verify_compose down --remove-orphans
+    verify_compose build verify
+    verify_compose run --rm verify bash scripts/docker-stage-verify.sh
+  )
 }
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
