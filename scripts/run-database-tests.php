@@ -47,7 +47,10 @@ if ($lane === 'sqlite') {
         'DB_USERNAME' => ['TEST_PGSQL_USERNAME', 'DB_USERNAME', 'songchart_admin'],
         'DB_PASSWORD' => ['TEST_PGSQL_PASSWORD', 'DB_PASSWORD', ''],
     ];
-    $env['SONGCHART_DEVELOPMENT_DATABASE'] = (string) ($dotenv['DB_DATABASE'] ?? (getenv('DB_DATABASE') ?: 'songchart'));
+    $env['SONGCHART_DEVELOPMENT_DATABASE'] = (string) (
+        getenv('SONGCHART_DEVELOPMENT_DATABASE')
+        ?: ($dotenv['DB_DATABASE'] ?? 'songchart')
+    );
     $env['DB_CONNECTION'] = 'pgsql';
     foreach ($map as $target => [$testKey, $dbKey, $default]) {
         $value = getenv($testKey);
