@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace App\Application\Catalog\Queries;
 
 use App\Domain\Catalog\Enums\EntityType;
+use App\Models\Catalog\Recording;
 use App\Models\Provider;
 use App\Models\ProviderDestination;
 
 final class RecordingMediaExperience
 {
     /** @return array<string, mixed>|null */
-    public function for(string $recordingId): ?array
+    public function forSlug(string $recordingSlug): ?array
     {
+        $recording = Recording::query()->where('slug', $recordingSlug)->first();
+        if (! $recording instanceof Recording) {
+            return null;
+        }
+
         $destination = ProviderDestination::query()
             ->where('entity_type', EntityType::Recording->value)
-            ->where('entity_id', $recordingId)
+            ->where('entity_id', $recording->getKey())
             ->where('review_state', 'approved')
             ->with('provider')
             ->latest('verified_at')
