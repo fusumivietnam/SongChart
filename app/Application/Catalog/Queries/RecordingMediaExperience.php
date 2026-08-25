@@ -32,18 +32,23 @@ final class RecordingMediaExperience
         }
 
         $providerRelation = $destination->getRelation('provider');
-        $provider = $providerRelation instanceof Provider ? $providerRelation : null;
+        $providerSlug = '';
+        $providerName = 'Provider';
+        if ($providerRelation instanceof Provider) {
+            $providerSlug = $providerRelation->slug;
+            $providerName = $providerRelation->name;
+        }
+
         $lastCheckedAt = $destination->getAttribute('last_checked_at');
         $fresh = $lastCheckedAt instanceof \DateTimeInterface && $lastCheckedAt >= now()->subDays(30);
         $embeddable = $destination->getAttribute('is_embeddable') === true;
         $resourceId = (string) $destination->getAttribute('provider_resource_id');
         $url = $destination->getAttribute('url');
-        $providerSlug = $provider?->slug ?? '';
         $youtube = $providerSlug === 'youtube';
         $canEmbed = $youtube && $fresh && $embeddable && $resourceId !== '';
 
         return [
-            'provider' => $provider?->name ?? 'Provider',
+            'provider' => $providerName,
             'provider_key' => $providerSlug,
             'title' => (string) ($destination->getAttribute('title') ?: 'Video'),
             'channel_title' => (string) ($destination->getAttribute('channel_title') ?: ''),
