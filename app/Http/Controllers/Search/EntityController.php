@@ -61,9 +61,7 @@ final class EntityController extends Controller
         $entity = $this->find(EntityType::Recording, $slug, $catalog, $demo);
         abort_if($entity === null, 404);
 
-        $media = isset($entity['id']) && is_string($entity['id'])
-            ? $mediaExperience->for($entity['id'])
-            : null;
+        $media = $mediaExperience->forSlug($slug);
 
         return view('entities.show', compact('entity', 'media'));
     }
