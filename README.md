@@ -1,6 +1,6 @@
 # SongChartWeb
 
-Current stage: **17.10.3 — Linux-first CLI + Stable Docker Identity**
+Current stage: **17.12 — Provider Admission Integration**
 
 Candidate delivery: **v1**
 
@@ -9,14 +9,13 @@ SongChartWeb is a Laravel 13 modular monolith for music discovery, canonical met
 ## Current development stage
 
 - Product: `SongChart 0.1.0-dev`
-- Stage: `17.10.3 — Linux-first CLI + Stable Docker Identity`
+- Stage: `17.12 — Provider Admission Integration`
 - Current-stage history: `docs/project/DEVELOPMENT_HISTORY.md`
 - Domain authorities: `docs/project/domain/`
 - Candidate closure: `composer stage:verify`
 - Canonical closure: `composer canonical:verify`
 
-Stage 17.10 now covers deterministic scheduling, database idempotency, queued rate-gated execution, durable retry/review outcomes, and governed MusicBrainz evidence acquisition through the existing provider adapter/normalizer. Fresh identity evidence can short-circuit provider calls and a configurable daily execution budget provides coarse admission; canonical mutation remains outside the orchestrator.
-
+Stage 17.12 connects admissible provider field evidence to the existing metadata-assertion and governed canonical-admission boundaries without allowing provider execution to mutate canonical entities directly. The Linux-first CLI also gains running-service fallback and an explicit `./songchart candidate` preparation command while canonical verification remains read-only and fail-closed.
 
 ## Requirements
 
@@ -54,6 +53,7 @@ Primary host CLI:
 ./songchart dev setup
 ./songchart dev up
 ./songchart artisan admin:create
+./songchart candidate
 ./songchart test
 ./songchart verify
 ```
@@ -134,7 +134,6 @@ Use focused impact-driven gates while iterating. `composer stage:verify` owns ca
 
 Verified release source is packaged only after canonical/provenance PASS with `composer release:package`.
 
-
 ## Canonical verification environment
 
 Docker Desktop + WSL2 is the supported primary local development runtime. Release verification uses the isolated Docker verification profile and named volumes for Composer `vendor/`, `node_modules`, and Composer cache. Laragon is compatibility-only.
@@ -152,7 +151,6 @@ powershell -ExecutionPolicy Bypass -File scripts/verify-canonical.ps1
 ```
 
 The canonical verification environment runs PHP 8.5, Node 22, PostgreSQL 18 and Redis, installs dependencies from lockfiles, normalizes with the locked Pint version, and then runs `composer canonical:verify` exactly once.
-
 
 ## Docker local development
 
@@ -179,7 +177,6 @@ https://docker.songchart.test:8443
 
 The profile uses PostgreSQL 18.4, Redis, Caddy 2.11.3, a Docker-only dependency volume, and a trusted mkcert certificate. Laragon can continue serving `https://songchart.test` on port 443 at the same time.
 
-
 ## Privileged operations and audit
 
 Stage 16.5 introduces an explicit business audit trail for privileged administration. `spatie/laravel-activitylog` is used as infrastructure, but SongChart deliberately does not attach broad automatic model logging traits.
@@ -198,7 +195,6 @@ Privileged user changes must use audited commands instead of Tinker:
 php artisan admin:user:set-role user@example.com editor --actor=admin@example.com --reason="Approved editorial responsibility change."
 php artisan admin:user:set-active user@example.com inactive --actor=operator@example.com --reason="Account suspended after access review."
 ```
-
 
 ## Repository contract and release safety
 
@@ -219,14 +215,11 @@ Release closure additionally requires both dependency lockfiles and the real Pos
 - Future roadmap only: `docs/project/docs/ROADMAP.md`
 - Historical Stage 11/12 delivery records remain frozen in their original manifests.
 
-
 Correction note: verifier TestCase annotation detection now accepts fully-qualified and imported forms and reports the source SHA-256 on failure.
-
 
 ## Executable repository authority
 
 Stage 16.5.2 resolves repository authorities through `RepositoryContractResolver` instead of allowing each verifier/test to maintain its own copy. Use `composer repository-compiler:verify` for closure and `php artisan songchart:doctor --contract=<name>` to inspect an authority and consumers.
-
 
 ## Stage delivery / fast upgrade
 
@@ -242,7 +235,6 @@ Keep the target project's `.env`. Normal upgrades should apply the changeset rat
 Stage 16.5.3 removes nested duplicate verification. The executable topology is `docs/project/engineering/verification-topology.json`; AI workflow authority is `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`.
 
 Model-specific AI files are bootstrap pointers only. Do not add stage-specific workflow copies to AGENTS/CLAUDE/GEMINI.
-
 
 ## Docker-first primary workflow
 
@@ -263,7 +255,6 @@ songchart verify
 
 `compose.dev.yml` owns persistent development services/data. `compose.verify.yml` owns an isolated test/canonical database. Existing `docker-dev-*.bat` and `verify-songchart.bat` commands are retained as compatibility shims. Laragon remains available only for compatibility and must not be used for release claims.
 
-
 ## Verification command surface reduction
 
 Stage 16.5.5 removes legacy Composer aliases and historical release orchestration from active tooling. Use only:
@@ -278,7 +269,6 @@ composer release:package
 
 Machine authority: `docs/project/engineering/verification-command-surface.json`.
 
-
 ## Migration lifecycle and upgrade safety
 
 Stage 16.5.6 freezes historical migrations through `docs/project/stack/migration-lifecycle-contract.json`. Existing schema repairs are forward-only.
@@ -292,7 +282,6 @@ songchart verify
 ```
 
 Fresh installation remains covered by the normal PostgreSQL test lane. Canonical closure additionally reconstructs a supported previous-schema fixture and proves forward migration to the current schema.
-
 
 ## Verification consumer ownership
 
@@ -313,7 +302,6 @@ composer repository-compiler:verify
 
 The impact output includes semantic verification ownership for changed verifier/Architecture paths.
 
-
 ## Authorization model
 
 SongChart uses Laravel Gates over a static machine-owned role/capability matrix:
@@ -329,7 +317,6 @@ Laravel Gate
 ```
 
 `UserRole` no longer defines `can*` methods and `User` no longer repeats capability logic. Privileged mutations authorize through Gates and then record explicit privileged audit events.
-
 
 ## Application data boundary
 
