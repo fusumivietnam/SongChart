@@ -82,7 +82,14 @@ case "$cmd" in
   require_docker; ensure_dev_config
   printf '[SongChart candidate] Refreshing generated source context.\n'
   dev run --rm app php scripts/project-context.php --write-source
+  printf '[SongChart candidate] Refreshing compiled repository authority.\n'
+  dev run --rm app php scripts/compile-repository-contracts.php --refresh-check
   git -C "$ROOT" diff --check
+  if ! git -C "$ROOT" diff --quiet -- docs/project/generated; then
+    printf '%s\n' '[SongChart candidate] Generated repository artifacts changed.' >&2
+    printf '%s\n' '[SongChart candidate] Review and commit docs/project/generated, then run ./songchart candidate again.' >&2
+    exit 1
+  fi
   printf '[SongChart candidate] Running candidate verification.\n'
   stage_verify
   printf '[SongChart candidate] PASSED.\n' ;;
