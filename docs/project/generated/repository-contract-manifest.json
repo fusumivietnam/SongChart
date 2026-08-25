@@ -158,7 +158,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "869b2ac74bab170974c1079b479e4a43d91772365147eefb1c371496d118517b",
+            "fingerprint": "e687db8a8fcaf1749af3fa5421f7f7df6c69678e8ed79dae62454834dd946341",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -196,7 +196,7 @@
         },
         "operational-contracts": {
             "source": "docs/project/domain/operational-contracts.json",
-            "fingerprint": "70cbfe63ff1e7a09893bfe5fb47966f1a6d8ce59c79db470c49844a6e1db41c9",
+            "fingerprint": "92798bbc817d97153eab25ad41333f7258c7c0cec9b4aa9caa38c57b3460741c",
             "consumers": []
         },
         "use-case-contracts": {
@@ -1622,5 +1622,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "56ea14cd60818cf6fd948f266d5912e10b05ab1a1505516b1ce167a783d7a3b7"
+    "graph_fingerprint": "c80a68dd5a89806fb9904a038010c029b3e7b4e4b12c31dd69d14486076ac25f"
 }

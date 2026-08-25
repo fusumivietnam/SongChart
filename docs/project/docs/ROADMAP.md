@@ -1,121 +1,85 @@
-# Product Roadmap
+# Lộ trình sản phẩm
 
-Status: future-looking product roadmap. This file does not declare repository current-stage state. `README.md` owns the current-stage pointer; `docs/project/DEVELOPMENT_HISTORY.md` owns delivered chronology.
+Trạng thái: tài liệu định hướng cho các hạng mục hiện tại và tương lai. Tài liệu này không quyết định stage hiện tại của repository. `README.md` là nguồn chuẩn cho stage hiện tại; `docs/project/DEVELOPMENT_HISTORY.md` lưu lịch sử các stage đã hoàn tất.
 
-## Foundation closure
+## Nguyên tắc đọc roadmap
 
-Foundation work through provider mutation/recovery controls and Stage 17.0 reconciliation is delivered repository history, not future roadmap scope. New foundation verifiers or infrastructure require a concrete product/release risk rather than stage-by-stage expansion.
+- Chỉ giữ các hạng mục đang triển khai hoặc chưa triển khai.
+- Công việc đã hoàn tất phải chuyển sang `docs/project/DEVELOPMENT_HISTORY.md`.
+- Tên kỹ thuật quan trọng được giữ bằng tiếng Anh trong ngoặc ở lần xuất hiện đầu để dễ đối chiếu code và contract.
+- Giao diện người dùng và Admin ưu tiên thuật ngữ tiếng Việt rõ nghĩa; không phơi thuật ngữ nội bộ nếu người dùng không cần biết.
 
-## Provider integration sequence
+## Stage 18.0 — Trải nghiệm media YouTube
 
-Stage 17.1 is delivered: MusicBrainz is the first live provider contract, limited to Artist lookup/search and disabled by default until policy/contact configuration is explicit.
+Mục tiêu: giúp người dùng xem hoặc mở nội dung YouTube đã được SongChart xác minh từ trang Recording, đồng thời vẫn giữ kiểm soát về độ mới, khả năng nhúng và quota.
 
-### 17.2 — Artist import vertical slice
+Phạm vi đang triển khai:
 
-Implementation candidate: Provider request → immutable raw ledger → normalization → validation/quarantine → exact identity resolution → canonical mutation → admin inspection → frontend discovery. Closure evidence is owned by the current-stage records, not this roadmap.
+- phát video YouTube đã duyệt và còn hiệu lực bằng iframe riêng tư (`youtube-nocookie.com`);
+- khi không thể nhúng, hiển thị liên kết mở YouTube bên ngoài kèm lý do dễ hiểu;
+- kiểm tra độ mới của điểm đến (destination freshness) và tự đánh dấu nội dung cần kiểm tra lại;
+- làm mới trạng thái video bằng job nền có giới hạn;
+- theo dõi hạn mức API (quota) và tình trạng sử dụng trong Admin;
+- đưa các chính sách vận hành như thời hạn kiểm tra, bật/tắt nhúng, lịch làm mới và ngưỡng quota vào Admin thay vì hard-code;
+- chỉ giữ secret hạ tầng như API key trong environment/secret store; Admin không trở thành trình sửa `.env`;
+- hoàn thiện trình bày media trên Recording trước, sau đó mới mở rộng sang Artist khi có use case rõ ràng.
 
-### 17.3 — Provider import recovery and operational hardening
+Điều kiện an toàn:
 
-Delivered implementation: explicit terminal/transient provider request semantics, bounded Laravel queue retry, persisted retry context, recovery visibility, and operator controls on the proven Artist slice. Closure evidence is owned by current-stage records.
+- chỉ destination có trạng thái đã duyệt (`approved`) mới được hiển thị công khai;
+- chỉ YouTube destination còn mới, cho phép nhúng (`embeddable`) và có resource ID hợp lệ mới được phát trong SongChart;
+- destination cũ hoặc không cho phép nhúng không được tự động phát;
+- SongChart không lưu hoặc re-host file media của provider.
 
-### 17.3.1 — Canonical Artist admin editing and development-status corrective
+## Nhóm 18.x — Tìm kiếm và khám phá công khai
 
-Delivered corrective: governed canonical Artist editing in Admin plus accurate pipeline health/error classification discovered during live MusicBrainz testing.
+Sau khi media experience ổn định:
 
-### 17.3.2 — Admin provider import workbench and public catalog indexes
+- tìm kiếm production ưu tiên PostgreSQL, có ranking rõ ràng;
+- hoàn thiện trang canonical cho Nghệ sĩ, Nhóm nhạc, Bản phát hành, Bản thu và Tác phẩm;
+- trình chọn nền tảng nghe/xem hiển thị rõ khả dụng và thời điểm kiểm tra gần nhất;
+- metadata có cấu trúc, canonical URL và SEO được hoàn thiện trước khi public indexing rộng rãi.
 
-Delivered corrective/product-surface bridge: MusicBrainz Artist search/import is available from Admin → Providers, while `/artists`, `/releases`, and `/collections` resolve to canonical public indexes with public-only Collection visibility and honest Release empty state.
+## Nhóm 19.x — Giá trị cho người dùng cá nhân
 
-### 17.3.3 — Provider rate policy and global request gate
+- theo dõi (follow) Nghệ sĩ/Nhóm nhạc;
+- lưu nội dung (save) và bộ sưu tập riêng tư;
+- khám phá theo quy tắc dựa trên hành động rõ ràng của người dùng;
+- chỉ kết nối tài khoản provider khi API chính thức và chính sách của provider cho phép.
 
-Delivered implementation: provider-neutral operation-aware rate policy, Redis-backed global request gate, MusicBrainz minimum-interval/cooldown enforcement, and Admin operational visibility. MusicBrainz is the first proof; future providers declare their own policy semantics.
+## Nhóm 20.x — Sẵn sàng vận hành production
 
-### 17.4 — MusicBrainz Release Group + Release vertical slice
+- chuẩn triển khai, queue và scheduler;
+- quan sát hệ thống (observability) và chỉ số vận hành provider;
+- hoàn thiện security headers, backup và quy trình khôi phục;
+- sitemap, structured data và kiểm chứng SEO trên production.
 
-Delivered implementation: expands the proven Artist pipeline to release groups/releases while preserving distinct MusicBrainz semantics. Preserve MusicBrainz release-group vs release semantics, edition/country/date/label/barcode/media data, Cover Art Archive references, admin import inspection, `/releases`, and `/release/{slug}`. Keep requests paginated/bounded and governed by the shared provider gate.
+## Thuật ngữ dùng trong UI/Admin
 
-### 17.5 — MusicBrainz Recording + ISRC vertical slice
+| Thuật ngữ kỹ thuật | Cách hiển thị ưu tiên | Ghi chú |
+|---|---|---|
+| Provider | Nguồn dữ liệu / Nền tảng | Dùng “Nền tảng” khi nói YouTube; “Nguồn dữ liệu” khi nói MusicBrainz hoặc provenance. |
+| Provider destination | Điểm đến trên nền tảng | Ví dụ video YouTube đã liên kết với một Recording. |
+| Canonical | Dữ liệu chuẩn | Có thể giữ “canonical” trong màn kỹ thuật dành cho admin nâng cao. |
+| Canonical admission | Duyệt vào dữ liệu chuẩn | Tránh “admission” trên UI người dùng. |
+| Candidate evidence | Bằng chứng chờ duyệt | Dùng trong Admin review flow. |
+| Metadata assertion | Bằng chứng metadata | Tên model/contract vẫn giữ nguyên trong code. |
+| Freshness | Độ mới / Thời hạn kiểm tra | UI nên nói “Đã kiểm tra ngày…” hoặc “Cần kiểm tra lại”. |
+| Embeddable | Có thể phát trực tiếp | Dễ hiểu hơn “có thể nhúng”. |
+| Outbound fallback | Mở trên nền tảng | Không dùng “fallback” trên UI. |
+| Review state | Trạng thái duyệt | Ví dụ: Chờ duyệt / Đã duyệt / Đã từ chối. |
+| Quota | Hạn mức API | Có thể ghi “Hạn mức YouTube API” trong Admin. |
+| Enrichment | Bổ sung dữ liệu | Ví dụ “Kế hoạch bổ sung dữ liệu”. |
+| Enrichment plan | Kế hoạch bổ sung dữ liệu | Không cần dùng từ “enrichment” trên frontend. |
+| Identity bridge | Liên kết định danh | Mô tả việc nối MusicBrainz/ISRC/provider identity vào một thực thể SongChart. |
+| Entity passport | Hồ sơ chất lượng dữ liệu | Dùng cho màn kỹ thuật; frontend phổ thông có thể rút gọn thành “Chất lượng dữ liệu”. |
+| Provenance | Nguồn gốc dữ liệu | UI có thể dùng “Nguồn dữ liệu”. |
+| Operational visibility | Theo dõi vận hành | Dùng trong Admin. |
 
-Delivered implementation: add recordings, artist credits, durations, ISRCs and release appearances. This stage creates the canonical recording identity needed before attaching playable media destinations. Establish focused PostgreSQL query/queue evidence while importing representative data instead of pausing product work for a separate broad performance-only stage.
+## Quy tắc roadmap
 
-### 17.6.1 — Admin Catalog Data Boundary Corrective
-
-Corrective only: preserve Stage 17.6 behavior while restoring the Stage 17.0 controller/read-model/write-service boundary for Admin canonical Artist edits.
-
-### 17.6 — Essential MusicBrainz relationships
-
-Current implementation candidate: complete the minimum pre-YouTube graph with Artist↔Artist group membership, Recording→Work, Artist Credit credited-name/join-phrase evidence, aliases, selected URL relationships, direct Work import and `/works`. Defer long-tail entities/events/places/series/instruments until product demand exists.
-
-### 17.7 — YouTube provider foundation + video destination
-
-Delivered candidate: separate YouTube destination-discovery boundary with server-side API key, operation-aware quota guard, `search.list` candidate discovery, `videos.list` verification, deterministic metadata scoring, mandatory admin approval, provider-neutral Recording destinations, and verification Compose project isolation. IFrame playback is deferred beyond the Data Fusion and public taxonomy foundation; SongChart does not store/rehost media.
-
-### 17.8 — Canonical Data Fusion Foundation + Public URL Canonicalization
-
-Delivered candidate: reuse SongChart provenance assertions/conflicts as the provider-neutral evidence fabric, establish deterministic field-level authority/confidence/freshness resolution, expose Entity Passport data-quality state, and standardize public detail URLs on plural type-specific routes without redirects while the catalog is still local/unindexed.
-
-### 17.8.1 — Public Taxonomy & Detail Runtime Corrective
-
-Corrective closure: subtype-aware Artist public URLs (`/artists/*` for person, `/groups/*` for group/orchestra/choir), canonical-DB-first detail resolution with local/testing fixture fallback, and URL-safe entity rows. No schema migration and no legacy redirects.
-
-### 17.9 — Identity Bridge & Enrichment Planner
-
-Delivered implementation: provider-neutral identity bridge from external identifiers and reviewed destinations plus read-only enrichment recipes/plans by canonical entity type, provider availability, priority and cost class. Stage 17.9 corrective closure continues through the current 17.9.4 candidate and is not considered canonically accepted until the current candidate passes the canonical Docker lane.
-
-### 17.10 — Enrichment Orchestrator
-
-Current implementation stage. Deterministic provider-neutral scheduling now flows through a persisted `enrichment_attempts` ledger, database-enforced idempotency, the existing provider request/rate gate, and a provider-execution outcome boundary. Unsupported execution fails safe to review, retryable execution re-enters the rate gate, and successful evidence is persisted without canonical mutation. Subsequent slices add concrete governed provider executors plus quota/freshness-aware dispatch before any canonical admission.
-
-### 17.10.3 — Linux-first CLI + Stable Docker Identity
-
-Current corrective candidate: make Linux/WSL the primary host workflow, add a Bash `./songchart` entrypoint, and pin stable development/verification Compose project identities. Windows wrappers remain compatibility-only. No product/domain semantics change.
-
-### 18.0 — YouTube media experience
-
-Future: verified YouTube iframe playback, outbound fallback, destination freshness jobs, quota observability and recording/artist media presentation.
-
-## Frontend discovery sequence
-
-### 18.x
-
-- PostgreSQL-first production search and ranking;
-- canonical artist/release/recording/work pages;
-- provider destination chooser with explicit availability/freshness;
-- canonical URLs, structured metadata, and SEO closure.
-
-## User value sequence
-
-### 19.x
-
-- follows/saves/private collections;
-- rule-based discovery from explicit user actions;
-- provider account connections only where official APIs and policy permit.
-
-## Production sequence
-
-### 20.x
-
-- deployment/queue/scheduler baseline;
-- observability and provider operational metrics;
-- security/header/backup closure;
-- SEO/sitemap/structured-data production validation.
-
-## Roadmap rules
-
-- Delivered work belongs in `docs/project/DEVELOPMENT_HISTORY.md`, not here.
-- Every implementation stage starts from an accepted use case and executable contract.
-- New provider fields/states must be declared in contract authorities before migrations or application code consume them.
-- A feature is not release-closed until required PostgreSQL/quality/release evidence exists; SQLite compatibility is non-authoritative.
-
-- PostgreSQL 18 Docker persistence uses the 18+ parent mount `/var/lib/postgresql`; the legacy `/var/lib/postgresql/data` mount is forbidden for the dev stack.
-
-
-
-### Stage 17.10 execution slices
-
-- v1: deterministic scheduling.
-- v2: persisted attempts + database idempotency.
-- v3: queue dispatch + existing provider request/rate gate.
-- v4: provider execution boundary + persisted success/retry/review/failure outcomes; retryable work re-enters the rate gate.
-- next: concrete governed provider executors, then quota/freshness scheduling, then governed canonical admission.
-- cleanup: remove compatibility wrappers only after executable authority consumers are migrated; obsolete `docker-dev-ready.bat` and `docker-dev-cycle.bat` are removed now.
+- Mỗi stage triển khai phải bắt đầu từ use case đã được chấp nhận và contract thực thi được.
+- Field/state mới của provider phải được khai báo trong contract authority trước khi migration hoặc application code sử dụng.
+- Một feature chưa được coi là đóng release nếu chưa có đầy đủ PostgreSQL, quality và canonical verification theo authority hiện hành.
+- SQLite không phải môi trường xác minh có thẩm quyền.
+- PostgreSQL 18 Docker persistence dùng parent mount `/var/lib/postgresql`; mount cũ `/var/lib/postgresql/data` không được dùng cho dev stack.

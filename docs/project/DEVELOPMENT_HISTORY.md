@@ -121,6 +121,7 @@ Keep stage and hotfix chronology separate from the current-stage pointer. `READM
 
 | 17.9.4 | Candidate Stage Consistency Closure | Makes candidate verification fail closed when `candidate-verification.json` names a different stage than the README current-stage authority, preventing canonical evidence from being attached to stale stage metadata. |
 | 17.10 | Enrichment Orchestrator | In-development candidate now includes deterministic scheduling, database-enforced idempotency, queued request/rate gating, durable execution outcomes, governed MusicBrainz execution through the existing adapter/normalizer, freshness short-circuiting, and daily execution-budget admission; canonical mutation remains out of scope until later slices. |
+| 17.12 | Provider Admission Integration | Connects admissible provider field evidence to idempotent metadata assertions and the governed canonical-admission review queue without automatic canonical mutation; also hardens Linux-first candidate/dev-ready workflows and development runtime ownership. Evidence: `docs/foundation/STAGE_17_12_TASK_CONTRACT.md`, `docs/foundation/STAGE_17_12_VALIDATION_REPORT.md`. |
 
 ## History rules
 
