@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "34a113854117f815cb5e646def76e09dd71a3c43374092ed4f78fdcdd7e6a790",
+    "source_fingerprint": "8de1b53f5b7152087269a157ab55092929d5da6b01575b977422bcb4b143b66e",
     "candidate": {
         "stage": "17.10.3",
         "candidate": "v1",
@@ -145,6 +145,23 @@
                     "expiration"
                 ],
                 "owner": "framework"
+            },
+            "canonical_admission_decisions": {
+                "migration": "2026_08_26_000100_create_canonical_admission_decisions_table.php",
+                "columns": [
+                    "id",
+                    "metadata_assertion_id",
+                    "entity_type",
+                    "entity_id",
+                    "field_name",
+                    "status",
+                    "canonical_value",
+                    "decision_reason",
+                    "reviewer_id",
+                    "reviewed_at",
+                    "applied_at"
+                ],
+                "owner": "operational-contracts"
             },
             "collection_items": {
                 "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
@@ -987,10 +1004,11 @@
         "database/migrations/2026_08_18_000100_create_provider_destinations.php": "9cb563ac61f14740c23e3e710c08f7a822f51d688d7b6977add202fc4582749f",
         "database/migrations/2026_08_24_000100_create_enrichment_attempts_table.php": "ddba94e6a180a817c9b2b8ffadb9f0a4ce5f2ac603326aaa21850d1b2244019c",
         "database/migrations/2026_08_24_000200_add_execution_outcomes_to_enrichment_attempts.php": "b129a152f69ff877c73052662efba1179d070bc14a1ca18af425374f3e4218bd",
+        "database/migrations/2026_08_26_000100_create_canonical_admission_decisions_table.php": "faa967c798f821519f854f8545cc35c554ed7810eb6bb5c49a60cf342ab93c5b",
         "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
         "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
         "database/seeders/ProviderRegistrySeeder.php": "f7517aa8ab1ff83ae14957839c536d088d9d9f3531ddd988d5dfa7095d098e66",
-        "docs/project/domain/schema-ownership.json": "b4f9097b516bd49c4c68cf0bee443703b529b6f9b991e9fc323fbf847d611184",
+        "docs/project/domain/schema-ownership.json": "b46485152411d896b89ff354e1b7077ee887d985a6baf4bf69828dc2dbec68b8",
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "e3777a46bfdd521b8f3f425cd9696a1f467fe7b879c84d082a8a9f2d75f080b8",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "e816f2ec8ed7ea713d35f1b8e9e4391ff587647633b783b691ccaf13814f09a0",
         "docs/project/engineering/ai-development-contract.json": "f4e1ebbcd9e27ba73707c73ac570e2c974873fc96a05f216a47d33a930084cd2",

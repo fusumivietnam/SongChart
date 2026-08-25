@@ -206,7 +206,7 @@
         },
         "schema-ownership": {
             "source": "docs/project/domain/schema-ownership.json",
-            "fingerprint": "a6c09c1f557c3327d87f33699d858bc5411bc6f2a5554d077ac8798e0f838a14",
+            "fingerprint": "15b788eb8cb679c4a700693f24c08608a0597a966508c6d8b0316c828c62d65e",
             "consumers": [
                 "scripts/project-context.php",
                 "scripts/verify-runtime-project-context.php"
@@ -1622,5 +1622,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "a3013db0a7b329e1cc83d8dd31576f656e5a87924aec30144f3d0f6b32bfd631"
+    "graph_fingerprint": "56ea14cd60818cf6fd948f266d5912e10b05ab1a1505516b1ce167a783d7a3b7"
 }
