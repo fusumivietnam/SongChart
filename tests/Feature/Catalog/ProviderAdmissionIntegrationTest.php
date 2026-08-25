@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Admin\Queries\CanonicalAdmissionReviewConsole;
 use App\Application\Catalog\Admission\MaterializeProviderAdmissionEvidence;
 use App\Contracts\Catalog\EnrichmentAttemptStore;
 use App\Contracts\Catalog\EnrichmentEvidenceAdmissionPolicy;
@@ -16,6 +17,7 @@ use App\Models\Catalog\CanonicalAdmissionDecision;
 use App\Models\Catalog\EnrichmentAttempt;
 use App\Models\Catalog\MetadataAssertion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 
 uses(RefreshDatabase::class);
 
@@ -105,4 +107,15 @@ it('connects an admissible enrichment field result to the governed canonical adm
         ->and($artist->country_code)->toBeNull()
         ->and(MetadataAssertion::query()->count())->toBe(1)
         ->and(CanonicalAdmissionDecision::query()->count())->toBe(1);
+});
+
+it('returns an actionable unavailable state when the canonical admission migration is still pending', function (): void {
+    Schema::drop('canonical_admission_decisions');
+
+    $state = app(CanonicalAdmissionReviewConsole::class)->index('pending');
+
+    expect($state['available'])->toBeFalse()
+        ->and($state['decisions'])->toBeNull()
+        ->and($state['unstaged'])->toHaveCount(0)
+        ->and($state['status'])->toBe('pending');
 });
