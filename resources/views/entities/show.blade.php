@@ -9,6 +9,7 @@
 <div class="grid h-32 w-32 shrink-0 place-items-center rounded-[var(--sc-radius-card)] bg-[var(--sc-primary-soft)] text-4xl font-bold text-[var(--sc-primary)]" aria-hidden="true">{{ mb_substr($entity['title'],0,1) }}</div>
 <div><p class="text-sm font-semibold text-[var(--sc-primary)]">{{ $entity['eyebrow'] }}</p><div class="mt-2 flex flex-wrap gap-2"><x-ui.badge :variant="$entity['type']">{{ $entity['label'] }}</x-ui.badge>@if($entity['verified'])<x-ui.badge variant="success">Canonical đã xác minh</x-ui.badge>@else<x-ui.badge variant="warning">Một số thông tin chưa được xác minh</x-ui.badge>@endif</div><h1 class="mt-3 text-4xl font-bold tracking-tight">{{ $entity['title'] }}</h1><p class="mt-2 text-lg text-[var(--sc-text-secondary)]">{{ $entity['context'] }}</p><p class="mt-3 text-sm text-[var(--sc-text-muted)]">{{ $entity['meta'] }}</p></div>
 </header>
+@if($entity['type'] === 'recording')<x-provider.media-player :media="$media ?? null" />@endif
 <section aria-labelledby="entity-overview-title"><h2 id="entity-overview-title" class="sc-section-title">Tổng quan</h2><p class="mt-3 max-w-3xl leading-7 text-[var(--sc-text-secondary)]">{{ $entity['description'] }}</p><div class="mt-5"><x-entity.facts :facts="$entity['facts']" /></div></section>
 <section aria-labelledby="entity-passport-title" data-entity-passport>
 <h2 id="entity-passport-title" class="sc-section-title">Data passport</h2>
