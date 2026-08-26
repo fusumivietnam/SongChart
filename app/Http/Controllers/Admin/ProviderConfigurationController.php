@@ -37,7 +37,7 @@ final class ProviderConfigurationController extends Controller
             ]);
         }
 
-        $configuration->update(
+        $configuration->apply(
             provider: $provider,
             settings: $settings,
             secrets: $secrets,
