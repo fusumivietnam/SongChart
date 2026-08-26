@@ -5,8 +5,7 @@
 @php
     $canonicalUrl = url()->current();
     $schemaType = match ($entity['type']) {
-        'artist' => 'Person',
-        'group' => 'MusicGroup',
+        'artist' => \App\Support\Catalog\PublicEntityUrl::isGroupArtistType((string) ($entity['artist_type'] ?? '')) ? 'MusicGroup' : 'Person',
         'release', 'release_group' => 'MusicAlbum',
         'recording' => 'MusicRecording',
         'work' => 'MusicComposition',
