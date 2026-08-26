@@ -6,7 +6,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 - `main` contains the merged Stage `18.0 — YouTube Media Experience` baseline used to start the current Stage 18.1 branch.
 - Stage 18.1 is **not accepted yet**; canonical closure for the exact target tree is still pending.
-- Development authority remains Docker-first through the repository `songchart` CLI. Codespaces is a remote adapter over the same Docker contract; Windows/macOS/WSL use their supported host entrypoints.
+- Development authority is Linux/WSL2 + Docker through the repository `./songchart` CLI. GitHub Codespaces is the preferred remote adapter; native Windows Batch/PowerShell and Laragon execution paths are retired.
 
 ## Current stage
 
@@ -22,37 +22,39 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - read-only Admin provider import preview and deterministic preview-to-plan projection;
 - fingerprint-checked plan execution reusing the existing provider import orchestrator;
 - provider configuration writes moved behind application commands so controllers remain transport-only;
-- Node 24 development/CI baseline and candidate-preparation workflow hardening;
+- Node 24 development/CI/verification baseline;
 - GitHub Codespaces Docker adapter with private forwarded live-demo URL and no auto-start on Codespace open;
 - shared demo adapter with remote PostgreSQL and on-demand app/queue/Redis compute;
 - repository-local AI skills normalized for Codex-compatible `SKILL.md` frontmatter;
-- cross-platform `songchart ai status` bootstrap for Git, candidate, context, runtime, demo and AI-tool visibility;
+- Linux `./songchart ai status` bootstrap for Git, candidate, context, runtime, demo and AI-tool visibility;
 - `./songchart ai doctor` copy-friendly diagnostic bundle for ChatGPT/Codex handoff without exposing environment files or known secret values;
-- isolated Linux/Codespaces focused-test lane through `./songchart dev test`, keeping Feature tests on the PostgreSQL verification runtime rather than the development container.
+- isolated focused-test lane through `./songchart dev test`, keeping Feature tests on the PostgreSQL verification runtime rather than the development container;
+- GitHub-only development handoff authority; native Windows/Laragon wrappers and legacy ZIP/patch installer workflow retired.
 
 ## Current blockers / risks
 
 - Candidate evidence is not yet closure-ready; `candidate-verification.json` still records no completed closure run for Stage 18.1.
+- Repository context/generated authority is expected to require refresh after the Linux/Git workflow authority changes; refresh only through the governed candidate preparation flow.
 - Shared demo is implemented but remains unconfigured until remote PostgreSQL secrets are provisioned; this does not block Stage 18.1 closure.
 - Alternative AI tooling such as Gemini/Antigravity is deferred until after launch-readiness work; ChatGPT Plus + GitHub + Codespaces/Codex remains the active development workflow.
-- Focused Stage 18.1 Feature suites currently pass assertions but still emit warnings; warnings must be understood and removed before candidate closure rather than suppressed.
 
 ## Latest focused evidence
 
 - Codespaces development stack reached healthy `app`, PostgreSQL, Redis and queue services with the private port-8000 preview URL.
-- Focused Feature tests now run against isolated PostgreSQL 18 verification state; test database safety reports development/test isolation PASS.
-- Provider Admin configuration projection was corrected to retrieve `configuration` before the Blade setup surface reads it.
-- Verification image now trusts only the mounted `/workspace` repository path for Git operations, removing the container-only dubious-ownership blocker.
-- `ProviderImportPreviewTest` currently completes with 37 assertions and warnings; `ProviderConfigurationTest` completes with 11 assertions and warnings after the projection fix. Exact warning causes still require inspection.
-- Full Stage 18.1 candidate/canonical closure has not yet been recorded.
+- Focused Feature tests run against isolated PostgreSQL 18 verification state; test database safety reports development/test isolation PASS.
+- Provider Admin configuration projection and model/static typing were corrected; PHPStan regressions were reduced to zero before the latest stage closure attempt.
+- Verification runtime now supplies deterministic testing environment input and captures focused-test warning/failure evidence for `ai doctor`.
+- Stage closure exposed and corrected two stale test contracts: `ReproducibleVerificationEnvironmentTest` now asserts Node 24, and `ProviderImportOrchestrationTest` supplies `ProviderRuntimeConfiguration` to direct job execution.
+- Linux/Docker/Git is now the sole active development/verification route in machine contracts; native Windows/Laragon wrappers and legacy patch installers have been removed.
+- Full Stage 18.1 candidate/canonical closure has not yet been recorded for this corrected exact tree.
 
 ## Next required action
 
-1. Pull the latest Stage 18.1 branch and run `./songchart ai doctor` to capture the current copy-friendly diagnostic bundle.
-2. Use `./songchart dev test tests/Feature/Admin/ProviderImportPreviewTest.php` and `./songchart dev test tests/Feature/Admin/ProviderConfigurationTest.php`; inspect and eliminate warning root causes without middleware/test suppression.
-3. Run the remaining Stage 18.1 focused Unit tests and impact-owned static/governance gates.
-4. Run `./songchart ai status`; resolve any checkpoint/context drift and ensure the working tree is clean.
-5. Run `./songchart candidate --prepare` only if generated authority is stale, then `./songchart candidate` on the exact committed tree.
+1. Synchronize the Codespace to the latest remote Stage 18.1 branch and confirm a clean working tree.
+2. Run the two regressions that failed the previous stage attempt: `tests/Architecture/ReproducibleVerificationEnvironmentTest.php` and `tests/Feature/Providers/ProviderImportOrchestrationTest.php`.
+3. Run the impact-owned AI/Docker/repository/static gates, including PHPStan, and resolve any remaining active references to retired Windows/Laragon execution surfaces.
+4. Run `./songchart candidate --prepare` to refresh/commit generated authority for the changed registered contracts, then confirm `./songchart ai status` reports a clean tree, `Checkpoint: SYNCED`, and `Context: FRESH`.
+5. Run `./songchart candidate` on the exact committed tree.
 6. Run `./songchart verify` only after candidate PASS; merge Stage 18.1 only after canonical closure is recorded for that exact tree.
 
 ## Documentation checkpoint discipline
