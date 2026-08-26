@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Providers\Enums\ProviderStatus;
+use App\Domain\Providers\Ingestion\DTO\ProviderImportPlan;
 use App\Enums\UserRole;
 use App\Jobs\Providers\Ingestion\FetchProviderImportPage;
 use App\Models\Provider;
@@ -85,6 +86,7 @@ it('creates a governed import run only after plan confirmation', function (): vo
         ->assertOk();
 
     $plan = $previewResponse->viewData('plan');
+    $this->assertInstanceOf(ProviderImportPlan::class, $plan);
 
     $this->withSession(['auth.password_confirmed_at' => time()])
         ->post(route('admin.imports.preview.execute'), array_merge($input, [
