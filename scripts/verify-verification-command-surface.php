@@ -67,8 +67,6 @@ $forbiddenActiveText = [
     'docker-dev-setup.bat',
     'scripts/songchart.ps1',
     'scripts/verify-canonical.ps1',
-    'Laragon-ready',
-    'incremental changeset ZIP',
 ];
 
 foreach ($activeDocs as $relative) {

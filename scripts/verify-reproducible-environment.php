@@ -132,8 +132,13 @@ if (substr_count($canonical, 'compile-repository-contracts.php --refresh-check')
 }
 
 $songchart = (string) file_get_contents($root.'/songchart');
-if (! str_contains($songchart, 'scripts/canonical-verify.sh') || ! str_contains($songchart, 'verify)')) {
-    $errors[] = 'Linux songchart CLI must own canonical Docker verification.';
+if (! str_contains($songchart, 'VERIFY_COMPOSE="$ROOT/compose.verify.yml"')
+    || ! str_contains($songchart, 'verify_compose run --rm verify')) {
+    $errors[] = 'Linux songchart CLI must route canonical verification through compose.verify.yml.';
+}
+
+if (! str_contains($compose, 'command: ["bash", "scripts/canonical-verify.sh"]')) {
+    $errors[] = 'compose.verify.yml must own the canonical verification shell.';
 }
 
 $workflow = (string) file_get_contents($root.'/.github/workflows/tests.yml');

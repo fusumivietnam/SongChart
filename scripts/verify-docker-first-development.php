@@ -28,7 +28,7 @@ foreach (['dev setup', 'dev ready', 'dev up', 'dev down', 'dev status', 'dev log
         $errors[] = "Docker CLI contract missing [{$command}].";
     }
 }
-foreach (['compose.dev.yml', 'compose.verify.yml', 'scripts/docker-stage-verify.sh', 'scripts/canonical-verify.sh'] as $signal) {
+foreach (['compose.dev.yml', 'compose.verify.yml', 'scripts/docker-stage-verify.sh'] as $signal) {
     if (! str_contains($cli, $signal)) {
         $errors[] = "Unified Linux CLI does not own [{$signal}].";
     }
@@ -36,6 +36,11 @@ foreach (['compose.dev.yml', 'compose.verify.yml', 'scripts/docker-stage-verify.
 
 $stageShell = (string) file_get_contents($root.'/scripts/docker-stage-verify.sh');
 $canonicalShell = (string) file_get_contents($root.'/scripts/canonical-verify.sh');
+
+$verifyCompose = (string) file_get_contents($root.'/compose.verify.yml');
+if (! str_contains($verifyCompose, 'command: ["bash", "scripts/canonical-verify.sh"]')) {
+    $errors[] = 'compose.verify.yml must own scripts/canonical-verify.sh.';
+}
 if (substr_count($canonicalShell, 'compile-repository-contracts.php --refresh-check') < 2) {
     $errors[] = 'Canonical Docker shell must refresh derived authority manifest before and after normalization.';
 }
