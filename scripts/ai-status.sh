@@ -10,6 +10,7 @@ value_from_json(){
 
 branch="$(git branch --show-current 2>/dev/null || printf 'unknown')"
 head="$(git rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
+head_full="$(git rev-parse HEAD 2>/dev/null || printf 'unknown')"
 modified="$(git status --porcelain --untracked-files=all 2>/dev/null | wc -l | tr -d ' ')"
 upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null || true)"
 ahead=0
@@ -28,6 +29,7 @@ elif grep -qi microsoft /proc/version 2>/dev/null; then
 fi
 
 candidate_file="$ROOT/candidate-verification.json"
+runtime_candidate_file="$ROOT/storage/framework/candidate-verification-runtime.json"
 stage="unknown"
 candidate="unknown"
 closure_ready="unknown"
@@ -35,15 +37,29 @@ verified_at="never"
 not_run=0
 passed=0
 failed=0
+verification_source="definition"
 if [[ -f "$candidate_file" ]]; then
   stage="$(value_from_json "$candidate_file" stage)"
   candidate="$(value_from_json "$candidate_file" candidate)"
-  closure_ready="$(grep -m1 -E '"closure_ready"[[:space:]]*:' "$candidate_file" | sed -E 's/.*:[[:space:]]*(true|false).*/\1/' || true)"
-  verified_raw="$(grep -m1 -E '"verified_at"[[:space:]]*:' "$candidate_file" | sed -E 's/.*:[[:space:]]*(.*),?$/\1/' | tr -d '" ,' || true)"
+  verification_file="$candidate_file"
+
+  if [[ -f "$runtime_candidate_file" ]]; then
+    runtime_stage="$(value_from_json "$runtime_candidate_file" stage)"
+    runtime_candidate="$(value_from_json "$runtime_candidate_file" candidate)"
+    runtime_commit="$(value_from_json "$runtime_candidate_file" git_commit)"
+    runtime_dirty="$(grep -m1 -E '"git_dirty"[[:space:]]*:' "$runtime_candidate_file" | sed -E 's/.*:[[:space:]]*(.*),?$/\1/' | tr -d '" ,' || true)"
+    if [[ "$runtime_stage" == "$stage" && "$runtime_candidate" == "$candidate" && "$runtime_commit" == "$head_full" && "$runtime_dirty" == "null" ]]; then
+      verification_file="$runtime_candidate_file"
+      verification_source="runtime-exact-head"
+    fi
+  fi
+
+  closure_ready="$(grep -m1 -E '"closure_ready"[[:space:]]*:' "$verification_file" | sed -E 's/.*:[[:space:]]*(true|false).*/\1/' || true)"
+  verified_raw="$(grep -m1 -E '"verified_at"[[:space:]]*:' "$verification_file" | sed -E 's/.*:[[:space:]]*(.*),?$/\1/' | tr -d '" ,' || true)"
   [[ -n "$verified_raw" && "$verified_raw" != "null" ]] && verified_at="$verified_raw"
-  not_run="$(grep -c ': "not_run"' "$candidate_file" || true)"
-  passed="$(grep -c ': "passed"' "$candidate_file" || true)"
-  failed="$(grep -c ': "failed"' "$candidate_file" || true)"
+  not_run="$(grep -c ': "not_run"' "$verification_file" || true)"
+  passed="$(grep -c ': "passed"' "$verification_file" || true)"
+  failed="$(grep -c ': "failed"' "$verification_file" || true)"
 fi
 
 checkpoint_state="MISSING"
@@ -154,8 +170,10 @@ elif [[ "$checkpoint_state" != "SYNCED" ]]; then
   next_action="Reconcile docs/project/DEVELOPMENT_STATE.md with the current candidate stage."
 elif [[ "$context_state" != "FRESH" ]]; then
   next_action="Refresh repository context: ./songchart context --refresh-source, then review/commit generated authority."
+elif [[ "$closure_ready" == "true" && "$verification_source" == "runtime-exact-head" ]]; then
+  next_action="Exact HEAD canonical evidence is closure-ready; proceed through the governed closure workflow."
 elif [[ "$closure_ready" == "true" ]]; then
-  next_action="Candidate evidence is closure-ready; proceed only through the governed closure workflow."
+  next_action="Tracked candidate definition is closure-ready but exact-HEAD runtime evidence is unavailable; run canonical verification before closure."
 fi
 
 printf 'SongChart AI Session Status\n\n'
@@ -167,7 +185,7 @@ printf '%-14s %s — %s\n' 'Checkpoint:' "$checkpoint_state" "$checkpoint_detail
 printf '%-14s %s — %s\n' 'Context:' "$context_state" "$context_detail"
 printf '%-14s %s — %s\n' 'Dev:' "$dev_state" "$dev_url"
 printf '%-14s %s — %s\n' 'Demo:' "$demo_state" "$demo_url"
-printf '%-14s closure_ready=%s verified_at=%s gates(passed=%s failed=%s not_run=%s)\n' 'Verification:' "$closure_ready" "$verified_at" "$passed" "$failed" "$not_run"
+printf '%-14s closure_ready=%s verified_at=%s gates(passed=%s failed=%s not_run=%s) source=%s\n' 'Verification:' "$closure_ready" "$verified_at" "$passed" "$failed" "$not_run" "$verification_source"
 printf '%-14s %s\n' 'Codex:' "$codex_version"
 printf '%-14s %s\n' 'Gemini:' "$gemini_version"
 printf '%-14s %s\n' 'Gemini auth:' "$gemini_auth"
