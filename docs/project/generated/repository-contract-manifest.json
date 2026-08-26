@@ -25,7 +25,7 @@
         },
         "runtime-environment": {
             "source": "docs/project/stack/runtime-environments.json",
-            "fingerprint": "231390d543327f9ef9943ac6a497b5c2b9ee83b158d3ab5e8cb86913e2bc4eea",
+            "fingerprint": "10eb132003501ede5ca4ba7dfe89cb428b5a37806f8dbd5249aee0b4c656179f",
             "consumers": [
                 "compose.verify.yml",
                 "docker/verify/Dockerfile",
@@ -73,7 +73,7 @@
         },
         "repository-compiler": {
             "source": "docs/project/engineering/repository-contract-compiler.json",
-            "fingerprint": "e5403a0dae7efe75d7a06faf6e8e84c0c32e11cc348e99db790cb413b3ffb57b",
+            "fingerprint": "bcac7620a27b293a789e96726ba73e79ec87a75c75c114b71ca9b85c82547feb",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/compile-repository-contracts.php",
@@ -113,7 +113,7 @@
         },
         "ai-development-protocol": {
             "source": "docs/project/engineering/ai-development-contract.json",
-            "fingerprint": "f407b4a07c8d2f63f4afe9feba00dd3ffe00308db93b3182dded137ce3ddddaf",
+            "fingerprint": "d5435d4b2fdc34421cdd7f6f5435813566896caf88a0f3c13a3baffb98b3f991",
             "consumers": [
                 "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
                 "AGENTS.md",
@@ -131,20 +131,12 @@
         },
         "docker-development": {
             "source": "docs/project/stack/docker-development-contract.json",
-            "fingerprint": "42ea610241300c4cdc5c0062651747480cc2790b94f104e6898fe0f9029df191",
+            "fingerprint": "71409b291514de6d311060f4be758b1e2d7e12ee4b0e4c78a0a15069cb3ce765",
             "consumers": [
+                "songchart",
                 "docs/project/stack/runtime-environments.json",
                 "compose.dev.yml",
                 "compose.verify.yml",
-                "scripts/songchart.ps1",
-                "songchart.bat",
-                "scripts/setup-docker-dev.ps1",
-                "scripts/docker-dev-up.ps1",
-                "scripts/docker-dev-down.ps1",
-                "docker-dev-setup.bat",
-                "docker-dev-up.bat",
-                "docker-dev-down.bat",
-                "verify-songchart.bat",
                 "scripts/docker-stage-verify.sh",
                 "scripts/verify-docker-first-development.php",
                 "scripts/verify-docker-local-development.php",
@@ -158,7 +150,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "e687db8a8fcaf1749af3fa5421f7f7df6c69678e8ed79dae62454834dd946341",
+            "fingerprint": "1712e55c7a1a85e82734ddb5fa0375ff3e97ed3773289164f567d37fd7d3652c",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -170,7 +162,7 @@
                 "tests/Architecture/VerificationWorkflowTopologyTest.php",
                 "tests/Architecture/ContractCoverageReleaseBaselineTest.php",
                 "tests/Architecture/VerificationCommandSurfaceTest.php",
-                "scripts/songchart.ps1"
+                "songchart"
             ]
         },
         "migration-lifecycle": {
@@ -1622,5 +1614,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "f650e892e4572e035667126a44a4d929fb3807f42f1b99bb4e6f5cd0f00fa5d9"
+    "graph_fingerprint": "020df09377119c6a32b0cc904ae4e46f97c6f9c3ee85e70a7d2b8be0e985130a"
 }
