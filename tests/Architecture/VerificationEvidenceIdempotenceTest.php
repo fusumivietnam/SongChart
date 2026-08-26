@@ -7,14 +7,15 @@ it('keeps canonical verification evidence outside the tracked candidate definiti
     $verifier = file_get_contents(base_path('scripts/verify-candidate-contract.php'));
 
     expect($recorder)
-        ->toContain("storage/framework/candidate-verification-runtime.json")
+        ->toContain('storage/framework/candidate-verification-runtime.json')
         ->toContain('status --porcelain --untracked-files=no')
         ->toContain('refusing to record closure evidence')
-        ->not->toContain("file_put_contents(\n    $definitionPath");
+        ->toContain('$runtimePath,')
+        ->not->toContain('$definitionPath,');
 
     expect($verifier)
-        ->toContain("storage/framework/candidate-verification-runtime.json")
+        ->toContain('storage/framework/candidate-verification-runtime.json')
         ->toContain('rev-parse HEAD')
-        ->toContain("$runtimeCommit === $head")
-        ->toContain("$runtimeDirty === null");
+        ->toContain('$runtimeCommit === $head')
+        ->toContain('$runtimeDirty === null');
 });
