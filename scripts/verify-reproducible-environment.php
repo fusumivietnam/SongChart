@@ -14,6 +14,7 @@ $required = [
     'scripts/verify-canonical-php-extensions.php',
     'scripts/record-canonical-verification.php',
     'verify-songchart.bat',
+    'docs/project/stack/stack-manifest.json',
 ];
 
 $errors = [];
@@ -22,6 +23,24 @@ foreach ($required as $relative) {
     if (! is_file($root.'/'.$relative)) {
         $errors[] = "Missing canonical verification file [{$relative}].";
     }
+}
+
+$stackManifest = [];
+try {
+    $stackManifest = json_decode(
+        (string) file_get_contents($root.'/docs/project/stack/stack-manifest.json'),
+        true,
+        512,
+        JSON_THROW_ON_ERROR,
+    );
+} catch (JsonException $exception) {
+    $errors[] = 'Stack manifest is not valid JSON: '.$exception->getMessage();
+}
+
+$nodeRuntimeMajor = $stackManifest['policies']['node_runtime_major'] ?? null;
+if (! is_int($nodeRuntimeMajor) || $nodeRuntimeMajor < 1) {
+    $errors[] = 'Stack manifest must declare a positive integer policies.node_runtime_major.';
+    $nodeRuntimeMajor = null;
 }
 
 $compose = (string) file_get_contents($root.'/compose.verify.yml');
@@ -40,10 +59,9 @@ foreach ([
 }
 
 $dockerfile = (string) file_get_contents($root.'/docker/verify/Dockerfile');
-foreach ([
+$dockerSignals = [
     'FROM php:8.5-cli-bookworm',
     'FROM composer:2 AS composer',
-    'FROM node:22-bookworm-slim AS node',
     'docker-php-ext-install',
     'bcmath',
     'intl',
@@ -52,7 +70,12 @@ foreach ([
     'zip',
     'pecl install redis',
     'PHP extension smoke check passed.',
-] as $signal) {
+];
+if ($nodeRuntimeMajor !== null) {
+    $dockerSignals[] = "FROM node:{$nodeRuntimeMajor}-bookworm-slim AS node";
+}
+
+foreach ($dockerSignals as $signal) {
     if (! str_contains($dockerfile, $signal)) {
         $errors[] = "Verification Dockerfile missing [{$signal}].";
     }
@@ -125,4 +148,4 @@ if ($errors !== []) {
     exit(1);
 }
 
-fwrite(STDOUT, 'Reproducible verification environment contract passed.'.PHP_EOL);
+fwrite(STDOUT, 'Reproducible verification environment contract passed.'.PHP_EOL;
