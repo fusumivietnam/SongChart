@@ -11,10 +11,19 @@
             "songchart dev logs",
             "songchart dev shell",
             "songchart dev test",
+            "songchart dev db backup",
+            "songchart dev db restore",
+            "songchart demo setup",
+            "songchart demo up",
+            "songchart demo down",
+            "songchart demo status",
+            "songchart demo logs",
+            "songchart demo url",
             "songchart context"
         ],
         "focused": [
             "songchart dev test",
+            "songchart dev test --no-build",
             "songchart test"
         ],
         "candidate_closure": [
@@ -22,6 +31,7 @@
             "composer stage:verify"
         ],
         "canonical_closure": [
+            "songchart close",
             "songchart verify",
             "composer canonical:verify"
         ],
@@ -70,6 +80,7 @@
         "primary_linux_wsl": "./songchart",
         "native_windows": "retired-use-wsl2",
         "development_compose_project": "songchart-dev",
+        "demo_compose_project": "songchart-demo",
         "verification_compose_project": "songchart-verify"
     }
 }
