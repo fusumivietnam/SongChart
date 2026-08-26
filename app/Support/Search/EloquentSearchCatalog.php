@@ -43,12 +43,8 @@ final class EloquentSearchCatalog implements SearchCatalog
 
         $items = $type === 'all' ? $all : $all->where('type', $type)->values();
         $items = (match ($sort) {
-            'title' => $items->sortBy(fn (array $item): string => mb_strtolower((string) $item['title']).'|'.$item['type'].'|'.$item['canonical_id']),
-            'year_desc' => $items->sort(function (array $left, array $right): int {
-                $year = ((int) $right['year']) <=> ((int) $left['year']);
-
-                return $year !== 0 ? $year : $this->compareCanonicalTieBreak($left, $right);
-            }),
+            'title' => $items->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE),
+            'year_desc' => $items->sortByDesc('year'),
             default => $items->sort(function (array $left, array $right): int {
                 $rank = ((int) $left['search_rank']) <=> ((int) $right['search_rank']);
 
@@ -161,7 +157,7 @@ final class EloquentSearchCatalog implements SearchCatalog
         $verification = $model->getAttribute('verification_state');
         $verified = $verification === VerificationState::Verified || $verification === VerificationState::Verified->value;
         $artistType = $type === EntityType::Artist ? (string) ($model->getAttribute('artist_type') ?? '') : null;
-        $rank = $model->getAttribute('songchart_search_rank');
+        $rank = $model->getAttributes()['songchart_search_rank'] ?? null;
 
         return [
             'type' => $type->value,
@@ -188,9 +184,9 @@ final class EloquentSearchCatalog implements SearchCatalog
             return $title;
         }
 
-        $type = ((string) $left['type']) <=> ((string) $right['type']);
+        $type = strcmp((string) $left['type'], (string) $right['type']);
 
-        return $type !== 0 ? $type : ((string) $left['canonical_id'] <=> (string) $right['canonical_id']);
+        return $type !== 0 ? $type : strcmp((string) $left['canonical_id'], (string) $right['canonical_id']);
     }
 
     private function description(EntityType $type, Model $model): string
