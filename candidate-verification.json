@@ -33,7 +33,7 @@
         "authorization_consolidation": "passed",
         "application_data_boundary": "passed"
     },
-    "verified_at": "2026-08-26T11:39:45+00:00",
+    "verified_at": "2026-08-26T12:07:20+00:00",
     "evidence": {
         "php": "8.5.9",
         "postgresql": "PostgreSQL 18.4 (Debian 18.4-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit",
@@ -41,11 +41,11 @@
         "composer": "Composer version 2.10.2 2026-07-01 11:24:45",
         "repository_contracts": {
             "graph_fingerprint": "020df09377119c6a32b0cc904ae4e46f97c6f9c3ee85e70a7d2b8be0e985130a",
-            "source_tree_sha256": "d3c063d62466ec0338e8f2e5135af8707096c72be8fd69b76290eedf72e3322d",
+            "source_tree_sha256": "1343dc4f077bb2ef8c3bdb3d69d457500610352d03d1638f94763e9084bc9b25",
             "composer_lock_sha256": "21f1b62cb8159ec964ee3f0d381965ae07bab1150cf20ab04dab254d4c3c44e9",
             "package_lock_sha256": "09c3b7b395cc244bd9aa9bc9c9d3874d3acc9c4711822b84e2641d4829013968",
-            "git_commit": "0fc1663f4b73a51cf00cb98174936bdbad997950",
-            "git_tree": "d054421044cfe733cc5a2251bbcea7bb4640a91d",
+            "git_commit": "8348c8d6e0784f5b74c78a5cc24792f51bce7298",
+            "git_tree": "f62898507d5e5d4c0365c5dced2accb010bcd541",
             "git_dirty": null,
             "postgres_schema_snapshot_sha256": "bc7de031528340ebe2bd5fac85524b1b27c660b69218c5f6bc80a1e14bdb4b93",
             "package_upstream_adaptations_sha256": "ec315d74e51a0c0ec270d8bfde2c13fc8ebb8f29006dd34dd581e6ce923a54df"
