@@ -32,18 +32,30 @@ final class EloquentSearchCatalog implements SearchCatalog
     public function search(string $query, string $type = 'all', string $sort = 'relevance', int $page = 1): array
     {
         $needle = trim($query);
-        $types = $type === 'all' ? EntityType::cases() : [EntityType::from($type)];
-        $all = collect($types)->flatMap(fn (EntityType $entityType): array => $this->searchType($entityType, $needle))->values();
+        $all = collect(EntityType::cases())
+            ->flatMap(fn (EntityType $entityType): array => $this->searchType($entityType, $needle))
+            ->values();
+
         $counts = ['all' => $all->count()];
         foreach (EntityType::cases() as $entityType) {
             $counts[$entityType->value] = $all->where('type', $entityType->value)->count();
         }
+
         $items = $type === 'all' ? $all : $all->where('type', $type)->values();
         $items = (match ($sort) {
-            'title' => $items->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE),
-            'year_desc' => $items->sortByDesc('year'),
-            default => $items,
+            'title' => $items->sort(fn (array $left, array $right): int => $this->compareCanonicalTieBreak($left, $right)),
+            'year_desc' => $items->sort(function (array $left, array $right): int {
+                $year = ((int) $right['year']) <=> ((int) $left['year']);
+
+                return $year !== 0 ? $year : $this->compareCanonicalTieBreak($left, $right);
+            }),
+            default => $items->sort(function (array $left, array $right): int {
+                $rank = ((int) $left['search_rank']) <=> ((int) $right['search_rank']);
+
+                return $rank !== 0 ? $rank : $this->compareCanonicalTieBreak($left, $right);
+            }),
         })->values();
+
         $total = $items->count();
         $offset = max(0, ($page - 1) * self::PER_PAGE);
 
@@ -107,6 +119,7 @@ final class EloquentSearchCatalog implements SearchCatalog
         if ($entityType === null) {
             return null;
         }
+
         $model = $entityType->modelClass()::query()->where('slug', $slug)->first();
 
         return $model instanceof Model ? $this->detail($entityType, $model) : null;
@@ -116,13 +129,26 @@ final class EloquentSearchCatalog implements SearchCatalog
     private function searchType(EntityType $type, string $needle): array
     {
         $titleColumn = $this->contracts->displayField($type);
+        $modelClass = $type->modelClass();
+        $model = new $modelClass;
+
         /** @var Builder<Model> $query */
-        $query = $type->modelClass()::query()->orderBy($titleColumn);
-        if ($needle !== '') {
-            $query->where($titleColumn, 'like', '%'.$needle.'%');
+        $query = $modelClass::query();
+        if ($needle === '') {
+            $query->orderByRaw('LOWER('.$titleColumn.')')->orderBy($model->getKeyName());
+        } else {
+            $query->whereRaw('LOWER('.$titleColumn.') LIKE LOWER(?)', ['%'.$needle.'%'])
+                ->select($model->getTable().'.*')
+                ->selectRaw(
+                    'CASE WHEN LOWER('.$titleColumn.') = LOWER(?) THEN 0 WHEN LOWER('.$titleColumn.') LIKE LOWER(?) THEN 1 ELSE 2 END AS songchart_search_rank',
+                    [$needle, $needle.'%'],
+                )
+                ->orderBy('songchart_search_rank')
+                ->orderByRaw('LOWER('.$titleColumn.')')
+                ->orderBy($model->getKeyName());
         }
 
-        return $query->limit(100)->get()->map(fn (Model $model): array => $this->summary($type, $model))->all();
+        return $query->limit(100)->get()->map(fn (Model $result): array => $this->summary($type, $result))->all();
     }
 
     /** @return array<string, mixed> */
@@ -134,22 +160,43 @@ final class EloquentSearchCatalog implements SearchCatalog
         $year = $releasedOn instanceof \DateTimeInterface ? (int) $releasedOn->format('Y') : 0;
         $verification = $model->getAttribute('verification_state');
         $verified = $verification === VerificationState::Verified || $verification === VerificationState::Verified->value;
-
         $artistType = $type === EntityType::Artist ? (string) ($model->getAttribute('artist_type') ?? '') : null;
+        $rank = $model->getAttributes()['songchart_search_rank'] ?? null;
 
         return [
             'type' => $type->value,
             'label' => $type === EntityType::Artist && PublicEntityUrl::isGroupArtistType($artistType) ? 'Nhóm nhạc' : $type->label(),
             'artist_type' => $artistType,
+            'canonical_id' => (string) $model->getKey(),
             'slug' => (string) $model->getAttribute($this->contracts->slugField($type)),
             'title' => $title,
             'context' => $type->label().' canonical',
             'meta' => $year > 0 ? $type->label().' · '.$year : $type->label().' · Metadata đang hoàn thiện',
             'year' => $year,
+            'search_rank' => is_numeric($rank) ? (int) $rank : 0,
             'verified' => $verified,
             'description' => $this->description($type, $model),
             'url' => PublicEntityUrl::to($type, (string) $model->getAttribute($this->contracts->slugField($type)), $artistType),
         ];
+    }
+
+    /**
+     * @param  array<string,mixed>  $left
+     * @param  array<string,mixed>  $right
+     */
+    private function compareCanonicalTieBreak(array $left, array $right): int
+    {
+        $title = strnatcasecmp((string) $left['title'], (string) $right['title']);
+        if ($title !== 0) {
+            return $title;
+        }
+
+        $type = strcmp((string) $left['type'], (string) $right['type']);
+        if ($type !== 0) {
+            return $type;
+        }
+
+        return strcmp((string) $left['canonical_id'], (string) $right['canonical_id']);
     }
 
     private function description(EntityType $type, Model $model): string
