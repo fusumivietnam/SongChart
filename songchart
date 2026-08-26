@@ -107,13 +107,21 @@ dev_db_restore(){
 setup_demo(){
   ensure_dev_config
   [[ -f "$ROOT/.env.demo" ]] || cp "$ROOT/.env.demo.example" "$ROOT/.env.demo"
-  python3 - "$ROOT/.env.demo" <<'PY2'
+  python3 - "$ROOT/.env.demo" "$SONGCHART_DEMO_APP_URL" <<'PY2'
 from pathlib import Path
-import base64,os,re,sys
-p=Path(sys.argv[1]); t=p.read_text()
-if re.search(r'(?m)^APP_KEY=\s*$',t):
- t=re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:'+base64.b64encode(os.urandom(32)).decode(), t); p.write_text(t)
+import base64, os, re, sys
+p = Path(sys.argv[1])
+demo_url = sys.argv[2]
+t = p.read_text()
+if re.search(r'(?m)^APP_KEY=\s*$', t):
+    t = re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:' + base64.b64encode(os.urandom(32)).decode(), t)
+if re.search(r'(?m)^APP_URL=', t):
+    t = re.sub(r'(?m)^APP_URL=.*$', 'APP_URL=' + demo_url, t)
+else:
+    t += '\nAPP_URL=' + demo_url + '\n'
+p.write_text(t)
 PY2
+  printf '[SongChart demo] URL authority: %s\n' "$SONGCHART_DEMO_APP_URL"
   printf '[SongChart demo] Ensuring development PostgreSQL authority is running.\n'
   dev up -d postgres
   demo build app
