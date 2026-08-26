@@ -123,6 +123,8 @@ Keep stage and hotfix chronology separate from the current-stage pointer. `READM
 | 17.10 | Enrichment Orchestrator | In-development candidate now includes deterministic scheduling, database-enforced idempotency, queued request/rate gating, durable execution outcomes, governed MusicBrainz execution through the existing adapter/normalizer, freshness short-circuiting, and daily execution-budget admission; canonical mutation remains out of scope until later slices. |
 | 17.12 | Provider Admission Integration | Connects admissible provider field evidence to idempotent metadata assertions and the governed canonical-admission review queue without automatic canonical mutation; also hardens Linux-first candidate/dev-ready workflows and development runtime ownership. Evidence: `docs/foundation/STAGE_17_12_TASK_CONTRACT.md`, `docs/foundation/STAGE_17_12_VALIDATION_REPORT.md`. |
 
+| 18.1 | Rich Entity & Multi-Provider Evidence Model | Extends provider normalization with rich evidence for identifiers, relationships, media, destinations, availability, classifications and metrics; adds provider-specific mapping plus a read-only Admin import preview while preserving validation, identity resolution and governed canonical-admission boundaries. Evidence: `docs/foundation/STAGE_18_1_TASK_CONTRACT.md`, `docs/foundation/STAGE_18_1_VALIDATION_REPORT.md`. |
+
 ## History rules
 
 - Add one chronological row when a stage or corrective hotfix is delivered.
