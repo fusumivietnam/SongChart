@@ -85,6 +85,8 @@
       "songchart demo setup",
       "songchart demo up"
     ],
+    "stop_entrypoint": "songchart dev down",
+    "url_entrypoint": "songchart dev url",
     "stop_entrypoints": [
       "songchart dev down",
       "songchart demo down"
@@ -101,7 +103,7 @@
     "stage_entrypoint": "songchart test",
     "streamlined_closure_entrypoint": "songchart close",
     "isolated_from_development_database": true,
-    "derived_manifest_refresh": "only candidate --prepare writes generated authority; ordinary candidate/canonical gates verify committed state"
+    "derived_manifest_refresh": "inside Docker before stage/canonical verification; only candidate --prepare may commit generated repository authority"
   },
   "cli": {
     "linux_entrypoint": "songchart",
