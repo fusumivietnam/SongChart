@@ -9,6 +9,8 @@ services:
       timeout: 3s
       retries: 12
       start_period: 5s
+    networks:
+      - demo
 
   app:
     user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
@@ -23,6 +25,11 @@ services:
       APP_DEBUG: "false"
       APP_URL: "${SONGCHART_DEMO_APP_URL}"
       DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: songchart_docker
+      DB_USERNAME: songchart_docker
+      DB_PASSWORD: songchart_docker_only
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       REDIS_CACHE_DB: "1"
@@ -54,6 +61,9 @@ services:
       - songchart_demo_node_modules:/workspace/node_modules
       - songchart_demo_composer_cache:/tmp/composer-cache
       - songchart_demo_npm_cache:/tmp/npm-cache
+    networks:
+      - demo
+      - development
 
   queue:
     user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
@@ -67,6 +77,11 @@ services:
       APP_ENV: demo
       APP_DEBUG: "false"
       DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: songchart_docker
+      DB_USERNAME: songchart_docker
+      DB_PASSWORD: songchart_docker_only
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       REDIS_CACHE_DB: "1"
@@ -88,6 +103,15 @@ services:
       - songchart_demo_node_modules:/workspace/node_modules
       - songchart_demo_composer_cache:/tmp/composer-cache
       - songchart_demo_npm_cache:/tmp/npm-cache
+    networks:
+      - demo
+      - development
+
+networks:
+  demo:
+  development:
+    external: true
+    name: "${SONGCHART_DEV_PROJECT:-songchart-dev}_default"
 
 volumes:
   songchart_demo_vendor:
