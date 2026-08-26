@@ -1,49 +1,50 @@
 {
-    "schema_version":  1,
-    "authority":  "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
-    "before_implementation":  [
-                                  "Read PROJECT_AUTHORITY.md.",
-                                  "Read docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md.",
-                                  "Read the current stage task contract.",
-                                  "Run repository impact resolution for planned changed paths when they are known.",
-                                  "Review docs/project/stack/STACK_OVERVIEW.md and docs/project/stack/CAPABILITY_OWNERSHIP.md when the change affects dependencies, infrastructure, framework capabilities, runtime, database, queues, caching, frontend stack, or package ownership.",
-                                  "Inspect native Laravel/PHP/package capabilities before custom infrastructure."
-                              ],
-    "implementation_rules":  [
-                                 "Do not duplicate registered authority literals.",
-                                 "Do not edit generated repository-contract manifests by hand.",
-                                 "Do not weaken PHPStan, Pint, Pest, PostgreSQL or CI gates.",
-                                 "Do not add a new verifier when an existing authority/resolver can own the invariant.",
-                                 "Prefer Laravel/native or approved first-party capability before custom code.",
-                                 "Do not mutate historical migrations unless the task contract explicitly owns that migration-history change.",
-                                 "Use Docker Desktop/WSL2 as the primary development/runtime/test environment; treat Laragon as compatibility-only and do not require host PHP/Composer/Node/PostgreSQL/Redis for the primary workflow.",
-                                 "Use only the active verification command surface defined in docs/project/engineering/verification-command-surface.json; do not restore removed aliases.",
-                                 "Historical migration files listed in docs/project/stack/migration-lifecycle-contract.json are immutable; schema corrections must use guarded forward migrations and the PostgreSQL upgrade lane.",
-                                 "Every verifier and Architecture test must be routed through docs/project/engineering/verification-consumer-graph.json; authority changes require consumer graph closure before candidate verification.",
-                                 "Authorization capabilities are owned by docs/project/security/authorization-contract.json and Laravel Gates; do not reintroduce role capability methods on User/UserRole or direct role authorization checks outside explicit business invariants.",
-                                 "When a refactor removes or renames a method/class/file, perform an exact-target removed-symbol and orphan-file scan across application source before closure; packaging-side reconstructed source is not sufficient evidence of consumer completeness.",
-                                 "HTTP controllers are transport adapters: do not add direct Eloquent/query-builder reads or persistence writes. Put read composition in registered Query/Read Model surfaces and mutations in application actions/services.",
-                                 "Read songchart context --json before architecture/persistence/Docker/provider/migration/seeder/verification changes; do not infer facts provided by context and report drift before feature work."
-                             ],
-    "verification":  {
-                         "during_implementation":  "impact-driven focused gates only",
-                         "stage_closure":  "composer stage:verify",
-                         "canonical_closure":  "composer canonical:verify inside canonical Docker lane",
-                         "packaging":  "composer release:package only after canonical evidence/provenance passes",
-                         "public_command_surface":  "docs/project/engineering/verification-command-surface.json",
-                         "migration_lifecycle_authority":  "docs/project/stack/migration-lifecycle-contract.json",
-                         "consumer_graph_authority":  "docs/project/engineering/verification-consumer-graph.json",
-                         "authorization_authority":  "docs/project/security/authorization-contract.json",
-                         "application_data_boundary_authority":  "docs/project/domain/application-data-boundary.json",
-                         "query_budget_authority":  "docs/project/performance/query-budget-contract.json",
-                         "project_context_authority":  "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md"
-                     },
-    "failure_protocol":  [
-                             "Preserve exact failing evidence.",
-                             "Identify the owning authority before patching.",
-                             "Prefer extending the existing resolver/contract over adding duplicate guards.",
-                             "Record a regression class only when a durable machine guard exists.",
-                             "Use same-stage corrective candidates; do not use --force as normal recovery."
-                         ],
-    "documentation_rule":  "AGENTS.md, CLAUDE.md and GEMINI.md are thin bootstrap files and must not duplicate this protocol."
+  "schema_version": 1,
+  "authority": "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+  "before_implementation": [
+    "Read PROJECT_AUTHORITY.md.",
+    "Read docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md.",
+    "Read the current stage task contract.",
+    "Run repository impact resolution for planned changed paths when they are known.",
+    "Review docs/project/stack/STACK_OVERVIEW.md and docs/project/stack/CAPABILITY_OWNERSHIP.md when the change affects dependencies, infrastructure, framework capabilities, runtime, database, queues, caching, frontend stack, or package ownership.",
+    "Inspect native Laravel/PHP/package capabilities before custom infrastructure."
+  ],
+  "implementation_rules": [
+    "Do not duplicate registered authority literals.",
+    "Do not edit generated repository-contract manifests by hand.",
+    "Do not weaken PHPStan, Pint, Pest, PostgreSQL or CI gates.",
+    "Do not add a new verifier when an existing authority/resolver can own the invariant.",
+    "Prefer Laravel/native or approved first-party capability before custom code.",
+    "Do not mutate historical migrations unless the task contract explicitly owns that migration-history change.",
+    "Use Linux or WSL2 with Docker Engine and Compose v2 as the supported development/runtime/test environment; GitHub Codespaces is the preferred remote adapter and native Windows Batch/PowerShell plus Laragon execution paths are retired.",
+    "Use GitHub branches, commits and pull requests for device and AI handoff; do not use source ZIP copying, incremental patch ZIPs, native Windows installers or cross-device stash as the normal synchronization path.",
+    "Use only the active verification command surface defined in docs/project/engineering/verification-command-surface.json; do not restore removed aliases or retired native Windows wrappers.",
+    "Historical migration files listed in docs/project/stack/migration-lifecycle-contract.json are immutable; schema corrections must use guarded forward migrations and the PostgreSQL upgrade lane.",
+    "Every verifier and Architecture test must be routed through docs/project/engineering/verification-consumer-graph.json; authority changes require consumer graph closure before candidate verification.",
+    "Authorization capabilities are owned by docs/project/security/authorization-contract.json and Laravel Gates; do not reintroduce role capability methods on User/UserRole or direct role authorization checks outside explicit business invariants.",
+    "When a refactor removes or renames a method/class/file, perform an exact-target removed-symbol and orphan-file scan across application source before closure; packaging-side reconstructed source is not sufficient evidence of consumer completeness.",
+    "HTTP controllers are transport adapters: do not add direct Eloquent/query-builder reads or persistence writes. Put read composition in registered Query/Read Model surfaces and mutations in application actions/services.",
+    "Read ./songchart context --json before architecture/persistence/Docker/provider/migration/seeder/verification changes; do not infer facts provided by context and report drift before feature work."
+  ],
+  "verification": {
+    "during_implementation": "impact-driven focused gates only",
+    "stage_closure": "./songchart candidate or composer stage:verify inside the governed Docker lane",
+    "canonical_closure": "./songchart verify or composer canonical:verify inside canonical Docker lane",
+    "packaging": "composer release:package only after canonical evidence/provenance passes",
+    "public_command_surface": "docs/project/engineering/verification-command-surface.json",
+    "migration_lifecycle_authority": "docs/project/stack/migration-lifecycle-contract.json",
+    "consumer_graph_authority": "docs/project/engineering/verification-consumer-graph.json",
+    "authorization_authority": "docs/project/security/authorization-contract.json",
+    "application_data_boundary_authority": "docs/project/domain/application-data-boundary.json",
+    "query_budget_authority": "docs/project/performance/query-budget-contract.json",
+    "project_context_authority": "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md"
+  },
+  "failure_protocol": [
+    "Preserve exact failing evidence.",
+    "Identify the owning authority before patching.",
+    "Prefer extending the existing resolver/contract over adding duplicate guards.",
+    "Record a regression class only when a durable machine guard exists.",
+    "Use same-stage corrective candidates; do not use --force as normal recovery."
+  ],
+  "documentation_rule": "AGENTS.md, CLAUDE.md and GEMINI.md are thin bootstrap files and must not duplicate this protocol."
 }
