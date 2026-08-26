@@ -1,6 +1,6 @@
 # Lộ trình sản phẩm
 
-Trạng thái: tài liệu định hướng cho hạng mục đang triển khai và tương lai. Tài liệu này không quyết định stage hiện tại; `README.md` là nguồn chuẩn cho current-stage pointer, `docs/foundation/STAGE_18_1_TASK_CONTRACT.md` sở hữu scope/acceptance hiện tại, và `docs/project/DEVELOPMENT_HISTORY.md` sở hữu chronology đã hoàn tất.
+Trạng thái: tài liệu định hướng cho hạng mục đang triển khai và tương lai. Tài liệu này không quyết định stage hiện tại; `docs/project/DEVELOPMENT_STATE.md` là nguồn chuẩn cho operational current state, task contract của stage đang hoạt động sở hữu scope/acceptance, và `docs/project/DEVELOPMENT_HISTORY.md` sở hữu chronology đã hoàn tất.
 
 ## Nguyên tắc đọc roadmap
 
@@ -9,35 +9,40 @@ Trạng thái: tài liệu định hướng cho hạng mục đang triển khai 
 - Roadmap không thay thế task contract, candidate evidence hay `DEVELOPMENT_STATE.md`.
 - UI/Admin ưu tiên thuật ngữ tiếng Việt rõ nghĩa; code/contract giữ tên kỹ thuật khi cần đối chiếu.
 
-## Stage 18.1 — Rich Entity & Multi-Provider Evidence Model
+## Stage 18.2 — Public Search & Canonical Surfaces
 
-Mục tiêu hiện tại: hoàn thiện provider ingestion theo mô hình evidence đa nguồn, không cho provider payload ghi trực tiếp vào canonical entities.
+Mục tiêu tiếp theo: biến nền canonical/provider đã được governance thành trải nghiệm tìm kiếm và duyệt catalog có giá trị trực tiếp cho người dùng.
 
-Trọng tâm còn lại để đóng Stage 18.1:
+Trọng tâm:
 
-- ổn định rich normalized provider DTO + validation cho fields, identifiers, relationships, media, destinations, availability, classifications và metrics;
-- giữ provider-specific mapping sau typed mapper registry; chỉ mapper thực sự hỗ trợ mới được công bố trong Admin;
-- hoàn thiện read-only preview → deterministic import plan → fingerprint-checked execution;
-- tiếp tục tái sử dụng `ProviderImportOrchestrator`, identity resolution, validation và canonical-admission boundaries; không tạo ingestion pipeline thứ hai;
-- làm rõ provider UX/Admin wording và operational feedback trước candidate closure;
-- giữ Codespaces/shared-demo chỉ là development adapters, không thay persistence/domain authority;
-- hoàn tất focused verification, candidate preparation, Stage closure và canonical closure trên exact target tree.
+- production search trên PostgreSQL với ranking và tie-break rõ ràng, deterministic;
+- hoàn thiện canonical public pages cho Artist, Group, Release, Recording và Work;
+- search facets, pagination, empty states và canonical URLs nhất quán;
+- giữ public read models độc lập với raw provider payload và provider-specific transport;
+- mọi destination/media hiển thị phải tiếp tục đi qua availability, freshness, provenance và policy hiện hành;
+- không mở ingestion pipeline thứ hai và không cho search layer mutate canonical data.
 
 Điều kiện an toàn:
 
+- PostgreSQL vẫn là database authority cho verification/release;
+- public search không truy cập provider API trực tiếp trong request path;
+- canonical URLs không phụ thuộc provider identity;
 - provider payload không tự động mutate canonical entities;
-- preview-only payload không trở thành provider evidence chỉ vì được xem trước;
-- shared demo database không được dùng cho destructive development/test workflow;
-- AI agents phải đọc repository authority, chạy `songchart ai status`, và không tự tạo workflow truth song song.
+- Stage 18.2 chỉ bắt đầu sau khi post-18.1 repository hygiene được xác nhận sạch.
 
-## Nhóm 18.x — Public search, discovery và rich canonical surfaces
+## Stage 18.3 — Public Metadata & SEO Readiness
 
-Sau Stage 18.1:
+- structured data cho canonical entity pages;
+- canonical metadata, title/description và OpenGraph/social metadata;
+- sitemap và indexability policy;
+- duplicate-content/canonical-link verification;
+- production SEO verification trước public indexing rộng rãi.
 
-- production search ưu tiên PostgreSQL với ranking rõ ràng;
-- hoàn thiện canonical pages cho Artist, Group, Release, Recording và Work;
-- provider destination/media selector thể hiện availability, freshness và provenance rõ ràng;
-- structured metadata, canonical URL và SEO hoàn thiện trước public indexing rộng rãi;
+## Stage 18.4 — Provider Destination & Media Quality
+
+- destination/media selector theo availability, freshness và provenance;
+- deterministic preference/ranking giữa approved destinations;
+- operational visibility cho stale/unavailable destinations;
 - mở rộng provider breadth theo evidence quality và official API capability, không theo số lượng connector.
 
 ## Nhóm 19.x — Giá trị cho người dùng cá nhân
@@ -52,7 +57,7 @@ Sau Stage 18.1:
 - deployment, queue và scheduler production;
 - observability và provider operational metrics;
 - security headers, backup và recovery;
-- sitemap, structured data và production SEO verification.
+- production SEO/indexing rollout và recovery verification.
 
 ## Quy tắc roadmap
 
