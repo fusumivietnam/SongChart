@@ -29,3 +29,14 @@ it('publishes only canonical public surfaces in the sitemap', function (): void 
         ->assertDontSee('/admin', false)
         ->assertDontSee('/search?', false);
 });
+
+it('publishes an explicit crawler policy with the canonical sitemap', function (): void {
+    $this->get('/robots.txt')
+        ->assertOk()
+        ->assertHeader('content-type', 'text/plain; charset=UTF-8')
+        ->assertSee('Disallow: /admin/', false)
+        ->assertSee('Disallow: /account/', false)
+        ->assertSee('Disallow: /development/', false)
+        ->assertSee('Disallow: /search', false)
+        ->assertSee('Sitemap: '.route('sitemap'), false);
+});
