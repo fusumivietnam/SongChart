@@ -106,7 +106,7 @@ if ($prepareSchema) {
     }
 }
 
-$command = array_merge([PHP_BINARY, 'artisan', 'test', '--ansi'], $testArguments);
+$command = array_merge([PHP_BINARY, 'artisan', 'test', '--ansi', '--display-warnings'], $testArguments);
 $descriptors = [
     0 => STDIN,
     1 => ['pipe', 'w'],
