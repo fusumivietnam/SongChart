@@ -20,7 +20,7 @@ final readonly class ProviderConfigurationService
      * @param array<string, scalar|null> $settings
      * @param array<string, string|null> $secrets
      */
-    public function update(
+    public function apply(
         Provider $provider,
         array $settings,
         array $secrets,
