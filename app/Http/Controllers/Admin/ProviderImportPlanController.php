@@ -14,6 +14,7 @@ use App\Support\Providers\Ingestion\ProviderImportPreviewBuilder;
 use DateTimeImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 
 final class ProviderImportPlanController extends Controller
 {
@@ -50,7 +51,13 @@ final class ProviderImportPlanController extends Controller
             ]);
         }
 
-        $run = $starter->execute($plan);
+        try {
+            $run = $starter->execute($plan);
+        } catch (RuntimeException $exception) {
+            throw ValidationException::withMessages([
+                'provider_slug' => $exception->getMessage(),
+            ]);
+        }
 
         return redirect()->route('admin.imports.show', ['run' => $run->getKey()])
             ->with('status', 'Đã tạo tác vụ nhập có kiểm soát. SongChart sẽ tiếp tục qua pipeline xác minh và duyệt dữ liệu chuẩn.');
