@@ -148,4 +148,4 @@ if ($errors !== []) {
     exit(1);
 }
 
-fwrite(STDOUT, 'Reproducible verification environment contract passed.'.PHP_EOL;
+fwrite(STDOUT, 'Reproducible verification environment contract passed.'.PHP_EOL);
