@@ -5,7 +5,7 @@
   "canonical_families": {
     "public_catalog": ["/", "/search", "/artists", "/groups", "/release-groups/{slug}", "/releases", "/recordings", "/works", "/collections"],
     "account": ["/account", "/account/profile", "/account/security"],
-    "admin": ["/admin", "/admin/catalog", "/admin/providers", "/admin/imports", "/admin/imports/preview", "/admin/imports/preview/execute", "/admin/quarantine", "/admin/identity-conflicts", "/admin/users", "/admin/system", "/admin/audit", "/admin/extensions"],
+    "admin": ["/admin", "/admin/catalog", "/admin/providers", "/admin/providers/{provider}/configuration", "/admin/imports", "/admin/imports/preview", "/admin/imports/search", "/admin/imports/select", "/admin/imports/preview/execute", "/admin/quarantine", "/admin/identity-conflicts", "/admin/users", "/admin/system", "/admin/audit", "/admin/extensions"],
     "development": ["/development/status", "/development/providers/musicbrainz/artists/import", "/development/design-system", "/development/design-system/shell/frontend", "/development/design-system/shell/admin", "/development/design-system/concepts", "/development/design-system/concepts/{concept}"]
   },
   "canonical_design_system_route_names": [
