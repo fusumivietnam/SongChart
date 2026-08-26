@@ -3,13 +3,16 @@ Set-StrictMode -Version Latest
 $Root = Split-Path -Parent $PSScriptRoot
 Push-Location $Root
 try {
-    $branch = (& git branch --show-current 2>$null).Trim()
+    $branchRaw = & git branch --show-current 2>$null
+    $branch = if ($null -eq $branchRaw) { 'unknown' } else { ([string]$branchRaw).Trim() }
     if ([string]::IsNullOrWhiteSpace($branch)) { $branch = 'unknown' }
-    $head = (& git rev-parse --short HEAD 2>$null).Trim()
+    $headRaw = & git rev-parse --short HEAD 2>$null
+    $head = if ($null -eq $headRaw) { 'unknown' } else { ([string]$headRaw).Trim() }
     if ([string]::IsNullOrWhiteSpace($head)) { $head = 'unknown' }
     $changes = @(& git status --porcelain --untracked-files=all 2>$null)
     $modified = $changes.Count
-    $upstream = (& git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>$null).Trim()
+    $upstreamRaw = & git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>$null
+    $upstream = if ($null -eq $upstreamRaw) { '' } else { ([string]$upstreamRaw).Trim() }
     $ahead = 0; $behind = 0
     if (-not [string]::IsNullOrWhiteSpace($upstream)) {
         $counts = ((& git rev-list --left-right --count "HEAD...$upstream" 2>$null) -split '\s+')
@@ -50,8 +53,10 @@ try {
         $sourceDirty = @(& git @dirtyArgs 2>$null)
         $contextDirty = @(& git status --porcelain --untracked-files=all -- 'docs/project/generated/project-context.json' 2>$null)
         $sourceLogArgs = @('log','-1','--format=%H','--') + $contextSources
-        $sourceCommit = (& git @sourceLogArgs 2>$null).Trim()
-        $contextCommit = (& git log -1 --format=%H -- 'docs/project/generated/project-context.json' 2>$null).Trim()
+        $sourceCommitRaw = & git @sourceLogArgs 2>$null
+        $contextCommitRaw = & git log -1 --format=%H -- 'docs/project/generated/project-context.json' 2>$null
+        $sourceCommit = if ($null -eq $sourceCommitRaw) { '' } else { ([string]$sourceCommitRaw).Trim() }
+        $contextCommit = if ($null -eq $contextCommitRaw) { '' } else { ([string]$contextCommitRaw).Trim() }
         if ($sourceDirty.Count -gt 0 -or $contextDirty.Count -gt 0) {
             $contextState = 'STALE'; $contextDetail = 'registered context input or generated context has uncommitted changes'
         } elseif (-not [string]::IsNullOrWhiteSpace($sourceCommit) -and -not [string]::IsNullOrWhiteSpace($contextCommit)) {
