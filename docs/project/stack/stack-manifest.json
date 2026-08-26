@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "stage": "16.4.3",
+  "stage": "18.1",
   "sources": {
     "php": "composer.json",
     "php_lock": "composer.lock",
@@ -13,7 +13,8 @@
     "architecture_changes_require_adr": true,
     "provider_ids_may_be_primary_keys": false,
     "parallel_capability_owners_allowed": false,
-    "release_database_major": 18
+    "release_database_major": 18,
+    "node_runtime_major": 24
   },
   "required_php_packages": [
     "laravel/framework",
@@ -56,6 +57,7 @@
     "package_governance": "songchart-package-registry",
     "canonical_verification": "docker-compose",
     "release_database": "postgresql-18",
+    "node_runtime": "nodejs-24-lts",
     "docker_local_development": "docker-compose",
     "local_https": "caddy-mkcert"
   }
