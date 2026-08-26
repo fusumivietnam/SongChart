@@ -10,22 +10,29 @@ $required = [
     'compose.codespaces.yml',
     '.env.docker.example',
     'docker/dev/Caddyfile',
-    'docker-dev-setup.bat',
-    'docker-dev-up.bat',
-    'docker-dev-down.bat',
-    'scripts/setup-docker-dev.ps1',
-    'scripts/docker-dev-up.ps1',
-    'scripts/docker-dev-down.ps1',
     'scripts/setup-docker-dev.sh',
     'songchart',
-    'songchart.bat',
-    'scripts/songchart.ps1',
     'docs/project/stack/docker-development-contract.json',
 ];
 
 foreach ($required as $relative) {
     if (! is_file($root.'/'.$relative)) {
         $errors[] = "Missing Docker local-development file [{$relative}].";
+    }
+}
+
+foreach ([
+    'songchart.bat',
+    'docker-dev-setup.bat',
+    'docker-dev-up.bat',
+    'docker-dev-down.bat',
+    'scripts/setup-docker-dev.ps1',
+    'scripts/docker-dev-up.ps1',
+    'scripts/docker-dev-down.ps1',
+    'scripts/setup-laragon.bat',
+] as $retired) {
+    if (is_file($root.'/'.$retired)) {
+        $errors[] = "Retired host-specific development file must be removed [{$retired}].";
     }
 }
 
@@ -144,6 +151,9 @@ if (! is_array($contract)) {
         || ($codespaces['url_entrypoint'] ?? null) !== 'songchart dev url') {
         $errors[] = 'Docker development contract must govern the Codespaces adapter, private app port, no-auto-start policy and URL entrypoint.';
     }
+    if (($contract['compatibility']['native_windows_cli']['status'] ?? null) !== 'retired') {
+        $errors[] = 'Docker development contract must mark native Windows CLI as retired.';
+    }
 }
 
 $gitignore = (string) file_get_contents($root.'/.gitignore');
@@ -155,8 +165,7 @@ foreach (['.env.docker', '.certs/*'] as $signal) {
 
 if ($errors !== []) {
     fwrite(STDERR, "Docker local-development verification failed:\n- ".implode("\n- ", $errors).PHP_EOL);
-
     exit(1);
 }
 
-fwrite(STDOUT, 'Docker local-development, trusted HTTPS compatibility and Codespaces development-adapter contract passed.'.PHP_EOL);
+fwrite(STDOUT, 'Docker local-development and Codespaces adapter contract passed.'.PHP_EOL);
