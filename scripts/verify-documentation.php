@@ -35,7 +35,7 @@ $requiredFiles = [
 ];
 
 foreach ($requiredFiles as $relativePath) {
-    if (! is_file($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativePath))) {
+    if (!is_file($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativePath))) {
         $errors[] = "Missing required documentation file: {$relativePath}";
     }
 }
@@ -52,13 +52,14 @@ $iterator = new RecursiveIteratorIterator(
 
 /** @var SplFileInfo $file */
 foreach ($iterator as $file) {
-    if (! $file->isFile() || strtolower($file->getExtension()) !== 'md') {
+    if (!$file->isFile() || strtolower($file->getExtension()) !== 'md') {
         continue;
     }
 
     $contents = file_get_contents($file->getPathname());
     if ($contents === false) {
         $errors[] = 'Unable to read: '.str_replace($root.DIRECTORY_SEPARATOR, '', $file->getPathname());
+
         continue;
     }
 
@@ -78,7 +79,7 @@ foreach ($iterator as $file) {
             ? $root.DIRECTORY_SEPARATOR.ltrim(str_replace('/', DIRECTORY_SEPARATOR, $path), DIRECTORY_SEPARATOR)
             : $file->getPath().DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path);
 
-        if (! file_exists($resolved)) {
+        if (!file_exists($resolved)) {
             $relativeFile = str_replace($root.DIRECTORY_SEPARATOR, '', $file->getPathname());
             $errors[] = "Broken local Markdown link in {$relativeFile}: {$target}";
         }
