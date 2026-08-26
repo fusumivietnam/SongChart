@@ -59,8 +59,8 @@ foreach (['composer validate --strict', 'composer quality:verify', 'composer tes
 $requiredWorkflowFragments = [
     "push:\n    branches:\n      - main",
     "pull_request:\n    branches:\n      - main",
-    "workflow_dispatch:",
-    "concurrency:",
+    'workflow_dispatch:',
+    'concurrency:',
     'group: tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}',
     'cancel-in-progress: true',
     'actions/checkout@v6',

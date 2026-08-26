@@ -73,6 +73,7 @@ foreach ($activeDocs as $relative) {
     $path = $root.'/'.$relative;
     if (! is_file($path)) {
         $errors[] = "Active documentation surface is missing [{$relative}].";
+
         continue;
     }
 

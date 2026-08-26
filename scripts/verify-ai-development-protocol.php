@@ -123,17 +123,20 @@ if (! is_dir($skillsRoot)) {
         $skillPath = $skillDirectory.'/SKILL.md';
         if (! is_file($skillPath)) {
             $errors[] = "AI skill [{$expectedName}] is missing SKILL.md.";
+
             continue;
         }
 
         $source = (string) file_get_contents($skillPath);
         if (! str_starts_with($source, "---\n")) {
             $errors[] = "AI skill [{$expectedName}] must start with YAML frontmatter at byte 0.";
+
             continue;
         }
 
         if (preg_match('/\A---\n(?<frontmatter>.*?)\n---(?:\n|\z)/s', $source, $matches) !== 1) {
             $errors[] = "AI skill [{$expectedName}] has invalid YAML frontmatter delimiters.";
+
             continue;
         }
 
@@ -145,6 +148,7 @@ if (! is_dir($skillsRoot)) {
             }
             if (preg_match('/^(?<key>[A-Za-z0-9_-]+):\s*(?<value>.*)$/', $line, $fieldMatch) !== 1) {
                 $errors[] = "AI skill [{$expectedName}] frontmatter contains unsupported YAML structure [{$line}].";
+
                 continue 2;
             }
             $fields[$fieldMatch['key']] = trim((string) $fieldMatch['value'], " \t\n\r\0\x0B\"'");

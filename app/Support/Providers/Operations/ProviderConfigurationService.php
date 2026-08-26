@@ -17,8 +17,8 @@ final readonly class ProviderConfigurationService
     public function __construct(private PrivilegedAuditLogger $privilegedAudit) {}
 
     /**
-     * @param array<string, scalar|null> $settings
-     * @param array<string, string|null> $secrets
+     * @param  array<string, scalar|null>  $settings
+     * @param  array<string, string|null>  $secrets
      */
     public function apply(
         Provider $provider,
@@ -92,7 +92,7 @@ final readonly class ProviderConfigurationService
     }
 
     /**
-     * @param array<string, mixed> $configuration
+     * @param  array<string, mixed>  $configuration
      * @return array<string, mixed>
      */
     private function safeState(array $configuration): array
