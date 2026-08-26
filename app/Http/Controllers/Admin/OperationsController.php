@@ -14,6 +14,7 @@ use App\Support\Providers\Catalog\MusicBrainzArtistWorkbench;
 use App\Support\Providers\Catalog\MusicBrainzRecordingWorkbench;
 use App\Support\Providers\Catalog\MusicBrainzReleaseWorkbench;
 use App\Support\Providers\Catalog\MusicBrainzWorkWorkbench;
+use App\Support\Providers\Configuration\ProviderRuntimeConfiguration;
 use App\Support\Providers\Destinations\YouTubeDestinationWorkbench;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -58,8 +59,12 @@ final class OperationsController extends Controller
         YouTubeDestinationWorkbench $youtubeWorkbench,
         ProviderRatePolicyRegistry $ratePolicies,
         ProviderRequestGate $requestGate,
+        ProviderRuntimeConfiguration $runtimeConfiguration,
     ): View {
         $data = $console->provider($provider);
+        $providerSlug = (string) ($data['provider']->slug ?? '');
+        $runtimeConfiguration->apply($providerSlug);
+
         $musicBrainzQuery = trim((string) $request->query('musicbrainz_query', ''));
         $musicBrainzResults = [];
         $musicBrainzReleaseGroupQuery = trim((string) $request->query('musicbrainz_release_group_query', ''));
@@ -77,11 +82,11 @@ final class OperationsController extends Controller
         $youtubeCandidates = [];
         $youtubeError = null;
 
-        if (($data['provider']->slug ?? null) === 'musicbrainz') {
+        if ($providerSlug === 'musicbrainz') {
             $providerRateState = $requestGate->state($ratePolicies->for('musicbrainz', 'artist.search'));
         }
 
-        if (($data['provider']->slug ?? null) === 'musicbrainz') {
+        if ($providerSlug === 'musicbrainz') {
             try {
                 if ($musicBrainzQuery !== '') {
                     $musicBrainzResults = $workbench->search($musicBrainzQuery);
@@ -99,7 +104,7 @@ final class OperationsController extends Controller
             }
         }
 
-        if (($data['provider']->slug ?? null) === 'youtube' && $youtubeRecordingId !== '') {
+        if ($providerSlug === 'youtube' && $youtubeRecordingId !== '') {
             try {
                 $youtube = $youtubeWorkbench->search($youtubeRecordingId);
                 $youtubeRecording = $youtube['recording'];
