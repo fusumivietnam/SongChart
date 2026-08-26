@@ -38,7 +38,7 @@ foreach (['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'] as $bootstrap) {
     if (count($lines) > 30) {
         $errors[] = "{$bootstrap} must remain a thin bootstrap (maximum 30 lines).";
     }
-    foreach (['PROJECT_AUTHORITY.md', 'AI_DEVELOPMENT_PROTOCOL.md', 'composer stage:verify', 'composer canonical:verify'] as $needle) {
+    foreach (['PROJECT_AUTHORITY.md', 'AI_DEVELOPMENT_PROTOCOL.md', 'composer stage:verify', 'composer canonical:verify', 'ai status'] as $needle) {
         if (! str_contains($source, $needle)) {
             $errors[] = "{$bootstrap} is missing bootstrap pointer [{$needle}].";
         }
@@ -48,6 +48,26 @@ foreach (['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'] as $bootstrap) {
         if (str_contains($source, $duplicatedHistoricalRule)) {
             $errors[] = "{$bootstrap} duplicates historical implementation rules [{$duplicatedHistoricalRule}].";
         }
+    }
+}
+
+foreach (['scripts/ai-status.sh', 'scripts/ai-status.ps1'] as $statusScript) {
+    if (! is_file($root.'/'.$statusScript)) {
+        $errors[] = "AI session status implementation [{$statusScript}] is missing.";
+    }
+}
+
+$linuxCli = (string) file_get_contents($root.'/songchart');
+foreach (['./songchart ai status', 'scripts/ai-status.sh', "ai)"] as $needle) {
+    if (! str_contains($linuxCli, $needle)) {
+        $errors[] = "Linux AI session bootstrap is missing [{$needle}].";
+    }
+}
+
+$windowsCli = (string) file_get_contents($root.'/songchart.bat');
+foreach (['ai', 'status', 'scripts\\ai-status.ps1'] as $needle) {
+    if (! str_contains($windowsCli, $needle)) {
+        $errors[] = "Windows AI session bootstrap is missing [{$needle}].";
     }
 }
 
