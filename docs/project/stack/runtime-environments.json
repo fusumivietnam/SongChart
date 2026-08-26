@@ -25,6 +25,18 @@
       "destructive_database_role": "development",
       "authority": "primary-development",
       "compose_file": "compose.dev.yml"
+    },
+    "docker-demo": {
+      "app_env": "demo",
+      "db_connection": "pgsql",
+      "db_host": "postgres",
+      "db_database": "songchart_docker",
+      "redis_host": "redis",
+      "destructive_database_role": "development",
+      "authority": "public-live-verification-adapter",
+      "compose_file": "compose.demo.yml",
+      "shares_database_with": "docker-development",
+      "queue_worker_default": false
     }
   },
   "php_extensions": {
