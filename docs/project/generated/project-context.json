@@ -3,7 +3,7 @@
     "generated_from_repository": true,
     "source_fingerprint": "fc3d2faac2d5fe549d1df8170183e4e000517815e8677b57d1e8b15d36a3a20e",
     "candidate": {
-        "stage": "18.1",
+        "stage": "18.2",
         "candidate": "v1",
         "informational_not_fingerprinted": true
     },
