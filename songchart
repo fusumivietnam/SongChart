@@ -3,8 +3,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEV_COMPOSE="$ROOT/compose.dev.yml"
 CODESPACES_COMPOSE="$ROOT/compose.codespaces.yml"
+DEMO_COMPOSE="$ROOT/compose.demo.yml"
 VERIFY_COMPOSE="$ROOT/compose.verify.yml"
 DEV_PROJECT="${SONGCHART_DEV_PROJECT:-songchart-dev}"
+DEMO_PROJECT="${SONGCHART_DEMO_PROJECT:-songchart-demo}"
 VERIFY_PROJECT="${SONGCHART_VERIFY_PROJECT:-songchart-verify}"
 export SONGCHART_HOST_UID="${SONGCHART_HOST_UID:-$(id -u)}"
 export SONGCHART_HOST_GID="${SONGCHART_HOST_GID:-$(id -g)}"
@@ -14,9 +16,14 @@ if codespaces_mode; then
   [[ -f "$CODESPACES_COMPOSE" ]] || die 'compose.codespaces.yml is required in GitHub Codespaces.'
   [[ -n "${CODESPACE_NAME:-}" ]] || die 'CODESPACE_NAME is required in GitHub Codespaces.'
   export SONGCHART_CODESPACES_APP_URL="https://${CODESPACE_NAME}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"
+  export SONGCHART_DEMO_APP_URL="https://${CODESPACE_NAME}-8001.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"
+else
+  export SONGCHART_DEMO_APP_URL="${SONGCHART_DEMO_APP_URL:-http://127.0.0.1:8001}"
 fi
+export SONGCHART_DEMO_PORT="${SONGCHART_DEMO_PORT:-8001}"
 require_docker(){ command -v docker >/dev/null 2>&1 || die 'Docker CLI is required.'; docker version >/dev/null 2>&1 || die 'Docker Engine is not reachable.'; docker compose version >/dev/null 2>&1 || die 'Docker Compose v2 plugin is required.'; }
 ensure_dev_config(){ [[ -f "$ROOT/.env.docker" ]] || die '.env.docker is missing. Run: ./songchart dev setup'; }
+ensure_demo_config(){ [[ -f "$ROOT/.env.demo" ]] || die '.env.demo is missing. Run: ./songchart demo setup'; }
 dev(){
   if codespaces_mode; then
     docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" -f "$CODESPACES_COMPOSE" "$@"
@@ -24,6 +31,7 @@ dev(){
     docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" "$@"
   fi
 }
+demo(){ docker compose -p "$DEMO_PROJECT" -f "$DEMO_COMPOSE" "$@"; }
 verify_compose(){ docker compose -p "$VERIFY_PROJECT" -f "$VERIFY_COMPOSE" "$@"; }
 dev_app_running(){ [[ "$(dev ps --status running --services 2>/dev/null | grep -x 'app' || true)" == 'app' ]]; }
 dev_up(){
@@ -40,6 +48,7 @@ dev_url(){
     printf '%s\n' 'https://docker.songchart.test:8443'
   fi
 }
+demo_url(){ printf '%s\n' "$SONGCHART_DEMO_APP_URL"; }
 dev_exec_or_run(){
   if dev_app_running; then
     dev exec app "$@"
@@ -47,10 +56,46 @@ dev_exec_or_run(){
     dev run --rm app "$@"
   fi
 }
+env_value(){
+  local file="$1" key="$2"
+  grep -m1 -E "^${key}=" "$file" 2>/dev/null | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true
+}
+ensure_local_admin(){
+  local email name role
+  email="$(env_value "$ROOT/.env.docker" SONGCHART_LOCAL_ADMIN_EMAIL)"
+  [[ -n "$email" ]] || return 0
+  name="$(env_value "$ROOT/.env.docker" SONGCHART_LOCAL_ADMIN_NAME)"
+  role="$(env_value "$ROOT/.env.docker" SONGCHART_LOCAL_ADMIN_ROLE)"
+  [[ -n "$name" ]] || name='SongChart Admin'
+  [[ -n "$role" ]] || role='super_admin'
+  printf '[SongChart dev] Ensuring configured local administrator %s.\n' "$email"
+  dev_exec_or_run php artisan admin:ensure-local "$email" "--name=$name" "--role=$role"
+}
 repair_dev_runtime_ownership(){
   printf '[SongChart dev] Repairing generated runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
   dev run --rm --user root app sh -lc \
     "mkdir -p /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/bootstrap/cache /workspace/storage"
+}
+setup_demo(){
+  ensure_dev_config
+  [[ -f "$ROOT/.env.demo" ]] || cp "$ROOT/.env.demo.example" "$ROOT/.env.demo"
+  python3 - "$ROOT/.env.demo" <<'PY2'
+from pathlib import Path
+import base64,os,re,sys
+p=Path(sys.argv[1]); t=p.read_text()
+if re.search(r'(?m)^APP_KEY=\s*$',t):
+ t=re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:'+base64.b64encode(os.urandom(32)).decode(), t); p.write_text(t)
+PY2
+  printf '[SongChart demo] Ensuring development PostgreSQL authority is running.\n'
+  dev up -d postgres
+  demo build app
+  demo run --rm --user root app sh -lc \
+    "mkdir -p /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage"
+  demo run --rm app composer install --no-interaction --prefer-dist --no-progress
+  demo run --rm app npm ci --no-audit --no-fund
+  demo run --rm app npm run build
+  demo up -d redis app queue
+  printf '[SongChart demo] READY — '; demo_url
 }
 focused_test(){
   local focused="${1:-tests/Feature/EntityDetailSystemTest.php}"
@@ -110,39 +155,39 @@ prepare_candidate_authority(){
   git -C "$ROOT" commit -m 'chore: refresh generated repository authority'
   printf '[SongChart candidate] Generated repository authority committed.\n'
 }
+canonical_verify_without_build(){
+  local keep="${1:-false}"
+  cleanup(){ [[ "$keep" == true ]] || verify_compose down --remove-orphans >/dev/null 2>&1 || true; }
+  trap cleanup RETURN
+  verify_compose down --remove-orphans
+  verify_compose run --rm verify
+  printf '[SongChart verify] PASSED.\n'
+}
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
-  ./songchart ai status
-  ./songchart ai doctor
-  ./songchart dev setup
-  ./songchart dev ready
-  ./songchart dev up|down|status|logs|shell|url
+  ./songchart ai status|doctor
+  ./songchart dev setup|ready|up|down|status|logs|shell|url
   ./songchart dev test [test-path]
-  ./songchart artisan <args...>
-  ./songchart composer <args...>
-  ./songchart npm <args...>
+  ./songchart demo setup|up|down|status|logs|url
+  ./songchart artisan|composer|npm <args...>
   ./songchart context [args...]
   ./songchart candidate [--prepare]
+  ./songchart close
   ./songchart test
   ./songchart verify [--no-build] [--keep-services]
 
-AI session bootstrap:
-  ./songchart ai status    read-only branch/stage/context/runtime/verification summary; never starts Docker
-  ./songchart ai doctor    copy-friendly, secret-redacted diagnostic bundle for ChatGPT/Codex handoff
+Development/live test:
+  ./songchart dev ready     start the persistent development runtime on port 8000
+  ./songchart demo setup    prepare the production-like demo runtime on port 8001 using the development PostgreSQL authority
+  ./songchart demo up       start demo without rebuilding dependencies
 
-Focused verification:
-  ./songchart dev test tests/Unit/...       isolated verification container, no development DB/runtime
-  ./songchart dev test tests/Feature/...    isolated PostgreSQL verification lane
+Verification:
+  ./songchart dev test <path>       isolated focused lane
+  ./songchart candidate             read-only verification of an already committed exact tree
+  ./songchart candidate --prepare   refresh/commit generated authority, then candidate verification
+  ./songchart close                 prepare + candidate + canonical verification; reuses the candidate image for canonical closure
 
-GitHub Codespaces is auto-detected through CODESPACES=true.
-Development services start only when dev setup/ready/up is invoked.
-Use ./songchart dev url for the private forwarded live-demo URL.
-
-Candidate workflow:
-  ./songchart candidate            verify an already committed exact tree
-  ./songchart candidate --prepare  refresh and commit only docs/project/generated, then verify
-
-Stable projects: songchart-dev / songchart-verify
+Stable projects: songchart-dev / songchart-demo / songchart-verify
 EOF
 }
 cmd="${1:-help}"; shift || true
@@ -168,10 +213,11 @@ case "$cmd" in
     dev_exec_or_run php artisan view:clear
     printf '[SongChart dev] Applying pending development migrations.\n'
     dev_exec_or_run php artisan migrate --force
+    ensure_local_admin
     printf '[SongChart dev] Development environment is ready.\n'
     dev ps
-    printf '\nLive demo: '; dev_url ;;
-   up) ensure_dev_config; dev_up; dev ps; printf '\nLive demo: '; dev_url ;;
+    printf '\nLive development: '; dev_url ;;
+   up) ensure_dev_config; dev_up; dev ps; printf '\nLive development: '; dev_url ;;
    down) dev down --remove-orphans ;;
    status) dev ps ;;
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
@@ -179,6 +225,17 @@ case "$cmd" in
    url) ensure_dev_config; dev_url ;;
    test) focused_test "${1:-tests/Feature/EntityDetailSystemTest.php}" ;;
    *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test]' ;;
+  esac ;;
+ demo)
+  sub="${1:-status}"; shift || true; require_docker
+  case "$sub" in
+   setup) setup_demo ;;
+   up) ensure_dev_config; ensure_demo_config; dev up -d postgres; demo up -d redis app queue; demo ps; printf '\nLive demo: '; demo_url ;;
+   down) demo down --remove-orphans ;;
+   status) ensure_demo_config; demo ps ;;
+   logs) ensure_demo_config; demo logs --follow --tail 200 "$@" ;;
+   url) ensure_demo_config; demo_url ;;
+   *) die 'Usage: ./songchart demo [setup|up|down|status|logs|url]' ;;
   esac ;;
  artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
  composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
@@ -198,13 +255,7 @@ case "$cmd" in
   if [[ "$prepare" == true ]]; then
     prepare_candidate_authority
   else
-    refresh_candidate_authority
     git -C "$ROOT" diff --check
-    if ! git -C "$ROOT" diff --quiet -- docs/project/generated || ! git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
-      printf '%s\n' '[SongChart candidate] Generated repository artifacts are not committed.' >&2
-      printf '%s\n' '[SongChart candidate] Run ./songchart candidate --prepare on a clean tree, or review and commit docs/project/generated manually.' >&2
-      exit 1
-    fi
   fi
 
   if [[ -n "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]]; then
@@ -214,6 +265,16 @@ case "$cmd" in
   printf '[SongChart candidate] Running candidate verification.\n'
   stage_verify
   printf '[SongChart candidate] PASSED.\n' ;;
+ close)
+  require_docker; ensure_dev_config
+  prepare_candidate_authority
+  [[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]] || die 'Closure requires a clean committed working tree.'
+  printf '[SongChart close] Running candidate verification.\n'
+  stage_verify
+  printf '[SongChart candidate] PASSED.\n'
+  printf '[SongChart close] Reusing candidate image for canonical verification.\n'
+  canonical_verify_without_build false
+  printf '[SongChart close] PASSED.\n' ;;
  test) require_docker; stage_verify; printf '[SongChart stage] PASSED.\n' ;;
  verify)
   require_docker; no_build=false; keep=false
