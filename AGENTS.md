@@ -1,6 +1,6 @@
 # SongChart AI Bootstrap
 
-This file is intentionally thin. Do not duplicate project workflow or verification rules here.
+This file is intentionally thin. Do not duplicate project workflow or verification rules here. Before modifying source, run `./songchart ai status` (`songchart.bat ai status` on native Windows); it is read-only and never starts Docker.
 
 Mandatory read order before modifying SongChart:
 1. `PROJECT_AUTHORITY.md`
