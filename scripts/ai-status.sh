@@ -64,8 +64,9 @@ context_file="$ROOT/docs/project/generated/project-context.json"
 context_state="MISSING"
 context_detail="generated context file is missing"
 context_sources=(
-  composer.json composer.lock compose.dev.yml compose.verify.yml scripts/songchart.ps1
+  composer.json composer.lock compose.dev.yml compose.verify.yml songchart
   docs/project/stack/runtime-environments.json
+  docs/project/stack/docker-development-contract.json
   docs/project/domain/schema-ownership.json
   docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md
   docs/project/engineering/ai-development-contract.json
