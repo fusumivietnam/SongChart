@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]})")" && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEV_COMPOSE="$ROOT/compose.dev.yml"
 CODESPACES_COMPOSE="$ROOT/compose.codespaces.yml"
 VERIFY_COMPOSE="$ROOT/compose.verify.yml"
