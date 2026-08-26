@@ -9,7 +9,6 @@ use App\Support\Providers\Ingestion\ProviderImportPreviewBuilder;
 use App\Support\Providers\Normalization\DefaultNormalizedProviderEntityValidator;
 use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
 use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
-use DateTimeImmutable;
 
 it('builds a deterministic governed plan with zero direct canonical mutations', function (): void {
     $payload = new ProviderPayload(
@@ -21,7 +20,7 @@ it('builds a deterministic governed plan with zero direct canonical mutations', 
             'length' => 181000,
             'isrcs' => ['USAAA2600001'],
         ],
-        receivedAt: new DateTimeImmutable('2026-08-26T00:00:00+00:00'),
+        receivedAt: new \DateTimeImmutable('2026-08-26T00:00:00+00:00'),
     );
     $previewBuilder = new ProviderImportPreviewBuilder(
         new ProviderSpecificMapperRegistry([new MusicBrainzProviderMapper]),
