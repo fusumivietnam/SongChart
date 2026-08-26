@@ -172,21 +172,22 @@ while (true) {
 
 $exitCode = proc_close($process);
 
+$diagnosticDirectory = $root.'/storage/logs';
+if (! is_dir($diagnosticDirectory)) {
+    @mkdir($diagnosticDirectory, 0777, true);
+}
+$redacted = preg_replace(
+    '/(DB_PASSWORD|TEST_PGSQL_PASSWORD|API[_ -]?KEY|TOKEN|SECRET|AUTHORIZATION|password)(\s*[:=]\s*)[^\s]+/i',
+    '$1$2[REDACTED]',
+    $captured,
+) ?? $captured;
+@file_put_contents($diagnosticDirectory.'/focused-test-last.log', $redacted);
+
 $failureEvidenceTail = null;
 $failureEvidencePath = null;
 
 if ($exitCode !== 0) {
-    $diagnosticDirectory = $root.'/storage/logs';
-    if (! is_dir($diagnosticDirectory)) {
-        @mkdir($diagnosticDirectory, 0777, true);
-    }
-
     $diagnosticPath = $diagnosticDirectory.'/postgres-test-last-failure.log';
-    $redacted = preg_replace(
-        '/(DB_PASSWORD|TEST_PGSQL_PASSWORD|password)(\s*[:=]\s*)[^\s]+/i',
-        '$1$2[REDACTED]',
-        $captured,
-    ) ?? $captured;
     @file_put_contents($diagnosticPath, $redacted);
 
     $plain = preg_replace('/\x1B\[[0-?]*[ -\/]*[@-~]/', '', $redacted) ?? $redacted;
