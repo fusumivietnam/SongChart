@@ -8,6 +8,7 @@ VERIFY_COMPOSE="$ROOT/compose.verify.yml"
 DEV_PROJECT="${SONGCHART_DEV_PROJECT:-songchart-dev}"
 DEMO_PROJECT="${SONGCHART_DEMO_PROJECT:-songchart-demo}"
 VERIFY_PROJECT="${SONGCHART_VERIFY_PROJECT:-songchart-verify}"
+BACKUP_DIR="$ROOT/.songchart-backups"
 export SONGCHART_HOST_UID="${SONGCHART_HOST_UID:-$(id -u)}"
 export SONGCHART_HOST_GID="${SONGCHART_HOST_GID:-$(id -g)}"
 die(){ printf 'SongChart: %s\n' "$*" >&2; exit 1; }
@@ -76,6 +77,33 @@ repair_dev_runtime_ownership(){
   dev run --rm --user root app sh -lc \
     "mkdir -p /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/bootstrap/cache /workspace/storage"
 }
+dev_db_backup(){
+  ensure_dev_config
+  mkdir -p "$BACKUP_DIR"
+  dev up -d postgres >/dev/null
+  local stamp target
+  stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+  target="$BACKUP_DIR/songchart-dev-$stamp.dump"
+  printf '[SongChart dev db] Backing up development PostgreSQL to %s.\n' "$target"
+  dev exec -T postgres pg_dump -U songchart_docker -d songchart_docker -Fc > "$target"
+  cp "$target" "$BACKUP_DIR/songchart-dev-latest.dump"
+  printf '[SongChart dev db] Backup complete.\n'
+}
+dev_db_restore(){
+  ensure_dev_config
+  local source="${1:-$BACKUP_DIR/songchart-dev-latest.dump}"
+  [[ -f "$source" ]] || die "Development backup not found: $source"
+  printf 'Restore development database from %s? Existing development data will be replaced. [y/N] ' "$source"
+  local answer
+  read -r answer
+  [[ "$answer" =~ ^[Yy]$ ]] || { printf '[SongChart dev db] Restore cancelled.\n'; return 0; }
+  printf '[SongChart dev db] Creating pre-restore backup.\n'
+  dev_db_backup
+  dev up -d postgres >/dev/null
+  dev exec -T postgres pg_restore --clean --if-exists --no-owner --no-privileges -U songchart_docker -d songchart_docker < "$source"
+  printf '[SongChart dev db] Restore complete.\n'
+  ensure_local_admin
+}
 setup_demo(){
   ensure_dev_config
   [[ -f "$ROOT/.env.demo" ]] || cp "$ROOT/.env.demo.example" "$ROOT/.env.demo"
@@ -94,17 +122,24 @@ PY2
   demo run --rm app composer install --no-interaction --prefer-dist --no-progress
   demo run --rm app npm ci --no-audit --no-fund
   demo run --rm app npm run build
-  demo up -d redis app queue
+  demo up -d redis app
   printf '[SongChart demo] READY — '; demo_url
 }
 focused_test(){
+  local no_build=false
+  if [[ "${1:-}" == '--no-build' ]]; then
+    no_build=true
+    shift
+  fi
   local focused="${1:-tests/Feature/EntityDetailSystemTest.php}"
   local project="${SONGCHART_FOCUSED_PROJECT:-songchart-focused}"
   local test_command
   (
     set -e
     trap 'docker compose -p "$project" -f "$VERIFY_COMPOSE" down --remove-orphans >/dev/null 2>&1 || true' EXIT
-    docker compose -p "$project" -f "$VERIFY_COMPOSE" build verify
+    if [[ "$no_build" != true ]]; then
+      docker compose -p "$project" -f "$VERIFY_COMPOSE" build verify
+    fi
     if [[ "$focused" == tests/Unit/* || "$focused" == tests/Architecture/* ]]; then
       test_command="composer install --no-interaction --prefer-dist --no-progress && php artisan test '$focused'"
     else
@@ -156,18 +191,20 @@ prepare_candidate_authority(){
   printf '[SongChart candidate] Generated repository authority committed.\n'
 }
 canonical_verify_without_build(){
-  local keep="${1:-false}"
-  cleanup(){ [[ "$keep" == true ]] || verify_compose down --remove-orphans >/dev/null 2>&1 || true; }
-  trap cleanup RETURN
-  verify_compose down --remove-orphans
-  verify_compose run --rm verify
+  (
+    set -e
+    trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' EXIT
+    verify_compose down --remove-orphans
+    verify_compose run --rm verify
+  )
   printf '[SongChart verify] PASSED.\n'
 }
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart ai status|doctor
   ./songchart dev setup|ready|up|down|status|logs|shell|url
-  ./songchart dev test [test-path]
+  ./songchart dev test [--no-build] [test-path]
+  ./songchart dev db backup|restore [dump-path]
   ./songchart demo setup|up|down|status|logs|url
   ./songchart artisan|composer|npm <args...>
   ./songchart context [args...]
@@ -177,15 +214,22 @@ SongChart Linux-first development CLI
   ./songchart verify [--no-build] [--keep-services]
 
 Development/live test:
-  ./songchart dev ready     start the persistent development runtime on port 8000
-  ./songchart demo setup    prepare the production-like demo runtime on port 8001 using the development PostgreSQL authority
-  ./songchart demo up       start demo without rebuilding dependencies
+  ./songchart dev ready     start persistent development runtime on port 8000
+  ./songchart demo setup    prepare production-like public demo on port 8001 using development PostgreSQL data
+  ./songchart demo up       start demo app without a second queue worker
 
-Verification:
-  ./songchart dev test <path>       isolated focused lane
+Focused verification:
+  ./songchart dev test <path>              build/reuse Docker cache, then run isolated focused lane
+  ./songchart dev test --no-build <path>   rerun focused lane with the existing verify image
+
+Closure:
   ./songchart candidate             read-only verification of an already committed exact tree
   ./songchart candidate --prepare   refresh/commit generated authority, then candidate verification
-  ./songchart close                 prepare + candidate + canonical verification; reuses the candidate image for canonical closure
+  ./songchart close                 prepare + candidate + canonical verification; reuses candidate image for canonical closure
+
+Data resilience:
+  ./songchart dev db backup
+  ./songchart dev db restore [dump-path]
 
 Stable projects: songchart-dev / songchart-demo / songchart-verify
 EOF
@@ -223,14 +267,21 @@ case "$cmd" in
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
    shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" ${CODESPACES:+-f "$CODESPACES_COMPOSE"} exec app bash; else dev run --rm app bash; fi ;;
    url) ensure_dev_config; dev_url ;;
-   test) focused_test "${1:-tests/Feature/EntityDetailSystemTest.php}" ;;
-   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test]' ;;
+   test) focused_test "$@" ;;
+   db)
+    db_sub="${1:-}"; shift || true
+    case "$db_sub" in
+      backup) dev_db_backup ;;
+      restore) dev_db_restore "${1:-$BACKUP_DIR/songchart-dev-latest.dump}" ;;
+      *) die 'Usage: ./songchart dev db [backup|restore [dump-path]]' ;;
+    esac ;;
+   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test|db]' ;;
   esac ;;
  demo)
   sub="${1:-status}"; shift || true; require_docker
   case "$sub" in
    setup) setup_demo ;;
-   up) ensure_dev_config; ensure_demo_config; dev up -d postgres; demo up -d redis app queue; demo ps; printf '\nLive demo: '; demo_url ;;
+   up) ensure_dev_config; ensure_demo_config; dev up -d postgres; demo up -d redis app; demo ps; printf '\nLive demo: '; demo_url ;;
    down) demo down --remove-orphans ;;
    status) ensure_demo_config; demo ps ;;
    logs) ensure_demo_config; demo logs --follow --tail 200 "$@" ;;
@@ -273,7 +324,7 @@ case "$cmd" in
   stage_verify
   printf '[SongChart candidate] PASSED.\n'
   printf '[SongChart close] Reusing candidate image for canonical verification.\n'
-  canonical_verify_without_build false
+  canonical_verify_without_build
   printf '[SongChart close] PASSED.\n' ;;
  test) require_docker; stage_verify; printf '[SongChart stage] PASSED.\n' ;;
  verify)
