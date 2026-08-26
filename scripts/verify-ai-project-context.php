@@ -18,6 +18,7 @@ function canonicalSourceHash(string $path): ?string
 }
 
 $required = [
+    'songchart',
     'scripts/project-context.php',
     'docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md',
     'docs/project/generated/project-context.json',
@@ -28,8 +29,8 @@ foreach ($required as $relative) {
     }
 }
 
-$songchart = is_file($root.'/scripts/songchart.ps1') ? (string) file_get_contents($root.'/scripts/songchart.ps1') : '';
-foreach (["'context'", 'project-context.php', 'songchart dev [setup|up|down|status|logs|shell|ready|test|cycle]'] as $signal) {
+$songchart = is_file($root.'/songchart') ? (string) file_get_contents($root.'/songchart') : '';
+foreach (['context)', 'scripts/project-context.php', 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test]'] as $signal) {
     if (! str_contains($songchart, $signal)) {
         $errors[] = "SongChart CLI project-context contract is missing [{$signal}].";
     }
@@ -84,7 +85,7 @@ if (is_file($generatedPath)) {
             'composer.lock',
             'compose.dev.yml',
             'compose.verify.yml',
-            'scripts/songchart.ps1',
+            'songchart',
             'docs/project/stack/runtime-environments.json',
             'docs/project/domain/schema-ownership.json',
             'docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md',
@@ -104,7 +105,7 @@ if (is_file($generatedPath)) {
         foreach (array_unique($currentInputs) as $relative) {
             $actualHash = canonicalSourceHash($root.'/'.$relative);
             if (($generatedHashes[$relative] ?? null) !== $actualHash) {
-                $errors[] = "Generated project context is stale for [{$relative}]. Run: songchart context --refresh-source.";
+                $errors[] = "Generated project context is stale for [{$relative}]. Run: ./songchart candidate --prepare.";
             }
         }
         foreach (array_keys($generatedHashes) as $relative) {
