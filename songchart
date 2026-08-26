@@ -52,6 +52,22 @@ repair_dev_runtime_ownership(){
   dev run --rm --user root app sh -lc \
     "mkdir -p /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/bootstrap/cache /workspace/storage"
 }
+focused_test(){
+  local focused="${1:-tests/Feature/EntityDetailSystemTest.php}"
+  local project="${SONGCHART_FOCUSED_PROJECT:-songchart-focused}"
+  local test_command
+  (
+    set -e
+    trap 'docker compose -p "$project" -f "$VERIFY_COMPOSE" down --remove-orphans >/dev/null 2>&1 || true' EXIT
+    docker compose -p "$project" -f "$VERIFY_COMPOSE" build verify
+    if [[ "$focused" == tests/Unit/* || "$focused" == tests/Architecture/* ]]; then
+      test_command="composer install --no-interaction --prefer-dist --no-progress && php artisan test '$focused'"
+    else
+      test_command="composer install --no-interaction --prefer-dist --no-progress && php scripts/run-database-tests.php postgres --prepare-schema '$focused'"
+    fi
+    docker compose -p "$project" -f "$VERIFY_COMPOSE" run --rm verify bash -lc "$test_command"
+  )
+}
 stage_verify(){
   (
     set -e
@@ -100,6 +116,7 @@ SongChart Linux-first development CLI
   ./songchart dev setup
   ./songchart dev ready
   ./songchart dev up|down|status|logs|shell|url
+  ./songchart dev test [test-path]
   ./songchart artisan <args...>
   ./songchart composer <args...>
   ./songchart npm <args...>
@@ -110,6 +127,10 @@ SongChart Linux-first development CLI
 
 AI session bootstrap:
   ./songchart ai status    read-only branch/stage/context/runtime/verification summary; never starts Docker
+
+Focused verification:
+  ./songchart dev test tests/Unit/...       isolated verification container, no development DB/runtime
+  ./songchart dev test tests/Feature/...    isolated PostgreSQL verification lane
 
 GitHub Codespaces is auto-detected through CODESPACES=true.
 Development services start only when dev setup/ready/up is invoked.
@@ -153,7 +174,8 @@ case "$cmd" in
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
    shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" ${CODESPACES:+-f "$CODESPACES_COMPOSE"} exec app bash; else dev run --rm app bash; fi ;;
    url) ensure_dev_config; dev_url ;;
-   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url]' ;;
+   test) focused_test "${1:-tests/Feature/EntityDetailSystemTest.php}" ;;
+   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test]' ;;
   esac ;;
  artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
  composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
