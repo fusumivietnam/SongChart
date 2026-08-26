@@ -4,49 +4,47 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ## Accepted baseline
 
-- `main` contains merged Stage `18.1 — Rich Entity & Multi-Provider Evidence Model` and the post-18.1 repository-hygiene corrective.
-- Stage 18.1 canonical verification passed before merge; its governed provider-evidence boundaries are the accepted product baseline.
+- `main` contains merged Stage `18.2 — Public Search & Canonical Surfaces` via PR #9.
+- Stage 18.2 candidate and canonical verification passed with all 27 registered gates successful before merge.
+- Stage 18.2 adds PostgreSQL-backed exact → prefix → substring relevance, deterministic canonical tie-breaks, query-wide facets and canonical public search/detail URLs without provider request-path coupling.
 - Development authority is Linux/WSL2 + Docker through the repository `./songchart` CLI. GitHub Codespaces is the preferred remote adapter; native Windows Batch/PowerShell, Laragon execution paths, ZIP handoff and patch-installer workflows are retired.
 
 ## Current stage
 
 - Stage `18.2 — Public Search & Canonical Surfaces`
 - Candidate: `v1`
-- Branch: `stage-18.2-public-search-canonical-surfaces`
-- Candidate closure: pending.
+- Branch: `chore/post-18.2-verification-idempotence`
+- Candidate closure: accepted on the merged Stage 18.2 target tree; this branch is a bounded post-acceptance workflow corrective and adds no product behavior.
 
 ## Implemented slices
 
-- Stage 18.2 executable task contract and validation record;
-- `candidate-verification.json` initialized for Stage 18.2 instead of reusing Stage 18.1 closure evidence;
-- production `EloquentSearchCatalog` relevance semantics moved into the canonical database query: exact title → prefix → substring;
-- stable relevance tie-breaks by normalized title, entity type and canonical identity;
-- query-wide facet counts preserved even when a selected entity type scopes the displayed page;
-- canonical public routes/pages for Artist/Group, Release, Recording, Work and Collection preserved as the public surface baseline;
-- focused PostgreSQL-backed coverage added for relevance ordering, global facets and canonical group URLs;
-- public search remains behind the existing `SearchCatalog` read boundary with thin HTTP controllers and no provider request path.
+- Stage 18.2 production PostgreSQL relevance and deterministic search ordering accepted;
+- global query facets preserved while entity filters scope displayed results;
+- strict-Eloquent-safe search projection metadata and canonical public detail routes accepted;
+- canonical verification runtime evidence is being separated from tracked `candidate-verification.json`;
+- canonical evidence recording now refuses closure when verification has mutated tracked source.
 
 ## Current blockers / risks
 
-- Focused Stage 18.2 tests and PHPStan have not yet been executed on the new exact tree.
-- Cross-entity result collection remains bounded per canonical entity type; if real catalog scale demonstrates that this bound affects recall, a later Stage 18.2 slice should replace it with a dedicated PostgreSQL search projection rather than silently increasing the cap.
-- Volatile successful verification evidence can still rewrite tracked `candidate-verification.json`; treat that as a bounded workflow defect rather than a product blocker.
+- The verification-idempotence corrective still requires one candidate/canonical cycle proving `./songchart verify` PASS leaves `git status` clean.
+- Runtime verification evidence must only be accepted when stage, candidate and recorded Git commit match the current exact HEAD.
 - Shared demo remains optional/unconfigured and does not block product development.
 
 ## Latest focused evidence
 
-- Stage 18.1 candidate and canonical verification passed.
-- PR #7 merged Stage 18.1 and PR #8 merged the post-18.1 repository hygiene into `main`.
-- Existing public SearchFlow/SearchResults/PublicCatalogBrowse coverage was green on the accepted baseline.
-- Stage 18.2 source now has explicit database relevance ranking and query-wide facet semantics; runtime verification is pending.
+- Stage 18.2 focused PostgreSQL search/public-catalog tests passed after the strict-Eloquent search-rank corrective.
+- PHPStan/Larastan closure passed after explicit comparator iterable types were restored.
+- Stage 18.2 candidate verification passed.
+- Stage 18.2 canonical verification passed with 27/27 gates and `closure_ready=true`.
+- PR #9 merged Stage 18.2 into `main` on 2026-08-26.
 
 ## Next required action
 
-1. Pull the latest Stage 18.2 branch into Codespaces.
-2. Run `tests/Feature/Search/EloquentSearchCatalogRankingTest.php`, `tests/Feature/SearchFlowTest.php`, `tests/Feature/SearchResultsTest.php` and `tests/Feature/PublicCatalog/PublicCatalogBrowseTest.php` through the governed PostgreSQL focused-test lane.
-3. Run PHPStan/Larastan and fix any type/style issue without weakening gates.
-4. If focused evidence is green, continue the remaining Stage 18.2 public-surface polish only where tests/UX expose a concrete gap; do not expand provider scope.
-5. Run `./songchart candidate --prepare`, then canonical verification on the exact committed tree when Stage 18.2 acceptance is complete.
+1. Verify the post-18.2 idempotence corrective: candidate and canonical verification must pass without modifying tracked files.
+2. Confirm runtime evidence is stored under ignored runtime state and is accepted only for the exact current HEAD.
+3. Merge the bounded corrective after the clean-tree invariant is demonstrated.
+4. Branch from updated `main` for `Stage 18.3 — Public Metadata & SEO Readiness`.
+5. Keep Stage 18.3 product-focused: canonical metadata, structured data, indexability, sitemap and duplicate/canonical-link verification.
 
 ## Documentation checkpoint discipline
 
