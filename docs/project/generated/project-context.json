@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "c52cf8e554349adb4fc011ad37a72e10411c77b24de33144eb0d79b72fd5c84e",
+    "source_fingerprint": "f4ad392eac9323574a21c837d9b9ebfa8c51700d4033781d21c1d0be6ab57c89",
     "candidate": {
         "stage": "18.1",
         "candidate": "v1",
@@ -1013,7 +1013,7 @@
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "e816f2ec8ed7ea713d35f1b8e9e4391ff587647633b783b691ccaf13814f09a0",
         "docs/project/engineering/ai-development-contract.json": "f4e1ebbcd9e27ba73707c73ac570e2c974873fc96a05f216a47d33a930084cd2",
         "docs/project/engineering/verification-command-surface.json": "9a858e6672b6bc46087d493ca14a9d7ef00fdd7d8cc2da0fd0194179771b11ae",
-        "docs/project/engineering/verification-topology.json": "782b43d094fc9a70ae10f40ebaaebb36e6f915f486e91f4f440edae0a4d84748",
+        "docs/project/engineering/verification-topology.json": "6aad35fb4230ce8c4c4f330070830b1fdebae0056a9eff142af0b62daf3914e7",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "2d60cd1584106cb08a46e9904a4cd575feacd60d5657e4d9215ec29c5f6e9480",
         "scripts/songchart.ps1": "9d637713b40a476ec751089745023d6fb7de56b7cee46480b93edceaad80205d"
