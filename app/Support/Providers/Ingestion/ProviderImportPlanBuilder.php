@@ -19,6 +19,7 @@ final class ProviderImportPlanBuilder
             ['musicbrainz', EntityType::Recording] => 'recording-lookup',
             default => throw new InvalidArgumentException('No governed import operation is registered for this provider/entity pair.'),
         };
+        $externalId = $this->externalId($payload);
 
         $reviewReasons = array_map(
             static fn (array $issue): string => $issue['path'].': '.$issue['message'],
@@ -41,7 +42,7 @@ final class ProviderImportPlanBuilder
         $fingerprint = hash('sha256', json_encode([
             'provider_slug' => $payload->providerSlug,
             'entity_type' => $payload->entityType->value,
-            'external_id' => strtolower(trim($payload->externalId)),
+            'external_id' => $externalId,
             'operation' => $operation,
             'payload_hash' => $payload->hash(),
             'preview' => $preview->toArray(),
@@ -50,12 +51,19 @@ final class ProviderImportPlanBuilder
         return new ProviderImportPlan(
             providerSlug: $payload->providerSlug,
             entityType: $payload->entityType,
-            externalId: strtolower(trim($payload->externalId)),
+            externalId: $externalId,
             operation: $operation,
             executable: $preview->valid,
             counts: $counts,
             reviewReasons: $reviewReasons,
             fingerprint: $fingerprint,
         );
+    }
+
+    private function externalId(ProviderPayload $payload): string
+    {
+        $externalId = trim($payload->externalId);
+
+        return $payload->providerSlug === 'musicbrainz' ? strtolower($externalId) : $externalId;
     }
 }
