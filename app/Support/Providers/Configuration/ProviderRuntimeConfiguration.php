@@ -90,7 +90,9 @@ final class ProviderRuntimeConfiguration
     /** @return array<string, mixed> */
     private function configuration(string $providerSlug): array
     {
-        return $this->provider($providerSlug)?->configuration ?? [];
+        $provider = $this->provider($providerSlug);
+
+        return $provider->configuration ?? [];
     }
 
     private function provider(string $providerSlug): ?Provider
