@@ -35,8 +35,8 @@ if (str_contains($uxTest, "assertDontSee('Tác vụ dữ liệu')")) {
     $errors[] = 'Role-aware navigation tests must not use page-wide negative text assertions.';
 }
 
-$readme = $read('README.md');
-if (preg_match('/Current stage:\s*\*\*([0-9]+(?:\.[0-9]+)+)/', $readme, $stageMatch) !== 1) {
+$developmentState = $read('docs/project/DEVELOPMENT_STATE.md');
+if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $stageMatch) !== 1) {
     $errors[] = 'Unable to resolve current stage for changed-test guardrails.';
 } else {
     $stage = str_replace('.', '_', $stageMatch[1]);
