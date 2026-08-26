@@ -1594,6 +1594,16 @@
             ]
         },
         {
+            "target": "tests/Architecture/VerificationEvidenceIdempotenceTest.php",
+            "rule": "verification-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "verification-topology",
+                "verification-command-surface",
+                "impact-test-map"
+            ]
+        },
+        {
             "target": "tests/Architecture/VerificationProjectIsolationTest.php",
             "rule": "verification-governance",
             "classification": "declarative",
@@ -1614,5 +1624,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "020df09377119c6a32b0cc904ae4e46f97c6f9c3ee85e70a7d2b8be0e985130a"
+    "graph_fingerprint": "48393ff1863f33347bf53ff56e8dced8df8d4a68f3687767169d152d800040f1"
 }
