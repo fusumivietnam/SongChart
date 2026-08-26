@@ -81,9 +81,10 @@ if ($duplicateAgent === false) {
     }
 }
 
-$readme = @file_get_contents($root.'/README.md');
-if ($readme === false || preg_match('/Current stage:\s*\*\*([0-9]+(?:\.[0-9]+)+)/', $readme, $matches) !== 1) {
-    $errors[] = 'Unable to resolve the current stage from README.md.';
+$developmentState = @file_get_contents($root.'/docs/project/DEVELOPMENT_STATE.md');
+if ($developmentState === false
+    || preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $matches) !== 1) {
+    $errors[] = 'Unable to resolve the current stage from DEVELOPMENT_STATE.md.';
 } else {
     $stage = str_replace('.', '_', $matches[1]);
     $taskContractPath = $root."/docs/foundation/STAGE_{$stage}_TASK_CONTRACT.md";
