@@ -58,11 +58,13 @@ foreach (['scripts/ai-status.sh', 'scripts/ai-status.ps1'] as $statusScript) {
 }
 
 $songchart = (string) file_get_contents($root.'/songchart');
-$windowsCli = (string) file_get_contents($root.'/scripts/songchart.ps1');
+$windowsCli = (string) file_get_contents($root.'/songchart.bat');
 if (! str_contains($songchart, 'ai status') || ! str_contains($songchart, 'scripts/ai-status.sh')) {
     $errors[] = 'Linux songchart CLI must expose ai status through scripts/ai-status.sh.';
 }
-if (! str_contains($windowsCli, "'ai'") || ! str_contains($windowsCli, 'ai-status.ps1')) {
+if (! str_contains(strtolower($windowsCli), 'ai')
+    || ! str_contains(strtolower($windowsCli), 'status')
+    || ! str_contains($windowsCli, 'scripts\\ai-status.ps1')) {
     $errors[] = 'Windows songchart CLI must expose ai status through scripts/ai-status.ps1.';
 }
 
