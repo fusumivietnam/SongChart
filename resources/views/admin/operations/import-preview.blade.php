@@ -4,158 +4,115 @@
 @section('content')
 <x-admin.page-header :title="$title" :description="$description" />
 
-<div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+<div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,.72fr)]">
     <x-ui.card>
-        <div class="p-5">
-            <div class="mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-                <div class="font-semibold">Chỉ xem trước — chưa nhập dữ liệu</div>
-                <p class="mt-1 text-blue-800">SongChart chỉ chuẩn hóa và kiểm tra payload trong request hiện tại. Trang này không tạo import run, không ghi bằng chứng và không thay đổi dữ liệu chuẩn.</p>
+        <div class="p-5 md:p-6">
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
+                <div class="text-sm font-bold text-indigo-950">Bạn chỉ cần nhập điều bạn đang biết</div>
+                <p class="mt-1 text-sm leading-6 text-indigo-800">Tên ca sĩ, nhóm nhạc hoặc tên bài hát là đủ để bắt đầu. SongChart sẽ tìm định danh bên nguồn và tải dữ liệu chi tiết; bạn không cần biết MBID hay JSON.</p>
             </div>
 
-            <form method="POST" action="{{ route('admin.imports.preview.build') }}" class="space-y-5">
+            <form method="POST" action="{{ route('admin.imports.search') }}" class="mt-6 space-y-5">
                 @csrf
-
-                <div class="grid gap-4 md:grid-cols-2">
-                    <label class="block">
-                        <span class="mb-1.5 block text-sm font-semibold text-slate-800">Nguồn dữ liệu</span>
-                        <select name="provider_slug" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5" required>
-                            <option value="musicbrainz" @selected(old('provider_slug', 'musicbrainz') === 'musicbrainz')>MusicBrainz</option>
-                        </select>
-                        <span class="mt-1 block text-xs text-slate-500">Spotify, Apple Music, YouTube, SoundCloud và Wikidata sẽ xuất hiện khi mapper tương ứng được bật.</span>
-                        @error('provider_slug')<span class="mt-1 block text-sm text-red-600">{{ $message }}</span>@enderror
-                    </label>
-
-                    <label class="block">
-                        <span class="mb-1.5 block text-sm font-semibold text-slate-800">Loại thực thể</span>
-                        <select name="entity_type" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5" required>
-                            <option value="artist" @selected(old('entity_type', 'recording') === 'artist')>Nghệ sĩ</option>
-                            <option value="recording" @selected(old('entity_type', 'recording') === 'recording')>Bản ghi âm</option>
-                        </select>
-                        @error('entity_type')<span class="mt-1 block text-sm text-red-600">{{ $message }}</span>@enderror
-                    </label>
-                </div>
+                <fieldset>
+                    <legend class="text-sm font-bold text-slate-900">Bạn đang có thông tin gì?</legend>
+                    <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                        @foreach([
+                            'artist' => ['Nghệ sĩ / nhóm nhạc', 'Ví dụ: Adele, Da LAB'],
+                            'recording' => ['Tên bài hát', 'Ví dụ: Hello, Nước mắt em lau bằng tình yêu mới'],
+                            'lyrics' => ['Đoạn lời bài hát', 'SongChart sẽ dùng khi có nguồn lời được duyệt'],
+                        ] as $value => $copy)
+                            <label class="cursor-pointer rounded-xl border border-slate-200 p-4 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
+                                <input type="radio" name="intent" value="{{ $value }}" class="mr-2" @checked(old('intent', $intent ?? 'artist') === $value)>
+                                <span class="font-semibold text-slate-900">{{ $copy[0] }}</span>
+                                <span class="mt-1 block text-xs leading-5 text-slate-500">{{ $copy[1] }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('intent')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                </fieldset>
 
                 <label class="block">
-                    <span class="mb-1.5 block text-sm font-semibold text-slate-800">Mã định danh bên nguồn</span>
-                    <input name="external_id" value="{{ old('external_id') }}" class="w-full rounded-xl border border-slate-300 px-3 py-2.5" placeholder="Ví dụ: MusicBrainz ID (MBID)" required>
-                    <span class="mt-1 block text-xs text-slate-500">Dùng đúng ID của entity mà payload mô tả để preview identity evidence chính xác.</span>
-                    @error('external_id')<span class="mt-1 block text-sm text-red-600">{{ $message }}</span>@enderror
+                    <span class="mb-1.5 block text-sm font-bold text-slate-900">Tìm kiếm</span>
+                    <div class="flex flex-col gap-3 sm:flex-row">
+                        <input name="query" value="{{ old('query', $query ?? '') }}" class="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3" placeholder="Nhập tên nghệ sĩ, nhóm nhạc hoặc bài hát…" required autofocus>
+                        <button class="rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700">Tìm thông tin</button>
+                    </div>
+                    @error('query')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
                 </label>
-
-                <label class="block">
-                    <span class="mb-1.5 block text-sm font-semibold text-slate-800">Dữ liệu JSON từ provider</span>
-                    <textarea name="payload_json" rows="16" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 font-mono text-sm" placeholder='{"title":"Example Song","length":181000,"isrcs":["USAAA2600001"]}' required>{{ old('payload_json') }}</textarea>
-                    <span class="mt-1 block text-xs text-slate-500">Tối đa 1 MiB. Secret/API key không nên xuất hiện trong payload preview.</span>
-                    @error('payload_json')<span class="mt-1 block text-sm text-red-600">{{ $message }}</span>@enderror
-                </label>
-
-                <div class="flex flex-wrap items-center gap-3">
-                    <button type="submit" class="rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Xem trước dữ liệu</button>
-                    <a href="{{ route('admin.imports.index') }}" class="rounded-xl border border-slate-300 px-4 py-2.5 font-semibold text-slate-700">Xem lịch sử tác vụ</a>
-                </div>
             </form>
+
+            @if(($searchNotice ?? null) !== null)
+                <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">{{ $searchNotice }}</div>
+            @endif
+
+            @if(($results ?? []) !== [])
+                <section class="mt-7" aria-labelledby="import-search-results">
+                    <div class="flex items-end justify-between gap-4">
+                        <div>
+                            <h2 id="import-search-results" class="text-lg font-bold text-slate-900">Kết quả phù hợp</h2>
+                            <p class="mt-1 text-sm text-slate-500">Chọn đúng người hoặc bài hát. SongChart sẽ tự tải bản ghi đầy đủ và dựng kế hoạch nhập trước khi có thay đổi.</p>
+                        </div>
+                        <span class="text-sm font-semibold text-slate-500">{{ count($results) }} kết quả</span>
+                    </div>
+                    <div class="mt-4 space-y-3">
+                        @foreach($results as $result)
+                            <form method="POST" action="{{ route('admin.imports.select') }}" class="rounded-xl border border-slate-200 p-4 transition hover:border-indigo-300 hover:bg-slate-50">
+                                @csrf
+                                <input type="hidden" name="provider_slug" value="musicbrainz">
+                                <input type="hidden" name="entity_type" value="{{ ($intent ?? 'artist') === 'artist' ? 'artist' : 'recording' }}">
+                                <input type="hidden" name="external_id" value="{{ $result['id'] }}">
+                                <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                                    <div class="min-w-0 flex-1">
+                                        @if(($intent ?? 'artist') === 'artist')
+                                            <div class="font-bold text-slate-900">{{ $result['name'] }}</div>
+                                            <div class="mt-1 text-sm text-slate-500">{{ collect([$result['type'] ?: null, $result['country'] ?: null, $result['disambiguation'] ?: null])->filter()->implode(' · ') ?: 'Nghệ sĩ / nhóm nhạc trên MusicBrainz' }}</div>
+                                        @else
+                                            <div class="font-bold text-slate-900">{{ $result['title'] }}</div>
+                                            <div class="mt-1 text-sm text-slate-500">{{ collect([$result['artist_credit'] ?: null, $result['disambiguation'] ?: null])->filter()->implode(' · ') ?: 'Bản ghi âm trên MusicBrainz' }}</div>
+                                        @endif
+                                    </div>
+                                    <button class="shrink-0 rounded-xl border border-indigo-200 bg-white px-4 py-2.5 font-semibold text-indigo-700 hover:bg-indigo-50">Chọn và xem kế hoạch</button>
+                                </div>
+                            </form>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
         </div>
     </x-ui.card>
 
-    <div>
-        @if($preview)
-            @php($normalized = $preview->normalized)
-            <x-ui.card>
-                <div class="p-5">
-                    <div class="flex flex-wrap items-start justify-between gap-3">
-                        <div>
-                            <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">Kết quả xem trước</div>
-                            <h2 class="mt-1 text-xl font-bold text-slate-900">{{ $preview->valid ? 'Có thể tiếp tục xử lý' : 'Cần sửa dữ liệu trước' }}</h2>
-                            <p class="mt-1 text-sm text-slate-600">Đây là cấu trúc SongChart nhận được sau bước mapper + validation.</p>
-                        </div>
-                        <x-ui.badge :variant="$preview->valid ? 'success' : 'warning'">{{ $preview->valid ? 'Hợp lệ' : 'Cần kiểm tra' }}</x-ui.badge>
-                    </div>
+    <div class="space-y-6">
+        <x-ui.card>
+            <div class="p-5">
+                <h2 class="font-bold text-slate-900">Luồng nhập an toàn</h2>
+                <ol class="mt-4 space-y-3 text-sm text-slate-600">
+                    <li><strong class="text-slate-900">1. Tìm</strong> — bằng thông tin quen thuộc.</li>
+                    <li><strong class="text-slate-900">2. Chọn</strong> — SongChart tải dữ liệu từ nguồn.</li>
+                    <li><strong class="text-slate-900">3. Kiểm tra</strong> — xem kế hoạch, định danh, quan hệ và cảnh báo.</li>
+                    <li><strong class="text-slate-900">4. Xác nhận</strong> — mới tạo tác vụ nhập có kiểm soát.</li>
+                </ol>
+                <p class="mt-4 rounded-lg bg-slate-50 p-3 text-xs leading-5 text-slate-500">Không có bước nào ghi trực tiếp dữ liệu chuẩn. Canonical admission và identity resolution vẫn giữ nguyên.</p>
+            </div>
+        </x-ui.card>
 
-                    <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                        @foreach([
-                            'fields' => 'Thuộc tính',
-                            'identifiers' => 'Định danh',
-                            'relationships' => 'Quan hệ',
-                            'media_assets' => 'Media',
-                            'destinations' => 'Điểm đến',
-                            'availability' => 'Khả dụng',
-                            'classifications' => 'Phân loại',
-                            'metrics' => 'Chỉ số',
-                        ] as $key => $label)
-                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                                <div class="text-2xl font-bold text-slate-900">{{ $preview->counts[$key] ?? 0 }}</div>
-                                <div class="mt-1 text-xs font-medium text-slate-600">{{ $label }}</div>
-                            </div>
-                        @endforeach
-                    </div>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5">
+            <summary class="cursor-pointer font-semibold text-slate-800">Chế độ nâng cao: ID + JSON</summary>
+            <p class="mt-2 text-sm text-slate-500">Dành cho chẩn đoán hoặc payload đã có sẵn. Người vận hành thông thường không cần dùng phần này.</p>
+            <form method="POST" action="{{ route('admin.imports.preview.build') }}" class="mt-4 space-y-3">
+                @csrf
+                <select name="entity_type" class="w-full rounded-xl border border-slate-300 px-3 py-2.5">
+                    <option value="artist">Nghệ sĩ</option>
+                    <option value="recording">Bản ghi âm</option>
+                </select>
+                <input type="hidden" name="provider_slug" value="musicbrainz">
+                <input name="external_id" class="w-full rounded-xl border border-slate-300 px-3 py-2.5" placeholder="MusicBrainz ID (MBID)">
+                <textarea name="payload_json" rows="8" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 font-mono text-xs" placeholder="Dán JSON provider…"></textarea>
+                <button class="w-full rounded-xl border border-slate-300 px-4 py-2.5 font-semibold text-slate-700">Xem trước payload kỹ thuật</button>
+            </form>
+        </details>
 
-                    @if($preview->issues !== [])
-                        <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
-                            <h3 class="font-semibold text-amber-900">Điểm cần kiểm tra</h3>
-                            <ul class="mt-2 space-y-2 text-sm text-amber-900">
-                                @foreach($preview->issues as $issue)
-                                    <li><strong>{{ $issue['path'] }}</strong>: {{ $issue['message'] }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <div class="mt-6 space-y-5">
-                        <section>
-                            <h3 class="text-sm font-bold text-slate-900">Thuộc tính đã chuẩn hóa</h3>
-                            <div class="mt-2 overflow-x-auto rounded-xl border border-slate-200">
-                                <table class="min-w-full text-left text-sm">
-                                    <thead class="bg-slate-50 text-slate-600"><tr><th class="p-3">Thuộc tính</th><th class="p-3">Tình trạng</th><th class="p-3">Giá trị</th></tr></thead>
-                                    <tbody class="divide-y divide-slate-100">
-                                        @foreach($normalized['fields'] as $name => $field)
-                                            <tr>
-                                                <td class="p-3 font-semibold text-slate-800">{{ $name }}</td>
-                                                <td class="p-3 text-slate-600">{{ $field['presence'] }}</td>
-                                                <td class="p-3 text-slate-700">{{ array_key_exists('value', $field) ? (is_scalar($field['value']) ? (string) $field['value'] : json_encode($field['value'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) : '—' }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </section>
-
-                        <section>
-                            <h3 class="text-sm font-bold text-slate-900">Định danh và quan hệ</h3>
-                            <div class="mt-2 grid gap-3 md:grid-cols-2">
-                                <div class="rounded-xl border border-slate-200 p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">Định danh</div>
-                                    @forelse($normalized['identifiers'] as $identifier)
-                                        <div class="mt-2 text-sm"><span class="font-semibold">{{ $identifier['namespace'] }}</span><div class="break-all text-slate-600">{{ $identifier['value'] }}</div></div>
-                                    @empty
-                                        <p class="mt-2 text-sm text-slate-500">Không có định danh bổ sung.</p>
-                                    @endforelse
-                                </div>
-                                <div class="rounded-xl border border-slate-200 p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">Quan hệ</div>
-                                    @forelse($normalized['relationships'] as $relationship)
-                                        <div class="mt-2 text-sm"><span class="font-semibold">{{ $relationship['type'] }}</span><div class="break-all text-slate-600">{{ $relationship['target_entity_type'] }} · {{ $relationship['target_external_id'] }}</div></div>
-                                    @empty
-                                        <p class="mt-2 text-sm text-slate-500">Không có quan hệ trong payload này.</p>
-                                    @endforelse
-                                </div>
-                            </div>
-                        </section>
-
-                        <details class="rounded-xl border border-slate-200 p-4">
-                            <summary class="cursor-pointer font-semibold text-slate-800">Xem dữ liệu chuẩn hóa đầy đủ</summary>
-                            <pre class="mt-3 max-h-[32rem] overflow-auto whitespace-pre-wrap break-words rounded-lg bg-slate-950 p-4 text-xs text-slate-100">{{ json_encode($normalized, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</pre>
-                        </details>
-                    </div>
-                </div>
-            </x-ui.card>
-        @else
-            <x-ui.card>
-                <div class="p-8 text-center">
-                    <div class="text-lg font-bold text-slate-900">Chưa có dữ liệu xem trước</div>
-                    <p class="mx-auto mt-2 max-w-md text-sm text-slate-600">Chọn nguồn, loại thực thể, nhập ID và payload JSON. SongChart sẽ hiển thị cách dữ liệu được chuẩn hóa trước khi bạn quyết định bước tiếp theo.</p>
-                </div>
-            </x-ui.card>
-        @endif
+        <a href="{{ route('admin.imports.index') }}" class="block text-center text-sm font-semibold text-indigo-700 underline">Xem lịch sử tác vụ</a>
     </div>
 </div>
 @endsection
