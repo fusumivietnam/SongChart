@@ -7,6 +7,7 @@ $errors = [];
 
 $required = [
     'compose.dev.yml',
+    'compose.codespaces.yml',
     '.env.docker.example',
     'docker/dev/Caddyfile',
     'docker-dev-setup.bat',
@@ -15,6 +16,8 @@ $required = [
     'scripts/setup-docker-dev.ps1',
     'scripts/docker-dev-up.ps1',
     'scripts/docker-dev-down.ps1',
+    'scripts/setup-docker-dev.sh',
+    'songchart',
     'songchart.bat',
     'scripts/songchart.ps1',
     'docs/project/stack/docker-development-contract.json',
@@ -54,6 +57,21 @@ if (str_contains($compose, '443:443') && ! str_contains($compose, '127.0.0.1:844
     $errors[] = 'Docker local development must not claim host port 443 by default.';
 }
 
+$codespacesCompose = (string) file_get_contents($root.'/compose.codespaces.yml');
+foreach ([
+    'APP_URL: "${SONGCHART_CODESPACES_APP_URL}"',
+    'SESSION_DOMAIN: ""',
+    'SESSION_SECURE_COOKIE: "true"',
+    '127.0.0.1:8000:8000',
+] as $signal) {
+    if (! str_contains($codespacesCompose, $signal)) {
+        $errors[] = "compose.codespaces.yml missing [{$signal}].";
+    }
+}
+if (str_contains($codespacesCompose, 'caddy:')) {
+    $errors[] = 'Codespaces override must not create a second Caddy/TLS runtime.';
+}
+
 $caddy = (string) file_get_contents($root.'/docker/dev/Caddyfile');
 foreach ([
     'docker.songchart.test',
@@ -87,6 +105,47 @@ foreach ([
     }
 }
 
+$songchart = (string) file_get_contents($root.'/songchart');
+foreach ([
+    'compose.codespaces.yml',
+    'CODESPACES:-false',
+    'SONGCHART_CODESPACES_APP_URL',
+    'GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev',
+    'dev up -d postgres redis app queue',
+    'dev url',
+] as $signal) {
+    if (! str_contains($songchart, $signal)) {
+        $errors[] = "songchart Codespaces workflow missing [{$signal}].";
+    }
+}
+
+$setup = (string) file_get_contents($root.'/scripts/setup-docker-dev.sh');
+foreach ([
+    'IS_CODESPACES=false',
+    'compose.codespaces.yml',
+    'SONGCHART_CODESPACES_APP_URL',
+    'if [[ "$IS_CODESPACES" == false ]]',
+    'if [[ "$IS_CODESPACES" == true ]]',
+] as $signal) {
+    if (! str_contains($setup, $signal)) {
+        $errors[] = "setup-docker-dev.sh Codespaces workflow missing [{$signal}].";
+    }
+}
+
+$contract = json_decode((string) file_get_contents($root.'/docs/project/stack/docker-development-contract.json'), true);
+if (! is_array($contract)) {
+    $errors[] = 'docker-development-contract.json must decode as JSON.';
+} else {
+    $codespaces = $contract['codespaces'] ?? null;
+    if (! is_array($codespaces)
+        || ($codespaces['compose_override'] ?? null) !== 'compose.codespaces.yml'
+        || ($codespaces['app_host_port'] ?? null) !== 8000
+        || ($codespaces['auto_start_services'] ?? null) !== false
+        || ($codespaces['url_entrypoint'] ?? null) !== 'songchart dev url') {
+        $errors[] = 'Docker development contract must govern the Codespaces adapter, private app port, no-auto-start policy and URL entrypoint.';
+    }
+}
+
 $gitignore = (string) file_get_contents($root.'/.gitignore');
 foreach (['.env.docker', '.certs/*'] as $signal) {
     if (! str_contains($gitignore, $signal)) {
@@ -100,4 +159,4 @@ if ($errors !== []) {
     exit(1);
 }
 
-fwrite(STDOUT, 'Docker local-development and trusted HTTPS compatibility contract passed.'.PHP_EOL);
+fwrite(STDOUT, 'Docker local-development, trusted HTTPS compatibility and Codespaces development-adapter contract passed.'.PHP_EOL);

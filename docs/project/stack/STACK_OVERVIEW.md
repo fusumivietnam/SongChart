@@ -11,6 +11,7 @@ This directory is the canonical authority for SongChartWeb framework, package an
 - Node.js: Node 24 LTS is the Stage 18.1 development, CI and canonical build baseline.
 - npm: use the version bundled with the approved Node.js 24 runtime.
 - Local development: Docker Desktop + WSL2 through the repository `songchart` CLI; Laragon is compatibility-only.
+- Remote development: GitHub Codespaces is an optional Docker development adapter through the same `songchart` CLI. It uses `compose.dev.yml` plus `compose.codespaces.yml`, does not require local `mkcert`/Caddy TLS, exposes only app port `8000` to the private Codespaces forwarding proxy, and never auto-starts SongChart services merely because a Codespace opens.
 - CI: GitHub Actions.
 - Database test/release authority: PostgreSQL; SQLite is optional compatibility-only.
 
@@ -52,4 +53,4 @@ Laravel-native-first. Do not add a package, service, client, queue, authenticati
 - Redis
 - Node 24 LTS
 - Composer/npm dependencies restored from repository lockfiles
-- Docker Desktop + WSL2 is the primary development and verification runtime; Laragon is compatibility-only
+- Docker Desktop + WSL2 is the primary local development and verification runtime; GitHub Codespaces is a remote adapter over the same Docker/CLI contract; Laragon is compatibility-only

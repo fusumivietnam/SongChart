@@ -2,17 +2,44 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEV_COMPOSE="$ROOT/compose.dev.yml"
+CODESPACES_COMPOSE="$ROOT/compose.codespaces.yml"
 VERIFY_COMPOSE="$ROOT/compose.verify.yml"
 DEV_PROJECT="${SONGCHART_DEV_PROJECT:-songchart-dev}"
 VERIFY_PROJECT="${SONGCHART_VERIFY_PROJECT:-songchart-verify}"
 export SONGCHART_HOST_UID="${SONGCHART_HOST_UID:-$(id -u)}"
 export SONGCHART_HOST_GID="${SONGCHART_HOST_GID:-$(id -g)}"
 die(){ printf 'SongChart: %s\n' "$*" >&2; exit 1; }
+codespaces_mode(){ [[ "${CODESPACES:-false}" == "true" ]]; }
+if codespaces_mode; then
+  [[ -f "$CODESPACES_COMPOSE" ]] || die 'compose.codespaces.yml is required in GitHub Codespaces.'
+  [[ -n "${CODESPACE_NAME:-}" ]] || die 'CODESPACE_NAME is required in GitHub Codespaces.'
+  export SONGCHART_CODESPACES_APP_URL="https://${CODESPACE_NAME}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"
+fi
 require_docker(){ command -v docker >/dev/null 2>&1 || die 'Docker CLI is required.'; docker version >/dev/null 2>&1 || die 'Docker Engine is not reachable.'; docker compose version >/dev/null 2>&1 || die 'Docker Compose v2 plugin is required.'; }
 ensure_dev_config(){ [[ -f "$ROOT/.env.docker" ]] || die '.env.docker is missing. Run: ./songchart dev setup'; }
-dev(){ docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" "$@"; }
+dev(){
+  if codespaces_mode; then
+    docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" -f "$CODESPACES_COMPOSE" "$@"
+  else
+    docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" "$@"
+  fi
+}
 verify_compose(){ docker compose -p "$VERIFY_PROJECT" -f "$VERIFY_COMPOSE" "$@"; }
 dev_app_running(){ [[ "$(dev ps --status running --services 2>/dev/null | grep -x 'app' || true)" == 'app' ]]; }
+dev_up(){
+  if codespaces_mode; then
+    dev up -d postgres redis app queue
+  else
+    dev up -d postgres redis app queue caddy
+  fi
+}
+dev_url(){
+  if codespaces_mode; then
+    printf '%s\n' "$SONGCHART_CODESPACES_APP_URL"
+  else
+    printf '%s\n' 'https://docker.songchart.test:8443'
+  fi
+}
 dev_exec_or_run(){
   if dev_app_running; then
     dev exec app "$@"
@@ -71,7 +98,7 @@ help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart dev setup
   ./songchart dev ready
-  ./songchart dev up|down|status|logs|shell
+  ./songchart dev up|down|status|logs|shell|url
   ./songchart artisan <args...>
   ./songchart composer <args...>
   ./songchart npm <args...>
@@ -79,6 +106,10 @@ SongChart Linux-first development CLI
   ./songchart candidate [--prepare]
   ./songchart test
   ./songchart verify [--no-build] [--keep-services]
+
+GitHub Codespaces is auto-detected through CODESPACES=true.
+Development services start only when dev setup/ready/up is invoked.
+Use ./songchart dev url for the private forwarded live-demo URL.
 
 Candidate workflow:
   ./songchart candidate            verify an already committed exact tree
@@ -97,20 +128,22 @@ case "$cmd" in
    ready)
     ensure_dev_config
     printf '[SongChart dev] Starting development services.\n'
-    dev up -d postgres redis app queue caddy
+    dev_up
     repair_dev_runtime_ownership
     printf '[SongChart dev] Clearing stale compiled views.\n'
     dev_exec_or_run php artisan view:clear
     printf '[SongChart dev] Applying pending development migrations.\n'
     dev_exec_or_run php artisan migrate --force
     printf '[SongChart dev] Development environment is ready.\n'
-    dev ps ;;
-   up) ensure_dev_config; dev up -d postgres redis app queue caddy; dev ps ;;
+    dev ps
+    printf '\nLive demo: '; dev_url ;;
+   up) ensure_dev_config; dev_up; dev ps; printf '\nLive demo: '; dev_url ;;
    down) dev down --remove-orphans ;;
    status) dev ps ;;
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
-   shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app bash; else exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" run --rm app bash; fi ;;
-   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell]' ;;
+   shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" ${CODESPACES:+-f "$CODESPACES_COMPOSE"} exec app bash; else dev run --rm app bash; fi ;;
+   url) ensure_dev_config; dev_url ;;
+   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url]' ;;
   esac ;;
  artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
  composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
