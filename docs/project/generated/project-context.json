@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "632cf2fa93140a2887e975258f143d5c43806bfb6f2b37afc09368b9fedfc9dd",
+    "source_fingerprint": "fc3d2faac2d5fe549d1df8170183e4e000517815e8677b57d1e8b15d36a3a20e",
     "candidate": {
         "stage": "18.1",
         "candidate": "v1",
@@ -40,9 +40,19 @@
         "https_url": "https://docker.songchart.test:8443"
     },
     "command_surface": {
-        "dev": [],
-        "canonical_verify": ".\\songchart.bat verify",
-        "context": ".\\songchart.bat context --json"
+        "dev": [
+            "setup",
+            "ready",
+            "up",
+            "down",
+            "status",
+            "logs",
+            "shell",
+            "url",
+            "test"
+        ],
+        "canonical_verify": "./songchart verify",
+        "context": "./songchart context --json"
     },
     "seeders": {
         "CatalogFixtureSeeder": {
@@ -85,6 +95,7 @@
                     "artist_id",
                     "recording_id",
                     "credit_role",
+                    "primary",
                     "position",
                     "created_at",
                     "updated_at"
@@ -97,6 +108,7 @@
                     "artist_id",
                     "release_id",
                     "credit_role",
+                    "primary",
                     "position",
                     "created_at",
                     "updated_at"
@@ -111,8 +123,10 @@
                     "sort_name",
                     "slug",
                     "artist_type",
+                    "person",
                     "country_code",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -141,13 +155,16 @@
                 "columns": [
                     "id",
                     "metadata_assertion_id",
+                    "metadata_assertions",
                     "entity_type",
                     "entity_id",
                     "field_name",
                     "status",
+                    "pending",
                     "canonical_value",
                     "decision_reason",
                     "reviewer_id",
+                    "users",
                     "reviewed_at",
                     "applied_at"
                 ],
@@ -174,7 +191,9 @@
                     "slug",
                     "description",
                     "visibility",
+                    "private",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -185,11 +204,13 @@
                 "columns": [
                     "id",
                     "channel_id",
+                    "discovery_channels",
                     "entity_type",
                     "entity_id",
                     "reason",
                     "expires_at",
                     "created_by",
+                    "users",
                     "created_at",
                     "updated_at"
                 ],
@@ -200,6 +221,7 @@
                 "columns": [
                     "id",
                     "channel_id",
+                    "discovery_channels",
                     "entity_type",
                     "entity_id",
                     "position",
@@ -208,6 +230,7 @@
                     "ends_at",
                     "metadata",
                     "created_by",
+                    "users",
                     "created_at",
                     "updated_at"
                 ],
@@ -224,6 +247,7 @@
                     "entity_type",
                     "mode",
                     "status",
+                    "draft",
                     "rule_schema_version",
                     "rules",
                     "sorts",
@@ -232,8 +256,10 @@
                     "publish_from",
                     "publish_until",
                     "publication_timezone",
+                    "UTC",
                     "revision",
                     "created_by",
+                    "users",
                     "updated_by",
                     "archived_at",
                     "created_at",
@@ -246,15 +272,18 @@
                 "columns": [
                     "id",
                     "channel_id",
+                    "discovery_channels",
                     "surface",
                     "slot",
                     "scope_type",
+                    "global",
                     "scope_key",
                     "position",
                     "visible",
                     "starts_at",
                     "ends_at",
                     "created_by",
+                    "users",
                     "updated_by",
                     "created_at",
                     "updated_at"
@@ -266,6 +295,7 @@
                 "columns": [
                     "id",
                     "channel_id",
+                    "discovery_channels",
                     "channel_revision",
                     "projection_revision",
                     "rule_schema_version",
@@ -293,6 +323,7 @@
                     "reason",
                     "idempotency_key",
                     "status",
+                    "planned",
                     "attempt_count",
                     "last_error"
                 ],
@@ -306,7 +337,9 @@
                     "entity_type",
                     "entity_id",
                     "status",
+                    "candidate",
                     "match_method",
+                    "manual",
                     "confidence",
                     "evidence",
                     "created_at",
@@ -325,6 +358,7 @@
                     "object_id",
                     "metadata_source_id",
                     "verification_state",
+                    "candidate",
                     "created_at",
                     "updated_at"
                 ],
@@ -338,6 +372,7 @@
                     "type",
                     "status",
                     "actor_id",
+                    "users",
                     "source",
                     "checksum_sha256",
                     "details",
@@ -358,7 +393,9 @@
                     "path",
                     "checksum_sha256",
                     "signature_status",
+                    "unsigned",
                     "status",
+                    "staged",
                     "manifest",
                     "installed_at",
                     "created_at",
@@ -378,6 +415,7 @@
                     "manifest",
                     "configuration",
                     "created_by",
+                    "users",
                     "created_at",
                     "updated_at"
                 ],
@@ -391,6 +429,7 @@
                     "slug",
                     "name",
                     "state",
+                    "installed",
                     "active_version",
                     "active_path",
                     "enabled",
@@ -412,6 +451,7 @@
                     "metadata_source_id",
                     "is_primary",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -436,6 +476,7 @@
                     "id",
                     "identity_conflict_review_id",
                     "actor_id",
+                    "users",
                     "action",
                     "selected_entity_id",
                     "rationale",
@@ -452,6 +493,7 @@
                     "provider_entity_id",
                     "entity_type",
                     "status",
+                    "open",
                     "candidate_entity_ids",
                     "evidence",
                     "opened_at",
@@ -501,6 +543,7 @@
                     "value_fingerprint",
                     "metadata_source_id",
                     "verification_state",
+                    "candidate",
                     "confidence",
                     "observed_at",
                     "expires_at",
@@ -517,8 +560,10 @@
                     "entity_id",
                     "field_name",
                     "left_assertion_id",
+                    "metadata_assertions",
                     "right_assertion_id",
                     "status",
+                    "open",
                     "resolution_note",
                     "resolved_at",
                     "created_at",
@@ -558,6 +603,7 @@
                     "provider_id",
                     "capability",
                     "status",
+                    "unsupported",
                     "requires_user_consent",
                     "market_dependent",
                     "cache_ttl_seconds",
@@ -572,6 +618,7 @@
                 "columns": [
                     "id",
                     "provider_id",
+                    "providers",
                     "entity_type",
                     "entity_id",
                     "provider_resource_id",
@@ -584,6 +631,7 @@
                     "privacy_status",
                     "match_score",
                     "review_state",
+                    "approved",
                     "evidence",
                     "verified_at",
                     "last_checked_at",
@@ -605,6 +653,7 @@
                     "fetched_at",
                     "expires_at",
                     "status",
+                    "active",
                     "created_at",
                     "updated_at"
                 ],
@@ -674,6 +723,7 @@
                     "payload_hash",
                     "payload",
                     "schema_version",
+                    "1",
                     "received_at",
                     "created_at",
                     "updated_at"
@@ -706,6 +756,7 @@
                 "columns": [
                     "id",
                     "provider_id",
+                    "providers",
                     "operation",
                     "status",
                     "requested_by_type",
@@ -728,8 +779,11 @@
                 "columns": [
                     "id",
                     "provider_id",
+                    "providers",
                     "provider_import_run_id",
+                    "provider_import_runs",
                     "actor_user_id",
+                    "users",
                     "action",
                     "idempotency_key",
                     "before_state",
@@ -766,6 +820,7 @@
                     "name",
                     "category",
                     "status",
+                    "research",
                     "is_enabled",
                     "feature_flag",
                     "official_docs_url",
@@ -785,6 +840,9 @@
                     "type",
                     "key",
                     "key_hash",
+                    "binary",
+                    "unhex(md5(`key`))",
+                    "md5(",
                     "aggregate",
                     "value",
                     "count"
@@ -799,6 +857,9 @@
                     "type",
                     "key",
                     "key_hash",
+                    "binary",
+                    "unhex(md5(`key`))",
+                    "md5(",
                     "value"
                 ],
                 "owner": "laravel-pulse"
@@ -811,6 +872,9 @@
                     "type",
                     "key",
                     "key_hash",
+                    "binary",
+                    "unhex(md5(`key`))",
+                    "md5(",
                     "value"
                 ],
                 "owner": "laravel-pulse"
@@ -825,6 +889,7 @@
                     "version_type",
                     "duration_ms",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -840,6 +905,7 @@
                     "duration_ms",
                     "is_explicit",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -856,6 +922,7 @@
                     "first_release_date",
                     "disambiguation",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -882,10 +949,12 @@
                     "title",
                     "slug",
                     "release_type",
+                    "album",
                     "released_on",
                     "country_code",
                     "barcode",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -922,6 +991,7 @@
                     "public_key",
                     "fingerprint",
                     "status",
+                    "active",
                     "valid_from",
                     "valid_until",
                     "revoked_at",
@@ -940,6 +1010,7 @@
                     "email_verified_at",
                     "password",
                     "role",
+                    "user",
                     "is_active",
                     "two_factor_secret",
                     "two_factor_recovery_codes",
@@ -956,8 +1027,10 @@
                     "title",
                     "slug",
                     "work_type",
+                    "song",
                     "language_code",
                     "verification_state",
+                    "unverified",
                     "created_at",
                     "updated_at"
                 ],
@@ -1000,11 +1073,12 @@
         "database/seeders/ProviderRegistrySeeder.php": "f7517aa8ab1ff83ae14957839c536d088d9d9f3531ddd988d5dfa7095d098e66",
         "docs/project/domain/schema-ownership.json": "b46485152411d896b89ff354e1b7077ee887d985a6baf4bf69828dc2dbec68b8",
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "5e86c2077e3db060bef11991ca0e50788b4e6c9d015d495838158e298556022c",
-        "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "e816f2ec8ed7ea713d35f1b8e9e4391ff587647633b783b691ccaf13814f09a0",
+        "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
         "docs/project/engineering/ai-development-contract.json": "77525674fae35514b66947a49863989f0b9b2c43067ba7f6fc225fd221e4a82a",
         "docs/project/engineering/verification-command-surface.json": "698d2e6601f4b3245ee7797d700b15f243a489ee512743fcc5b22f28fce833c6",
         "docs/project/engineering/verification-topology.json": "6aad35fb4230ce8c4c4f330070830b1fdebae0056a9eff142af0b62daf3914e7",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
-        "docs/project/stack/runtime-environments.json": "4bb2a277fa3647aee6ac250d33908d4d14bca6a5cb086e57a2d2536ec41afe3f"
+        "docs/project/stack/runtime-environments.json": "4bb2a277fa3647aee6ac250d33908d4d14bca6a5cb086e57a2d2536ec41afe3f",
+        "songchart": "04dfde7582c03ae9101e651e2d10b46bbf42376d5153854063513eeef0b7a881"
     }
 }
