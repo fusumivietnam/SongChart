@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\MusicBrainzReleaseImportController as AdminMusicB
 use App\Http\Controllers\Admin\MusicBrainzWorkImportController as AdminMusicBrainzWorkImportController;
 use App\Http\Controllers\Admin\OperationsController;
 use App\Http\Controllers\Admin\PrivilegedAuditController;
+use App\Http\Controllers\Admin\ProviderConfigurationController;
+use App\Http\Controllers\Admin\ProviderImportDiscoveryController;
 use App\Http\Controllers\Admin\ProviderImportPlanController;
 use App\Http\Controllers\Admin\ProviderImportPreviewController;
 use App\Http\Controllers\Admin\ProviderMutationController;
@@ -72,6 +74,7 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::post('/canonical-admissions/{admission}/decisions', [CanonicalAdmissionController::class, 'decide'])->where('admission', app(DomainContractRegistry::class)->adminUlidPattern())->name('canonical-admissions.decide')->middleware(['can:manage-catalog', 'password.confirm']);
         Route::get('/providers', [OperationsController::class, 'providers'])->name('providers.index');
         Route::get('/providers/{provider}', [OperationsController::class, 'provider'])->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.show');
+        Route::post('/providers/{provider}/configuration', ProviderConfigurationController::class)->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.configuration.update')->middleware(['can:manage-providers', 'password.confirm']);
         Route::post('/providers/{provider}/operations', [ProviderMutationController::class, 'provider'])->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.mutate')->middleware(['can:manage-providers', 'password.confirm']);
         Route::post('/providers/{provider}/musicbrainz/artists/import', AdminMusicBrainzArtistImportController::class)->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.musicbrainz.artists.import')->middleware(['can:manage-providers', 'password.confirm']);
         Route::post('/providers/{provider}/musicbrainz/releases/import', AdminMusicBrainzReleaseImportController::class)->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.musicbrainz.releases.import')->middleware(['can:manage-providers', 'password.confirm']);
@@ -80,6 +83,8 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::post('/providers/{provider}/youtube/destinations/approve', YouTubeDestinationController::class)->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.youtube.destinations.approve')->middleware(['can:manage-providers', 'password.confirm']);
         Route::get('/imports', [OperationsController::class, 'imports'])->name('imports.index');
         Route::get('/imports/preview', [ProviderImportPreviewController::class, 'index'])->name('imports.preview');
+        Route::post('/imports/search', [ProviderImportDiscoveryController::class, 'search'])->name('imports.search');
+        Route::post('/imports/select', [ProviderImportDiscoveryController::class, 'select'])->name('imports.select');
         Route::post('/imports/preview', [ProviderImportPreviewController::class, 'preview'])->name('imports.preview.build');
         Route::post('/imports/preview/execute', [ProviderImportPlanController::class, 'execute'])->name('imports.preview.execute')->middleware(['can:manage-providers', 'password.confirm']);
         Route::get('/imports/{run}', [OperationsController::class, 'importRun'])->where('run', app(DomainContractRegistry::class)->adminUlidPattern())->name('imports.show');
@@ -102,13 +107,6 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::post('/extensions/{extension}/cleanup', [ExtensionController::class, 'cleanup'])->name('extensions.cleanup')->middleware(['can:manage-extensions', 'password.confirm']);
     });
 
-/*
-|--------------------------------------------------------------------------
-| Frontend Design Lab
-|--------------------------------------------------------------------------
-| Reference-only pages. Keep available in local/staging. Production access
-| requires explicit DESIGN_LAB_ENABLED=true.
-*/
 if (app()->environment(['local', 'testing'])) {
     Route::get('/development/status', StatusController::class)->name('development.status');
     Route::post('/development/providers/musicbrainz/artists/import', MusicBrainzArtistImportController::class)->name('development.musicbrainz.artists.import');
@@ -128,5 +126,4 @@ if (app()->environment(['local', 'testing']) || config('design-lab.enabled')) {
             ->where('section', 'foundations|components|patterns|states|admin')
             ->name('index');
     });
-
 }
