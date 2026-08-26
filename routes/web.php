@@ -26,6 +26,7 @@ use App\Http\Controllers\Development\MusicBrainzArtistImportController;
 use App\Http\Controllers\Development\StatusController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PublicCatalog\BrowseController;
+use App\Http\Controllers\PublicCatalog\SitemapController;
 use App\Http\Controllers\Search\EntityController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\ShellPreviewController;
@@ -34,6 +35,7 @@ use App\Support\DomainContracts\DomainContractRegistry;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/search', SearchController::class)->name('search');
 Route::get('/artists', [BrowseController::class, 'artists'])->name('artists.index');
 Route::get('/groups', [BrowseController::class, 'groups'])->name('groups.index');
