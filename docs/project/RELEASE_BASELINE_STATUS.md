@@ -10,7 +10,7 @@ A distributable SongChartWeb release baseline is release-reproducible only when 
 - `package-lock.json` exists and matches `package.json`;
 - lockfile authority passes;
 - exact-tree candidate verification passes;
-- canonical verification passes in the repository Docker verification environment;
+- canonical verification passes in the repository Docker verification environment through `composer canonical:verify`;
 - `composer release:package` passes from that canonically verified source tree;
 - release artifacts exclude `vendor/`, `node_modules/`, `.git/`, local backup/scratch directories, and mutable runtime state.
 
@@ -27,6 +27,8 @@ From Linux/WSL2 or GitHub Codespaces:
 ./songchart candidate
 ./songchart verify
 ```
+
+`./songchart verify` is the governed host entrypoint; inside the canonical Docker lane it executes the canonical closure owned by `composer canonical:verify`.
 
 After canonical/provenance PASS, create the release/deployment artifact with:
 
