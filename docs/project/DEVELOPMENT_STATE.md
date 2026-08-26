@@ -17,31 +17,36 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ## Implemented slices
 
-- Stage 18.1 rich provider-normalized evidence and governed import preview/plan baseline;
-- canonical public routes/pages for Artist/Group, Release, Recording, Work and Collection already exist as the starting surface;
-- public search already uses a `SearchCatalog` read boundary with thin HTTP controllers and deterministic request validation;
-- Linux/Docker/Git-only development and verification authority through `./songchart`.
+- Stage 18.2 executable task contract and validation record;
+- `candidate-verification.json` initialized for Stage 18.2 instead of reusing Stage 18.1 closure evidence;
+- production `EloquentSearchCatalog` relevance semantics moved into the canonical database query: exact title → prefix → substring;
+- stable relevance tie-breaks by normalized title, entity type and canonical identity;
+- query-wide facet counts preserved even when a selected entity type scopes the displayed page;
+- canonical public routes/pages for Artist/Group, Release, Recording, Work and Collection preserved as the public surface baseline;
+- focused PostgreSQL-backed coverage added for relevance ordering, global facets and canonical group URLs;
+- public search remains behind the existing `SearchCatalog` read boundary with thin HTTP controllers and no provider request path.
 
 ## Current blockers / risks
 
-- Production `EloquentSearchCatalog` still performs relevance ordering and cross-entity pagination largely after loading bounded per-type result sets instead of making relevance explicit in the PostgreSQL query.
-- Facet counts can become scoped to the selected type rather than representing the full query result set.
-- `candidate-verification.json` must be reset to Stage 18.2 before candidate closure; volatile successful verification evidence can still make that tracked file dirty and remains a bounded workflow defect rather than a product blocker.
+- Focused Stage 18.2 tests and PHPStan have not yet been executed on the new exact tree.
+- Cross-entity result collection remains bounded per canonical entity type; if real catalog scale demonstrates that this bound affects recall, a later Stage 18.2 slice should replace it with a dedicated PostgreSQL search projection rather than silently increasing the cap.
+- Volatile successful verification evidence can still rewrite tracked `candidate-verification.json`; treat that as a bounded workflow defect rather than a product blocker.
 - Shared demo remains optional/unconfigured and does not block product development.
 
 ## Latest focused evidence
 
 - Stage 18.1 candidate and canonical verification passed.
 - PR #7 merged Stage 18.1 and PR #8 merged the post-18.1 repository hygiene into `main`.
-- Existing public SearchFlow/SearchResults/PublicCatalogBrowse coverage is green on the accepted baseline.
+- Existing public SearchFlow/SearchResults/PublicCatalogBrowse coverage was green on the accepted baseline.
+- Stage 18.2 source now has explicit database relevance ranking and query-wide facet semantics; runtime verification is pending.
 
 ## Next required action
 
-1. Establish the Stage 18.2 executable task contract and validation record.
-2. Move production relevance semantics into the PostgreSQL-backed search read model with exact → prefix → substring ranking and deterministic canonical tie-breaks.
-3. Keep facet counts global to the query while type filters only scope the displayed result page.
-4. Add focused PostgreSQL-backed tests for ranking, facets, pagination and canonical URLs without enabling provider API calls in request paths.
-5. Run focused tests/PHPStan, then `./songchart candidate --prepare` and canonical verification on the exact committed tree.
+1. Pull the latest Stage 18.2 branch into Codespaces.
+2. Run `tests/Feature/Search/EloquentSearchCatalogRankingTest.php`, `tests/Feature/SearchFlowTest.php`, `tests/Feature/SearchResultsTest.php` and `tests/Feature/PublicCatalog/PublicCatalogBrowseTest.php` through the governed PostgreSQL focused-test lane.
+3. Run PHPStan/Larastan and fix any type/style issue without weakening gates.
+4. If focused evidence is green, continue the remaining Stage 18.2 public-surface polish only where tests/UX expose a concrete gap; do not expand provider scope.
+5. Run `./songchart candidate --prepare`, then canonical verification on the exact committed tree when Stage 18.2 acceptance is complete.
 
 ## Documentation checkpoint discipline
 
