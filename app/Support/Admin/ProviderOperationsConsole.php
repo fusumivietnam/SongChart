@@ -25,7 +25,7 @@ final class ProviderOperationsConsole
         $enabled = trim((string) ($filters['enabled'] ?? ''));
 
         $query = Provider::query()
-            ->select(['id', 'name', 'slug', 'category', 'status', 'is_enabled', 'policy_reviewed_at'])
+            ->select(['id', 'name', 'slug', 'category', 'status', 'is_enabled', 'policy_reviewed_at', 'configuration'])
             ->withCount('capabilities');
         if ($term !== '') {
             $query->where(function ($nested) use ($term): void {
