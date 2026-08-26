@@ -26,6 +26,7 @@ RUN apt-get update \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && php -r '$required = ["bcmath", "curl", "dom", "intl", "mbstring", "pcntl", "pdo_pgsql", "redis", "xml", "zip"]; foreach ($required as $extension) { if (! extension_loaded($extension)) { fwrite(STDERR, "Missing PHP extension: {$extension}\\n"); exit(1); } } echo "PHP extension smoke check passed.\\n";' \
+    && git config --system --add safe.directory /workspace \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/pear
 
