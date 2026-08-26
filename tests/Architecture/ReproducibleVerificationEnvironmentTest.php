@@ -15,7 +15,7 @@ it('defines a canonical Docker verification environment with PostgreSQL 18', fun
         ->toContain('condition: service_healthy')
         ->and($dockerfile)
         ->toContain('FROM php:8.5-cli-bookworm')
-        ->toContain('FROM node:22-bookworm-slim AS node')
+        ->toContain('FROM node:24-bookworm-slim AS node')
         ->toContain('pdo_pgsql')
         ->and($registry['runtime']['database'])->toBe('postgresql-18')
         ->and($registry['runtime']['database_major'])->toBe(18);
