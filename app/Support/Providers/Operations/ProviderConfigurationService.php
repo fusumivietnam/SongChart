@@ -40,7 +40,7 @@ final readonly class ProviderConfigurationService
                 return;
             }
 
-            $configuration = is_array($locked->configuration) ? $locked->configuration : [];
+            $configuration = $locked->configuration ?? [];
             $before = $this->safeState($configuration);
 
             foreach ($settings as $key => $value) {
@@ -51,7 +51,8 @@ final readonly class ProviderConfigurationService
                 }
             }
 
-            $encryptedSecrets = is_array($configuration['_secrets'] ?? null) ? $configuration['_secrets'] : [];
+            $secretsState = $configuration['_secrets'] ?? null;
+            $encryptedSecrets = is_array($secretsState) ? $secretsState : [];
             foreach ($secrets as $key => $value) {
                 if ($value === null || $value === '') {
                     continue;
@@ -90,12 +91,14 @@ final readonly class ProviderConfigurationService
         });
     }
 
-    /** @param array<string, mixed> $configuration
-     *  @return array<string, mixed>
+    /**
+     * @param array<string, mixed> $configuration
+     * @return array<string, mixed>
      */
     private function safeState(array $configuration): array
     {
-        $secrets = is_array($configuration['_secrets'] ?? null) ? $configuration['_secrets'] : [];
+        $secretsState = $configuration['_secrets'] ?? null;
+        $secrets = is_array($secretsState) ? $secretsState : [];
         unset($configuration['_secrets']);
 
         return [
