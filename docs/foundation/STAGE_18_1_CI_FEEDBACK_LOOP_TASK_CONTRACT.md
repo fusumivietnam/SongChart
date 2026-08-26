@@ -4,7 +4,7 @@ Status: corrective task contract.
 
 ## Goal
 
-Reduce redundant GitHub Actions execution during feature-branch iteration without weakening SongChart quality, PostgreSQL, frontend, candidate, canonical, or release gates.
+Reduce redundant GitHub Actions execution and repetitive candidate-preparation work during feature-branch iteration without weakening SongChart quality, PostgreSQL, frontend, candidate, canonical, or release gates.
 
 ## Non-goals
 
@@ -13,6 +13,8 @@ Reduce redundant GitHub Actions execution during feature-branch iteration withou
 - Reusing stale candidate/canonical evidence.
 - Adding path filters that could silently skip required verification.
 - Changing canonical verification semantics.
+- Allowing canonical verification to mutate or commit repository state.
+- Automatically committing arbitrary application/source changes.
 
 ## Acceptance criteria
 
@@ -23,17 +25,23 @@ Reduce redundant GitHub Actions execution during feature-branch iteration withou
 - CI configuration verification fails closed if the trigger/concurrency contract is removed.
 - Developer/AI workflow authority explicitly requires focused local verification during iteration, logical-batch pushes, PR CI before merge, candidate closure on the exact candidate tree, and canonical closure before release/merge completion.
 - Verification topology records that CI orchestration may reduce duplicate executions but must not reduce gate coverage.
+- `./songchart candidate --prepare` requires a clean working tree before preparation.
+- Candidate preparation may refresh and commit only `docs/project/generated`; changes outside that path fail closed and are never auto-committed.
+- The generated-authority commit happens before candidate verification so the candidate gate still runs against an exact committed tree.
+- Plain `./songchart candidate` remains read-only with respect to Git history and fails when generated authority is stale or uncommitted.
+- Canonical verification remains read-only with respect to Git history and does not use candidate preparation behavior.
 
 ## Affected modules and boundaries
 
 - `.github/workflows/tests.yml`
 - `scripts/verify-ci-configuration.php`
+- `songchart`
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
 - `docs/project/engineering/verification-topology.json`
 
 ## Security and data impact
 
-No runtime application, schema, provider, authorization, secret, or canonical-data behavior changes.
+No runtime application, schema, provider, authorization, secret, or canonical-data behavior changes. Candidate preparation is an explicit developer command and is constrained to generated repository authority on a previously clean tree.
 
 ## Verification plan
 
@@ -41,7 +49,8 @@ No runtime application, schema, provider, authorization, secret, or canonical-da
 - `composer verification-topology:verify`
 - `composer ai-protocol:verify`
 - `composer quality:verify`
-- `./songchart candidate`
+- `./songchart candidate --prepare` on a clean tree when generated authority is stale
+- `./songchart candidate` on the resulting exact committed tree
 
 ## Rollback
 
