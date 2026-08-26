@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-it('exposes machine readable project context through the canonical local cli', function (): void {
+it('exposes machine readable project context through the canonical Linux CLI', function (): void {
     $root = dirname(__DIR__, 2);
-    $cli = (string) file_get_contents($root.'/scripts/songchart.ps1');
+    $cli = (string) file_get_contents($root.'/songchart');
     $protocol = (string) file_get_contents($root.'/docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md');
 
     expect($cli)
-        ->toContain("'context'")
-        ->toContain('project-context.php')
+        ->toContain('context)')
+        ->toContain('scripts/project-context.php')
         ->toContain('songchart-verify')
-        ->toContain('[string]::IsNullOrWhiteSpace($Subcommand)')
-        ->toContain('$contextArgs.Count -gt 0')
+        ->toContain('--refresh-source')
+        ->toContain('--write-source')
         ->and($protocol)
         ->toContain('songchart context --json')
         ->toContain('Do not infer class names')
