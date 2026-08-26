@@ -53,14 +53,26 @@ function stage1814RecordingPreviewInput(): array
     ];
 }
 
-it('shows the read-only all-in-one import preview workspace to admins', function (): void {
+it('shows the import workbench as a first-class admin navigation destination', function (): void {
     $this->actingAs(stage1813ProviderAdmin())
         ->get(route('admin.imports.preview'))
         ->assertOk()
         ->assertSee('Xem trước dữ liệu nhập')
         ->assertSee('Chỉ xem trước — chưa nhập dữ liệu')
+        ->assertSee('Nhập dữ liệu')
+        ->assertSee('Lịch sử tác vụ')
+        ->assertSee('data-admin-nav="import-workbench"', false)
         ->assertSee('MusicBrainz')
         ->assertSee('Bản ghi âm');
+});
+
+it('links the import history workspace back to starting a new import', function (): void {
+    $this->actingAs(stage1813ProviderAdmin())
+        ->get(route('admin.imports.index'))
+        ->assertOk()
+        ->assertSee('Nhập dữ liệu mới')
+        ->assertSee('Bắt đầu nhập dữ liệu')
+        ->assertSee(route('admin.imports.preview'), false);
 });
 
 it('turns a valid MusicBrainz preview into a governed import plan without persisting a run', function (): void {
