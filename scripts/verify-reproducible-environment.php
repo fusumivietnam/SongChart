@@ -8,12 +8,11 @@ $required = [
     'docker/verify/Dockerfile',
     'docker/verify/php.ini',
     'scripts/canonical-verify.sh',
-    'scripts/verify-canonical.ps1',
     'scripts/verify-canonical-host.sh',
     'scripts/verify-postgres-major.php',
     'scripts/verify-canonical-php-extensions.php',
     'scripts/record-canonical-verification.php',
-    'verify-songchart.bat',
+    'songchart',
     'docs/project/stack/stack-manifest.json',
 ];
 
@@ -22,6 +21,12 @@ $errors = [];
 foreach ($required as $relative) {
     if (! is_file($root.'/'.$relative)) {
         $errors[] = "Missing canonical verification file [{$relative}].";
+    }
+}
+
+foreach (['verify-songchart.bat', 'scripts/verify-canonical.ps1'] as $retired) {
+    if (is_file($root.'/'.$retired)) {
+        $errors[] = "Retired Windows canonical wrapper must be removed [{$retired}].";
     }
 }
 
@@ -74,7 +79,6 @@ $dockerSignals = [
 if ($nodeRuntimeMajor !== null) {
     $dockerSignals[] = "FROM node:{$nodeRuntimeMajor}-bookworm-slim AS node";
 }
-
 foreach ($dockerSignals as $signal) {
     if (! str_contains($dockerfile, $signal)) {
         $errors[] = "Verification Dockerfile missing [{$signal}].";
@@ -82,13 +86,11 @@ foreach ($dockerSignals as $signal) {
 }
 
 $extensionInstallBlock = '';
-
 if (preg_match('/docker-php-ext-install(?<block>.*?)&& pecl install redis/s', $dockerfile, $matches) === 1) {
     $extensionInstallBlock = (string) ($matches['block'] ?? '');
 } else {
     $errors[] = 'Verification Dockerfile extension-install block could not be parsed.';
 }
-
 foreach (['curl', 'dom', 'mbstring', 'xml'] as $extension) {
     if (preg_match('/\\b'.preg_quote($extension, '/').'\\b/', $extensionInstallBlock) === 1) {
         $errors[] = "Verification Dockerfile must not rebuild core extension [{$extension}] from php:8.5-cli-bookworm.";
@@ -100,15 +102,9 @@ $extensionPosition = strpos($canonical, 'php scripts/verify-canonical-php-extens
 $composerInstallPosition = strpos($canonical, 'composer install');
 $normalizePosition = strpos($canonical, 'composer quality:normalize');
 $closurePosition = strpos($canonical, 'composer canonical:verify');
-
-if (
-    $extensionPosition === false
-    || $composerInstallPosition === false
-    || $extensionPosition >= $composerInstallPosition
-) {
+if ($extensionPosition === false || $composerInstallPosition === false || $extensionPosition >= $composerInstallPosition) {
     $errors[] = 'Canonical PHP extension smoke check must run before Composer dependency installation.';
 }
-
 if ($normalizePosition === false || $closurePosition === false || $normalizePosition >= $closurePosition) {
     $errors[] = 'Canonical verification must normalize with locked Pint before the canonical closure entrypoint.';
 }
@@ -131,20 +127,22 @@ foreach (['composer release:verify', 'composer stage:verify', 'composer quality:
         $errors[] = "Canonical shell duplicates consolidated closure gate [{$forbidden}].";
     }
 }
-
 if (substr_count($canonical, 'compile-repository-contracts.php --refresh-check') < 2) {
     $errors[] = 'Canonical verification must refresh the exact-container authority manifest before and after normalization.';
 }
 
-$workflow = (string) file_get_contents($root.'/.github/workflows/tests.yml');
+$songchart = (string) file_get_contents($root.'/songchart');
+if (! str_contains($songchart, 'scripts/canonical-verify.sh') || ! str_contains($songchart, 'verify)')) {
+    $errors[] = 'Linux songchart CLI must own canonical Docker verification.';
+}
 
+$workflow = (string) file_get_contents($root.'/.github/workflows/tests.yml');
 if (! str_contains($workflow, 'image: postgres:18')) {
     $errors[] = 'CI PostgreSQL service must use major 18.';
 }
 
 if ($errors !== []) {
     fwrite(STDERR, "Reproducible verification environment failed:\n- ".implode("\n- ", $errors).PHP_EOL);
-
     exit(1);
 }
 
