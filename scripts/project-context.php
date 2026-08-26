@@ -126,23 +126,33 @@ function migrationSchema(string $root): array
         foreach ($creates as $create) {
             $body = (string) $create[2];
             $columns = [];
-            if (preg_match('/\\$table->id\\(\\s*\\)/', $body) === 1) {
+
+            if (preg_match('/\$table->id\(\s*\)/', $body) === 1) {
                 $columns[] = 'id';
             }
-            if (preg_match_all("~\\$table->([A-Za-z_][A-Za-z0-9_]*)\\(\\s*['\"]([^'\"]+)['\"]~", $body, $matches, PREG_SET_ORDER) > 0) {
+
+            $columnPattern = <<<'REGEX'
+~\$table->([A-Za-z_][A-Za-z0-9_]*)\(\s*['"]([^'"]+)['"]~
+REGEX;
+            if (preg_match_all($columnPattern, $body, $matches, PREG_SET_ORDER) > 0) {
                 foreach ($matches as $match) {
                     if (! in_array($match[1], ['morphs', 'nullableMorphs'], true)) {
                         $columns[] = (string) $match[2];
                     }
                 }
             }
-            if (preg_match_all("~\\$table->(?:morphs|nullableMorphs)\\(\\s*['\"]([^'\"]+)['\"]~", $body, $matches) > 0) {
+
+            $morphPattern = <<<'REGEX'
+~\$table->(?:morphs|nullableMorphs)\(\s*['"]([^'"]+)['"]~
+REGEX;
+            if (preg_match_all($morphPattern, $body, $matches) > 0) {
                 foreach ($matches[1] as $name) {
                     $columns[] = $name.'_type';
                     $columns[] = $name.'_id';
                 }
             }
-            if (preg_match('/\\$table->timestamps\\(\\s*\\)/', $body) === 1) {
+
+            if (preg_match('/\$table->timestamps\(\s*\)/', $body) === 1) {
                 $columns[] = 'created_at';
                 $columns[] = 'updated_at';
             }
