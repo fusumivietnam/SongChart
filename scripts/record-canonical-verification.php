@@ -6,15 +6,23 @@ use App\Support\Engineering\RepositoryContractResolver;
 
 $root = dirname(__DIR__);
 require $root.'/vendor/autoload.php';
-$manifestPath = $root.'/candidate-verification.json';
+$definitionPath = $root.'/candidate-verification.json';
+$runtimePath = $root.'/storage/framework/candidate-verification-runtime.json';
 
-if (! is_file($manifestPath)) {
+if (! is_file($definitionPath)) {
     fwrite(STDERR, 'candidate-verification.json is missing.'.PHP_EOL);
 
     exit(1);
 }
 
-$manifest = json_decode((string) file_get_contents($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+$trackedState = trim((string) shell_exec('git -C '.escapeshellarg($root).' status --porcelain --untracked-files=no 2>/dev/null'));
+if ($trackedState !== '') {
+    fwrite(STDERR, "Canonical verification mutated the tracked working tree; refusing to record closure evidence.\n{$trackedState}\n");
+
+    exit(1);
+}
+
+$manifest = json_decode((string) file_get_contents($definitionPath), true, 512, JSON_THROW_ON_ERROR);
 
 try {
     $host = getenv('TEST_PGSQL_HOST') ?: 'postgres';
@@ -68,8 +76,8 @@ $manifest['evidence'] = [
 ];
 
 file_put_contents(
-    $manifestPath,
+    $runtimePath,
     json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES).PHP_EOL,
 );
 
-fwrite(STDOUT, 'Canonical candidate verification evidence recorded.'.PHP_EOL);
+fwrite(STDOUT, 'Canonical candidate runtime evidence recorded without modifying tracked source.'.PHP_EOL);
