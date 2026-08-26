@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@php($activeAdminNav = 'import-workbench')
 
 @section('content')
 <x-admin.page-header :title="$title" :description="$description" />
