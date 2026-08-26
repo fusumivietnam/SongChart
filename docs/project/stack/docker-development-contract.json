@@ -4,12 +4,11 @@
   "remote_development_adapters": [
     "github-codespaces"
   ],
-  "compatibility_runtimes": [
-    "laragon-development"
-  ],
+  "compatibility_runtimes": [],
   "host_requirements": {
     "required": [
-      "Docker Desktop with WSL2 integration for local Windows development",
+      "Linux or WSL2",
+      "Docker Engine with Compose v2",
       "Git",
       "editor/browser"
     ],
@@ -81,9 +80,9 @@
   },
   "cli": {
     "linux_entrypoint": "songchart",
-    "windows_entrypoint": "songchart.bat",
-    "powershell_owner": "scripts/songchart.ps1",
     "commands": [
+      "ai status",
+      "ai doctor",
       "dev setup",
       "dev ready",
       "dev up",
@@ -92,22 +91,24 @@
       "dev logs",
       "dev shell",
       "dev url",
+      "dev test",
       "artisan",
       "composer",
       "npm",
+      "context",
+      "candidate",
       "test",
       "verify"
     ]
   },
   "compatibility": {
-    "laragon": {
-      "status": "compatibility-only",
-      "may_make_release_claims": false,
-      "may_define_runtime_authority": false
+    "native_windows_cli": {
+      "status": "retired",
+      "supported_path": "Use WSL2/Linux and ./songchart."
     },
-    "legacy_docker_wrappers": {
-      "status": "compatibility-shims",
-      "owner": "scripts/songchart.ps1"
+    "zip_handoff": {
+      "status": "retired",
+      "supported_path": "Use Git branches, commits and pull requests."
     }
   }
 }
