@@ -71,7 +71,8 @@ else
   printf '%s\n' 'No captured focused-test evidence found.'
 fi
 
-section 'Latest Laravel error signatures'
+section 'Historical Laravel error signatures'
+printf '%s\n' 'Note: entries below may predate the latest focused test and are context only.'
 laravel_log="$ROOT/storage/logs/laravel.log"
 if [[ -f "$laravel_log" ]]; then
   grep -E 'testing\.(ERROR|WARNING)|local\.(ERROR|WARNING)|production\.(ERROR|WARNING)' "$laravel_log" \
