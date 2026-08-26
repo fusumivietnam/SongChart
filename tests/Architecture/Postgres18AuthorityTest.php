@@ -7,7 +7,7 @@ it('exposes the canonical verification entry point in repository docs', function
     $readme = (string) file_get_contents($root.'/README.md');
     $authority = (string) file_get_contents($root.'/PROJECT_AUTHORITY.md');
 
-    expect($readme)->toContain('verify-songchart.bat')
+    expect($readme)->toContain('./songchart verify')
         ->and($authority)->toContain('compose.verify.yml')
         ->and($authority)->toContain('PostgreSQL 18');
 });
