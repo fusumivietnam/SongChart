@@ -8,7 +8,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
 
     expect($cli)
         ->toContain('./songchart close')
-        ->toContain('Reusing candidate image for canonical verification')
+        ->toContain('canonical owns the stage lane exactly once')
         ->toContain('./songchart dev test --no-build <path>')
         ->toContain('./songchart dev db backup')
         ->toContain('./songchart demo setup')
@@ -19,6 +19,12 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     expect($candidateBlock)
         ->toContain('git -C "$ROOT" diff --check')
         ->not->toContain('refresh_candidate_authority');
+
+    $closeBlock = str($cli)->after(" close)\n")->before(" test)\n")->toString();
+    expect($closeBlock)
+        ->toContain('prepare_candidate_authority')
+        ->toContain('verify_compose run --rm verify')
+        ->not->toContain('stage_verify');
 
     expect($demo)
         ->toContain('DB_DATABASE: songchart_docker')
