@@ -6,13 +6,21 @@ $root = dirname(__DIR__);
 $args = array_slice($argv, 1);
 $jsonOnly = in_array('--json', $args, true);
 $write = in_array('--write', $args, true);
-$noRuntime = in_array('--no-runtime', $args, true);
 $writeSource = in_array('--write-source', $args, true);
-if ($writeSource) {
-    $noRuntime = true;
-}
+$noRuntime = in_array('--no-runtime', $args, true) || $writeSource;
 
 /** @return array<string,mixed> */
+function readJson(string $path): array
+{
+    if (! is_file($path)) {
+        return [];
+    }
+
+    $decoded = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+
+    return is_array($decoded) ? $decoded : [];
+}
+
 function canonicalSourceHash(string $path): ?string
 {
     if (! is_file($path)) {
@@ -25,17 +33,6 @@ function canonicalSourceHash(string $path): ?string
     return hash('sha256', $content);
 }
 
-function readJson(string $path): array
-{
-    if (! is_file($path)) {
-        return [];
-    }
-
-    $decoded = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
-
-    return is_array($decoded) ? $decoded : [];
-}
-
 /** @return list<string> */
 function composeServices(string $path): array
 {
@@ -43,14 +40,11 @@ function composeServices(string $path): array
         return [];
     }
 
-    $lines = preg_split('/\R/', (string) file_get_contents($path)) ?: [];
-    $inside = false;
     $services = [];
-
-    foreach ($lines as $line) {
+    $inside = false;
+    foreach (preg_split('/\R/', (string) file_get_contents($path)) ?: [] as $line) {
         if ($line === 'services:') {
             $inside = true;
-
             continue;
         }
         if ($inside && preg_match('/^[A-Za-z0-9_.-]+:/', $line) === 1) {
@@ -66,13 +60,27 @@ function composeServices(string $path): array
     return array_values(array_unique($services));
 }
 
+/** @return list<string> */
+function devCommands(string $path): array
+{
+    if (! is_file($path)) {
+        return [];
+    }
+
+    $source = (string) file_get_contents($path);
+    if (preg_match('/Usage: \.\/songchart dev \[([^\]]+)\]/', $source, $match) !== 1) {
+        return [];
+    }
+
+    return array_values(array_filter(explode('|', $match[1]), static fn (string $value): bool => $value !== ''));
+}
+
 /** @return array<string,string> */
 function installedPackages(string $lockPath, array $wanted): array
 {
     $lock = readJson($lockPath);
     $packages = array_merge($lock['packages'] ?? [], $lock['packages-dev'] ?? []);
     $versions = [];
-
     foreach ($packages as $package) {
         if (! is_array($package)) {
             continue;
@@ -82,7 +90,6 @@ function installedPackages(string $lockPath, array $wanted): array
             $versions[$name] = (string) ($package['version'] ?? 'unknown');
         }
     }
-
     ksort($versions);
 
     return $versions;
@@ -97,10 +104,9 @@ function seederRegistry(string $root): array
         if (preg_match('/namespace\s+([^;]+);/', $source, $namespace) !== 1 || preg_match('/class\s+([A-Za-z_][A-Za-z0-9_]*)/', $source, $class) !== 1) {
             continue;
         }
-        $fqcn = trim($namespace[1]).'\\'.$class[1];
         $seeders[$class[1]] = [
             'file' => str_replace('\\', '/', substr($file, strlen($root) + 1)),
-            'class' => $fqcn,
+            'class' => trim($namespace[1]).'\\'.$class[1],
         ];
     }
     ksort($seeders);
@@ -118,27 +124,20 @@ function migrationSchema(string $root): array
             continue;
         }
         foreach ($creates as $create) {
-            $table = (string) $create[1];
             $body = (string) $create[2];
             $columns = [];
             if (preg_match('/\\$table->id\\(\\s*\\)/', $body) === 1) {
                 $columns[] = 'id';
             }
-            $columnPattern = <<<'REGEX'
-~\$table->([A-Za-z_][A-Za-z0-9_]*)\(\s*['"]([^'"]+)['"]~
-REGEX;
-            if (preg_match_all($columnPattern, $body, $columnMatches, PREG_SET_ORDER) > 0) {
-                foreach ($columnMatches as $columnMatch) {
-                    if (! in_array($columnMatch[1], ['morphs', 'nullableMorphs'], true)) {
-                        $columns[] = (string) $columnMatch[2];
+            if (preg_match_all("~\\$table->([A-Za-z_][A-Za-z0-9_]*)\\(\\s*['\"]([^'\"]+)['\"]~", $body, $matches, PREG_SET_ORDER) > 0) {
+                foreach ($matches as $match) {
+                    if (! in_array($match[1], ['morphs', 'nullableMorphs'], true)) {
+                        $columns[] = (string) $match[2];
                     }
                 }
             }
-            $morphPattern = <<<'REGEX'
-~\$table->(?:morphs|nullableMorphs)\(\s*['"]([^'"]+)['"]~
-REGEX;
-            if (preg_match_all($morphPattern, $body, $morphMatches) > 0) {
-                foreach ($morphMatches[1] as $name) {
+            if (preg_match_all("~\\$table->(?:morphs|nullableMorphs)\\(\\s*['\"]([^'\"]+)['\"]~", $body, $matches) > 0) {
+                foreach ($matches[1] as $name) {
                     $columns[] = $name.'_type';
                     $columns[] = $name.'_id';
                 }
@@ -147,7 +146,7 @@ REGEX;
                 $columns[] = 'created_at';
                 $columns[] = 'updated_at';
             }
-            $tables[$table] = [
+            $tables[(string) $create[1]] = [
                 'migration' => basename($file),
                 'columns' => array_values(array_unique($columns)),
             ];
@@ -158,30 +157,19 @@ REGEX;
     return $tables;
 }
 
-/** @return list<string> */
-function devCommands(string $path): array
-{
-    if (! is_file($path)) {
-        return [];
-    }
-    $source = (string) file_get_contents($path);
-    if (preg_match('/Usage: songchart dev \\[([^\\]]+)\\]/', $source, $match) !== 1) {
-        return [];
-    }
-
-    return array_values(array_filter(explode('|', $match[1]), static fn (string $value): bool => $value !== ''));
-}
-
 /** @return array<string,mixed> */
 function runtimeDatabaseState(array $expectedTables): array
 {
+    if (! extension_loaded('pdo_pgsql')) {
+        return ['available' => false, 'reason' => 'pdo_pgsql is unavailable.'];
+    }
+
     $host = (string) (getenv('DB_HOST') ?: '');
     $database = (string) (getenv('DB_DATABASE') ?: '');
     $username = (string) (getenv('DB_USERNAME') ?: '');
     $password = (string) (getenv('DB_PASSWORD') ?: '');
     $port = (int) (getenv('DB_PORT') ?: 5432);
-
-    if ($host === '' || $database === '' || $username === '' || ! extension_loaded('pdo_pgsql')) {
+    if ($host === '' || $database === '' || $username === '') {
         return ['available' => false, 'reason' => 'PostgreSQL runtime connection is unavailable.'];
     }
 
@@ -189,34 +177,20 @@ function runtimeDatabaseState(array $expectedTables): array
         $pdo = new PDO("pgsql:host={$host};port={$port};dbname={$database}", $username, $password, [PDO::ATTR_TIMEOUT => 2]);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $version = (string) $pdo->query('show server_version')->fetchColumn();
-        $rows = $pdo->query(
-            'select table_name, column_name, data_type, is_nullable, ordinal_position
-             from information_schema.columns
-             where table_schema = current_schema()
-             order by table_name, ordinal_position'
-        )->fetchAll(PDO::FETCH_ASSOC);
-
+        $rows = $pdo->query('select table_name, column_name from information_schema.columns where table_schema = current_schema() order by table_name, ordinal_position')->fetchAll(PDO::FETCH_ASSOC);
         $actual = [];
         foreach ($rows as $row) {
-            $table = (string) $row['table_name'];
-            $actual[$table]['columns'] ??= [];
-            $actual[$table]['columns'][(string) $row['column_name']] = [
-                'type' => (string) $row['data_type'],
-                'nullable' => ((string) $row['is_nullable']) === 'YES',
-            ];
+            $actual[(string) $row['table_name']][] = (string) $row['column_name'];
         }
-        ksort($actual);
-
         $missingTables = [];
         $missingColumns = [];
         foreach ($expectedTables as $table => $definition) {
             if (! array_key_exists($table, $actual)) {
                 $missingTables[] = $table;
-
                 continue;
             }
-            foreach (($definition['columns'] ?? []) as $column) {
-                if (! array_key_exists($column, $actual[$table]['columns'])) {
+            foreach ($definition['columns'] ?? [] as $column) {
+                if (! in_array($column, $actual[$table], true)) {
                     $missingColumns[] = $table.'.'.$column;
                 }
             }
@@ -226,7 +200,6 @@ function runtimeDatabaseState(array $expectedTables): array
             'available' => true,
             'server_version' => $version,
             'database' => $database,
-            'actual_tables' => $actual,
             'drift' => [
                 'missing_tables' => $missingTables,
                 'missing_columns' => $missingColumns,
@@ -248,8 +221,9 @@ try {
 
     $tableManifest = [];
     foreach ($migrations as $table => $definition) {
-        $owner = $owners[$table] ?? (in_array($table, $frameworkTables, true) ? 'framework' : null);
-        $tableManifest[$table] = $definition + ['owner' => $owner];
+        $tableManifest[$table] = $definition + [
+            'owner' => $owners[$table] ?? (in_array($table, $frameworkTables, true) ? 'framework' : null),
+        ];
     }
 
     $sourceFiles = [
@@ -257,7 +231,7 @@ try {
         'composer.lock',
         'compose.dev.yml',
         'compose.verify.yml',
-        'scripts/songchart.ps1',
+        'songchart',
         'docs/project/stack/runtime-environments.json',
         'docs/project/domain/schema-ownership.json',
         'docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md',
@@ -274,11 +248,12 @@ try {
         $sourceFiles[] = str_replace('\\', '/', substr($seeder, strlen($root) + 1));
     }
     sort($sourceFiles);
+
     $hashes = [];
     foreach (array_unique($sourceFiles) as $relative) {
-        $path = $root.'/'.$relative;
-        if (is_file($path)) {
-            $hashes[$relative] = canonicalSourceHash($path);
+        $hash = canonicalSourceHash($root.'/'.$relative);
+        if ($hash !== null) {
+            $hashes[$relative] = $hash;
         }
     }
 
@@ -314,9 +289,9 @@ try {
             'https_url' => 'https://docker.songchart.test:8443',
         ],
         'command_surface' => [
-            'dev' => devCommands($root.'/scripts/songchart.ps1'),
-            'canonical_verify' => '.\\songchart.bat verify',
-            'context' => '.\\songchart.bat context --json',
+            'dev' => devCommands($root.'/songchart'),
+            'canonical_verify' => './songchart verify',
+            'context' => './songchart context --json',
         ],
         'seeders' => seederRegistry($root),
         'database' => [
@@ -331,15 +306,10 @@ try {
         $manifest['database']['runtime'] = runtimeDatabaseState($tableManifest);
     }
 
-    if ($write) {
-        $target = $root.'/storage/project-state/project-context.json';
-        if (! is_dir(dirname($target))) {
-            mkdir(dirname($target), 0777, true);
-        }
-        file_put_contents($target, json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
-    }
-    if ($writeSource) {
-        $target = $root.'/docs/project/generated/project-context.json';
+    if ($write || $writeSource) {
+        $target = $writeSource
+            ? $root.'/docs/project/generated/project-context.json'
+            : $root.'/storage/project-state/project-context.json';
         if (! is_dir(dirname($target))) {
             mkdir(dirname($target), 0777, true);
         }
@@ -352,7 +322,7 @@ try {
     }
 
     $runtime = $manifest['database']['runtime'] ?? ['available' => false, 'reason' => 'runtime inspection disabled'];
-    fwrite(STDOUT, "SongChart Project Context v1\n\n");
+    fwrite(STDOUT, "SongChart Project Context v1\n");
     fwrite(STDOUT, 'Candidate: Stage '.($manifest['candidate']['stage'] ?? 'unknown').' / '.($manifest['candidate']['candidate'] ?? 'unknown')."\n");
     fwrite(STDOUT, 'Runtime authority: PHP '.($manifest['runtime_authority']['php'] ?? '?').', PostgreSQL '.($manifest['runtime_authority']['postgres_major'] ?? '?')."\n");
     fwrite(STDOUT, 'Dev Compose: compose.dev.yml ['.implode(', ', $manifest['docker']['development_services'])."]\n");
@@ -360,22 +330,9 @@ try {
     fwrite(STDOUT, 'Dev commands: '.implode(', ', $manifest['command_surface']['dev'])."\n");
     fwrite(STDOUT, 'Migration-owned tables: '.count($tableManifest)."\n");
     fwrite(STDOUT, 'Schema ownership: '.($manifest['database']['ownership_complete'] ? 'complete' : 'DRIFT')."\n");
-    if (($runtime['available'] ?? false) === true) {
-        fwrite(STDOUT, 'PostgreSQL runtime: '.$runtime['database'].' @ '.$runtime['server_version']."\n");
-        fwrite(STDOUT, 'Code -> DB drift: '.(($runtime['drift']['clean'] ?? false) ? 'none' : 'DETECTED')."\n");
-        if (($runtime['drift']['clean'] ?? false) !== true) {
-            foreach ($runtime['drift']['missing_tables'] ?? [] as $table) {
-                fwrite(STDOUT, "  missing table: {$table}\n");
-            }
-            foreach ($runtime['drift']['missing_columns'] ?? [] as $column) {
-                fwrite(STDOUT, "  missing column: {$column}\n");
-            }
-        }
-    } else {
-        fwrite(STDOUT, 'PostgreSQL runtime: unavailable ('.($runtime['reason'] ?? 'unknown').")\n");
-    }
-    fwrite(STDOUT, 'Machine JSON: .\\songchart.bat context --json'."\n");
+    fwrite(STDOUT, 'PostgreSQL runtime: '.(($runtime['available'] ?? false) ? (($runtime['database'] ?? '?').' @ '.($runtime['server_version'] ?? '?')) : 'unavailable ('.($runtime['reason'] ?? 'unknown').')')."\n");
+    fwrite(STDOUT, 'Machine JSON: ./songchart context --json'."\n");
 } catch (Throwable $exception) {
-    fwrite(STDERR, 'Project context failed: '.$exception->getMessage().PHP_EOL);
+    fwrite(STDERR, 'Unable to build SongChart project context: '.$exception->getMessage().PHP_EOL);
     exit(1);
 }
