@@ -1,12 +1,13 @@
 @extends('layouts.admin')
+@php($activeAdminNav = 'imports')
 @section('content')
 <x-admin.page-header :title="$title" :description="$description" />
 <div class="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50 p-5 md:flex md:items-center md:justify-between md:gap-6">
     <div>
-        <div class="text-sm font-bold text-indigo-950">Kiểm tra dữ liệu trước khi nhập</div>
-        <p class="mt-1 max-w-2xl text-sm text-indigo-800">Dán payload từ nguồn dữ liệu để xem SongChart sẽ hiểu định danh, thuộc tính và quan hệ như thế nào. Bước xem trước không ghi dữ liệu.</p>
+        <div class="text-sm font-bold text-indigo-950">Nhập dữ liệu mới</div>
+        <p class="mt-1 max-w-2xl text-sm text-indigo-800">Bắt đầu bằng bước xem trước để SongChart kiểm tra định danh, thuộc tính và quan hệ. Bạn sẽ thấy kế hoạch nhập trước khi tạo tác vụ và dữ liệu chuẩn không bị ghi trực tiếp.</p>
     </div>
-    <a href="{{ route('admin.imports.preview') }}" class="mt-4 inline-flex rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white hover:bg-indigo-700 md:mt-0">Mở công cụ xem trước</a>
+    <a href="{{ route('admin.imports.preview') }}" class="mt-4 inline-flex rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white hover:bg-indigo-700 md:mt-0">Bắt đầu nhập dữ liệu</a>
 </div>
 @include('admin.operations._metrics')
 <x-ui.card class="mt-6"><form method="GET" class="grid gap-3 p-4 md:grid-cols-4"><select class="rounded border p-2" name="provider"><option value="">Mọi nguồn dữ liệu</option>@foreach($providers as $provider)<option value="{{ $provider->id }}" @selected($filters['providerId']===$provider->id)>{{ $provider->name }}</option>@endforeach</select><input class="rounded border p-2" name="operation" value="{{ $filters['operation'] }}" placeholder="Loại tác vụ"><input class="rounded border p-2" name="status" value="{{ $filters['status'] }}" placeholder="Trạng thái"><button class="rounded border px-4 py-2">Lọc</button></form></x-ui.card>
