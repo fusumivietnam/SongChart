@@ -19,10 +19,12 @@ final class ProviderImportPreviewController extends Controller
     public function index(): View
     {
         return view('admin.operations.import-preview', [
-            'title' => 'Xem trước dữ liệu nhập',
-            'description' => 'Kiểm tra cách SongChart hiểu dữ liệu từ nguồn trước khi tạo bất kỳ thay đổi nào.',
-            'preview' => null,
-            'plan' => null,
+            'title' => 'Nhập dữ liệu',
+            'description' => 'Tìm nghệ sĩ, nhóm nhạc hoặc bài hát bằng thông tin quen thuộc; SongChart sẽ xử lý định danh provider và dựng kế hoạch nhập an toàn.',
+            'intent' => 'artist',
+            'query' => '',
+            'results' => [],
+            'searchNotice' => null,
         ]);
     }
 
