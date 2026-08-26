@@ -32,6 +32,7 @@ function stage1814MusicBrainzProvider(): Provider
         'category' => 'music',
         'status' => ProviderStatus::Approved,
         'is_enabled' => true,
+        'configuration' => ['user_agent' => 'SongChartWeb/1.0 (ops@songchart.test)'],
     ]);
 }
 
@@ -53,17 +54,28 @@ function stage1814RecordingPreviewInput(): array
     ];
 }
 
-it('shows the import workbench as a first-class admin navigation destination', function (): void {
+it('shows search-first import as a first-class admin navigation destination', function (): void {
     $this->actingAs(stage1813ProviderAdmin())
         ->get(route('admin.imports.preview'))
         ->assertOk()
-        ->assertSee('Xem trước dữ liệu nhập')
-        ->assertSee('Chỉ xem trước — chưa nhập dữ liệu')
         ->assertSee('Nhập dữ liệu')
+        ->assertSee('Bạn chỉ cần nhập điều bạn đang biết')
+        ->assertSee('Nghệ sĩ / nhóm nhạc')
+        ->assertSee('Tên bài hát')
+        ->assertSee('Đoạn lời bài hát')
+        ->assertSee('Chế độ nâng cao: ID + JSON')
         ->assertSee('Lịch sử tác vụ')
-        ->assertSee('data-admin-nav="import-workbench"', false)
-        ->assertSee('MusicBrainz')
-        ->assertSee('Bản ghi âm');
+        ->assertSee('data-admin-nav="import-workbench"', false);
+});
+
+it('explains lyrics search honestly when no approved lyrics provider exists', function (): void {
+    $this->actingAs(stage1813ProviderAdmin())
+        ->post(route('admin.imports.search'), [
+            'intent' => 'lyrics',
+            'query' => 'hello from the other side',
+        ])
+        ->assertOk()
+        ->assertSee('chưa có nguồn tìm kiếm lời bài hát được duyệt');
 });
 
 it('links the import history workspace back to starting a new import', function (): void {
@@ -75,7 +87,7 @@ it('links the import history workspace back to starting a new import', function 
         ->assertSee(route('admin.imports.preview'), false);
 });
 
-it('turns a valid MusicBrainz preview into a governed import plan without persisting a run', function (): void {
+it('turns a valid technical MusicBrainz preview into a governed import plan without persisting a run', function (): void {
     $this->actingAs(stage1813ProviderAdmin())
         ->post(route('admin.imports.preview.build'), stage1814RecordingPreviewInput())
         ->assertOk()
@@ -131,7 +143,7 @@ it('rejects a stale or tampered plan fingerprint before creating an import run',
     Queue::assertNothingPushed();
 });
 
-it('rejects non-object JSON instead of failing the preview page', function (): void {
+it('rejects non-object JSON instead of failing the advanced preview page', function (): void {
     $this->actingAs(stage1813ProviderAdmin())
         ->from(route('admin.imports.preview'))
         ->post(route('admin.imports.preview.build'), [
