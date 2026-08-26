@@ -51,16 +51,24 @@ else
 fi
 
 section 'Latest focused-test evidence'
+focused_log="$ROOT/storage/logs/focused-test-last.log"
 failure_log="$ROOT/storage/logs/postgres-test-last-failure.log"
-if [[ -f "$failure_log" ]]; then
+if [[ -f "$focused_log" ]]; then
+  printf 'Source: %s\n' 'storage/logs/focused-test-last.log'
+  printf 'Bytes: %s\n' "$(wc -c < "$focused_log" | tr -d ' ')"
+  grep -E '(^[[:space:]]*(FAIL|WARN|PASS)|FAILED|WARN|Tests:|Duration:|Exception|ERROR|file_get_contents|SongChart DB diagnostic|SongChart test evidence)' "$focused_log" \
+    | tail -n 120 \
+    | redact \
+    || true
+elif [[ -f "$failure_log" ]]; then
   printf 'Source: %s\n' 'storage/logs/postgres-test-last-failure.log'
   printf 'Bytes: %s\n' "$(wc -c < "$failure_log" | tr -d ' ')"
-  grep -E '(^[[:space:]]*(FAIL|WARN|PASS)|FAILED|WARN|Tests:|Duration:|Exception|ERROR|SongChart DB diagnostic|SongChart test evidence)' "$failure_log" \
-    | tail -n 100 \
+  grep -E '(^[[:space:]]*(FAIL|WARN|PASS)|FAILED|WARN|Tests:|Duration:|Exception|ERROR|file_get_contents|SongChart DB diagnostic|SongChart test evidence)' "$failure_log" \
+    | tail -n 120 \
     | redact \
     || true
 else
-  printf '%s\n' 'No captured PostgreSQL test failure log found.'
+  printf '%s\n' 'No captured focused-test evidence found.'
 fi
 
 section 'Latest Laravel error signatures'
