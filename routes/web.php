@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\MusicBrainzReleaseImportController as AdminMusicB
 use App\Http\Controllers\Admin\MusicBrainzWorkImportController as AdminMusicBrainzWorkImportController;
 use App\Http\Controllers\Admin\OperationsController;
 use App\Http\Controllers\Admin\PrivilegedAuditController;
+use App\Http\Controllers\Admin\ProviderImportPlanController;
 use App\Http\Controllers\Admin\ProviderImportPreviewController;
 use App\Http\Controllers\Admin\ProviderMutationController;
 use App\Http\Controllers\Admin\YouTubeDestinationController;
@@ -80,6 +81,7 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::get('/imports', [OperationsController::class, 'imports'])->name('imports.index');
         Route::get('/imports/preview', [ProviderImportPreviewController::class, 'index'])->name('imports.preview');
         Route::post('/imports/preview', [ProviderImportPreviewController::class, 'preview'])->name('imports.preview.build');
+        Route::post('/imports/preview/execute', [ProviderImportPlanController::class, 'execute'])->name('imports.preview.execute')->middleware(['can:manage-providers', 'password.confirm']);
         Route::get('/imports/{run}', [OperationsController::class, 'importRun'])->where('run', app(DomainContractRegistry::class)->adminUlidPattern())->name('imports.show');
         Route::post('/imports/{run}/operations', [ProviderMutationController::class, 'import'])->where('run', app(DomainContractRegistry::class)->adminUlidPattern())->name('imports.recover')->middleware(['can:manage-providers', 'password.confirm']);
         Route::get('/quarantine', [OperationsController::class, 'quarantine'])->name('quarantine.index');
