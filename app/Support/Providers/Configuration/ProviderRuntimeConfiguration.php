@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Support\Providers\Configuration;
 
 use App\Models\Provider;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Crypt;
 use Throwable;
 
 final class ProviderRuntimeConfiguration
@@ -44,24 +44,25 @@ final class ProviderRuntimeConfiguration
     {
         $provider = $this->provider($providerSlug);
 
-        return $provider?->is_enabled ?? $fallback;
+        return $provider === null ? $fallback : $provider->is_enabled;
     }
 
     public function setting(string $providerSlug, string $key, mixed $fallback = null): mixed
     {
-        $provider = $this->provider($providerSlug);
-        $configuration = is_array($provider?->configuration) ? $provider->configuration : [];
+        $configuration = $this->configuration($providerSlug);
 
         return $configuration[$key] ?? $fallback;
     }
 
     public function secret(string $providerSlug, string $key, ?string $fallback = null): ?string
     {
-        $provider = $this->provider($providerSlug);
-        $configuration = is_array($provider?->configuration) ? $provider->configuration : [];
-        $secrets = is_array($configuration['_secrets'] ?? null) ? $configuration['_secrets'] : [];
-        $encrypted = $secrets[$key] ?? null;
+        $configuration = $this->configuration($providerSlug);
+        $secrets = $configuration['_secrets'] ?? null;
+        if (! is_array($secrets)) {
+            return $fallback;
+        }
 
+        $encrypted = $secrets[$key] ?? null;
         if (! is_string($encrypted) || $encrypted === '') {
             return $fallback;
         }
@@ -75,11 +76,21 @@ final class ProviderRuntimeConfiguration
 
     public function hasSecret(string $providerSlug, string $key): bool
     {
-        $provider = $this->provider($providerSlug);
-        $configuration = is_array($provider?->configuration) ? $provider->configuration : [];
-        $secrets = is_array($configuration['_secrets'] ?? null) ? $configuration['_secrets'] : [];
+        $configuration = $this->configuration($providerSlug);
+        $secrets = $configuration['_secrets'] ?? null;
+        if (! is_array($secrets)) {
+            return false;
+        }
 
-        return is_string($secrets[$key] ?? null) && $secrets[$key] !== '';
+        $secret = $secrets[$key] ?? null;
+
+        return is_string($secret) && $secret !== '';
+    }
+
+    /** @return array<string, mixed> */
+    private function configuration(string $providerSlug): array
+    {
+        return $this->provider($providerSlug)?->configuration ?? [];
     }
 
     private function provider(string $providerSlug): ?Provider
