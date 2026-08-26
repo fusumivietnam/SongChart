@@ -49,12 +49,13 @@ final class ProviderImportPreviewController extends Controller
             receivedAt: new DateTimeImmutable('now'),
         );
         $preview = $previewBuilder->build($payload);
+        $plan = $planBuilder->build($payload, $preview);
 
-        return view('admin.operations.import-preview', [
-            'title' => 'Xem trước dữ liệu nhập',
-            'description' => 'Kiểm tra cách SongChart hiểu dữ liệu từ nguồn trước khi tạo bất kỳ thay đổi nào.',
+        return view('admin.operations.import-plan', [
+            'title' => 'Kế hoạch nhập dữ liệu',
+            'description' => 'Xem chính xác SongChart sẽ tạo tác vụ nào trước khi xác nhận chạy pipeline có kiểm soát.',
             'preview' => $preview,
-            'plan' => $planBuilder->build($payload, $preview),
+            'plan' => $plan,
             'submitted' => [
                 'provider_slug' => (string) $validated['provider_slug'],
                 'entity_type' => (string) $validated['entity_type'],
