@@ -17,6 +17,7 @@
 !/storage/framework/sessions/.gitignore
 /storage/framework/views/*
 !/storage/framework/views/.gitignore
+/storage/framework/candidate-verification-runtime.json
 
 /.phpunit.cache/
 .phpunit.result.cache
