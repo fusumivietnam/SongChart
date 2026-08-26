@@ -5,6 +5,7 @@ declare(strict_types=1);
 it('keeps candidate read-only and exposes optimized closure and demo workflows', function (): void {
     $cli = file_get_contents(base_path('songchart'));
     $demo = file_get_contents(base_path('compose.demo.yml'));
+    $demoEnv = file_get_contents(base_path('.env.demo.example'));
 
     expect($cli)
         ->toContain('./songchart close')
@@ -16,7 +17,14 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
         ->toContain('/tmp/composer-cache /tmp/npm-cache')
         ->toContain('chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID')
+        ->toContain('APP_URL=' . "' + demo_url")
+        ->toContain('SONGCHART_DEMO_APP_URL="https://${CODESPACE_NAME}-8001.')
         ->not->toContain('demo up -d redis app queue');
+
+    expect($demoEnv)
+        ->toContain("APP_URL=\n")
+        ->not->toContain('APP_URL=http://127.0.0.1:8001')
+        ->not->toContain('APP_URL=http://localhost:8001');
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
     $candidateBlock = (string) ($candidateMatch['block'] ?? '');
@@ -32,6 +40,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->not->toContain('stage_verify');
 
     expect($demo)
+        ->toContain('APP_URL: "${SONGCHART_DEMO_APP_URL}"')
         ->toContain('DB_DATABASE: songchart_docker')
         ->toContain('name: "${SONGCHART_DEV_PROJECT:-songchart-dev}_default"')
         ->not->toContain('songchart_verify_test');
