@@ -38,7 +38,7 @@ foreach (['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'] as $bootstrap) {
     if (count($lines) > 30) {
         $errors[] = "{$bootstrap} must remain a thin bootstrap (maximum 30 lines).";
     }
-    foreach (['PROJECT_AUTHORITY.md', 'AI_DEVELOPMENT_PROTOCOL.md', 'composer stage:verify', 'composer canonical:verify', 'ai status'] as $needle) {
+    foreach (['PROJECT_AUTHORITY.md', 'AI_DEVELOPMENT_PROTOCOL.md', 'composer stage:verify', 'composer canonical:verify', 'songchart ai status'] as $needle) {
         if (! str_contains($source, $needle)) {
             $errors[] = "{$bootstrap} is missing bootstrap pointer [{$needle}].";
         }
@@ -53,21 +53,58 @@ foreach (['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'] as $bootstrap) {
 
 foreach (['scripts/ai-status.sh', 'scripts/ai-status.ps1'] as $statusScript) {
     if (! is_file($root.'/'.$statusScript)) {
-        $errors[] = "AI session status implementation [{$statusScript}] is missing.";
+        $errors[] = "AI session bootstrap is missing [{$statusScript}].";
     }
 }
 
-$linuxCli = (string) file_get_contents($root.'/songchart');
-foreach (['./songchart ai status', 'scripts/ai-status.sh', "ai)"] as $needle) {
-    if (! str_contains($linuxCli, $needle)) {
-        $errors[] = "Linux AI session bootstrap is missing [{$needle}].";
-    }
+$songchart = (string) file_get_contents($root.'/songchart');
+$windowsCli = (string) file_get_contents($root.'/scripts/songchart.ps1');
+if (! str_contains($songchart, 'ai status') || ! str_contains($songchart, 'scripts/ai-status.sh')) {
+    $errors[] = 'Linux songchart CLI must expose ai status through scripts/ai-status.sh.';
+}
+if (! str_contains($windowsCli, "'ai'") || ! str_contains($windowsCli, 'ai-status.ps1')) {
+    $errors[] = 'Windows songchart CLI must expose ai status through scripts/ai-status.ps1.';
 }
 
-$windowsCli = (string) file_get_contents($root.'/songchart.bat');
-foreach (['ai', 'status', 'scripts\\ai-status.ps1'] as $needle) {
-    if (! str_contains($windowsCli, $needle)) {
-        $errors[] = "Windows AI session bootstrap is missing [{$needle}].";
+$gitignore = (string) file_get_contents($root.'/.gitignore');
+if (! str_contains($gitignore, '/.gemini/')) {
+    $errors[] = 'Repository .gitignore must exclude local Gemini CLI state [.gemini/].';
+}
+
+$readme = (string) file_get_contents($root.'/README.md');
+$candidate = json_decode((string) file_get_contents($root.'/candidate-verification.json'), true, 512, JSON_THROW_ON_ERROR);
+$developmentStatePath = $root.'/docs/project/DEVELOPMENT_STATE.md';
+if (! is_file($developmentStatePath)) {
+    $errors[] = 'Operational checkpoint [docs/project/DEVELOPMENT_STATE.md] is missing.';
+} else {
+    $developmentState = (string) file_get_contents($developmentStatePath);
+    $readmeStage = null;
+    $checkpointStage = null;
+    if (preg_match('/Current stage:\s*\*\*(?<stage>[0-9]+(?:\.[0-9]+)*)\s+—/', $readme, $match) === 1) {
+        $readmeStage = $match['stage'];
+    }
+    if (preg_match('/(?ms)^## Current stage\s+.*?Stage\s+`(?<stage>[0-9]+(?:\.[0-9]+)*)\s+—/', $developmentState, $match) === 1) {
+        $checkpointStage = $match['stage'];
+    }
+    $candidateStage = isset($candidate['stage']) ? (string) $candidate['stage'] : null;
+
+    if ($readmeStage === null) {
+        $errors[] = 'README current-stage pointer could not be parsed.';
+    }
+    if ($checkpointStage === null) {
+        $errors[] = 'DEVELOPMENT_STATE current-stage checkpoint could not be parsed.';
+    }
+    if ($readmeStage !== null && $candidateStage !== null && $readmeStage !== $candidateStage) {
+        $errors[] = "README stage [{$readmeStage}] does not match candidate stage [{$candidateStage}].";
+    }
+    if ($checkpointStage !== null && $candidateStage !== null && $checkpointStage !== $candidateStage) {
+        $errors[] = "DEVELOPMENT_STATE stage [{$checkpointStage}] does not match candidate stage [{$candidateStage}].";
+    }
+
+    foreach (['## Current blockers / risks', '## Latest focused evidence', '## Next required action', '## Documentation checkpoint discipline'] as $section) {
+        if (! str_contains($developmentState, $section)) {
+            $errors[] = "DEVELOPMENT_STATE must contain checkpoint section [{$section}].";
+        }
     }
 }
 

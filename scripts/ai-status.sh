@@ -46,6 +46,20 @@ if [[ -f "$candidate_file" ]]; then
   failed="$(grep -c ': "failed"' "$candidate_file" || true)"
 fi
 
+checkpoint_state="MISSING"
+checkpoint_detail="DEVELOPMENT_STATE.md is missing"
+checkpoint_file="$ROOT/docs/project/DEVELOPMENT_STATE.md"
+if [[ -f "$checkpoint_file" ]]; then
+  checkpoint_stage="$(grep -A4 '^## Current stage' "$checkpoint_file" | grep -m1 -E 'Stage[[:space:]]+`?[0-9]+(\.[0-9]+)*|`[0-9]+(\.[0-9]+)*' | sed -E 's/.*`?([0-9]+(\.[0-9]+)*)`?.*/\1/' || true)"
+  if [[ -n "$checkpoint_stage" && "$checkpoint_stage" == "$stage" ]]; then
+    checkpoint_state="SYNCED"
+    checkpoint_detail="operational checkpoint matches candidate stage"
+  else
+    checkpoint_state="DRIFT"
+    checkpoint_detail="checkpoint stage=${checkpoint_stage:-unknown}, candidate stage=$stage"
+  fi
+fi
+
 context_file="$ROOT/docs/project/generated/project-context.json"
 context_state="MISSING"
 context_detail="generated context file is missing"
@@ -112,9 +126,31 @@ gemini_version="not installed"
 command -v codex >/dev/null 2>&1 && codex_version="$(codex --version 2>/dev/null | head -n1 || printf 'installed')"
 command -v gemini >/dev/null 2>&1 && gemini_version="$(gemini --version 2>/dev/null | head -n1 || printf 'installed')"
 
+gemini_auth="not configured"
+settings_file=""
+if [[ -f "$ROOT/.gemini/settings.json" ]]; then
+  settings_file="$ROOT/.gemini/settings.json"
+elif [[ -f "${HOME:-}/.gemini/settings.json" ]]; then
+  settings_file="${HOME}/.gemini/settings.json"
+fi
+if [[ -n "$settings_file" ]]; then
+  selected_type="$(grep -m1 -E '"selectedType"[[:space:]]*:' "$settings_file" | sed -E 's/.*:[[:space:]]*"([^"]+)".*/\1/' || true)"
+  case "$selected_type" in
+    oauth-personal) gemini_auth="oauth-personal (Google account; AI Pro/Ultra eligible)" ;;
+    gemini-api-key) gemini_auth="gemini-api-key (separate API quota/billing)" ;;
+    USE_VERTEX_AI|vertex-ai) gemini_auth="vertex-ai" ;;
+    '') gemini_auth="not selected" ;;
+    *) gemini_auth="$selected_type" ;;
+  esac
+elif [[ -n "${GEMINI_API_KEY:-}" ]]; then
+  gemini_auth="gemini-api-key via environment (separate API quota/billing)"
+fi
+
 next_action="Continue current stage with focused verification."
 if [[ "$modified" != "0" ]]; then
   next_action="Review/commit the current working tree before AI handoff."
+elif [[ "$checkpoint_state" != "SYNCED" ]]; then
+  next_action="Reconcile docs/project/DEVELOPMENT_STATE.md with the current candidate stage."
 elif [[ "$context_state" != "FRESH" ]]; then
   next_action="Refresh repository context: ./songchart context --refresh-source, then review/commit generated authority."
 elif [[ "$closure_ready" == "true" ]]; then
@@ -126,10 +162,12 @@ printf '%-14s %s\n' 'Environment:' "$environment"
 printf '%-14s %s / %s\n' 'Stage:' "$stage" "$candidate"
 printf '%-14s %s @ %s\n' 'Branch:' "$branch" "$head"
 printf '%-14s modified=%s ahead=%s behind=%s upstream=%s\n' 'Git:' "$modified" "$ahead" "$behind" "${upstream:-none}"
+printf '%-14s %s — %s\n' 'Checkpoint:' "$checkpoint_state" "$checkpoint_detail"
 printf '%-14s %s — %s\n' 'Context:' "$context_state" "$context_detail"
 printf '%-14s %s — %s\n' 'Dev:' "$dev_state" "$dev_url"
 printf '%-14s %s — %s\n' 'Demo:' "$demo_state" "$demo_url"
 printf '%-14s closure_ready=%s verified_at=%s gates(passed=%s failed=%s not_run=%s)\n' 'Verification:' "$closure_ready" "$verified_at" "$passed" "$failed" "$not_run"
 printf '%-14s %s\n' 'Codex:' "$codex_version"
 printf '%-14s %s\n' 'Gemini:' "$gemini_version"
+printf '%-14s %s\n' 'Gemini auth:' "$gemini_auth"
 printf '\nNext: %s\n' "$next_action"

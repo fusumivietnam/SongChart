@@ -37,6 +37,19 @@ try {
         }
     }
 
+    $checkpointPath = Join-Path $Root 'docs/project/DEVELOPMENT_STATE.md'
+    $checkpointState = 'MISSING'; $checkpointDetail = 'DEVELOPMENT_STATE.md is missing'
+    if (Test-Path -LiteralPath $checkpointPath) {
+        $checkpointText = Get-Content -LiteralPath $checkpointPath -Raw
+        $match = [regex]::Match($checkpointText, '(?ms)^## Current stage\s+.*?`(?<stage>[0-9]+(?:\.[0-9]+)*)')
+        if ($match.Success -and $match.Groups['stage'].Value -eq $stage) {
+            $checkpointState = 'SYNCED'; $checkpointDetail = 'operational checkpoint matches candidate stage'
+        } else {
+            $checkpointStage = if ($match.Success) { $match.Groups['stage'].Value } else { 'unknown' }
+            $checkpointState = 'DRIFT'; $checkpointDetail = "checkpoint stage=$checkpointStage, candidate stage=$stage"
+        }
+    }
+
     $contextPath = Join-Path $Root 'docs/project/generated/project-context.json'
     $contextState = 'MISSING'
     $contextDetail = 'generated context file is missing'
@@ -96,8 +109,30 @@ try {
     if ($null -ne (Get-Command codex -ErrorAction SilentlyContinue)) { $codexVersion = (& codex --version 2>$null | Select-Object -First 1) }
     if ($null -ne (Get-Command gemini -ErrorAction SilentlyContinue)) { $geminiVersion = (& gemini --version 2>$null | Select-Object -First 1) }
 
+    $geminiAuth = 'not configured'
+    $projectSettings = Join-Path $Root '.gemini/settings.json'
+    $userSettings = if ($HOME) { Join-Path $HOME '.gemini/settings.json' } else { $null }
+    $settingsPath = if (Test-Path -LiteralPath $projectSettings) { $projectSettings } elseif ($userSettings -and (Test-Path -LiteralPath $userSettings)) { $userSettings } else { $null }
+    if ($settingsPath) {
+        try {
+            $settings = Get-Content -LiteralPath $settingsPath -Raw | ConvertFrom-Json
+            $selectedType = [string]$settings.security.auth.selectedType
+            switch ($selectedType) {
+                'oauth-personal' { $geminiAuth = 'oauth-personal (Google account; AI Pro/Ultra eligible)' }
+                'gemini-api-key' { $geminiAuth = 'gemini-api-key (separate API quota/billing)' }
+                'USE_VERTEX_AI' { $geminiAuth = 'vertex-ai' }
+                default { if (-not [string]::IsNullOrWhiteSpace($selectedType)) { $geminiAuth = $selectedType } else { $geminiAuth = 'not selected' } }
+            }
+        } catch {
+            $geminiAuth = 'invalid settings.json'
+        }
+    } elseif (-not [string]::IsNullOrWhiteSpace($env:GEMINI_API_KEY)) {
+        $geminiAuth = 'gemini-api-key via environment (separate API quota/billing)'
+    }
+
     $next = 'Continue current stage with focused verification.'
     if ($modified -gt 0) { $next = 'Review/commit the current working tree before AI handoff.' }
+    elseif ($checkpointState -ne 'SYNCED') { $next = 'Reconcile docs/project/DEVELOPMENT_STATE.md with the current candidate stage.' }
     elseif ($contextState -ne 'FRESH') { $next = 'Refresh repository context: songchart.bat context --refresh-source, then review/commit generated authority.' }
     elseif ($closureReady -eq 'true') { $next = 'Candidate evidence is closure-ready; proceed only through the governed closure workflow.' }
 
@@ -107,12 +142,14 @@ try {
     Write-Host ("{0,-14} {1} / {2}" -f 'Stage:', $stage, $candidate)
     Write-Host ("{0,-14} {1} @ {2}" -f 'Branch:', $branch, $head)
     Write-Host ("{0,-14} modified={1} ahead={2} behind={3} upstream={4}" -f 'Git:', $modified, $ahead, $behind, $(if ($upstream) {$upstream} else {'none'}))
+    Write-Host ("{0,-14} {1} - {2}" -f 'Checkpoint:', $checkpointState, $checkpointDetail)
     Write-Host ("{0,-14} {1} - {2}" -f 'Context:', $contextState, $contextDetail)
     Write-Host ("{0,-14} {1} - {2}" -f 'Dev:', $devState, $devUrl)
     Write-Host ("{0,-14} {1} - {2}" -f 'Demo:', $demoState, $demoUrl)
     Write-Host ("{0,-14} closure_ready={1} verified_at={2} gates(passed={3} failed={4} not_run={5})" -f 'Verification:', $closureReady, $verifiedAt, $passed, $failed, $notRun)
     Write-Host ("{0,-14} {1}" -f 'Codex:', $codexVersion)
     Write-Host ("{0,-14} {1}" -f 'Gemini:', $geminiVersion)
+    Write-Host ("{0,-14} {1}" -f 'Gemini auth:', $geminiAuth)
     Write-Host ''
     Write-Host "Next: $next"
 } finally {
