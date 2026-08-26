@@ -7,9 +7,9 @@ namespace App\Domain\Providers\Ingestion\DTO;
 final readonly class ProviderImportPreview
 {
     /**
-     * @param array<string, int> $counts
-     * @param list<array{kind: string, path: string, message: string}> $issues
-     * @param array<string, mixed> $normalized
+     * @param  array<string, int>  $counts
+     * @param  list<array{kind: string, path: string, message: string}>  $issues
+     * @param  array<string, mixed>  $normalized
      */
     public function __construct(
         public bool $valid,
