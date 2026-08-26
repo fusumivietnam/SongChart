@@ -31,15 +31,14 @@ For dependency, infrastructure, framework-capability, runtime, database, queue/c
 - `docs/project/stack/STACK_OVERVIEW.md`
 - `docs/project/stack/CAPABILITY_OWNERSHIP.md`
 
-
 ## 2.1 Machine-readable project context
 
-Before modifying architecture, persistence, Docker, providers, migrations, seeders, or verification infrastructure, run/read `songchart context --json`.
+Before modifying architecture, persistence, Docker, providers, migrations, seeders, or verification infrastructure, run/read `./songchart context --json`.
 
 - Treat generated context as repository fact derived from existing authorities; do not create a parallel hand-maintained truth source.
 - Do not infer class names, schema ownership, Compose services, table presence, seeder FQCNs, or command availability when context provides them.
 - If context and source/runtime disagree, report drift and fix it before feature work.
-- Refresh the committed source manifest with `songchart context --refresh-source` after changing a registered context input.
+- Refresh the committed source manifest with `./songchart context --refresh-source` after changing a registered context input.
 
 ## 3. During implementation
 
@@ -51,49 +50,47 @@ Before modifying architecture, persistence, Docker, providers, migrations, seede
 - Prefer focused verification while iterating. Do not run the full PostgreSQL suite or production frontend build reflexively after every small edit.
 - Historical migrations listed in `docs/project/stack/migration-lifecycle-contract.json` are immutable. Schema corrections must be new guarded forward migrations; do not edit frozen history.
 
-## 3.1 Docker-first development runtime
+## 3.1 Linux/Docker development runtime
 
-Docker Desktop with WSL2 is the primary development, test and canonical runtime. Use the repository `songchart` CLI instead of host PHP/Composer/Node/PostgreSQL/Redis commands:
+Linux or WSL2 with Docker Engine + Compose v2 is the sole development, test and canonical host workflow. GitHub Codespaces is the preferred remote adapter. Use the repository `./songchart` CLI instead of host PHP/Composer/Node/PostgreSQL/Redis commands:
 
-```bat
-songchart dev up
-songchart artisan migrate
-songchart composer install
-songchart npm run build
-songchart test
-songchart verify
+```bash
+./songchart dev ready
+./songchart artisan migrate
+./songchart composer install
+./songchart npm run build
+./songchart dev test tests/Feature/...
+./songchart candidate
+./songchart verify
 ```
 
-Laragon is compatibility-only. Do not make release/canonical claims from Laragon and do not add new Laragon-specific workflow branches unless a compatibility task explicitly owns them.
+Native Windows Batch/PowerShell entrypoints and Laragon runtime compatibility are retired. Windows development, if needed, runs through WSL2 and the same Linux `./songchart` entrypoint.
 
+## 3.1.1 Git delivery and handoff
 
-## 3.1.1 Delivery artifacts
+Read `docs/project/engineering/DELIVERY_WORKFLOW.md` before handing off or closing any implementation stage.
 
-Read `docs/project/engineering/DELIVERY_WORKFLOW.md` before packaging or handing off any implementation stage.
-
-For every stage/corrective candidate, produce both artifacts from the same exact tree:
-
-- full Laragon-ready source ZIP;
-- incremental changeset ZIP from the last accepted/canonical baseline.
-
-Prefer the changeset for normal upgrades. Never overwrite local `.env`. A changeset must include a baseline declaration, changed/added files, `REMOVE_FILES.txt`, backup-before-mutation behavior, and Docker-first verification instructions. Do not substitute host `composer stage:verify` for the repository `.bat`/Docker entrypoint.
-
-When the user's target baseline is known, do not ask them to re-extract the full source merely to apply a normal stage upgrade.
+- GitHub is the source of truth.
+- Stage work is committed and pushed on the current stage branch.
+- Device/AI handoff uses Git state plus `./songchart ai status` / `./songchart ai doctor` evidence.
+- Do not copy source ZIPs, incremental ZIPs, patch installers, or cross-device stashes for normal development handoff.
+- `composer release:package` is post-canonical release packaging only; it is not a source synchronization mechanism.
 
 ## 3.2 Verification command surface
 
 Use only the active workflow entrypoints:
 
 ```text
-songchart test
+./songchart dev test <path>
+./songchart test
+./songchart candidate
 composer stage:verify
-songchart verify
+./songchart verify
 composer canonical:verify
 composer release:package
 ```
 
 Do not resurrect removed aliases (`verify`, `release:verify`, `test:all`, `test:postgres-clean`, `delivery:verify`, `release-contract:verify`) in code, docs, installers, tests, or AI instructions. Historical stage documents may preserve old commands as history only.
-
 
 ### Migration lifecycle
 
@@ -102,11 +99,10 @@ For schema changes:
 - inspect `docs/project/stack/migration-lifecycle-contract.json`;
 - never edit a frozen historical migration;
 - frozen history is compared by semantic fingerprint; formatting-only normalization is allowed, semantic schema/code changes are not;
-- Never bootstrap migration-history fingerprints from a packaging-side source artifact. The baseline is sealed once from the exact canonical Docker target.
+- never bootstrap migration-history fingerprints from a packaging-side source artifact;
 - add a forward migration with explicit existence guards when repairing prior schema drift;
-- verify both fresh PostgreSQL installation and previous-schema â†’ current upgrade behavior;
+- verify both fresh PostgreSQL installation and previous-schema → current upgrade behavior;
 - use `composer migration-lifecycle:verify` for static history ownership and `composer migration-upgrade:verify` only inside the isolated PostgreSQL verification environment.
-
 
 ### Verification consumer graph
 
@@ -124,19 +120,17 @@ Every `scripts/verify-*.php` file and every `tests/Architecture/*.php` file must
 
 Architecture tests verify boundaries and ownership. They must not independently redefine authority-sensitive command order, schema placement, package fields, or migration-history literals already owned by machine contracts.
 
-
 ### Authorization authority
 
 Authorization is Laravel Gate-first. Read `docs/project/security/authorization-contract.json` before changing privileged access.
 
 - `Capability` defines stable Gate names.
-- `AuthorizationMatrix` loads the static roleâ†’capability matrix once.
+- `AuthorizationMatrix` loads the static role→capability matrix once.
 - `UserRole` identifies roles; it must not own capability methods.
 - `User` owns authentication state/model concerns; it must not duplicate capability methods.
 - Controllers, services, commands and views authorize through Laravel Gates.
 - Direct `UserRole::SuperAdmin` checks are permitted only for explicit business invariants such as protecting the last active super administrator, not as general authorization.
 - Do not add Spatie Permission unless a later task demonstrates a real dynamic/custom-role/tenant-RBAC requirement.
-
 
 ### Removed-symbol and exact-target closure
 
@@ -144,12 +138,9 @@ For refactors that remove or rename a method, class, Gate implementation, middle
 
 - scan the exact target tree for the removed symbol before candidate closure;
 - scan for orphan files that still depend on the removed symbol;
-- do not treat a packaging-side reconstructed source tree as proof that all target consumers were found;
+- do not treat a reconstructed or packaging-side source tree as proof that all target consumers were found;
 - add the removed surface to its owning machine authority when the absence is a durable invariant;
 - run the owning static verifier before relying on PHPStan to discover stale consumers one by one.
-
-A changeset may explicitly retire a known orphan target file even when that file is absent from a pre-canonical packaging artifact; the installer must back it up before removal.
-
 
 ### Application data boundary
 
@@ -181,17 +172,21 @@ Run exactly:
 composer stage:verify
 ```
 
-This owns repository-wide quality/static closure, the authoritative PostgreSQL suite and frontend production build for the exact candidate tree.
+or through the governed exact-tree wrapper:
+
+```bash
+./songchart candidate
+```
 
 ### Canonical closure
 
-The canonical Docker shell installs locked dependencies, normalizes with the locked formatter, then invokes exactly:
+After candidate PASS, run:
 
 ```bash
-composer canonical:verify
+./songchart verify
 ```
 
-`canonical:verify` calls `stage:verify` once and owns the remaining runtime/package/migration/evidence gates. Do not separately rerun `quality:verify`, `test:postgres` or `npm run build` around it.
+The canonical Docker shell installs locked dependencies, normalizes with the locked formatter, then invokes exactly `composer canonical:verify`. `canonical:verify` calls `stage:verify` once and owns the remaining runtime/package/migration/evidence gates.
 
 ### Packaging
 
@@ -209,7 +204,7 @@ When a gate fails:
 2. identify the authority that owns the invariant;
 3. correct the authority/resolver/consumer rather than adding a parallel literal;
 4. add a regression ledger entry only when a permanent machine guard exists;
-5. produce a same-stage corrective candidate;
+5. keep the correction on the current stage branch unless a separate revision is explicitly required;
 6. do not use `--force` as normal recovery.
 
 ## 6. Verification budget
@@ -219,8 +214,8 @@ Do not trade correctness for speed. Reduce duplicated execution, not gate covera
 - documentation-only change: documentation/authority focused gates;
 - PHP implementation: focused Pint/PHPStan + focused tests;
 - schema/package change: add PostgreSQL/package-focused gates;
-- candidate closure: `composer stage:verify`;
-- release closure: canonical Docker â†’ `composer canonical:verify`.
+- candidate closure: `composer stage:verify` / `./songchart candidate`;
+- release closure: canonical Docker → `composer canonical:verify` / `./songchart verify`.
 
 Evidence caching/reuse is intentionally deferred until this topology is stable.
 

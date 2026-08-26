@@ -2,15 +2,19 @@
     "schema_version": 1,
     "public_entrypoints": {
         "development": [
+            "songchart ai status",
+            "songchart ai doctor",
             "songchart dev setup",
             "songchart dev ready",
             "songchart dev up",
             "songchart dev status",
             "songchart dev logs",
             "songchart dev shell",
+            "songchart dev test",
             "songchart context"
         ],
         "focused": [
+            "songchart dev test",
             "songchart test"
         ],
         "candidate_closure": [
@@ -44,11 +48,17 @@
     },
     "historical_orchestration": {
         "retired_files": [
-            "scripts/export-release-baseline.ps1",
-            "scripts/finalize-stage-11-release.ps1",
-            "scripts/finalize-stage-11-release.bat"
+            "songchart.bat",
+            "stage-verify.bat",
+            "verify-songchart.bat",
+            "docker-dev-setup.bat",
+            "docker-dev-up.bat",
+            "docker-dev-down.bat",
+            "scripts/songchart.ps1",
+            "scripts/verify-canonical.ps1",
+            "scripts/ai-status.ps1"
         ],
-        "reason": "Superseded by Docker-first canonical closure and provenance-gated release:package."
+        "reason": "Git + Linux/WSL2 + Docker is the sole active development and verification workflow; native Windows and ZIP handoff compatibility were retired."
     },
     "policy": {
         "active_docs_must_use_public_entrypoints": true,
@@ -58,7 +68,7 @@
     },
     "host_entrypoints": {
         "primary_linux_wsl": "./songchart",
-        "windows_compatibility": "songchart.bat",
+        "native_windows": "retired-use-wsl2",
         "development_compose_project": "songchart-dev",
         "verification_compose_project": "songchart-verify"
     }

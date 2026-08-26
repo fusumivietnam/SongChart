@@ -1,62 +1,153 @@
 # Project Context Authority
 
+Status: active derived-context authority.
+
 ## Purpose
 
-SongChart exposes a machine-readable project context so automation and AI agents read repository facts before changing persistence, Docker, provider, migration, seeder, verification, or architecture surfaces.
+SongChart exposes a machine-readable project context so developers and AI agents can inspect repository facts before modifying architecture, persistence, Docker, providers, migrations, seeders, or verification infrastructure.
 
-The context is derived from existing authorities. It is not a second hand-maintained source of truth.
+Project context is derived from existing repository authorities. It is not an independent or manually maintained source of truth.
 
-## Command
+## Authority model
+
+```text
+repository authorities
+        ↓
+scripts/project-context.php
+        ↓
+docs/project/generated/project-context.json
+        ↓
+AI / automation / verification consumers
+```
+
+Generated context must never become a parallel authority. If generated context disagrees with its source authorities, it is stale and must be regenerated.
+
+## Commands
 
 Human-readable context:
 
-```powershell
-.\songchart.bat context
+```bash
+./songchart context
 ```
 
-Machine-readable live context:
+Machine-readable context:
 
-```powershell
-.\songchart.bat context --json
+```bash
+./songchart context --json
 ```
 
-Refresh the committed source-only machine manifest after changing a context input:
+Persist a local diagnostic runtime snapshot:
 
-```powershell
-.\songchart.bat context --refresh-source
+```bash
+./songchart context --write
 ```
 
-AI environments that cannot start Docker may read `docs/project/generated/project-context.json`; canonical verification rejects this generated manifest when its source hashes are stale.
+Refresh committed source-derived context:
 
-Persist the latest runtime snapshot when useful for local diagnosis:
-
-```powershell
-.\songchart.bat context --write
+```bash
+./songchart context --refresh-source
 ```
 
-The persisted runtime snapshot is diagnostic state under `storage/project-state/project-context.json`; repository authorities remain the source of truth.
+The normal governed refresh path during stage closure is:
 
-## Inputs
+```bash
+./songchart candidate --prepare
+```
 
-The context builder derives facts from:
+AI environments that cannot inspect a live runtime may read `docs/project/generated/project-context.json`. Canonical verification rejects stale generated context.
+
+## Registered source inputs
+
+Project context derives stable repository facts from registered inputs including:
 
 - `composer.json` and `composer.lock`;
+- root `songchart` Linux CLI;
+- `compose.dev.yml` and `compose.verify.yml`;
 - `docs/project/stack/runtime-environments.json`;
 - `docs/project/domain/schema-ownership.json`;
+- `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`;
+- `docs/project/engineering/ai-development-contract.json`;
+- `docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md`;
+- `docs/project/engineering/verification-command-surface.json`;
+- `docs/project/engineering/verification-topology.json`;
+- `docs/project/stack/release-pipeline-contract.json`;
 - `database/migrations/*.php`;
-- `database/seeders/*.php`;
-- `compose.dev.yml` and `compose.verify.yml`;
-- `scripts/songchart.ps1`;
-- `candidate-verification.json` for informational current-candidate display only; volatile candidate evidence is intentionally excluded from the source fingerprint.
+- `database/seeders/*.php`.
 
-When PostgreSQL is reachable through the Docker application environment, the context additionally inspects the actual PostgreSQL schema and reports missing migration-owned tables or columns.
+Generation and verification must use the same registered source set. Retired platform adapters must not remain registered merely to preserve old hashes.
 
-## Drift rule
+## Command surface
 
-A source/runtime disagreement is a drift defect. Feature work must not guess around it. Correct the authority, code, migration, runtime schema, or command surface that is stale, then regenerate/re-read context.
+The active project CLI authority is the repository-root Linux entrypoint `./songchart`.
 
-The first version intentionally checks presence drift rather than attempting to infer every SQL type transformation from Laravel migration source. Existing model/schema, package/schema, migration lifecycle, PostgreSQL-major, and database-authority verifiers remain authoritative for their deeper contracts.
+Supported development commands are derived from that CLI and currently include setup, ready, up, down, status, logs, shell, url, and test.
 
-## AI rule
+Project context is exposed through `./songchart context ...`; canonical verification is exposed through `./songchart verify`.
 
-Before modifying architecture, persistence, Docker, providers, migrations, seeders, or verification infrastructure, read `songchart context --json`. Do not infer class names, schema ownership, Compose services, table presence, seeder FQCNs, or command availability when the generated context provides them. If source authorities and runtime disagree, report drift and fix it before feature work.
+Native Windows Batch, PowerShell, Laragon, and ZIP handoff command surfaces are retired and are not project-context authorities.
+
+## Runtime and database context
+
+Runtime versions and environment ownership come from stack authorities rather than from manually duplicated prose.
+
+Project context may project PHP/PostgreSQL authority, installed package versions, Compose services, migration-managed tables, schema ownership, seeders, and optional live PostgreSQL observations.
+
+Runtime inspection is diagnostic evidence. It never silently rewrites committed repository authority.
+
+## Source fingerprint
+
+The committed generated context contains hashes for registered stable source inputs. Text inputs are normalized for line endings before hashing so equivalent LF/CRLF representations do not create false drift.
+
+Verification must fail when a registered input changed, disappeared, was replaced without registration, or remains in generated context after retirement.
+
+The remediation is regeneration, not suppression and not hand-editing generated JSON.
+
+## Drift rules
+
+### Source-to-generated drift
+
+A registered source changed after `docs/project/generated/project-context.json` was generated.
+
+Resolve with:
+
+```bash
+./songchart candidate --prepare
+```
+
+### Authority drift
+
+Generation and verification disagree about source inputs, command surface, schema ownership, or another contract.
+
+Correct the owning source and verifier together. Do not edit generated output to make the gate pass.
+
+### Runtime drift
+
+Committed authority and Docker/PostgreSQL runtime disagree.
+
+Determine whether source, migration lifecycle, configuration, or runtime is stale and correct the owning layer.
+
+## AI development rule
+
+Before changing architecture, persistence, Docker, providers, migrations, seeders, or verification infrastructure, read:
+
+```bash
+./songchart context --json
+```
+
+Do not infer class names, seeder FQCNs, Compose services, schema ownership, expected migration tables, supported CLI commands, or runtime authority when project context already provides those facts.
+
+If context reports drift, resolve it before making assumptions that depend on the disputed fact.
+
+## Relationship to development state
+
+Project context describes repository structure and derived technical facts. It does not own development progress.
+
+Current stage, blockers, verification evidence, and next required action belong in `docs/project/DEVELOPMENT_STATE.md`.
+
+Accepted chronology belongs in `docs/project/DEVELOPMENT_HISTORY.md`. Future direction belongs in `docs/project/docs/ROADMAP.md`.
+
+`README.md` is a durable project introduction and must not become a project-context or development-state authority.
+
+## Non-goals
+
+Project context does not replace domain authorities, runtime authorities, schema ownership, migration lifecycle verification, lockfiles, candidate/canonical verification, or development-state ownership. It does not preserve retired platform command surfaces or automatically repair runtime drift.

@@ -5,21 +5,21 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $contract = json_decode((string) file_get_contents($root.'/docs/project/stack/candidate-verification-contract.json'), true, 512, JSON_THROW_ON_ERROR);
 $manifest = json_decode((string) file_get_contents($root.'/candidate-verification.json'), true, 512, JSON_THROW_ON_ERROR);
-$readme = (string) file_get_contents($root.'/README.md');
+$developmentState = (string) file_get_contents($root.'/docs/project/DEVELOPMENT_STATE.md');
 
 $errors = [];
 $allowed = $contract['allowed_status'] ?? [];
 
 $currentStage = null;
-if (preg_match('/^Current stage:\s*\*\*([0-9]+(?:\.[0-9]+)+)\s+—/m', $readme, $matches) === 1) {
+if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $matches) === 1) {
     $currentStage = $matches[1];
 } else {
-    $errors[] = 'Unable to resolve the current stage from README.md.';
+    $errors[] = 'Unable to resolve the current stage from DEVELOPMENT_STATE.md.';
 }
 
 if (is_string($currentStage) && ($manifest['stage'] ?? null) !== $currentStage) {
     $manifestStage = is_string($manifest['stage'] ?? null) ? $manifest['stage'] : '<missing>';
-    $errors[] = "candidate-verification.json stage [{$manifestStage}] must match README current stage [{$currentStage}].";
+    $errors[] = "candidate-verification.json stage [{$manifestStage}] must match DEVELOPMENT_STATE.md current stage [{$currentStage}].";
 }
 
 foreach (($contract['required_gates'] ?? []) as $gate) {

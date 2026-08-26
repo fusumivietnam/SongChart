@@ -4,34 +4,36 @@ Status: executable release-baseline policy.
 
 ## Authority
 
-A distributable SongChartWeb full-source baseline is release-reproducible only when all of the following are true:
+A distributable SongChartWeb release baseline is release-reproducible only when all of the following are true:
 
 - `composer.lock` exists and matches `composer.json`;
 - `package-lock.json` exists and matches `package.json`;
-- `composer locks:verify` passes;
-- `composer canonical:verify` passes on the target development machine;
-- `composer release:package` passes from the export tree;
-- the archive excludes `vendor/`, `node_modules/`, `.git/`, `.changeset-backups/`, `payload/`, and build scratch directories.
+- lockfile authority passes;
+- exact-tree candidate verification passes;
+- canonical verification passes in the repository Docker verification environment through `composer canonical:verify`;
+- `composer release:package` passes from that canonically verified source tree;
+- release artifacts exclude `vendor/`, `node_modules/`, `.git/`, local backup/scratch directories, and mutable runtime state.
 
-## Packaging-environment limitation
+## Dependency authority
 
-The Stage 16.5.3 packaging environment does not provide Composer or dependency-network resolution. It therefore does not generate or fabricate lockfiles. Missing lockfiles remain an explicit target-machine release blocker rather than being replaced with guessed dependency state.
+Lockfiles are never fabricated by a packaging environment. Dependency changes use the approved development workflow, are reviewed as source changes, and become part of the exact Git tree that is later verified.
 
-## Target-machine closure
+## Closure
 
-On the development machine, generate/reconcile lockfiles using the approved dependency workflow, review the dependency diff, then run:
+From Linux/WSL2 or GitHub Codespaces:
 
-```powershell
-composer validate --strict
-composer locks:verify
-composer canonical:verify
+```bash
+./songchart candidate --prepare   # only when generated authority needs refresh
+./songchart candidate
+./songchart verify
+```
+
+`./songchart verify` is the governed host entrypoint; inside the canonical Docker lane it executes the canonical closure owned by `composer canonical:verify`.
+
+After canonical/provenance PASS, create the release/deployment artifact with:
+
+```bash
 composer release:package
 ```
 
-After all gates pass, export a distributable archive with:
-
-```powershell
-composer release:package
-```
-
-The provenance-gated package command refuses to package a baseline when canonical evidence or dependency authority is invalid.
+The provenance-gated package command refuses to package a baseline when canonical evidence, source identity, generated authority, or dependency authority is invalid. Release packaging is not a development handoff mechanism; GitHub remains the source of truth between devices and AI execution environments.

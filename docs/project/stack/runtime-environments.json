@@ -25,14 +25,6 @@
       "destructive_database_role": "development",
       "authority": "primary-development",
       "compose_file": "compose.dev.yml"
-    },
-    "laragon-development": {
-      "app_env": "local",
-      "db_connection": "pgsql",
-      "db_host": "127.0.0.1",
-      "destructive_database_role": "development",
-      "authority": "compatibility-only",
-      "release_claims_allowed": false
     }
   },
   "php_extensions": {

@@ -1,0 +1,96 @@
+name: songchart-demo
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  app:
+    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
+    build:
+      context: .
+      dockerfile: docker/verify/Dockerfile
+    working_dir: /workspace
+    env_file:
+      - .env.demo
+    environment:
+      APP_ENV: demo
+      APP_DEBUG: "false"
+      APP_URL: "${SONGCHART_DEMO_APP_URL}"
+      DB_CONNECTION: pgsql
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_CACHE_DB: "1"
+      REDIS_CACHE_CONNECTION: cache
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: database
+      SESSION_SECURE_COOKIE: "true"
+      SESSION_DOMAIN: ""
+      SONGCHART_TRUST_DOCKER_PROXY: "true"
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+      HOME: /tmp
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+    command: ["sh", "-lc", "cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
+    ports:
+      - "127.0.0.1:${SONGCHART_DEMO_PORT:-8001}:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:8000/up >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - .:/workspace
+      - songchart_demo_vendor:/workspace/vendor
+      - songchart_demo_node_modules:/workspace/node_modules
+      - songchart_demo_composer_cache:/tmp/composer-cache
+      - songchart_demo_npm_cache:/tmp/npm-cache
+
+  queue:
+    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
+    build:
+      context: .
+      dockerfile: docker/verify/Dockerfile
+    working_dir: /workspace
+    env_file:
+      - .env.demo
+    environment:
+      APP_ENV: demo
+      APP_DEBUG: "false"
+      DB_CONNECTION: pgsql
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_CACHE_DB: "1"
+      REDIS_CACHE_CONNECTION: cache
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: database
+      SONGCHART_TRUST_DOCKER_PROXY: "true"
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+      HOME: /tmp
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+    command: ["php", "artisan", "queue:work", "redis", "--queue=critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default", "--sleep=1", "--tries=3", "--timeout=150"]
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - .:/workspace
+      - songchart_demo_vendor:/workspace/vendor
+      - songchart_demo_node_modules:/workspace/node_modules
+      - songchart_demo_composer_cache:/tmp/composer-cache
+      - songchart_demo_npm_cache:/tmp/npm-cache
+
+volumes:
+  songchart_demo_vendor:
+  songchart_demo_node_modules:
+  songchart_demo_composer_cache:
+  songchart_demo_npm_cache:

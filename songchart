@@ -2,17 +2,44 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEV_COMPOSE="$ROOT/compose.dev.yml"
+CODESPACES_COMPOSE="$ROOT/compose.codespaces.yml"
 VERIFY_COMPOSE="$ROOT/compose.verify.yml"
 DEV_PROJECT="${SONGCHART_DEV_PROJECT:-songchart-dev}"
 VERIFY_PROJECT="${SONGCHART_VERIFY_PROJECT:-songchart-verify}"
 export SONGCHART_HOST_UID="${SONGCHART_HOST_UID:-$(id -u)}"
 export SONGCHART_HOST_GID="${SONGCHART_HOST_GID:-$(id -g)}"
 die(){ printf 'SongChart: %s\n' "$*" >&2; exit 1; }
+codespaces_mode(){ [[ "${CODESPACES:-false}" == "true" ]]; }
+if codespaces_mode; then
+  [[ -f "$CODESPACES_COMPOSE" ]] || die 'compose.codespaces.yml is required in GitHub Codespaces.'
+  [[ -n "${CODESPACE_NAME:-}" ]] || die 'CODESPACE_NAME is required in GitHub Codespaces.'
+  export SONGCHART_CODESPACES_APP_URL="https://${CODESPACE_NAME}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"
+fi
 require_docker(){ command -v docker >/dev/null 2>&1 || die 'Docker CLI is required.'; docker version >/dev/null 2>&1 || die 'Docker Engine is not reachable.'; docker compose version >/dev/null 2>&1 || die 'Docker Compose v2 plugin is required.'; }
 ensure_dev_config(){ [[ -f "$ROOT/.env.docker" ]] || die '.env.docker is missing. Run: ./songchart dev setup'; }
-dev(){ docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" "$@"; }
+dev(){
+  if codespaces_mode; then
+    docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" -f "$CODESPACES_COMPOSE" "$@"
+  else
+    docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" "$@"
+  fi
+}
 verify_compose(){ docker compose -p "$VERIFY_PROJECT" -f "$VERIFY_COMPOSE" "$@"; }
 dev_app_running(){ [[ "$(dev ps --status running --services 2>/dev/null | grep -x 'app' || true)" == 'app' ]]; }
+dev_up(){
+  if codespaces_mode; then
+    dev up -d postgres redis app queue
+  else
+    dev up -d postgres redis app queue caddy
+  fi
+}
+dev_url(){
+  if codespaces_mode; then
+    printf '%s\n' "$SONGCHART_CODESPACES_APP_URL"
+  else
+    printf '%s\n' 'https://docker.songchart.test:8443'
+  fi
+}
 dev_exec_or_run(){
   if dev_app_running; then
     dev exec app "$@"
@@ -25,6 +52,22 @@ repair_dev_runtime_ownership(){
   dev run --rm --user root app sh -lc \
     "mkdir -p /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/bootstrap/cache /workspace/storage"
 }
+focused_test(){
+  local focused="${1:-tests/Feature/EntityDetailSystemTest.php}"
+  local project="${SONGCHART_FOCUSED_PROJECT:-songchart-focused}"
+  local test_command
+  (
+    set -e
+    trap 'docker compose -p "$project" -f "$VERIFY_COMPOSE" down --remove-orphans >/dev/null 2>&1 || true' EXIT
+    docker compose -p "$project" -f "$VERIFY_COMPOSE" build verify
+    if [[ "$focused" == tests/Unit/* || "$focused" == tests/Architecture/* ]]; then
+      test_command="composer install --no-interaction --prefer-dist --no-progress && php artisan test '$focused'"
+    else
+      test_command="composer install --no-interaction --prefer-dist --no-progress && php scripts/run-database-tests.php postgres --prepare-schema '$focused'"
+    fi
+    docker compose -p "$project" -f "$VERIFY_COMPOSE" run --rm verify bash -lc "$test_command"
+  )
+}
 stage_verify(){
   (
     set -e
@@ -34,24 +77,84 @@ stage_verify(){
     verify_compose run --rm verify bash scripts/docker-stage-verify.sh
   )
 }
+refresh_candidate_authority(){
+  printf '[SongChart candidate] Refreshing generated source context.\n'
+  dev run --rm app php scripts/project-context.php --write-source
+  printf '[SongChart candidate] Refreshing compiled repository authority.\n'
+  dev run --rm app php scripts/compile-repository-contracts.php --refresh-check
+}
+prepare_candidate_authority(){
+  local before after unexpected
+  before="$(git -C "$ROOT" status --porcelain --untracked-files=all)"
+  [[ -z "$before" ]] || die 'Candidate --prepare requires a clean working tree. Commit or restore source changes first.'
+
+  refresh_candidate_authority
+  git -C "$ROOT" diff --check
+
+  after="$(git -C "$ROOT" status --porcelain --untracked-files=all)"
+  [[ -n "$after" ]] || { printf '[SongChart candidate] Generated repository authority is already current.\n'; return; }
+
+  unexpected="$(printf '%s\n' "$after" | grep -vE '^.. docs/project/generated(/|$)' || true)"
+  if [[ -n "$unexpected" ]]; then
+    printf '%s\n' '[SongChart candidate] Preparation changed files outside docs/project/generated; refusing automatic commit.' >&2
+    printf '%s\n' "$unexpected" >&2
+    exit 1
+  fi
+
+  git -C "$ROOT" add -- docs/project/generated
+  if git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
+    printf '[SongChart candidate] No generated repository authority changes to commit.\n'
+    return
+  fi
+
+  git -C "$ROOT" commit -m 'chore: refresh generated repository authority'
+  printf '[SongChart candidate] Generated repository authority committed.\n'
+}
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
+  ./songchart ai status
+  ./songchart ai doctor
   ./songchart dev setup
   ./songchart dev ready
-  ./songchart dev up|down|status|logs|shell
+  ./songchart dev up|down|status|logs|shell|url
+  ./songchart dev test [test-path]
   ./songchart artisan <args...>
   ./songchart composer <args...>
   ./songchart npm <args...>
   ./songchart context [args...]
-  ./songchart candidate
+  ./songchart candidate [--prepare]
   ./songchart test
   ./songchart verify [--no-build] [--keep-services]
+
+AI session bootstrap:
+  ./songchart ai status    read-only branch/stage/context/runtime/verification summary; never starts Docker
+  ./songchart ai doctor    copy-friendly, secret-redacted diagnostic bundle for ChatGPT/Codex handoff
+
+Focused verification:
+  ./songchart dev test tests/Unit/...       isolated verification container, no development DB/runtime
+  ./songchart dev test tests/Feature/...    isolated PostgreSQL verification lane
+
+GitHub Codespaces is auto-detected through CODESPACES=true.
+Development services start only when dev setup/ready/up is invoked.
+Use ./songchart dev url for the private forwarded live-demo URL.
+
+Candidate workflow:
+  ./songchart candidate            verify an already committed exact tree
+  ./songchart candidate --prepare  refresh and commit only docs/project/generated, then verify
+
 Stable projects: songchart-dev / songchart-verify
 EOF
 }
 cmd="${1:-help}"; shift || true
 case "$cmd" in
  help|--help|-h) help ;;
+ ai)
+  sub="${1:-status}"; shift || true
+  case "$sub" in
+   status) exec bash "$ROOT/scripts/ai-status.sh" "$@" ;;
+   doctor) exec bash "$ROOT/scripts/ai-doctor.sh" "$@" ;;
+   *) die 'Usage: ./songchart ai [status|doctor]' ;;
+  esac ;;
  dev)
   sub="${1:-}"; shift || true; require_docker
   case "$sub" in
@@ -59,20 +162,23 @@ case "$cmd" in
    ready)
     ensure_dev_config
     printf '[SongChart dev] Starting development services.\n'
-    dev up -d postgres redis app queue caddy
+    dev_up
     repair_dev_runtime_ownership
     printf '[SongChart dev] Clearing stale compiled views.\n'
     dev_exec_or_run php artisan view:clear
     printf '[SongChart dev] Applying pending development migrations.\n'
     dev_exec_or_run php artisan migrate --force
     printf '[SongChart dev] Development environment is ready.\n'
-    dev ps ;;
-   up) ensure_dev_config; dev up -d postgres redis app queue caddy; dev ps ;;
+    dev ps
+    printf '\nLive demo: '; dev_url ;;
+   up) ensure_dev_config; dev_up; dev ps; printf '\nLive demo: '; dev_url ;;
    down) dev down --remove-orphans ;;
    status) dev ps ;;
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
-   shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" exec app bash; else exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" run --rm app bash; fi ;;
-   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell]' ;;
+   shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" ${CODESPACES:+-f "$CODESPACES_COMPOSE"} exec app bash; else dev run --rm app bash; fi ;;
+   url) ensure_dev_config; dev_url ;;
+   test) focused_test "${1:-tests/Feature/EntityDetailSystemTest.php}" ;;
+   *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test]' ;;
   esac ;;
  artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
  composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
@@ -80,16 +186,31 @@ case "$cmd" in
  context) require_docker; ensure_dev_config; args=(); for a in "$@"; do [[ "$a" == '--refresh-source' ]] && args+=('--write-source') || args+=("$a"); done; dev run --rm app php scripts/project-context.php "${args[@]}" ;;
  candidate)
   require_docker; ensure_dev_config
-  printf '[SongChart candidate] Refreshing generated source context.\n'
-  dev run --rm app php scripts/project-context.php --write-source
-  printf '[SongChart candidate] Refreshing compiled repository authority.\n'
-  dev run --rm app php scripts/compile-repository-contracts.php --refresh-check
-  git -C "$ROOT" diff --check
-  if ! git -C "$ROOT" diff --quiet -- docs/project/generated || ! git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
-    printf '%s\n' '[SongChart candidate] Generated repository artifacts are not committed.' >&2
-    printf '%s\n' '[SongChart candidate] Review and commit docs/project/generated, then run ./songchart candidate again.' >&2
-    exit 1
+  prepare=false
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --prepare) prepare=true ;;
+      *) die "Unknown candidate option: $1" ;;
+    esac
+    shift
+  done
+
+  if [[ "$prepare" == true ]]; then
+    prepare_candidate_authority
+  else
+    refresh_candidate_authority
+    git -C "$ROOT" diff --check
+    if ! git -C "$ROOT" diff --quiet -- docs/project/generated || ! git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
+      printf '%s\n' '[SongChart candidate] Generated repository artifacts are not committed.' >&2
+      printf '%s\n' '[SongChart candidate] Run ./songchart candidate --prepare on a clean tree, or review and commit docs/project/generated manually.' >&2
+      exit 1
+    fi
   fi
+
+  if [[ -n "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]]; then
+    die 'Candidate verification requires a clean committed working tree.'
+  fi
+
   printf '[SongChart candidate] Running candidate verification.\n'
   stage_verify
   printf '[SongChart candidate] PASSED.\n' ;;

@@ -226,10 +226,9 @@
         "docs/project/stack/runtime-environments.json"
       ],
       "dependents": [
+        "songchart",
         "compose.dev.yml",
         "compose.verify.yml",
-        "scripts/songchart.ps1",
-        "songchart.bat",
         "scripts/docker-stage-verify.sh",
         "scripts/verify-docker-first-development.php",
         "tests/Architecture/DockerFirstDevelopmentEnvironmentTest.php",

@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property bool $is_enabled
+ * @property array<string, mixed>|null $configuration
+ */
 final class Provider extends Model
 {
     use HasUlids;

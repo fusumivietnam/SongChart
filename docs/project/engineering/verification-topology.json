@@ -1,112 +1,129 @@
 {
-    "schema_version":  4,
-    "lanes":  {
-                  "impact":  {
-                                 "owner":  "scripts/resolve-repository-impact.php",
-                                 "purpose":  "Resolve affected authorities/consumers before implementation.",
-                                 "commands":  [
-                                                  "php scripts/resolve-repository-impact.php \u003cchanged-paths\u003e"
-                                              ]
-                             },
-                  "focused":  {
-                                  "owner":  "task-specific",
-                                  "purpose":  "Run only impacted static/focused gates during implementation.",
-                                  "rules":  {
-                                                "full_postgres_for_every_edit":  false,
-                                                "full_frontend_build_for_every_edit":  false,
-                                                "phpstan_baseline_widening":  false
-                                            }
-                              },
-                  "quality":  {
-                                  "owner":  "composer quality:verify",
-                                  "purpose":  "Repository-wide static, architecture-source and governance closure.",
-                                  "must_not_call":  [
-                                                        "@stage:verify",
-                                                        "@canonical:verify",
-                                                        "@test:postgres",
-                                                        "npm run build"
-                                                    ],
-                                  "owns":  [
-                                               "historical migration immutability and forward-only migration policy"
-                                           ]
-                              },
-                  "stage":  {
-                                "owner":  "composer stage:verify",
-                                "purpose":  "One candidate-stage closure on the exact target tree.",
-                                "ordered_steps":  [
-                                                      "@php artisan optimize:clear --ansi",
-                                                      "@php artisan route:list --except-vendor --ansi",
-                                                      "@quality:verify",
-                                                      "@test:postgres",
-                                                      "npm run build"
-                                                  ]
-                            },
-                  "canonical":  {
-                                    "owner":  "composer canonical:verify",
-                                    "purpose":  "Canonical runtime/release closure after locked dependencies are installed.",
-                                    "ordered_steps":  [
-                                                          "@lockfile-authority:release",
-                                                          "@environment:verify",
-                                                          "@postgres-major:verify",
-                                                          "@test-database:safety",
-                                                          "@locks:verify",
-                                                          "@package-upstream:verify",
-                                                          "@stage:verify",
-                                                          "@migration-lifecycle:seal",
-                                                          "@migration-lifecycle:verify",
-                                                          "@migration-upgrade:verify",
-                                                          "@migration-runtime-contract:verify",
-                                                          "@postgres-schema:snapshot",
-                                                          "@project-context:runtime-verify",
-                                                          "@foundation:release",
-                                                          "@candidate-evidence:record",
-                                                          "@candidate-contract:verify"
-                                                      ],
-                                    "must_call_once":  [
-                                                           "@stage:verify"
-                                                       ],
-                                    "owns":  [
-                                                 "previous-release-to-current PostgreSQL migration upgrade verification",
-                                                 "one-time exact-canonical-target migration history baseline sealing"
-                                             ]
-                                }
-              },
-    "installer_contract":  {
-                               "allowed_verification_entrypoints":  [
-                                                                        "composer stage:verify",
-                                                                        "composer canonical:verify"
-                                                                    ],
-                               "forbidden_direct_gates":  [
-                                                              "composer analyse",
-                                                              "composer quality:verify",
-                                                              "composer test:postgres",
-                                                              "vendor/bin/phpstan",
-                                                              "vendor/bin/pint",
-                                                              "npm run build"
-                                                          ]
-                           },
-    "canonical_shell_contract":  {
-                                     "preparation_only":  [
-                                                              "lockfile preflight",
-                                                              "canonical PHP extensions",
-                                                              "composer install",
-                                                              "npm ci",
-                                                              "exact-container repository contract refresh",
-                                                              "quality normalization"
-                                                          ],
-                                     "single_closure_entrypoint":  "composer canonical:verify"
-                                 },
-    "evidence_reuse":  {
-                           "enabled":  false,
-                           "reason":  "Deferred until topology is stable; correctness before cache optimization."
-                       },
-    "removed_aliases":  [
-                            "verify",
-                            "release:verify",
-                            "test:all",
-                            "test:postgres-clean",
-                            "release-contract:verify",
-                            "delivery:verify"
-                        ],
-    "public_entrypoints_authority":  "docs/project/engineering/verification-command-surface.json"
+  "schema_version": 4,
+  "lanes": {
+    "impact": {
+      "owner": "scripts/resolve-repository-impact.php",
+      "purpose": "Resolve affected authorities/consumers before implementation.",
+      "commands": [
+        "php scripts/resolve-repository-impact.php <changed-paths>"
+      ]
+    },
+    "focused": {
+      "owner": "task-specific",
+      "purpose": "Run only impacted static/focused gates during implementation.",
+      "rules": {
+        "full_postgres_for_every_edit": false,
+        "full_frontend_build_for_every_edit": false,
+        "phpstan_baseline_widening": false
+      }
+    },
+    "ci_feedback": {
+      "owner": ".github/workflows/tests.yml",
+      "purpose": "Run full shared CI at pull-request and main integration boundaries while avoiding redundant feature-branch push runs.",
+      "rules": {
+        "feature_branch_push_runs_full_ci": false,
+        "pull_request_to_main_runs_full_ci": true,
+        "push_to_main_runs_full_ci": true,
+        "manual_dispatch_supported": true,
+        "cancel_stale_same_ref_runs": true,
+        "path_filter_gate_reduction": false
+      },
+      "required_jobs": [
+        "quality",
+        "tests-postgres",
+        "frontend-build"
+      ]
+    },
+    "quality": {
+      "owner": "composer quality:verify",
+      "purpose": "Repository-wide static, architecture-source and governance closure.",
+      "must_not_call": [
+        "@stage:verify",
+        "@canonical:verify",
+        "@test:postgres",
+        "npm run build"
+      ],
+      "owns": [
+        "historical migration immutability and forward-only migration policy"
+      ]
+    },
+    "stage": {
+      "owner": "composer stage:verify",
+      "purpose": "One candidate-stage closure on the exact target tree.",
+      "ordered_steps": [
+        "@php artisan optimize:clear --ansi",
+        "@php artisan route:list --except-vendor --ansi",
+        "@quality:verify",
+        "@test:postgres",
+        "npm run build"
+      ]
+    },
+    "canonical": {
+      "owner": "composer canonical:verify",
+      "purpose": "Canonical runtime/release closure after locked dependencies are installed.",
+      "ordered_steps": [
+        "@lockfile-authority:release",
+        "@environment:verify",
+        "@postgres-major:verify",
+        "@test-database:safety",
+        "@locks:verify",
+        "@package-upstream:verify",
+        "@stage:verify",
+        "@migration-lifecycle:seal",
+        "@migration-lifecycle:verify",
+        "@migration-upgrade:verify",
+        "@migration-runtime-contract:verify",
+        "@postgres-schema:snapshot",
+        "@project-context:runtime-verify",
+        "@foundation:release",
+        "@candidate-evidence:record",
+        "@candidate-contract:verify"
+      ],
+      "must_call_once": [
+        "@stage:verify"
+      ],
+      "owns": [
+        "previous-release-to-current PostgreSQL migration upgrade verification",
+        "one-time exact-canonical-target migration history baseline sealing"
+      ]
+    }
+  },
+  "installer_contract": {
+    "allowed_verification_entrypoints": [
+      "composer stage:verify",
+      "composer canonical:verify"
+    ],
+    "forbidden_direct_gates": [
+      "composer analyse",
+      "composer quality:verify",
+      "composer test:postgres",
+      "vendor/bin/phpstan",
+      "vendor/bin/pint",
+      "npm run build"
+    ]
+  },
+  "canonical_shell_contract": {
+    "preparation_only": [
+      "lockfile preflight",
+      "canonical PHP extensions",
+      "composer install",
+      "npm ci",
+      "exact-container repository contract refresh",
+      "quality normalization"
+    ],
+    "single_closure_entrypoint": "composer canonical:verify"
+  },
+  "evidence_reuse": {
+    "enabled": false,
+    "reason": "Deferred until topology is stable; correctness before cache optimization."
+  },
+  "removed_aliases": [
+    "verify",
+    "release:verify",
+    "test:all",
+    "test:postgres-clean",
+    "release-contract:verify",
+    "delivery:verify"
+  ],
+  "public_entrypoints_authority": "docs/project/engineering/verification-command-surface.json"
 }

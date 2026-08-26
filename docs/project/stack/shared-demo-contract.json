@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "status": "development-demo-adapter",
+  "purpose": "One persistent shared demo dataset reachable from Windows, macOS and GitHub Codespaces without sharing the destructive development/test database.",
+  "database": {
+    "engine": "postgresql",
+    "ownership": "remote-managed",
+    "connection_env": "SONGCHART_DEMO_DATABASE_URL",
+    "required_ssl": true,
+    "local_database_forbidden": true,
+    "recommended_zero_cost_provider": "Supabase Free",
+    "destructive_reset_allowed": false
+  },
+  "application": {
+    "compose_file": "compose.demo.yml",
+    "project": "songchart-demo",
+    "host_port": 8001,
+    "codespaces_visibility": "private-by-default",
+    "https_owner_in_codespaces": "GitHub Codespaces port forwarding proxy",
+    "auto_start": false,
+    "services": ["redis", "app", "queue"]
+  },
+  "secrets": {
+    "database_url": "SONGCHART_DEMO_DATABASE_URL",
+    "app_key": "SONGCHART_DEMO_APP_KEY",
+    "committed": false,
+    "local_materialization": ".env.demo"
+  },
+  "commands": {
+    "setup": "./scripts/shared-demo.sh setup",
+    "migrate": "./scripts/shared-demo.sh migrate",
+    "seed": "./scripts/shared-demo.sh seed",
+    "ready": "./scripts/shared-demo.sh ready",
+    "up": "./scripts/shared-demo.sh up",
+    "down": "./scripts/shared-demo.sh down",
+    "status": "./scripts/shared-demo.sh status",
+    "url": "./scripts/shared-demo.sh url"
+  },
+  "safety": {
+    "setup_runs_migrations": false,
+    "migrate_fresh_exposed": false,
+    "generic_artisan_against_demo_exposed": false,
+    "development_database_remains_isolated": true,
+    "canonical_verification_database_remains_isolated": true
+  }
+}

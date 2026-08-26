@@ -14,6 +14,7 @@ use App\Models\Providers\Ingestion\ProviderImportFailure;
 use App\Models\Providers\Ingestion\ProviderImportItem;
 use App\Models\Providers\Ingestion\ProviderImportPayload;
 use App\Models\Providers\Ingestion\ProviderImportRun;
+use App\Support\Providers\Configuration\ProviderRuntimeConfiguration;
 use App\Support\Providers\Ingestion\ProviderImportOrchestrator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -62,8 +63,11 @@ final class FetchProviderImportPage implements ShouldBeUnique, ShouldQueue
         return [(new WithoutOverlapping('provider-import-'.$this->runId))->expireAfter(180)];
     }
 
-    public function handle(ProviderCatalogAdapterRegistry $registry, ProviderImportOrchestrator $orchestrator): void
-    {
+    public function handle(
+        ProviderCatalogAdapterRegistry $registry,
+        ProviderImportOrchestrator $orchestrator,
+        ProviderRuntimeConfiguration $runtimeConfiguration,
+    ): void {
         $run = ProviderImportRun::query()->with('provider')->findOrFail($this->runId);
         if ($run->getAttribute('cancellation_requested_at') !== null) {
             $orchestrator->transition($run, ProviderImportRunStatus::Cancelled, ['finished_at' => now()]);
@@ -84,6 +88,7 @@ final class FetchProviderImportPage implements ShouldBeUnique, ShouldQueue
         }
 
         $provider = $run->provider;
+        $runtimeConfiguration->apply((string) $provider->slug);
         $adapter = $registry->for((string) $provider->slug);
         if ($adapter === null) {
             throw new RuntimeException("No provider catalog adapter is registered for [{$provider->slug}].");

@@ -1,350 +1,324 @@
 {
-    "schema_version":  1,
-    "authorities":  {
-                        "database-test":  {
-                                              "source":  "docs/project/stack/database-test-contract.json",
-                                              "consumers":  [
-                                                                "composer.json",
-                                                                "scripts/verify-database-authority.php",
-                                                                "scripts/verify-runtime-authority-closure.php",
-                                                                "tests/Architecture/PostgresFirstDatabaseAuthorityTest.php",
-                                                                "tests/Architecture/RepositoryContractSafetyClosureTest.php",
-                                                                "scripts/resolve-repository-impact.php"
-                                                            ]
-                                          },
-                        "release-pipeline":  {
-                                                 "source":  "docs/project/stack/release-pipeline-contract.json",
-                                                 "consumers":  [
-                                                                   "composer.json",
-                                                                   "scripts/verify-performance-baseline.php",
-                                                                   "scripts/verify-release-orchestration.php",
-                                                                   "tests/Architecture/RepositoryContractSafetyClosureTest.php"
-                                                               ]
-                                             },
-                        "runtime-environment":  {
-                                                    "source":  "docs/project/stack/runtime-environments.json",
-                                                    "consumers":  [
-                                                                      "compose.verify.yml",
-                                                                      "docker/verify/Dockerfile",
-                                                                      "scripts/verify-runtime-contracts.php",
-                                                                      "scripts/verify-canonical-php-extensions.php",
-                                                                      "scripts/snapshot-postgres-schema.php",
-                                                                      "compose.dev.yml",
-                                                                      "scripts/verify-docker-first-development.php",
-                                                                      "tests/Architecture/DockerFirstDevelopmentEnvironmentTest.php",
-                                                                      "scripts/project-context.php",
-                                                                      "scripts/verify-runtime-project-context.php"
-                                                                  ]
-                                                },
-                        "package-schema":  {
-                                               "source":  "docs/project/stack/package-schema-contracts.json",
-                                               "consumers":  [
-                                                                 "composer.json",
-                                                                 "database/migrations/2026_08_13_000100_create_activity_log_table.php",
-                                                                 "scripts/verify-package-schema-contracts.php",
-                                                                 "scripts/verify-migration-runtime-contract.php",
-                                                                 "tests/Feature/RepositoryDatabaseContractTest.php",
-                                                                 "scripts/verify-package-upstream-adaptations.php",
-                                                                 "app/Support/Engineering/LaravelMigrationColumnExtractor.php",
-                                                                 "tests/Unit/LaravelMigrationColumnExtractorTest.php"
-                                                             ]
-                                           },
-                        "model-schema":  {
-                                             "source":  "docs/project/domain/model-schema-contracts.json",
-                                             "consumers":  [
-                                                               "scripts/verify-model-schema-contracts.php"
-                                                           ]
-                                         },
-                        "candidate-verification":  {
-                                                       "source":  "docs/project/stack/candidate-verification-contract.json",
-                                                       "consumers":  [
-                                                                         "candidate-verification.json",
-                                                                         "scripts/verify-candidate-contract.php",
-                                                                         "scripts/record-canonical-verification.php",
-                                                                         "scripts/verify-artifact-provenance.php",
-                                                                         "scripts/package-verified-source.php"
-                                                                     ]
-                                                   },
-                        "repository-compiler":  {
-                                                    "source":  "docs/project/engineering/repository-contract-compiler.json",
-                                                    "consumers":  [
-                                                                      "app/Support/Engineering/RepositoryContractResolver.php",
-                                                                      "scripts/compile-repository-contracts.php",
-                                                                      "scripts/verify-repository-contract-compiler.php",
-                                                                      "scripts/resolve-repository-impact.php",
-                                                                      "app/Console/Commands/SongChartDoctorCommand.php",
-                                                                      "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
-                                                                      "docs/project/generated/repository-contract-manifest.json",
-                                                                      "scripts/verify-artifact-provenance.php",
-                                                                      "scripts/package-verified-source.php"
-                                                                  ]
-                                                },
-                        "verification-topology":  {
-                                                      "source":  "docs/project/engineering/verification-topology.json",
-                                                      "consumers":  [
-                                                                        "composer.json",
-                                                                        "docs/project/stack/release-pipeline-contract.json",
-                                                                        "scripts/canonical-verify.sh",
-                                                                        "scripts/verify-verification-topology.php",
-                                                                        "scripts/verify-performance-baseline.php",
-                                                                        "scripts/verify-release-orchestration.php",
-                                                                        "tests/Architecture/VerificationWorkflowTopologyTest.php",
-                                                                        "scripts/verify-reproducible-environment.php",
-                                                                        "scripts/verify-local-data-safety.php",
-                                                                        "scripts/verify-foundation-closure.php",
-                                                                        "tests/Architecture/DocumentationGovernanceTest.php",
-                                                                        "tests/Architecture/FoundationReleaseClosureTest.php",
-                                                                        "tests/Architecture/LaravelFeatureAlignmentTest.php",
-                                                                        "tests/Architecture/LocalDataSafetyArchitectureTest.php",
-                                                                        "tests/Architecture/PostgresFirstDatabaseAuthorityTest.php",
-                                                                        "tests/Architecture/RepositoryContractSafetyClosureTest.php",
-                                                                        "tests/Architecture/RepositoryRuntimeAuthorityClosureTest.php",
-                                                                        "tests/Architecture/ReproducibleVerificationEnvironmentTest.php",
-                                                                        "tests/Architecture/TestAuthorityCodeGenerationGuardrailsTest.php"
-                                                                    ]
-                                                  },
-                        "ai-development-protocol":  {
-                                                        "source":  "docs/project/engineering/ai-development-contract.json",
-                                                        "consumers":  [
-                                                                          "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
-                                                                          "AGENTS.md",
-                                                                          "CLAUDE.md",
-                                                                          "GEMINI.md",
-                                                                          "PROJECT_AUTHORITY.md",
-                                                                          "docs/templates/TASK_CONTRACT_TEMPLATE.md",
-                                                                          "scripts/verify-ai-development-protocol.php",
-                                                                          "tests/Architecture/AiDevelopmentProtocolTest.php",
-                                                                          "scripts/verify-stack-baseline.php",
-                                                                          "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md",
-                                                                          "scripts/verify-ai-project-context.php",
-                                                                          "tests/Architecture/DocumentationProjectContextAuthorityTest.php"
-                                                                      ]
-                                                    },
-                        "docker-development":  {
-                                                   "source":  "docs/project/stack/docker-development-contract.json",
-                                                   "consumers":  [
-                                                                     "docs/project/stack/runtime-environments.json",
-                                                                     "compose.dev.yml",
-                                                                     "compose.verify.yml",
-                                                                     "scripts/songchart.ps1",
-                                                                     "songchart.bat",
-                                                                     "scripts/setup-docker-dev.ps1",
-                                                                     "scripts/docker-dev-up.ps1",
-                                                                     "scripts/docker-dev-down.ps1",
-                                                                     "docker-dev-setup.bat",
-                                                                     "docker-dev-up.bat",
-                                                                     "docker-dev-down.bat",
-                                                                     "verify-songchart.bat",
-                                                                     "scripts/docker-stage-verify.sh",
-                                                                     "scripts/verify-docker-first-development.php",
-                                                                     "scripts/verify-docker-local-development.php",
-                                                                     "tests/Architecture/DockerFirstDevelopmentEnvironmentTest.php",
-                                                                     "PROJECT_AUTHORITY.md",
-                                                                     "README.md",
-                                                                     "docs/project/stack/STACK_OVERVIEW.md",
-                                                                     "docs/project/docs/LOCAL_SETUP.md",
-                                                                     "scripts/canonical-verify.sh"
-                                                                 ]
-                                               },
-                        "verification-command-surface":  {
-                                                             "source":  "docs/project/engineering/verification-command-surface.json",
-                                                             "consumers":  [
-                                                                               "composer.json",
-                                                                               "PROJECT_AUTHORITY.md",
-                                                                               "README.md",
-                                                                               "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
-                                                                               "scripts/verify-verification-command-surface.php",
-                                                                               "scripts/verify-verification-topology.php",
-                                                                               "scripts/verify-release-orchestration.php",
-                                                                               "tests/Architecture/VerificationWorkflowTopologyTest.php",
-                                                                               "tests/Architecture/ContractCoverageReleaseBaselineTest.php",
-                                                                               "tests/Architecture/VerificationCommandSurfaceTest.php",
-                                                                               "scripts/songchart.ps1"
-                                                                           ]
-                                                         },
-                        "migration-lifecycle":  {
-                                                    "source":  "docs/project/stack/migration-lifecycle-contract.json",
-                                                    "consumers":  [
-                                                                      "database/migrations/2026_08_13_000100_create_activity_log_table.php",
-                                                                      "database/migrations/2026_08_16_000100_add_attribute_changes_to_activity_log_if_missing.php",
-                                                                      "scripts/verify-migration-lifecycle.php",
-                                                                      "scripts/run-migration-upgrade-test.php",
-                                                                      "tests/Architecture/MigrationLifecycleUpgradeSafetyTest.php",
-                                                                      "docs/project/stack/package-schema-contracts.json",
-                                                                      "composer.json",
-                                                                      "app/Support/Engineering/PhpSemanticFingerprint.php",
-                                                                      "tests/Unit/PhpSemanticFingerprintTest.php",
-                                                                      "scripts/seal-migration-lifecycle.php"
-                                                                  ]
-                                                },
-                        "domain-contracts":  {
-                                                 "source":  "docs/project/domain/domain-contracts.json",
-                                                 "consumers":  [
-
-                                                               ]
-                                             },
-                        "operational-contracts":  {
-                                                      "source":  "docs/project/domain/operational-contracts.json",
-                                                      "consumers":  [
-
-                                                                    ]
-                                                  },
-                        "use-case-contracts":  {
-                                                   "source":  "docs/project/domain/use-case-contracts.json",
-                                                   "consumers":  [
-
-                                                                 ]
-                                               },
-                        "schema-ownership":  {
-                                                 "source":  "docs/project/domain/schema-ownership.json",
-                                                 "consumers":  [
-                                                                   "scripts/project-context.php",
-                                                                   "scripts/verify-runtime-project-context.php"
-                                                               ]
-                                             },
-                        "performance-contracts":  {
-                                                      "source":  "docs/project/performance/performance-contracts.json",
-                                                      "consumers":  [
-
-                                                                    ]
-                                                  },
-                        "postgres-query-plan":  {
-                                                    "source":  "docs/project/performance/postgres-query-plan-baseline.json",
-                                                    "consumers":  [
-
-                                                                  ]
-                                                },
-                        "stack-manifest":  {
-                                               "source":  "docs/project/stack/stack-manifest.json",
-                                               "consumers":  [
-
-                                                             ]
-                                           },
-                        "package-registry":  {
-                                                 "source":  "docs/project/stack/package-registry.json",
-                                                 "consumers":  [
-
-                                                               ]
-                                             },
-                        "impact-test-map":  {
-                                                "source":  "docs/project/stack/impact-test-map.json",
-                                                "consumers":  [
-
-                                                              ]
-                                            },
-                        "regression-ledger":  {
-                                                  "source":  "docs/project/engineering/regression-ledger.json",
-                                                  "consumers":  [
-
-                                                                ]
-                                              },
-                        "verification-consumer-graph":  {
-                                                            "source":  "docs/project/engineering/verification-consumer-graph.json",
-                                                            "consumers":  [
-                                                                              "app/Support/Engineering/RepositoryContractResolver.php",
-                                                                              "scripts/verify-repository-contract-compiler.php",
-                                                                              "scripts/resolve-repository-impact.php",
-                                                                              "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
-                                                                              "PROJECT_AUTHORITY.md",
-                                                                              "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md"
-                                                                          ]
-                                                        },
-                        "authorization":  {
-                                              "source":  "docs/project/security/authorization-contract.json",
-                                              "consumers":  [
-                                                                "app/Enums/Capability.php",
-                                                                "app/Enums/UserRole.php",
-                                                                "app/Models/User.php",
-                                                                "app/Support/Auth/AuthorizationMatrix.php",
-                                                                "app/Providers/AppServiceProvider.php",
-                                                                "app/Support/Admin/PrivilegedUserAdministration.php",
-                                                                "app/Console/Commands/CreateAdminCommand.php",
-                                                                "app/Console/Commands/EnsureLocalAdminCommand.php",
-                                                                "scripts/verify-authentication-hardening.php",
-                                                                "tests/Unit/AuthorizationMatrixTest.php",
-                                                                "tests/Feature/AuthorizationGateTest.php",
-                                                                "tests/Architecture/AuthenticationHardeningBoundaryTest.php",
-                                                                "scripts/verify-queue-infrastructure.php",
-                                                                "scripts/verify-pulse-observability.php",
-                                                                "tests/Architecture/QueueInfrastructureBoundaryTest.php",
-                                                                "tests/Unit/PulseObservabilityContractTest.php",
-                                                                "routes/web.php",
-                                                                "resources/views/components/shell/frontend-header.blade.php",
-                                                                "resources/views/components/admin/sidebar.blade.php",
-                                                                "app/Support/Admin/AdminInformationArchitecture.php",
-                                                                "tests/Feature/AdminDashboardTest.php",
-                                                                "tests/Feature/PrivilegedAuditTest.php",
-                                                                "scripts/verify-laravel-alignment.php",
-                                                                "tests/Architecture/LaravelFeatureAlignmentTest.php",
-                                                                "scripts/verify-identity-conflict-review-ui.php",
-                                                                "tests/Architecture/IdentityConflictReviewUiArchitectureTest.php",
-                                                                "tests/Feature/IdentityConflictReviewUiTest.php"
-                                                            ]
-                                          },
-                        "application-data-boundary":  {
-                                                          "source":  "docs/project/domain/application-data-boundary.json",
-                                                          "consumers":  [
-                                                                            "app/Application/Admin/Queries/ExtensionReadModel.php",
-                                                                            "app/Http/Controllers/Admin/ExtensionController.php",
-                                                                            "app/Support/Admin/AdminDashboardSnapshot.php",
-                                                                            "app/Support/Admin/AdminInformationArchitecture.php",
-                                                                            "app/Support/Admin/CatalogAdministration.php",
-                                                                            "app/Support/Admin/IdentityConflictReviewConsole.php",
-                                                                            "app/Support/Admin/PrivilegedAuditConsole.php",
-                                                                            "app/Support/Admin/ProviderOperationsConsole.php",
-                                                                            "app/Support/Admin/PrivilegedUserAdministration.php",
-                                                                            "scripts/verify-architecture-conformance.php",
-                                                                            "tests/Architecture/ArchitectureConformanceTest.php",
-                                                                            "docs/project/performance/query-budget-contract.json",
-                                                                            "PROJECT_AUTHORITY.md",
-                                                                            "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md"
-                                                                        ]
-                                                      },
-                        "query-budget":  {
-                                             "source":  "docs/project/performance/query-budget-contract.json",
-                                             "consumers":  [
-                                                               "docs/project/domain/application-data-boundary.json",
-                                                               "scripts/verify-architecture-conformance.php",
-                                                               "tests/Architecture/ArchitectureConformanceTest.php",
-                                                               "docs/foundation/STAGE_16_7_TASK_CONTRACT.md",
-                                                               "docs/foundation/STAGE_16_7_VALIDATION_REPORT.md"
-                                                           ]
-                                         }
-                    },
-    "raw_literal_rules":  [
-                              {
-                                  "authority":  "database-test",
-                                  "literal":  "@php scripts/run-database-tests.php postgres --prepare-schema",
-                                  "scan_paths":  [
-                                                     "tests/Architecture/*.php",
-                                                     "scripts/*.php"
-                                                 ],
-                                  "allowed_files":  [
-                                                        "scripts/verify-database-authority.php",
-                                                        "scripts/verify-runtime-authority-closure.php",
-                                                        "scripts/verify-database-test-isolation.php"
-                                                    ]
-                              },
-                              {
-                                  "authority":  "release-pipeline",
-                                  "literal":  "@lockfile-authority:release",
-                                  "scan_paths":  [
-                                                     "tests/Architecture/*.php",
-                                                     "scripts/*.php"
-                                                 ],
-                                  "allowed_files":  [
-                                                        "scripts/verify-performance-baseline.php",
-                                                        "scripts/verify-release-orchestration.php"
-                                                    ]
-                              }
-                          ],
-    "policy":  {
-                   "single_executable_authority":  true,
-                   "consumer_literals_forbidden_unless_allowlisted":  true,
-                   "compiled_manifest_required":  true,
-                   "canonical_before_packaging":  true,
-                   "impact_resolution_before_implementation":  true,
-                   "derived_manifest_compiled_on_exact_target_tree":  true,
-                   "packaged_generated_manifest_is_not_cross_environment_authority":  true
-               }
+  "schema_version": 1,
+  "authorities": {
+    "database-test": {
+      "source": "docs/project/stack/database-test-contract.json",
+      "consumers": [
+        "composer.json",
+        "scripts/verify-database-authority.php",
+        "scripts/verify-runtime-authority-closure.php",
+        "tests/Architecture/PostgresFirstDatabaseAuthorityTest.php",
+        "tests/Architecture/RepositoryContractSafetyClosureTest.php",
+        "scripts/resolve-repository-impact.php"
+      ]
+    },
+    "release-pipeline": {
+      "source": "docs/project/stack/release-pipeline-contract.json",
+      "consumers": [
+        "composer.json",
+        "scripts/verify-performance-baseline.php",
+        "scripts/verify-release-orchestration.php",
+        "tests/Architecture/RepositoryContractSafetyClosureTest.php"
+      ]
+    },
+    "runtime-environment": {
+      "source": "docs/project/stack/runtime-environments.json",
+      "consumers": [
+        "compose.verify.yml",
+        "docker/verify/Dockerfile",
+        "scripts/verify-runtime-contracts.php",
+        "scripts/verify-canonical-php-extensions.php",
+        "scripts/snapshot-postgres-schema.php",
+        "compose.dev.yml",
+        "scripts/verify-docker-first-development.php",
+        "tests/Architecture/DockerFirstDevelopmentEnvironmentTest.php",
+        "scripts/project-context.php",
+        "scripts/verify-runtime-project-context.php"
+      ]
+    },
+    "package-schema": {
+      "source": "docs/project/stack/package-schema-contracts.json",
+      "consumers": [
+        "composer.json",
+        "database/migrations/2026_08_13_000100_create_activity_log_table.php",
+        "scripts/verify-package-schema-contracts.php",
+        "scripts/verify-migration-runtime-contract.php",
+        "tests/Feature/RepositoryDatabaseContractTest.php",
+        "scripts/verify-package-upstream-adaptations.php",
+        "app/Support/Engineering/LaravelMigrationColumnExtractor.php",
+        "tests/Unit/LaravelMigrationColumnExtractorTest.php"
+      ]
+    },
+    "model-schema": {
+      "source": "docs/project/domain/model-schema-contracts.json",
+      "consumers": [
+        "scripts/verify-model-schema-contracts.php"
+      ]
+    },
+    "candidate-verification": {
+      "source": "docs/project/stack/candidate-verification-contract.json",
+      "consumers": [
+        "candidate-verification.json",
+        "scripts/verify-candidate-contract.php",
+        "scripts/record-canonical-verification.php",
+        "scripts/verify-artifact-provenance.php",
+        "scripts/package-verified-source.php"
+      ]
+    },
+    "repository-compiler": {
+      "source": "docs/project/engineering/repository-contract-compiler.json",
+      "consumers": [
+        "app/Support/Engineering/RepositoryContractResolver.php",
+        "scripts/compile-repository-contracts.php",
+        "scripts/verify-repository-contract-compiler.php",
+        "scripts/resolve-repository-impact.php",
+        "app/Console/Commands/SongChartDoctorCommand.php",
+        "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
+        "docs/project/generated/repository-contract-manifest.json",
+        "scripts/verify-artifact-provenance.php",
+        "scripts/package-verified-source.php"
+      ]
+    },
+    "verification-topology": {
+      "source": "docs/project/engineering/verification-topology.json",
+      "consumers": [
+        "composer.json",
+        "docs/project/stack/release-pipeline-contract.json",
+        "scripts/canonical-verify.sh",
+        "scripts/verify-verification-topology.php",
+        "scripts/verify-performance-baseline.php",
+        "scripts/verify-release-orchestration.php",
+        "tests/Architecture/VerificationWorkflowTopologyTest.php",
+        "scripts/verify-reproducible-environment.php",
+        "scripts/verify-local-data-safety.php",
+        "scripts/verify-foundation-closure.php",
+        "tests/Architecture/DocumentationGovernanceTest.php",
+        "tests/Architecture/FoundationReleaseClosureTest.php",
+        "tests/Architecture/LaravelFeatureAlignmentTest.php",
+        "tests/Architecture/LocalDataSafetyArchitectureTest.php",
+        "tests/Architecture/PostgresFirstDatabaseAuthorityTest.php",
+        "tests/Architecture/RepositoryContractSafetyClosureTest.php",
+        "tests/Architecture/RepositoryRuntimeAuthorityClosureTest.php",
+        "tests/Architecture/ReproducibleVerificationEnvironmentTest.php",
+        "tests/Architecture/TestAuthorityCodeGenerationGuardrailsTest.php"
+      ]
+    },
+    "ai-development-protocol": {
+      "source": "docs/project/engineering/ai-development-contract.json",
+      "consumers": [
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "PROJECT_AUTHORITY.md",
+        "docs/templates/TASK_CONTRACT_TEMPLATE.md",
+        "scripts/verify-ai-development-protocol.php",
+        "tests/Architecture/AiDevelopmentProtocolTest.php",
+        "scripts/verify-stack-baseline.php",
+        "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md",
+        "scripts/verify-ai-project-context.php",
+        "tests/Architecture/DocumentationProjectContextAuthorityTest.php"
+      ]
+    },
+    "docker-development": {
+      "source": "docs/project/stack/docker-development-contract.json",
+      "consumers": [
+        "songchart",
+        "docs/project/stack/runtime-environments.json",
+        "compose.dev.yml",
+        "compose.verify.yml",
+        "scripts/docker-stage-verify.sh",
+        "scripts/verify-docker-first-development.php",
+        "scripts/verify-docker-local-development.php",
+        "tests/Architecture/DockerFirstDevelopmentEnvironmentTest.php",
+        "PROJECT_AUTHORITY.md",
+        "README.md",
+        "docs/project/stack/STACK_OVERVIEW.md",
+        "docs/project/docs/LOCAL_SETUP.md",
+        "scripts/canonical-verify.sh"
+      ]
+    },
+    "verification-command-surface": {
+      "source": "docs/project/engineering/verification-command-surface.json",
+      "consumers": [
+        "composer.json",
+        "PROJECT_AUTHORITY.md",
+        "README.md",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+        "scripts/verify-verification-command-surface.php",
+        "scripts/verify-verification-topology.php",
+        "scripts/verify-release-orchestration.php",
+        "tests/Architecture/VerificationWorkflowTopologyTest.php",
+        "tests/Architecture/ContractCoverageReleaseBaselineTest.php",
+        "tests/Architecture/VerificationCommandSurfaceTest.php",
+        "songchart"
+      ]
+    },
+    "migration-lifecycle": {
+      "source": "docs/project/stack/migration-lifecycle-contract.json",
+      "consumers": [
+        "database/migrations/2026_08_13_000100_create_activity_log_table.php",
+        "database/migrations/2026_08_16_000100_add_attribute_changes_to_activity_log_if_missing.php",
+        "scripts/verify-migration-lifecycle.php",
+        "scripts/run-migration-upgrade-test.php",
+        "tests/Architecture/MigrationLifecycleUpgradeSafetyTest.php",
+        "docs/project/stack/package-schema-contracts.json",
+        "composer.json",
+        "app/Support/Engineering/PhpSemanticFingerprint.php",
+        "tests/Unit/PhpSemanticFingerprintTest.php",
+        "scripts/seal-migration-lifecycle.php"
+      ]
+    },
+    "domain-contracts": {
+      "source": "docs/project/domain/domain-contracts.json",
+      "consumers": []
+    },
+    "operational-contracts": {
+      "source": "docs/project/domain/operational-contracts.json",
+      "consumers": []
+    },
+    "use-case-contracts": {
+      "source": "docs/project/domain/use-case-contracts.json",
+      "consumers": []
+    },
+    "schema-ownership": {
+      "source": "docs/project/domain/schema-ownership.json",
+      "consumers": [
+        "scripts/project-context.php",
+        "scripts/verify-runtime-project-context.php"
+      ]
+    },
+    "performance-contracts": {
+      "source": "docs/project/performance/performance-contracts.json",
+      "consumers": []
+    },
+    "postgres-query-plan": {
+      "source": "docs/project/performance/postgres-query-plan-baseline.json",
+      "consumers": []
+    },
+    "stack-manifest": {
+      "source": "docs/project/stack/stack-manifest.json",
+      "consumers": []
+    },
+    "package-registry": {
+      "source": "docs/project/stack/package-registry.json",
+      "consumers": []
+    },
+    "impact-test-map": {
+      "source": "docs/project/stack/impact-test-map.json",
+      "consumers": []
+    },
+    "regression-ledger": {
+      "source": "docs/project/engineering/regression-ledger.json",
+      "consumers": []
+    },
+    "verification-consumer-graph": {
+      "source": "docs/project/engineering/verification-consumer-graph.json",
+      "consumers": [
+        "app/Support/Engineering/RepositoryContractResolver.php",
+        "scripts/verify-repository-contract-compiler.php",
+        "scripts/resolve-repository-impact.php",
+        "tests/Architecture/ExecutableRepositoryAuthorityTest.php",
+        "PROJECT_AUTHORITY.md",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md"
+      ]
+    },
+    "authorization": {
+      "source": "docs/project/security/authorization-contract.json",
+      "consumers": [
+        "app/Enums/Capability.php",
+        "app/Enums/UserRole.php",
+        "app/Models/User.php",
+        "app/Support/Auth/AuthorizationMatrix.php",
+        "app/Providers/AppServiceProvider.php",
+        "app/Support/Admin/PrivilegedUserAdministration.php",
+        "app/Console/Commands/CreateAdminCommand.php",
+        "app/Console/Commands/EnsureLocalAdminCommand.php",
+        "scripts/verify-authentication-hardening.php",
+        "tests/Unit/AuthorizationMatrixTest.php",
+        "tests/Feature/AuthorizationGateTest.php",
+        "tests/Architecture/AuthenticationHardeningBoundaryTest.php",
+        "scripts/verify-queue-infrastructure.php",
+        "scripts/verify-pulse-observability.php",
+        "tests/Architecture/QueueInfrastructureBoundaryTest.php",
+        "tests/Unit/PulseObservabilityContractTest.php",
+        "routes/web.php",
+        "resources/views/components/shell/frontend-header.blade.php",
+        "resources/views/components/admin/sidebar.blade.php",
+        "app/Support/Admin/AdminInformationArchitecture.php",
+        "tests/Feature/AdminDashboardTest.php",
+        "tests/Feature/PrivilegedAuditTest.php",
+        "scripts/verify-laravel-alignment.php",
+        "tests/Architecture/LaravelFeatureAlignmentTest.php",
+        "scripts/verify-identity-conflict-review-ui.php",
+        "tests/Architecture/IdentityConflictReviewUiArchitectureTest.php",
+        "tests/Feature/IdentityConflictReviewUiTest.php"
+      ]
+    },
+    "application-data-boundary": {
+      "source": "docs/project/domain/application-data-boundary.json",
+      "consumers": [
+        "app/Application/Admin/Queries/ExtensionReadModel.php",
+        "app/Http/Controllers/Admin/ExtensionController.php",
+        "app/Support/Admin/AdminDashboardSnapshot.php",
+        "app/Support/Admin/AdminInformationArchitecture.php",
+        "app/Support/Admin/CatalogAdministration.php",
+        "app/Support/Admin/IdentityConflictReviewConsole.php",
+        "app/Support/Admin/PrivilegedAuditConsole.php",
+        "app/Support/Admin/ProviderOperationsConsole.php",
+        "app/Support/Admin/PrivilegedUserAdministration.php",
+        "scripts/verify-architecture-conformance.php",
+        "tests/Architecture/ArchitectureConformanceTest.php",
+        "docs/project/performance/query-budget-contract.json",
+        "PROJECT_AUTHORITY.md",
+        "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md"
+      ]
+    },
+    "query-budget": {
+      "source": "docs/project/performance/query-budget-contract.json",
+      "consumers": [
+        "docs/project/domain/application-data-boundary.json",
+        "scripts/verify-architecture-conformance.php",
+        "tests/Architecture/ArchitectureConformanceTest.php",
+        "docs/foundation/STAGE_16_7_TASK_CONTRACT.md",
+        "docs/foundation/STAGE_16_7_VALIDATION_REPORT.md"
+      ]
+    }
+  },
+  "raw_literal_rules": [
+    {
+      "authority": "database-test",
+      "literal": "@php scripts/run-database-tests.php postgres --prepare-schema",
+      "scan_paths": [
+        "tests/Architecture/*.php",
+        "scripts/*.php"
+      ],
+      "allowed_files": [
+        "scripts/verify-database-authority.php",
+        "scripts/verify-runtime-authority-closure.php",
+        "scripts/verify-database-test-isolation.php"
+      ]
+    },
+    {
+      "authority": "release-pipeline",
+      "literal": "@lockfile-authority:release",
+      "scan_paths": [
+        "tests/Architecture/*.php",
+        "scripts/*.php"
+      ],
+      "allowed_files": [
+        "scripts/verify-performance-baseline.php",
+        "scripts/verify-release-orchestration.php"
+      ]
+    }
+  ],
+  "policy": {
+    "single_executable_authority": true,
+    "consumer_literals_forbidden_unless_allowlisted": true,
+    "compiled_manifest_required": true,
+    "canonical_before_packaging": true,
+    "impact_resolution_before_implementation": true,
+    "derived_manifest_compiled_on_exact_target_tree": true,
+    "packaged_generated_manifest_is_not_cross_environment_authority": true
+  }
 }

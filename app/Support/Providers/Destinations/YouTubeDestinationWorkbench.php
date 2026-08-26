@@ -10,16 +10,21 @@ use App\Domain\Providers\Destinations\DTO\VideoDestinationCandidate;
 use App\Models\Catalog\Recording;
 use App\Models\Provider;
 use App\Models\ProviderDestination;
+use App\Support\Providers\Configuration\ProviderRuntimeConfiguration;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 final class YouTubeDestinationWorkbench
 {
-    public function __construct(private readonly VideoDestinationDiscovery $discovery) {}
+    public function __construct(
+        private readonly VideoDestinationDiscovery $discovery,
+        private readonly ProviderRuntimeConfiguration $runtimeConfiguration,
+    ) {}
 
     /** @return array{recording:Recording,candidates:list<VideoDestinationCandidate>} */
     public function search(string $recordingId): array
     {
+        $this->runtimeConfiguration->apply('youtube');
         $recording = Recording::query()->with('artists')->find($recordingId);
         if (! $recording instanceof Recording) {
             throw new RuntimeException('Canonical Recording was not found.');
@@ -30,6 +35,7 @@ final class YouTubeDestinationWorkbench
 
     public function approve(string $providerId, string $recordingId, string $videoId): ProviderDestination
     {
+        $this->runtimeConfiguration->apply('youtube');
         $provider = Provider::query()->find($providerId);
         if (! $provider instanceof Provider || $provider->slug !== 'youtube' || ! $provider->is_enabled) {
             throw new RuntimeException('Enabled YouTube provider registry row was not found.');

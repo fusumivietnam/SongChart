@@ -55,13 +55,28 @@ if (count($capabilities) !== count(array_unique(array_keys($capabilities)))) {
 }
 
 $policies = $manifest['policies'] ?? [];
-foreach (['laravel_native_first', 'new_packages_require_review', 'provider_ids_may_be_primary_keys'] as $policy) {
+foreach (['laravel_native_first', 'new_packages_require_review', 'provider_ids_may_be_primary_keys', 'node_runtime_major'] as $policy) {
     if (! array_key_exists($policy, $policies)) {
         $failures[] = 'Missing stack policy: '.$policy;
     }
 }
 if (($policies['provider_ids_may_be_primary_keys'] ?? true) !== false) {
     $failures[] = 'Provider identifiers must not be canonical primary keys.';
+}
+if (($policies['node_runtime_major'] ?? null) !== 24) {
+    $failures[] = 'Node runtime authority must remain on Node 24 LTS for Stage 18.1.';
+}
+
+$dockerfile = is_file($root.'/docker/verify/Dockerfile') ? (string) file_get_contents($root.'/docker/verify/Dockerfile') : '';
+$workflow = is_file($root.'/.github/workflows/tests.yml') ? (string) file_get_contents($root.'/.github/workflows/tests.yml') : '';
+if (! str_contains($dockerfile, 'FROM node:24-bookworm-slim AS node')) {
+    $failures[] = 'Docker verification/development runtime must use Node 24 LTS.';
+}
+if (substr_count($workflow, "node-version: '24'") < 2) {
+    $failures[] = 'GitHub quality and frontend-build jobs must use Node 24.';
+}
+if (str_contains($workflow, "node-version: '22'") || str_contains($dockerfile, 'FROM node:22')) {
+    $failures[] = 'Node 22 runtime drift is not allowed after Node 24 alignment.';
 }
 
 $scripts = $composer['scripts'] ?? [];

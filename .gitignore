@@ -24,6 +24,7 @@
 
 /.idea/
 /.vscode/
+/.gemini/
 .DS_Store
 Thumbs.db
 

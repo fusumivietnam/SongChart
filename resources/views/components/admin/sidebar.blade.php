@@ -13,9 +13,10 @@ $groups = [
         ['key' => 'catalog', 'label' => 'Nội dung', 'icon' => 'database', 'href' => route('admin.catalog.index')],
     ]],
     ['label' => 'Vận hành dữ liệu', 'items' => array_values(array_filter([
-        $canManageCatalog ? ['key' => 'canonical-admissions', 'label' => 'Canonical admission', 'icon' => 'shield', 'href' => route('admin.canonical-admissions.index')] : null,
+        $canManageCatalog ? ['key' => 'canonical-admissions', 'label' => 'Duyệt vào dữ liệu chuẩn', 'icon' => 'shield', 'href' => route('admin.canonical-admissions.index')] : null,
         $canManageProviders ? ['key' => 'providers', 'label' => 'Nguồn dữ liệu', 'icon' => 'external', 'href' => route('admin.providers.index')] : null,
-        $canManageProviders ? ['key' => 'imports', 'label' => 'Tác vụ dữ liệu', 'icon' => 'collection', 'href' => route('admin.imports.index')] : null,
+        $canManageProviders ? ['key' => 'import-workbench', 'label' => 'Nhập dữ liệu', 'icon' => 'collection', 'href' => route('admin.imports.preview')] : null,
+        $canManageProviders ? ['key' => 'imports', 'label' => 'Lịch sử tác vụ', 'icon' => 'database', 'href' => route('admin.imports.index')] : null,
         $canManageProviders ? ['key' => 'quarantine', 'label' => 'Dữ liệu cần rà soát', 'icon' => 'shield', 'href' => route('admin.quarantine.index')] : null,
         $canReviewIdentity ? ['key' => 'identity-conflicts', 'label' => 'Xung đột định danh', 'icon' => 'shield', 'href' => route('admin.identity-conflicts.index')] : null,
     ]))],
@@ -52,6 +53,6 @@ $groups = [
     </nav>
     <div class="admin-sidebar-footer">
         <p class="text-xs text-white/45">SongChartWeb 0.1.0-dev</p>
-        <p class="mt-1 text-xs text-white/70">Vận hành theo công việc · Stage 16.5</p>
+        <p class="mt-1 text-xs text-white/70">Vận hành theo công việc · Stage 18.1</p>
     </div>
 </aside>

@@ -2,69 +2,71 @@
 
 ## Purpose
 
-This environment is the release/candidate verification authority. It exists so Pint, Larastan/PHPStan, Pest, PostgreSQL migrations/tests and frontend builds run before packaging with the actual locked dependency graph.
+This environment is the release/candidate verification authority. It exists so Pint, Larastan/PHPStan, Pest, PostgreSQL migrations/tests and frontend builds run before release packaging with the actual locked dependency graph.
 
-It does not replace Laragon for daily Windows development and it does not define production deployment topology.
+It does not define production deployment topology.
 
 ## Runtime
 
 - PHP 8.5
 - Composer 2
-- Node 22
+- Node 24
 - PostgreSQL 18.4 container; release guard requires major 18 exactly
-- Redis 7.4 profile
+- Redis 7.4
 - application source bind-mounted at `/workspace`
 - `vendor/`, `node_modules` and Composer cache isolated in named Docker volumes
 
-## Windows
+## Supported host workflow
 
-Docker Desktop with WSL2 integration must be running.
+Linux/WSL2 with Docker Engine + Compose v2 is the supported local host. GitHub Codespaces is a remote adapter over the same repository contract.
 
-```bat
-verify-songchart.bat
+Candidate closure:
+
+```bash
+./songchart candidate
 ```
 
-PowerShell entry point:
+Canonical closure after candidate PASS:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/verify-canonical.ps1
+```bash
+./songchart verify
 ```
 
-Use `-NoBuild` only when the verification image has already been built and the Dockerfile did not change. Use `-KeepServices` only for diagnostics.
-
-## Linux / WSL2
+For direct diagnostics of the host adapter, the Linux helper remains available:
 
 ```bash
 bash scripts/verify-canonical-host.sh
 ```
 
+Native Windows Batch/PowerShell and Laragon verification entrypoints are retired.
+
 ## Verification order
 
-1. reset ephemeral PostgreSQL/Redis containers;
-2. build the PHP 8.5 verification image;
+1. reset ephemeral PostgreSQL/Redis verification containers;
+2. build the PHP 8.5 / Node 24 verification image;
 3. restore Composer dependencies from `composer.lock` into the isolated vendor volume;
 4. restore frontend dependencies from `package-lock.json` into the isolated node_modules volume;
-5. verify PostgreSQL major 18;
-6. run `composer quality:normalize` using the locked Pint binary;
-7. run `composer canonical:verify`;
-8. record candidate evidence;
-9. re-check candidate contract.
+5. verify the canonical PHP extension and PostgreSQL 18 contracts;
+6. refresh exact-tree generated repository authority where the governed workflow requires it;
+7. run `composer quality:normalize` using the locked Pint binary;
+8. run `composer canonical:verify` exactly once;
+9. record candidate evidence and re-check candidate contract.
 
-The source tree is intentionally writable because the exact source emitted by Pint is the source that must later be packaged.
+The source tree is intentionally writable during canonical normalization because the exact normalized tree must match recorded canonical evidence.
 
 ## Database lifecycle
 
-The verification PostgreSQL database is ephemeral. `docker compose down` removes its container and test data. Dependency/cache volumes are preserved unless explicitly removed with Docker volume commands.
+The verification PostgreSQL database is isolated from development state. The governed Compose lifecycle removes ephemeral verification containers while dependency/cache volumes may be retained for performance.
 
-Do not point canonical verification at the Laragon development database.
+Never point canonical verification at a development or shared-demo database.
 
 ## PHP extension image contract
 
-The PHP 8.5 base image already provides core/runtime extensions including `curl`, `dom`, `mbstring`, and `xml`. The verification Dockerfile must not rebuild those extensions. SongChart compiles only the additional extensions needed by the canonical runtime and verifies the complete required extension set during image build and again at canonical verification startup.
+The PHP 8.5 base image already provides core/runtime extensions including `curl`, `dom`, `mbstring`, and `xml`. The verification Dockerfile must not rebuild those extensions. SongChart compiles only additional extensions required by the canonical runtime and verifies the complete required extension set during image build and canonical startup.
 
-Use:
+Useful diagnostic commands:
 
-```powershell
-docker compose -f compose.verify.yml build --no-cache verify
-docker compose -f compose.verify.yml run --rm --no-deps verify php scripts/verify-canonical-php-extensions.php
+```bash
+docker compose -p songchart-verify -f compose.verify.yml build --no-cache verify
+docker compose -p songchart-verify -f compose.verify.yml run --rm --no-deps verify php scripts/verify-canonical-php-extensions.php
 ```

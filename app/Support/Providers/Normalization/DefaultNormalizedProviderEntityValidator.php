@@ -72,6 +72,36 @@ final class DefaultNormalizedProviderEntityValidator implements NormalizedProvid
             }
         }
 
+        foreach ($entity->mediaAssets as $index => $asset) {
+            if ($asset->url !== null && ! $this->isSafeUrl($asset->url)) {
+                $issues[] = new NormalizationValidationIssue(
+                    NormalizationFailureKind::UnsafeUrl,
+                    'media_assets.'.$index.'.url',
+                    'Only HTTPS media URLs are accepted.',
+                );
+            }
+        }
+
+        foreach ($entity->destinations as $index => $destination) {
+            if (! $this->isSafeUrl($destination->url)) {
+                $issues[] = new NormalizationValidationIssue(
+                    NormalizationFailureKind::UnsafeUrl,
+                    'destinations.'.$index.'.url',
+                    'Only HTTPS destination URLs are accepted.',
+                );
+            }
+        }
+
+        foreach ($entity->availability as $index => $availability) {
+            if (! preg_match('/^[A-Z]{2}$/', $availability->market)) {
+                $issues[] = new NormalizationValidationIssue(
+                    NormalizationFailureKind::InvalidValue,
+                    'availability.'.$index.'.market',
+                    'Availability market must be an ISO 3166-1 alpha-2 code.',
+                );
+            }
+        }
+
         $encoded = json_encode($entity->toArray(), JSON_THROW_ON_ERROR);
         if (strlen($encoded) > self::MAX_SERIALIZED_BYTES) {
             $issues[] = new NormalizationValidationIssue(

@@ -1,12 +1,14 @@
 {
   "schema_version": 1,
   "primary_local_runtime": "docker-development",
-  "compatibility_runtimes": [
-    "laragon-development"
+  "remote_development_adapters": [
+    "github-codespaces"
   ],
+  "compatibility_runtimes": [],
   "host_requirements": {
     "required": [
-      "Docker Desktop with WSL2 integration",
+      "Linux or WSL2",
+      "Docker Engine with Compose v2",
       "Git",
       "editor/browser"
     ],
@@ -48,6 +50,25 @@
     "postgres_volume_mount": "/var/lib/postgresql",
     "postgres_pgdata": "/var/lib/postgresql/18/docker"
   },
+  "codespaces": {
+    "status": "development-adapter",
+    "auto_detect_env": "CODESPACES=true",
+    "compose_override": "compose.codespaces.yml",
+    "app_host_port": 8000,
+    "port_visibility": "private-by-default",
+    "https_owner": "GitHub Codespaces port forwarding proxy",
+    "local_tls_required": false,
+    "caddy_required": false,
+    "auto_start_services": false,
+    "start_entrypoints": [
+      "songchart dev setup",
+      "songchart dev ready",
+      "songchart dev up"
+    ],
+    "stop_entrypoint": "songchart dev down",
+    "url_entrypoint": "songchart dev url",
+    "cost_model": "Codespace compute is consumed only while the Codespace is running; repository services do not keep a stopped Codespace alive. Use the GitHub Codespaces idle timeout for automatic shutdown."
+  },
   "verification": {
     "compose_file": "compose.verify.yml",
     "database": "songchart_verify_test",
@@ -58,31 +79,36 @@
     "derived_manifest_refresh": "inside Docker before stage/canonical verification and after Pint normalization"
   },
   "cli": {
-    "windows_entrypoint": "songchart.bat",
-    "powershell_owner": "scripts/songchart.ps1",
+    "linux_entrypoint": "songchart",
     "commands": [
+      "ai status",
+      "ai doctor",
       "dev setup",
+      "dev ready",
       "dev up",
       "dev down",
       "dev status",
       "dev logs",
       "dev shell",
+      "dev url",
+      "dev test",
       "artisan",
       "composer",
       "npm",
+      "context",
+      "candidate",
       "test",
       "verify"
     ]
   },
   "compatibility": {
-    "laragon": {
-      "status": "compatibility-only",
-      "may_make_release_claims": false,
-      "may_define_runtime_authority": false
+    "native_windows_cli": {
+      "status": "retired",
+      "supported_path": "Use WSL2/Linux and ./songchart."
     },
-    "legacy_docker_wrappers": {
-      "status": "compatibility-shims",
-      "owner": "scripts/songchart.ps1"
+    "zip_handoff": {
+      "status": "retired",
+      "supported_path": "Use Git branches, commits and pull requests."
     }
   }
 }

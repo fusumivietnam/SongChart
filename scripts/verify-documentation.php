@@ -8,26 +8,30 @@ $errors = [];
 $readmePath = $root.'/README.md';
 if (is_file($readmePath)) {
     $readme = (string) file_get_contents($readmePath);
-    $currentStageHeadings = preg_match_all('/^## Current development stage$/m', $readme);
-    if ($currentStageHeadings !== 1) {
-        $errors[] = sprintf('README.md must contain exactly one current development stage heading; found %d.', $currentStageHeadings);
+    foreach (['Current stage:', 'Candidate delivery:', '## Current development stage'] as $marker) {
+        if (str_contains($readme, $marker)) {
+            $errors[] = "README.md must not own development progress marker [{$marker}].";
+        }
     }
 }
 
 $requiredFiles = [
+    'PROJECT_AUTHORITY.md',
     'AGENTS.md',
     'README.md',
     'docs/START_HERE.md',
     'docs/DOCUMENTATION_GOVERNANCE.md',
     'docs/DOCUMENTATION_INDEX.md',
+    'docs/project/DEVELOPMENT_STATE.md',
+    'docs/project/DEVELOPMENT_HISTORY.md',
+    'docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md',
+    'docs/project/engineering/DELIVERY_WORKFLOW.md',
+    'docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md',
     'docs/project/docs/ARCHITECTURE.md',
     'docs/project/docs/ENGINEERING_RULES.md',
-    'docs/project/docs/WORKFLOW.md',
     'docs/project/docs/SECURITY.md',
     'docs/project/docs/TESTING.md',
     'docs/project/docs/DECISIONS.md',
-    'docs/foundation/STAGE_11_FOUNDATION_BASELINE.md',
-    'docs/foundation/STAGE_11_IMPLEMENTATION_STATUS.md',
 ];
 
 foreach ($requiredFiles as $relativePath) {
@@ -36,15 +40,7 @@ foreach ($requiredFiles as $relativePath) {
     }
 }
 
-$prohibitedRootAuthorities = [
-    'ARCHITECTURE.md',
-    'SECURITY.md',
-    'WORKFLOW.md',
-    'TESTING.md',
-    'DECISIONS.md',
-];
-
-foreach ($prohibitedRootAuthorities as $filename) {
+foreach (['ARCHITECTURE.md', 'SECURITY.md', 'WORKFLOW.md', 'TESTING.md', 'DECISIONS.md'] as $filename) {
     if (is_file($root.DIRECTORY_SEPARATOR.$filename)) {
         $errors[] = "Duplicate root authority is prohibited: {$filename}";
     }
@@ -61,7 +57,6 @@ foreach ($iterator as $file) {
     }
 
     $contents = file_get_contents($file->getPathname());
-
     if ($contents === false) {
         $errors[] = 'Unable to read: '.str_replace($root.DIRECTORY_SEPARATOR, '', $file->getPathname());
 
@@ -69,16 +64,13 @@ foreach ($iterator as $file) {
     }
 
     preg_match_all('/\[[^\]]+\]\(([^)]+)\)/', $contents, $matches);
-
     foreach ($matches[1] as $target) {
         $target = trim($target);
-
         if ($target === '' || str_starts_with($target, '#') || preg_match('/^[a-z][a-z0-9+.-]*:/i', $target) === 1) {
             continue;
         }
 
         $path = rawurldecode(explode('#', $target, 2)[0]);
-
         if ($path === '') {
             continue;
         }

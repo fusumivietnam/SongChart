@@ -19,6 +19,7 @@ use App\Jobs\Providers\Ingestion\FetchProviderImportPage;
 use App\Models\Provider;
 use App\Models\Providers\Ingestion\ProviderImportRun;
 use App\Support\Providers\Catalog\InMemoryProviderCatalogAdapterRegistry;
+use App\Support\Providers\Configuration\ProviderRuntimeConfiguration;
 use App\Support\Providers\Ingestion\ProviderImportOrchestrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -87,7 +88,11 @@ it('fetches normalizes checkpoints and finalizes a page', function (): void {
     $provider = Provider::query()->create(['slug' => 'fixture', 'name' => 'Fixture', 'category' => 'metadata', 'status' => ProviderStatus::Approved, 'is_enabled' => true]);
     $run = app(ProviderImportOrchestrator::class)->start($provider, EntityType::Artist, 'artist-import', 'artist-1');
 
-    (new FetchProviderImportPage((string) $run->getKey()))->handle(app(ProviderCatalogAdapterRegistry::class), app(ProviderImportOrchestrator::class));
+    (new FetchProviderImportPage((string) $run->getKey()))->handle(
+        app(ProviderCatalogAdapterRegistry::class),
+        app(ProviderImportOrchestrator::class),
+        app(ProviderRuntimeConfiguration::class),
+    );
 
     $run->refresh();
     expect($run->payloads()->count())->toBe(1)
@@ -156,7 +161,11 @@ it('records terminal provider request failures without creating payloads', funct
     $provider = Provider::query()->create(['slug' => 'fixture-failing', 'name' => 'Fixture failing', 'category' => 'metadata', 'status' => ProviderStatus::Approved, 'is_enabled' => true]);
     $run = app(ProviderImportOrchestrator::class)->start($provider, EntityType::Artist, 'artist-import', 'missing-artist');
 
-    (new FetchProviderImportPage((string) $run->getKey()))->handle(app(ProviderCatalogAdapterRegistry::class), app(ProviderImportOrchestrator::class));
+    (new FetchProviderImportPage((string) $run->getKey()))->handle(
+        app(ProviderCatalogAdapterRegistry::class),
+        app(ProviderImportOrchestrator::class),
+        app(ProviderRuntimeConfiguration::class),
+    );
 
     $run->refresh();
     expect($run->status)->toBe(ProviderImportRunStatus::Failed)

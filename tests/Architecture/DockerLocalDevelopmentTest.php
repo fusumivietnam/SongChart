@@ -35,20 +35,18 @@ it('keeps Docker trusted proxy handling local-only and opt-in', function (): voi
         ->toContain("\$middleware->trustProxies(at: '*')");
 });
 
-it('provides an idempotent Docker dev readiness and verification cycle', function (): void {
+it('provides idempotent Docker development readiness and isolated verification', function (): void {
     $root = dirname(__DIR__, 2);
-    $cli = (string) file_get_contents($root.'/scripts/songchart.ps1');
-    $ready = (string) file_get_contents($root.'/scripts/prepare-docker-dev.ps1');
+    $cli = (string) file_get_contents($root.'/songchart');
+    $setup = (string) file_get_contents($root.'/scripts/setup-docker-dev.sh');
 
     expect($cli)
-        ->toContain("'ready'")
-        ->toContain("'cycle'")
+        ->toContain('ready)')
+        ->toContain('dev_up')
+        ->toContain('php artisan migrate --force')
         ->toContain('songchart-verify')
         ->toContain('run-database-tests.php postgres --prepare-schema')
-        ->and($ready)
-        ->toContain('ALTER ROLE songchart_docker')
-        ->toContain('php', 'artisan', 'migrate')
-        ->toContain('curl.exe --fail --silent --show-error')
-        ->toContain('/up')
-        ->toContain('Live application smoke failed');
+        ->toContain('docker-stage-verify.sh')
+        ->and($setup)
+        ->toContain('.env.docker');
 });

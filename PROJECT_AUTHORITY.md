@@ -8,10 +8,11 @@ Status: mandatory engineering entry point. Machine-readable authorities referenc
 - Laravel: `^13.0`
 - Database: PostgreSQL 18.x is the only release-authoritative database; release gates require major version 18 exactly.
 - Queue: Laravel Redis queue is the runtime baseline.
-- Primary local development: Linux/WSL2 source with Docker Engine + Compose v2. Docker Desktop may provide the engine as a compatibility option; Laragon is compatibility-only and may not define release/canonical authority.
-- Horizon: Linux/WSL deployment profile only.
+- Primary development: Linux/WSL2 source with Docker Engine + Compose v2; GitHub Codespaces is the preferred remote adapter.
+- Native Windows Batch/PowerShell and Laragon development runtimes are retired. Windows development, when needed, uses WSL2 and the same Linux `./songchart` entrypoint.
+- Horizon: Linux deployment profile only.
 - Pulse: first-party operational observability.
-- Node: approved LTS / repository lockfile authority.
+- Node: 24 / repository lockfile authority.
 
 ## Read order before implementation
 
@@ -71,15 +72,16 @@ Use for source boundaries, capability ownership, forbidden dependencies and gove
 
 Schema, migrations, persistence and release-authoritative database behavior must pass the PostgreSQL lane.
 
-## Delivery and upgrade artifact authority
+## Delivery and handoff authority
 
 `docs/project/engineering/DELIVERY_WORKFLOW.md` is mandatory for every implementation stage and corrective candidate.
 
-- Publish a full Laragon-ready source ZIP **and** an incremental changeset ZIP from the exact same implementation tree.
-- The changeset is the normal upgrade path from the immediately preceding accepted/canonical baseline; the full ZIP is the recovery/bootstrap path.
-- Delivery artifacts never contain or overwrite `.env`, `.env.docker`, private certificates, dependency directories, database volumes, logs, or compiled runtime caches.
-- Changesets declare their baseline, back up overwritten/deleted files, carry an explicit removal manifest, and use Docker-first verification entrypoints when verification is requested.
-- Do not advance implementation against an assumed target tree. The baseline for the next changeset is the latest candidate known to be applied and canonically accepted by the user.
+- GitHub is the only development source of truth and handoff mechanism.
+- A stage uses its stage branch; logical slices are committed and pushed rather than copied between machines.
+- Device/AI handoff uses Git state plus `./songchart ai status` / `./songchart ai doctor` evidence.
+- Do not publish or consume source ZIPs, incremental ZIPs, Laragon-ready ZIPs, patch installers, or cross-device stashes as normal development handoff.
+- Do not advance implementation against an assumed target tree. The next action starts from the exact committed branch tree.
+- `composer release:package` remains post-canonical release/deployment packaging only; it is not a source synchronization mechanism.
 
 ## Verification workflow
 
@@ -109,16 +111,15 @@ A stage is not closure-ready until canonical evidence is recorded and exact-tree
 composer release:package
 ```
 
-
 ## Verification command surface
 
 Active workflow entrypoints are intentionally small:
 
 ```text
-Development:       songchart dev ...
-Focused Docker:    songchart test
-Candidate closure: composer stage:verify
-Canonical closure: songchart verify / composer canonical:verify
+Development:       ./songchart dev ...
+Focused Docker:    ./songchart dev test <path> / ./songchart test
+Candidate closure: ./songchart candidate / composer stage:verify
+Canonical closure: ./songchart verify / composer canonical:verify
 Packaging:         composer release:package
 ```
 
@@ -126,52 +127,52 @@ Removed compatibility aliases such as `verify`, `release:verify`, `test:all`, `t
 
 ## Canonical verification environment
 
-Docker Desktop + WSL2 is the primary local development runtime and the canonical verification host. Closure candidates must be verified in `compose.verify.yml` before packaging.
+Linux/WSL2 Docker is the supported local verification host; GitHub Codespaces is a remote adapter over the same repository contract. Closure candidates must be verified in `compose.verify.yml` before packaging.
 
 The canonical environment owns:
 - PHP 8.5
 - Composer 2 and lockfile-backed `vendor/`
-- Node 22 and lockfile-backed `node_modules`
+- Node 24 and lockfile-backed `node_modules`
 - PostgreSQL major 18
 - Redis
 - repository-locked Pint/Larastan/Pest execution
 
-`vendor/` and `node_modules` use Docker named volumes and are isolated from the Laragon working tree. The source tree is bind-mounted so Pint normalization becomes the exact source that is subsequently packaged.
+`vendor/` and `node_modules` use Docker named volumes. The source tree is bind-mounted so locked normalization and generated authority apply to the exact Git tree being verified.
 
-Run on Windows:
+Run:
 
-```bat
-verify-songchart.bat
+```bash
+./songchart candidate
+./songchart verify
 ```
 
 A candidate may be marked `closure_ready=true` only after the canonical environment completes `composer canonical:verify` and records evidence in `candidate-verification.json`.
 
+## Docker-first development
 
-## Docker-first local development
-
-`compose.dev.yml` is the primary web-development profile. `compose.verify.yml` remains the isolated canonical/test profile. Laragon is compatibility-only.
+`compose.dev.yml` is the primary local web-development profile. `compose.verify.yml` remains the isolated canonical/test profile. `compose.codespaces.yml` adapts the same development contract to GitHub Codespaces.
 
 Primary commands:
 
-```bat
-songchart dev setup
-songchart dev up
-songchart test
-songchart verify
+```bash
+./songchart dev setup
+./songchart dev ready
+./songchart dev up
+./songchart dev test tests/Feature/...
+./songchart candidate
+./songchart verify
 ```
 
-Default local endpoints are intentionally port-safe:
+Local Docker endpoints are intentionally port-safe:
 
 ```text
 https://docker.songchart.test:8443
 http://docker.songchart.test:8080
 ```
 
-The Docker profile must not claim host ports 80/443 by default because Laragon may already own them. HTTPS certificates are generated by `mkcert` on the Windows host and mounted read-only into Caddy. Private certificate material and `.env.docker` must never be committed.
+Codespaces uses private-by-default GitHub forwarded port 8000 and does not require local Caddy/TLS. Native Windows wrappers and Laragon host ownership are not supported execution paths.
 
 Trusted proxy handling is permitted only when `APP_ENV=local` and `SONGCHART_TRUST_DOCKER_PROXY=true`.
-
-
 
 ## Migration lifecycle authority
 
@@ -184,8 +185,6 @@ Required invariants:
 - package-managed schema adaptations must record both historical ownership and forward corrections;
 - guarded forward repairs use explicit table/column existence checks when repairing known drift;
 - never make an existing deployment depend on edits to an already-recorded migration.
-
-
 
 ## Application data boundary authority
 
@@ -225,7 +224,6 @@ Rules:
 - existing domain-specific ledgers such as provider idempotency/audit records remain authoritative for their own invariants;
 - Tinker must not be the normal interface for production user role/activation changes; use audited application commands.
 
-
 ## Contract-first repository safety
 
 Before implementing changes that touch models, database schema, package-managed tables, runtime images or database-backed tests:
@@ -262,8 +260,6 @@ composer canonical:verify
 - package adoption without registry ownership
 - publishing a candidate as fully verified when vendor/database/build gates were not actually run
 
-
-
 ## Verification consumer graph authority
 
 Verification semantics are routed by `docs/project/engineering/verification-consumer-graph.json`.
@@ -284,7 +280,6 @@ Repository-wide invariants that have a registered authority must be resolved thr
 Before implementing a change to a registered authority or consumer, run the impact resolver. After authority changes, recompile and verify `docs/project/generated/repository-contract-manifest.json`.
 
 Release-source packaging is post-canonical only. The package command must prove that the current source tree, authority graph and dependency lockfiles match canonical evidence.
-
 
 ## AI development protocol
 

@@ -10,6 +10,7 @@ use App\Domain\Catalog\Enums\EntityType;
 use App\Domain\Providers\Catalog\DTO\ProviderImportContext;
 use App\Models\Provider;
 use App\Models\Providers\Ingestion\ProviderImportRun;
+use App\Support\Providers\Configuration\ProviderRuntimeConfiguration;
 use App\Support\Providers\Ingestion\ProviderImportOrchestrator;
 use RuntimeException;
 
@@ -18,11 +19,13 @@ final class MusicBrainzRecordingWorkbench
     public function __construct(
         private readonly ProviderCatalogAdapterRegistry $adapters,
         private readonly ProviderImportOrchestrator $imports,
+        private readonly ProviderRuntimeConfiguration $runtimeConfiguration,
     ) {}
 
     /** @return list<array{id:string,title:string,length_ms:int|null,disambiguation:string,artist_credit:string,isrcs:list<string>} > */
     public function search(string $query, int $limit = 10): array
     {
+        $this->runtimeConfiguration->apply('musicbrainz');
         $page = $this->adapter()->fetchPage(new ProviderImportContext(
             runId: 'admin-musicbrainz-recording-search',
             entityType: EntityType::Recording,
