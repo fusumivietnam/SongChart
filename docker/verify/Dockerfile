@@ -1,5 +1,5 @@
 FROM composer:2 AS composer
-FROM node:22-bookworm-slim AS node
+FROM node:24-bookworm-slim AS node
 
 FROM php:8.5-cli-bookworm
 
