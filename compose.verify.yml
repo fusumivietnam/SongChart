@@ -58,6 +58,7 @@ services:
         condition: service_healthy
     volumes:
       - .:/workspace
+      - ./.env.testing.example:/workspace/.env:ro
       - songchart_verify_vendor:/workspace/vendor
       - songchart_verify_node_modules:/workspace/node_modules
       - songchart_verify_composer_cache:/tmp/composer-cache
