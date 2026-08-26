@@ -44,6 +44,8 @@ $activeDocs = [
     'PROJECT_AUTHORITY.md',
     'README.md',
     'docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md',
+    'docs/project/engineering/DELIVERY_WORKFLOW.md',
+    'docs/project/DEVELOPMENT_STATE.md',
     'docs/project/RELEASE_BASELINE_STATUS.md',
     'docs/project/docs/TESTING.md',
     'docs/project/stack/TESTING_TOOLCHAIN.md',
@@ -59,13 +61,20 @@ $forbiddenActiveText = [
     'composer release-contract:verify',
     'scripts/export-release-baseline.ps1',
     'scripts/finalize-stage-11-release',
+    'verify-songchart.bat',
+    'stage-verify.bat',
+    'songchart.bat',
+    'docker-dev-setup.bat',
+    'scripts/songchart.ps1',
+    'scripts/verify-canonical.ps1',
+    'Laragon-ready',
+    'incremental changeset ZIP',
 ];
 
 foreach ($activeDocs as $relative) {
     $path = $root.'/'.$relative;
     if (! is_file($path)) {
         $errors[] = "Active documentation surface is missing [{$relative}].";
-
         continue;
     }
 
