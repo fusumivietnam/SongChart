@@ -1,6 +1,6 @@
 {
     "schema_version": 1,
-    "stage": "17.12",
+    "stage": "18.1",
     "candidate": "v1",
     "closure_ready": false,
     "environment": "canonical-docker-verification",
