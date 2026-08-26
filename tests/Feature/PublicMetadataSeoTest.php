@@ -27,6 +27,21 @@ it('renders provider-neutral canonical social and structured metadata for an art
         ->assertDontSee('musicbrainz.org', false);
 });
 
+it('distinguishes group artists in structured metadata', function (): void {
+    Artist::factory()->create([
+        'name' => 'Daft Punk',
+        'slug' => 'daft-punk',
+        'artist_type' => 'group',
+        'country_code' => 'FR',
+    ]);
+
+    $this->get('/groups/daft-punk')
+        ->assertOk()
+        ->assertSee('<link rel="canonical" href="http://localhost/groups/daft-punk">', false)
+        ->assertSee('"@type":"MusicGroup"', false)
+        ->assertDontSee('"@type":"Person"', false);
+});
+
 it('renders music album schema on canonical release pages', function (): void {
     Release::factory()->create([
         'title' => 'Random Access Memories',
@@ -37,4 +52,26 @@ it('renders music album schema on canonical release pages', function (): void {
         ->assertOk()
         ->assertSee('<link rel="canonical" href="http://localhost/releases/random-access-memories">', false)
         ->assertSee('"@type":"MusicAlbum"', false);
+});
+
+it('keeps search and filtered catalog pages out of the index while preserving canonical roots', function (): void {
+    Artist::factory()->create([
+        'name' => 'Thomas Bangalter',
+        'slug' => 'thomas-bangalter',
+        'artist_type' => 'person',
+    ]);
+
+    $this->get('/search?q=Thomas')
+        ->assertOk()
+        ->assertSee('<link rel="canonical" href="http://localhost/search">', false)
+        ->assertSee('<meta name="robots" content="noindex,follow">', false);
+
+    $this->get('/artists?q=Thomas')
+        ->assertOk()
+        ->assertSee('<link rel="canonical" href="http://localhost/artists">', false)
+        ->assertSee('<meta name="robots" content="noindex,follow">', false);
+
+    $this->get('/artists')
+        ->assertOk()
+        ->assertSee('content="index,follow,max-image-preview:large"', false);
 });
