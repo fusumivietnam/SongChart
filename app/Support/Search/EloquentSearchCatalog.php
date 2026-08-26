@@ -181,8 +181,8 @@ final class EloquentSearchCatalog implements SearchCatalog
     }
 
     /**
-     * @param array<string,mixed> $left
-     * @param array<string,mixed> $right
+     * @param  array<string,mixed>  $left
+     * @param  array<string,mixed>  $right
      */
     private function compareCanonicalTieBreak(array $left, array $right): int
     {
