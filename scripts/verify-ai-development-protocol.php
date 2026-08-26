@@ -51,21 +51,22 @@ foreach (['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'] as $bootstrap) {
     }
 }
 
-foreach (['scripts/ai-status.sh', 'scripts/ai-status.ps1'] as $statusScript) {
-    if (! is_file($root.'/'.$statusScript)) {
-        $errors[] = "AI session bootstrap is missing [{$statusScript}].";
-    }
+if (! is_file($root.'/scripts/ai-status.sh')) {
+    $errors[] = 'AI session bootstrap is missing [scripts/ai-status.sh].';
 }
 
 $songchart = (string) file_get_contents($root.'/songchart');
-$windowsCli = (string) file_get_contents($root.'/songchart.bat');
 if (! str_contains($songchart, 'ai status') || ! str_contains($songchart, 'scripts/ai-status.sh')) {
     $errors[] = 'Linux songchart CLI must expose ai status through scripts/ai-status.sh.';
 }
-if (! str_contains(strtolower($windowsCli), 'ai')
-    || ! str_contains(strtolower($windowsCli), 'status')
-    || ! str_contains($windowsCli, 'scripts\\ai-status.ps1')) {
-    $errors[] = 'Windows songchart CLI must expose ai status through scripts/ai-status.ps1.';
+if (! str_contains($songchart, 'ai doctor') || ! str_contains($songchart, 'scripts/ai-doctor.sh')) {
+    $errors[] = 'Linux songchart CLI must expose ai doctor through scripts/ai-doctor.sh.';
+}
+
+foreach (['songchart.bat', 'scripts/songchart.ps1', 'scripts/ai-status.ps1'] as $retiredWindowsEntrypoint) {
+    if (is_file($root.'/'.$retiredWindowsEntrypoint)) {
+        $errors[] = "Retired native Windows AI/development entrypoint must be removed [{$retiredWindowsEntrypoint}].";
+    }
 }
 
 $gitignore = (string) file_get_contents($root.'/.gitignore');
