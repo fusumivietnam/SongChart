@@ -47,7 +47,7 @@
 
             <aside class="space-y-5">
                 <x-ui.card><h2 class="font-bold">Tìm kiếm liên quan</h2><div class="mt-3 flex flex-wrap gap-2">@foreach($result['related'] as $related)<a class="rounded-full bg-[var(--sc-bg-subtle)] px-3 py-2 text-sm font-semibold" href="{{ route('search',['q'=>$related]) }}">{{ $related }}</a>@endforeach</div></x-ui.card>
-                <x-ui.card><h2 class="font-bold">Về kết quả</h2><p class="mt-3 text-sm leading-6 text-[var(--sc-text-secondary)]">Kết quả dùng canonical catalog nội bộ; public request không gọi provider API và không tạo dữ liệu popularity giả.</p><p class="mt-3 text-xs leading-5 text-[var(--sc-text-muted)]">Nhãn “chưa xác minh” cho biết metadata còn thiếu, không có nghĩa nội dung không tồn tại.</p></x-ui.card>
+                <x-ui.card><h2 class="font-bold">Về kết quả</h2><p class="mt-3 text-sm leading-6 text-[var(--sc-text-secondary)]">Không có lượt nghe, chart hoặc độ phổ biến giả lập. Kết quả dùng canonical catalog nội bộ; public request không gọi provider API.</p><p class="mt-3 text-xs leading-5 text-[var(--sc-text-muted)]">Nhãn “chưa xác minh” cho biết metadata còn thiếu, không có nghĩa nội dung không tồn tại.</p></x-ui.card>
             </aside>
         </div>
     @endif
