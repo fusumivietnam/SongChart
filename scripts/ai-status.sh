@@ -50,7 +50,7 @@ checkpoint_state="MISSING"
 checkpoint_detail="DEVELOPMENT_STATE.md is missing"
 checkpoint_file="$ROOT/docs/project/DEVELOPMENT_STATE.md"
 if [[ -f "$checkpoint_file" ]]; then
-  checkpoint_stage="$(grep -A4 '^## Current stage' "$checkpoint_file" | grep -m1 -E 'Stage[[:space:]]+`?[0-9]+(\.[0-9]+)*|`[0-9]+(\.[0-9]+)*' | sed -E 's/.*`?([0-9]+(\.[0-9]+)*)`?.*/\1/' || true)"
+  checkpoint_stage="$(grep -A4 '^## Current stage' "$checkpoint_file" | grep -m1 -oE '[0-9]+(\.[0-9]+)+' || true)"
   if [[ -n "$checkpoint_stage" && "$checkpoint_stage" == "$stage" ]]; then
     checkpoint_state="SYNCED"
     checkpoint_detail="operational checkpoint matches candidate stage"
