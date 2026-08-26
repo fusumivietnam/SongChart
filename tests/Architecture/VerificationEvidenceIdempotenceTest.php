@@ -28,5 +28,6 @@ it('keeps canonical verification evidence outside the tracked candidate definiti
         ->toContain('head_full');
 
     expect($gitignore)
-        ->toContain('/storage/framework/candidate-verification-runtime.json');
+        ->toContain('/storage/framework/*')
+        ->not->toContain('/storage/framework/candidate-verification-runtime.json');
 });
