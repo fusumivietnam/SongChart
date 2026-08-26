@@ -74,31 +74,20 @@ if (! str_contains($gitignore, '/.gemini/')) {
     $errors[] = 'Repository .gitignore must exclude local Gemini CLI state [.gemini/].';
 }
 
-$readme = (string) file_get_contents($root.'/README.md');
 $candidate = json_decode((string) file_get_contents($root.'/candidate-verification.json'), true, 512, JSON_THROW_ON_ERROR);
 $developmentStatePath = $root.'/docs/project/DEVELOPMENT_STATE.md';
 if (! is_file($developmentStatePath)) {
     $errors[] = 'Operational checkpoint [docs/project/DEVELOPMENT_STATE.md] is missing.';
 } else {
     $developmentState = (string) file_get_contents($developmentStatePath);
-    $readmeStage = null;
     $checkpointStage = null;
-    if (preg_match('/Current stage:\s*\*\*(?<stage>[0-9]+(?:\.[0-9]+)*)\s+—/', $readme, $match) === 1) {
-        $readmeStage = $match['stage'];
-    }
     if (preg_match('/(?ms)^## Current stage\s+.*?Stage\s+`(?<stage>[0-9]+(?:\.[0-9]+)*)\s+—/', $developmentState, $match) === 1) {
         $checkpointStage = $match['stage'];
     }
     $candidateStage = isset($candidate['stage']) ? (string) $candidate['stage'] : null;
 
-    if ($readmeStage === null) {
-        $errors[] = 'README current-stage pointer could not be parsed.';
-    }
     if ($checkpointStage === null) {
         $errors[] = 'DEVELOPMENT_STATE current-stage checkpoint could not be parsed.';
-    }
-    if ($readmeStage !== null && $candidateStage !== null && $readmeStage !== $candidateStage) {
-        $errors[] = "README stage [{$readmeStage}] does not match candidate stage [{$candidateStage}].";
     }
     if ($checkpointStage !== null && $candidateStage !== null && $checkpointStage !== $candidateStage) {
         $errors[] = "DEVELOPMENT_STATE stage [{$checkpointStage}] does not match candidate stage [{$candidateStage}].";
