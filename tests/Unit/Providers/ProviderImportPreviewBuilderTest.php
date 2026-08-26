@@ -8,7 +8,6 @@ use App\Support\Providers\Ingestion\ProviderImportPreviewBuilder;
 use App\Support\Providers\Normalization\DefaultNormalizedProviderEntityValidator;
 use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
 use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
-use DateTimeImmutable;
 
 it('builds a valid read-only preview from a supported provider payload', function (): void {
     $builder = new ProviderImportPreviewBuilder(
@@ -25,7 +24,7 @@ it('builds a valid read-only preview from a supported provider payload', functio
             'length' => 181000,
             'isrcs' => ['USAAA2600001'],
         ],
-        receivedAt: new DateTimeImmutable('2026-08-26T00:00:00+00:00'),
+        receivedAt: new \DateTimeImmutable('2026-08-26T00:00:00+00:00'),
     ));
 
     expect($preview->valid)->toBeTrue()
