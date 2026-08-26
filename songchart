@@ -117,8 +117,9 @@ PY2
   printf '[SongChart demo] Ensuring development PostgreSQL authority is running.\n'
   dev up -d postgres
   demo build app
+  printf '[SongChart demo] Repairing dependency/runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
   demo run --rm --user root app sh -lc \
-    "mkdir -p /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage"
+    "mkdir -p /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache && find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} + && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache"
   demo run --rm app composer install --no-interaction --prefer-dist --no-progress
   demo run --rm app npm ci --no-audit --no-fund
   demo run --rm app npm run build
@@ -260,11 +261,11 @@ case "$cmd" in
    url) ensure_dev_config; dev_url ;;
    test) focused_test "$@" ;;
    db)
-    db_sub="${1:-}"; shift || true
-    case "$db_sub" in
-      backup) dev_db_backup ;;
-      restore) dev_db_restore "${1:-$BACKUP_DIR/songchart-dev-latest.dump}" ;;
-      *) die 'Usage: ./songchart dev db [backup|restore [dump-path]]' ;;
+    action="${1:-}"; shift || true
+    case "$action" in
+     backup) dev_db_backup ;;
+     restore) dev_db_restore "${1:-}" ;;
+     *) die 'Usage: ./songchart dev db [backup|restore [dump-path]]' ;;
     esac ;;
    *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test|db]' ;;
   esac ;;
@@ -312,14 +313,11 @@ case "$cmd" in
   prepare_candidate_authority
   [[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]] || die 'Closure requires a clean committed working tree.'
   printf '[SongChart close] Running canonical verification; canonical owns the stage lane exactly once.\n'
-  (
-    set -e
-    trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' EXIT
-    verify_compose down --remove-orphans
-    verify_compose build verify
-    verify_compose run --rm verify
-  )
-  printf '[SongChart verify] PASSED.\n'
+  verify_compose down --remove-orphans
+  verify_compose build verify
+  cleanup(){ verify_compose down --remove-orphans >/dev/null 2>&1 || true; }
+  trap cleanup EXIT
+  verify_compose run --rm verify
   printf '[SongChart close] PASSED.\n' ;;
  test) require_docker; stage_verify; printf '[SongChart stage] PASSED.\n' ;;
  verify)
