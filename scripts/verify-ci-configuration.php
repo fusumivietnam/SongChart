@@ -56,6 +56,25 @@ foreach (['composer validate --strict', 'composer quality:verify', 'composer tes
     }
 }
 
+$requiredWorkflowFragments = [
+    "push:\n    branches:\n      - main",
+    "pull_request:\n    branches:\n      - main",
+    "workflow_dispatch:",
+    "concurrency:",
+    'group: tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}',
+    'cancel-in-progress: true',
+];
+
+foreach ($requiredWorkflowFragments as $fragment) {
+    if (! is_string($workflow) || ! str_contains($workflow, $fragment)) {
+        $errors[] = 'GitHub Actions feedback-loop contract is missing: '.str_replace("\n", ' / ', $fragment);
+    }
+}
+
+if (is_string($workflow) && preg_match('/^\s{2}push:\s*$/m', $workflow) === 1 && ! str_contains($workflow, "push:\n    branches:\n      - main")) {
+    $errors[] = 'Full CI must not run on every feature-branch push; push verification is restricted to main.';
+}
+
 if ($errors !== []) {
     foreach ($errors as $error) {
         fwrite(STDERR, $error.PHP_EOL);
