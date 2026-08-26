@@ -6,10 +6,40 @@ namespace App\Support\Providers\Configuration;
 
 use App\Models\Provider;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Config;
 use Throwable;
 
 final class ProviderRuntimeConfiguration
 {
+    public function apply(string $providerSlug): void
+    {
+        if ($providerSlug === 'musicbrainz') {
+            Config::set('songchart.providers.musicbrainz.enabled', $this->enabled(
+                'musicbrainz',
+                (bool) config('songchart.providers.musicbrainz.enabled', false),
+            ));
+            Config::set('songchart.providers.musicbrainz.user_agent', $this->setting(
+                'musicbrainz',
+                'user_agent',
+                config('songchart.providers.musicbrainz.user_agent'),
+            ));
+
+            return;
+        }
+
+        if ($providerSlug === 'youtube') {
+            Config::set('songchart.providers.youtube.enabled', $this->enabled(
+                'youtube',
+                (bool) config('songchart.providers.youtube.enabled', false),
+            ));
+            Config::set('songchart.providers.youtube.api_key', $this->secret(
+                'youtube',
+                'api_key',
+                (string) config('songchart.providers.youtube.api_key', ''),
+            ));
+        }
+    }
+
     public function enabled(string $providerSlug, bool $fallback = false): bool
     {
         $provider = $this->provider($providerSlug);
