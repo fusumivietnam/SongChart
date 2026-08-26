@@ -224,7 +224,7 @@
         },
         "stack-manifest": {
             "source": "docs/project/stack/stack-manifest.json",
-            "fingerprint": "deccebca3f9306c0289140509d17f2a60adf69e400628e1ce316f0f582380719",
+            "fingerprint": "1d71e6a281e73823abb7546515c9c27c7f60baa9e76e1ee67bec699227b62b18",
             "consumers": []
         },
         "package-registry": {
@@ -1622,5 +1622,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "ae534628ff63cd402095ac41284672c8df67c5165220cd2d9069cf00f46c3b60"
+    "graph_fingerprint": "f650e892e4572e035667126a44a4d929fb3807f42f1b99bb4e6f5cd0f00fa5d9"
 }
