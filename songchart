@@ -190,15 +190,6 @@ prepare_candidate_authority(){
   git -C "$ROOT" commit -m 'chore: refresh generated repository authority'
   printf '[SongChart candidate] Generated repository authority committed.\n'
 }
-canonical_verify_without_build(){
-  (
-    set -e
-    trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' EXIT
-    verify_compose down --remove-orphans
-    verify_compose run --rm verify
-  )
-  printf '[SongChart verify] PASSED.\n'
-}
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart ai status|doctor
@@ -224,8 +215,8 @@ Focused verification:
 
 Closure:
   ./songchart candidate             read-only verification of an already committed exact tree
-  ./songchart candidate --prepare   refresh/commit generated authority, then candidate verification
-  ./songchart close                 prepare + candidate + canonical verification; reuses candidate image for canonical closure
+  ./songchart candidate --prepare   refresh/commit generated authority, then candidate-stage verification
+  ./songchart close                 refresh/commit generated authority, then run canonical closure; canonical owns stage verification exactly once
 
 Data resilience:
   ./songchart dev db backup
@@ -320,11 +311,15 @@ case "$cmd" in
   require_docker; ensure_dev_config
   prepare_candidate_authority
   [[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]] || die 'Closure requires a clean committed working tree.'
-  printf '[SongChart close] Running candidate verification.\n'
-  stage_verify
-  printf '[SongChart candidate] PASSED.\n'
-  printf '[SongChart close] Reusing candidate image for canonical verification.\n'
-  canonical_verify_without_build
+  printf '[SongChart close] Running canonical verification; canonical owns the stage lane exactly once.\n'
+  (
+    set -e
+    trap 'verify_compose down --remove-orphans >/dev/null 2>&1 || true' EXIT
+    verify_compose down --remove-orphans
+    verify_compose build verify
+    verify_compose run --rm verify
+  )
+  printf '[SongChart verify] PASSED.\n'
   printf '[SongChart close] PASSED.\n' ;;
  test) require_docker; stage_verify; printf '[SongChart stage] PASSED.\n' ;;
  verify)
