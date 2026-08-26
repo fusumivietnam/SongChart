@@ -26,27 +26,34 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - GitHub Codespaces Docker adapter with private forwarded live-demo URL and no auto-start on Codespace open;
 - shared demo adapter with remote PostgreSQL and on-demand app/queue/Redis compute;
 - repository-local AI skills normalized for Codex-compatible `SKILL.md` frontmatter;
-- cross-platform `songchart ai status` bootstrap for Git, candidate, context, runtime, demo and AI-tool visibility.
+- cross-platform `songchart ai status` bootstrap for Git, candidate, context, runtime, demo and AI-tool visibility;
+- `./songchart ai doctor` copy-friendly diagnostic bundle for ChatGPT/Codex handoff without exposing environment files or known secret values;
+- isolated Linux/Codespaces focused-test lane through `./songchart dev test`, keeping Feature tests on the PostgreSQL verification runtime rather than the development container.
 
 ## Current blockers / risks
 
 - Candidate evidence is not yet closure-ready; `candidate-verification.json` still records no completed closure run for Stage 18.1.
-- Shared demo is implemented but remains unconfigured until remote PostgreSQL secrets are provisioned.
-- Gemini CLI authentication must use Google OAuth (`oauth-personal`) to consume eligible Google AI Pro/Ultra quota; API-key mode is a separate quota/billing path.
+- Shared demo is implemented but remains unconfigured until remote PostgreSQL secrets are provisioned; this does not block Stage 18.1 closure.
+- Alternative AI tooling such as Gemini/Antigravity is deferred until after launch-readiness work; ChatGPT Plus + GitHub + Codespaces/Codex remains the active development workflow.
+- Focused Stage 18.1 Feature suites currently pass assertions but still emit warnings; warnings must be understood and removed before candidate closure rather than suppressed.
 
 ## Latest focused evidence
 
 - Codespaces development stack reached healthy `app`, PostgreSQL, Redis and queue services with the private port-8000 preview URL.
-- `./songchart ai status` reports Stage 18.1 / v1 and fresh generated project context.
+- Focused Feature tests now run against isolated PostgreSQL 18 verification state; test database safety reports development/test isolation PASS.
+- Provider Admin configuration projection was corrected to retrieve `configuration` before the Blade setup surface reads it.
+- Verification image now trusts only the mounted `/workspace` repository path for Git operations, removing the container-only dubious-ownership blocker.
+- `ProviderImportPreviewTest` currently completes with 37 assertions and warnings; `ProviderConfigurationTest` completes with 11 assertions and warnings after the projection fix. Exact warning causes still require inspection.
 - Full Stage 18.1 candidate/canonical closure has not yet been recorded.
 
 ## Next required action
 
-1. Pull the latest branch and restore a clean working tree; local AI-client state such as `.gemini/` must remain untracked/ignored.
-2. Confirm Gemini auth is `oauth-personal` when using Google AI Pro.
-3. Run `./songchart ai status` and resolve any `Checkpoint` or `Context` drift before implementation.
-4. Continue Stage 18.1 only through the current task contract and impact-driven focused tests.
-5. Before candidate closure, update this checkpoint in the same logical changeset, then run the governed candidate preparation/verification flow.
+1. Pull the latest Stage 18.1 branch and run `./songchart ai doctor` to capture the current copy-friendly diagnostic bundle.
+2. Use `./songchart dev test tests/Feature/Admin/ProviderImportPreviewTest.php` and `./songchart dev test tests/Feature/Admin/ProviderConfigurationTest.php`; inspect and eliminate warning root causes without middleware/test suppression.
+3. Run the remaining Stage 18.1 focused Unit tests and impact-owned static/governance gates.
+4. Run `./songchart ai status`; resolve any checkpoint/context drift and ensure the working tree is clean.
+5. Run `./songchart candidate --prepare` only if generated authority is stale, then `./songchart candidate` on the exact committed tree.
+6. Run `./songchart verify` only after candidate PASS; merge Stage 18.1 only after canonical closure is recorded for that exact tree.
 
 ## Documentation checkpoint discipline
 
@@ -59,4 +66,4 @@ For every logical implementation commit:
 - move completed-stage chronology to `docs/project/DEVELOPMENT_HISTORY.md` only after governed acceptance;
 - never duplicate workflow authority into `AGENTS.md`, `CLAUDE.md` or `GEMINI.md`.
 
-Before handing work to another AI/device, `./songchart ai status` must show the intended branch/stage and no unresolved checkpoint/context drift.
+Before handing work to another AI/device, `./songchart ai status` must show the intended branch/stage and no unresolved checkpoint/context drift. When debugging evidence needs to move between Codespaces/Codex and ChatGPT web, prefer the secret-redacted `./songchart ai doctor` bundle over manually copying raw environment/log output.
