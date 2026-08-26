@@ -73,32 +73,37 @@ foreach ($registry['authorities'] as $name => $authority) {
     }
 }
 
-$readme = (string) file_get_contents($root.'/README.md');
-if (preg_match('/Current stage:\s*\*\*([0-9]+(?:\.[0-9]+)+)/', $readme, $stageMatch) !== 1) {
-    $errors[] = 'Unable to resolve current stage for authority closure.';
+$developmentStatePath = $root.'/docs/project/DEVELOPMENT_STATE.md';
+if (! is_file($developmentStatePath)) {
+    $errors[] = 'Unable to resolve current stage for authority closure: DEVELOPMENT_STATE.md is missing.';
 } else {
-    $task = $root.'/docs/foundation/STAGE_'.str_replace('.', '_', $stageMatch[1]).'_TASK_CONTRACT.md';
-    if (! is_file($task)) {
-        $errors[] = 'Current-stage task contract is missing for authority closure.';
+    $developmentState = (string) file_get_contents($developmentStatePath);
+    if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $stageMatch) !== 1) {
+        $errors[] = 'Unable to resolve current stage for authority closure from DEVELOPMENT_STATE.md.';
     } else {
-        $taskSource = (string) file_get_contents($task);
-        $changedAuthorities = $backtickValues($section($taskSource, '## Changed authorities'));
-        $declaredFiles = $backtickValues(
-            $section($taskSource, '## Expected files')."\n".$section($taskSource, '## Allowed incidental files'),
-        );
-        $declared = array_fill_keys($declaredFiles, true);
+        $task = $root.'/docs/foundation/STAGE_'.str_replace('.', '_', $stageMatch[1]).'_TASK_CONTRACT.md';
+        if (! is_file($task)) {
+            $errors[] = 'Current-stage task contract is missing for authority closure.';
+        } else {
+            $taskSource = (string) file_get_contents($task);
+            $changedAuthorities = $backtickValues($section($taskSource, '## Changed authorities'));
+            $declaredFiles = $backtickValues(
+                $section($taskSource, '## Expected files')."\n".$section($taskSource, '## Allowed incidental files'),
+            );
+            $declared = array_fill_keys($declaredFiles, true);
 
-        foreach ($changedAuthorities as $authorityName) {
-            $authority = $registry['authorities'][$authorityName] ?? null;
-            if ($authority === null) {
-                $errors[] = "Task contract names unknown authority: {$authorityName}";
+            foreach ($changedAuthorities as $authorityName) {
+                $authority = $registry['authorities'][$authorityName] ?? null;
+                if ($authority === null) {
+                    $errors[] = "Task contract names unknown authority: {$authorityName}";
 
-                continue;
-            }
+                    continue;
+                }
 
-            foreach ([...$authority['authority_files'], ...$authority['dependents']] as $dependent) {
-                if (! isset($declared[$dependent])) {
-                    $errors[] = "{$authorityName}: current task contract must declare dependent {$dependent}.";
+                foreach ([...$authority['authority_files'], ...$authority['dependents']] as $dependent) {
+                    if (! isset($declared[$dependent])) {
+                        $errors[] = "{$authorityName}: current task contract must declare dependent {$dependent}.";
+                    }
                 }
             }
         }
