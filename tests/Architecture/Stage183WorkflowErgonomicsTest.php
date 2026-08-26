@@ -15,12 +15,14 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('demo up -d redis app')
         ->not->toContain('demo up -d redis app queue');
 
-    $candidateBlock = str($cli)->after(" candidate)\n")->before(" close)\n")->toString();
+    expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
+    $candidateBlock = (string) ($candidateMatch['block'] ?? '');
     expect($candidateBlock)
         ->toContain('git -C "$ROOT" diff --check')
         ->not->toContain('refresh_candidate_authority');
 
-    $closeBlock = str($cli)->after(" close)\n")->before(" test)\n")->toString();
+    expect(preg_match('/^ close\)\n(?<block>.*?)^ test\) /ms', $cli, $closeMatch))->toBe(1);
+    $closeBlock = (string) ($closeMatch['block'] ?? '');
     expect($closeBlock)
         ->toContain('prepare_candidate_authority')
         ->toContain('verify_compose run --rm verify')
