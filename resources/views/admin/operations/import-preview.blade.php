@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@php($activeAdminNav = 'import-workbench')
 
 @section('content')
 <x-admin.page-header :title="$title" :description="$description" />
@@ -50,7 +51,7 @@
 
                 <div class="flex flex-wrap items-center gap-3">
                     <button type="submit" class="rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Xem trước dữ liệu</button>
-                    <a href="{{ route('admin.imports.index') }}" class="rounded-xl border border-slate-300 px-4 py-2.5 font-semibold text-slate-700">Quay lại lịch sử nhập</a>
+                    <a href="{{ route('admin.imports.index') }}" class="rounded-xl border border-slate-300 px-4 py-2.5 font-semibold text-slate-700">Xem lịch sử tác vụ</a>
                 </div>
             </form>
         </div>
