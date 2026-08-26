@@ -8,6 +8,7 @@ use App\Domain\Catalog\Enums\EntityType;
 use App\Domain\Providers\Catalog\DTO\ProviderPayload;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProviderImportPreviewRequest;
+use App\Support\Providers\Ingestion\ProviderImportPlanBuilder;
 use App\Support\Providers\Ingestion\ProviderImportPreviewBuilder;
 use DateTimeImmutable;
 use Illuminate\Contracts\View\View;
@@ -21,11 +22,15 @@ final class ProviderImportPreviewController extends Controller
             'title' => 'Xem trước dữ liệu nhập',
             'description' => 'Kiểm tra cách SongChart hiểu dữ liệu từ nguồn trước khi tạo bất kỳ thay đổi nào.',
             'preview' => null,
+            'plan' => null,
         ]);
     }
 
-    public function preview(ProviderImportPreviewRequest $request, ProviderImportPreviewBuilder $builder): View
-    {
+    public function preview(
+        ProviderImportPreviewRequest $request,
+        ProviderImportPreviewBuilder $previewBuilder,
+        ProviderImportPlanBuilder $planBuilder,
+    ): View {
         $validated = $request->validated();
         $decoded = json_decode((string) $validated['payload_json'], true, 512, JSON_THROW_ON_ERROR);
 
@@ -43,11 +48,19 @@ final class ProviderImportPreviewController extends Controller
             data: $decoded,
             receivedAt: new DateTimeImmutable('now'),
         );
+        $preview = $previewBuilder->build($payload);
 
         return view('admin.operations.import-preview', [
             'title' => 'Xem trước dữ liệu nhập',
             'description' => 'Kiểm tra cách SongChart hiểu dữ liệu từ nguồn trước khi tạo bất kỳ thay đổi nào.',
-            'preview' => $builder->build($payload),
+            'preview' => $preview,
+            'plan' => $planBuilder->build($payload, $preview),
+            'submitted' => [
+                'provider_slug' => (string) $validated['provider_slug'],
+                'entity_type' => (string) $validated['entity_type'],
+                'external_id' => (string) $validated['external_id'],
+                'payload_json' => (string) $validated['payload_json'],
+            ],
         ]);
     }
 }
