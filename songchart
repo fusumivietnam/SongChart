@@ -96,6 +96,7 @@ prepare_candidate_authority(){
 }
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
+  ./songchart ai status
   ./songchart dev setup
   ./songchart dev ready
   ./songchart dev up|down|status|logs|shell|url
@@ -106,6 +107,9 @@ SongChart Linux-first development CLI
   ./songchart candidate [--prepare]
   ./songchart test
   ./songchart verify [--no-build] [--keep-services]
+
+AI session bootstrap:
+  ./songchart ai status    read-only branch/stage/context/runtime/verification summary; never starts Docker
 
 GitHub Codespaces is auto-detected through CODESPACES=true.
 Development services start only when dev setup/ready/up is invoked.
@@ -121,6 +125,12 @@ EOF
 cmd="${1:-help}"; shift || true
 case "$cmd" in
  help|--help|-h) help ;;
+ ai)
+  sub="${1:-status}"; shift || true
+  case "$sub" in
+   status) exec bash "$ROOT/scripts/ai-status.sh" "$@" ;;
+   *) die 'Usage: ./songchart ai status' ;;
+  esac ;;
  dev)
   sub="${1:-}"; shift || true; require_docker
   case "$sub" in
