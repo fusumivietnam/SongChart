@@ -13,6 +13,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('./songchart dev db backup')
         ->toContain('./songchart demo setup')
         ->toContain('demo up -d redis app')
+        ->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
+        ->toContain('/tmp/composer-cache /tmp/npm-cache')
+        ->toContain('chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID')
         ->not->toContain('demo up -d redis app queue');
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
