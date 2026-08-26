@@ -3,7 +3,14 @@
 @section('content')
 <div data-admin-dashboard="attention-first">
     <x-admin.page-header title="Tổng quan" description="Những việc cần chú ý trước, sau đó mới đến số liệu và chi tiết kỹ thuật.">
-        <x-slot:actions><a href="{{ route('home') }}"><x-ui.button size="sm">Mở trang công khai</x-ui.button></a></x-slot:actions>
+        <x-slot:actions>
+            <div class="flex flex-wrap gap-2">
+                @can('manage-providers')
+                    <a href="{{ route('admin.imports.preview') }}"><x-ui.button size="sm">Nhập dữ liệu</x-ui.button></a>
+                @endcan
+                <a href="{{ route('home') }}"><x-ui.button size="sm">Mở trang công khai</x-ui.button></a>
+            </div>
+        </x-slot:actions>
     </x-admin.page-header>
 
     <section class="mt-2" aria-labelledby="attention-heading" data-dashboard-section="attention-center">
