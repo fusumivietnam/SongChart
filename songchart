@@ -34,6 +34,39 @@ stage_verify(){
     verify_compose run --rm verify bash scripts/docker-stage-verify.sh
   )
 }
+refresh_candidate_authority(){
+  printf '[SongChart candidate] Refreshing generated source context.\n'
+  dev run --rm app php scripts/project-context.php --write-source
+  printf '[SongChart candidate] Refreshing compiled repository authority.\n'
+  dev run --rm app php scripts/compile-repository-contracts.php --refresh-check
+}
+prepare_candidate_authority(){
+  local before after unexpected
+  before="$(git -C "$ROOT" status --porcelain --untracked-files=all)"
+  [[ -z "$before" ]] || die 'Candidate --prepare requires a clean working tree. Commit or restore source changes first.'
+
+  refresh_candidate_authority
+  git -C "$ROOT" diff --check
+
+  after="$(git -C "$ROOT" status --porcelain --untracked-files=all)"
+  [[ -n "$after" ]] || { printf '[SongChart candidate] Generated repository authority is already current.\n'; return; }
+
+  unexpected="$(printf '%s\n' "$after" | grep -vE '^.. docs/project/generated(/|$)' || true)"
+  if [[ -n "$unexpected" ]]; then
+    printf '%s\n' '[SongChart candidate] Preparation changed files outside docs/project/generated; refusing automatic commit.' >&2
+    printf '%s\n' "$unexpected" >&2
+    exit 1
+  fi
+
+  git -C "$ROOT" add -- docs/project/generated
+  if git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
+    printf '[SongChart candidate] No generated repository authority changes to commit.\n'
+    return
+  fi
+
+  git -C "$ROOT" commit -m 'chore: refresh generated repository authority'
+  printf '[SongChart candidate] Generated repository authority committed.\n'
+}
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart dev setup
@@ -43,9 +76,14 @@ SongChart Linux-first development CLI
   ./songchart composer <args...>
   ./songchart npm <args...>
   ./songchart context [args...]
-  ./songchart candidate
+  ./songchart candidate [--prepare]
   ./songchart test
   ./songchart verify [--no-build] [--keep-services]
+
+Candidate workflow:
+  ./songchart candidate            verify an already committed exact tree
+  ./songchart candidate --prepare  refresh and commit only docs/project/generated, then verify
+
 Stable projects: songchart-dev / songchart-verify
 EOF
 }
@@ -80,16 +118,31 @@ case "$cmd" in
  context) require_docker; ensure_dev_config; args=(); for a in "$@"; do [[ "$a" == '--refresh-source' ]] && args+=('--write-source') || args+=("$a"); done; dev run --rm app php scripts/project-context.php "${args[@]}" ;;
  candidate)
   require_docker; ensure_dev_config
-  printf '[SongChart candidate] Refreshing generated source context.\n'
-  dev run --rm app php scripts/project-context.php --write-source
-  printf '[SongChart candidate] Refreshing compiled repository authority.\n'
-  dev run --rm app php scripts/compile-repository-contracts.php --refresh-check
-  git -C "$ROOT" diff --check
-  if ! git -C "$ROOT" diff --quiet -- docs/project/generated || ! git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
-    printf '%s\n' '[SongChart candidate] Generated repository artifacts are not committed.' >&2
-    printf '%s\n' '[SongChart candidate] Review and commit docs/project/generated, then run ./songchart candidate again.' >&2
-    exit 1
+  prepare=false
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --prepare) prepare=true ;;
+      *) die "Unknown candidate option: $1" ;;
+    esac
+    shift
+  done
+
+  if [[ "$prepare" == true ]]; then
+    prepare_candidate_authority
+  else
+    refresh_candidate_authority
+    git -C "$ROOT" diff --check
+    if ! git -C "$ROOT" diff --quiet -- docs/project/generated || ! git -C "$ROOT" diff --cached --quiet -- docs/project/generated; then
+      printf '%s\n' '[SongChart candidate] Generated repository artifacts are not committed.' >&2
+      printf '%s\n' '[SongChart candidate] Run ./songchart candidate --prepare on a clean tree, or review and commit docs/project/generated manually.' >&2
+      exit 1
+    fi
   fi
+
+  if [[ -n "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]]; then
+    die 'Candidate verification requires a clean committed working tree.'
+  fi
+
   printf '[SongChart candidate] Running candidate verification.\n'
   stage_verify
   printf '[SongChart candidate] PASSED.\n' ;;
