@@ -9,8 +9,8 @@ use App\Domain\Catalog\Enums\EntityType;
 final readonly class ProviderImportPlan
 {
     /**
-     * @param array<string, int> $counts
-     * @param list<string> $reviewReasons
+     * @param  array<string, int>  $counts
+     * @param  list<string>  $reviewReasons
      */
     public function __construct(
         public string $providerSlug,
