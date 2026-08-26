@@ -23,19 +23,19 @@ if (is_string($currentStage) && ($manifest['stage'] ?? null) !== $currentStage) 
 }
 
 foreach (($contract['required_gates'] ?? []) as $gate) {
-    if (!array_key_exists($gate, $manifest['gates'] ?? [])) {
+    if (! array_key_exists($gate, $manifest['gates'] ?? [])) {
         $errors[] = "Candidate manifest is missing gate [{$gate}].";
 
         continue;
     }
 
-    if (!in_array($manifest['gates'][$gate], $allowed, true)) {
+    if (! in_array($manifest['gates'][$gate], $allowed, true)) {
         $errors[] = "Candidate gate [{$gate}] has an invalid status.";
     }
 }
 
-$allPassed = !in_array('failed', $manifest['gates'] ?? [], true)
-    && !in_array('not_run', $manifest['gates'] ?? [], true);
+$allPassed = ! in_array('failed', $manifest['gates'] ?? [], true)
+    && ! in_array('not_run', $manifest['gates'] ?? [], true);
 
 if (($manifest['closure_ready'] ?? false) !== $allPassed) {
     $errors[] = 'candidate-verification.json closure_ready does not match gate statuses.';

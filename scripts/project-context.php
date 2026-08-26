@@ -45,6 +45,7 @@ function composeServices(string $path): array
     foreach (preg_split('/\R/', (string) file_get_contents($path)) ?: [] as $line) {
         if ($line === 'services:') {
             $inside = true;
+
             continue;
         }
         if ($inside && preg_match('/^[A-Za-z0-9_.-]+:/', $line) === 1) {
@@ -197,6 +198,7 @@ function runtimeDatabaseState(array $expectedTables): array
         foreach ($expectedTables as $table => $definition) {
             if (! array_key_exists($table, $actual)) {
                 $missingTables[] = $table;
+
                 continue;
             }
             foreach ($definition['columns'] ?? [] as $column) {

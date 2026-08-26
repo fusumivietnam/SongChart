@@ -39,7 +39,7 @@ if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—\s+[^`]+`/m', $developme
     $errors[] = 'DEVELOPMENT_STATE.md must declare the current numeric stage and title.';
 }
 
-if (!str_contains($startHere, 'docs/project/DEVELOPMENT_STATE.md')) {
+if (! str_contains($startHere, 'docs/project/DEVELOPMENT_STATE.md')) {
     $errors[] = 'docs/START_HERE.md must route current work to DEVELOPMENT_STATE.md.';
 }
 if (str_contains($startHere, 'Current stage:')) {
@@ -53,18 +53,18 @@ if (is_string($currentStage)) {
     $stageToken = str_replace('.', '_', $currentStage);
     foreach (['TASK_CONTRACT', 'VALIDATION_REPORT'] as $kind) {
         $relative = "docs/foundation/STAGE_{$stageToken}_{$kind}.md";
-        if (!is_file($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative))) {
+        if (! is_file($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative))) {
             $errors[] = "Missing current-stage governance record: {$relative}";
         }
     }
 }
 
 foreach (['## Expected files', '## Allowed incidental files', '## Scope deviations'] as $section) {
-    if (!str_contains($taskTemplate, $section)) {
+    if (! str_contains($taskTemplate, $section)) {
         $errors[] = "TASK_CONTRACT_TEMPLATE.md must include {$section}.";
     }
 }
-if (!str_contains($stage12Manifest, 'Status: historical manifest; frozen at Stage 16.4.4.')) {
+if (! str_contains($stage12Manifest, 'Status: historical manifest; frozen at Stage 16.4.4.')) {
     $errors[] = 'STAGE_12_CHANGE_MANIFEST.md must be explicitly historical and frozen.';
 }
 
@@ -78,13 +78,13 @@ $requiredIndexFragments = [
     'project/domain/use-case-contracts.json',
 ];
 foreach ($requiredIndexFragments as $fragment) {
-    if (!str_contains($index, $fragment)) {
+    if (! str_contains($index, $fragment)) {
         $errors[] = "DOCUMENTATION_INDEX.md is missing repository-state entry: {$fragment}";
     }
 }
 
 foreach (['composer.lock', 'package-lock.json', 'composer canonical:verify', 'composer release:package'] as $needle) {
-    if (!str_contains($releaseStatus, $needle)) {
+    if (! str_contains($releaseStatus, $needle)) {
         $errors[] = "RELEASE_BASELINE_STATUS.md is missing release invariant: {$needle}";
     }
 }
@@ -108,7 +108,7 @@ foreach ($requiredScripts as $name => $command) {
 }
 $quality = $scripts['quality:verify'] ?? [];
 foreach (['@repository-state:verify', '@operational-contracts:verify', '@impact-map:verify'] as $gate) {
-    if (!is_array($quality) || !in_array($gate, $quality, true)) {
+    if (! is_array($quality) || ! in_array($gate, $quality, true)) {
         $errors[] = "quality:verify must execute {$gate}.";
     }
 }

@@ -19,7 +19,7 @@ it('maps MusicBrainz recording identity, ISRC and artist credits', function (): 
                 ['artist' => ['id' => 'artist-mbid', 'name' => 'Example Artist']],
             ],
         ],
-        receivedAt: new \DateTimeImmutable('2026-08-26T00:00:00+00:00'),
+        receivedAt: new DateTimeImmutable('2026-08-26T00:00:00+00:00'),
     );
 
     $entity = (new MusicBrainzProviderMapper)->map($payload)->toArray();
@@ -42,7 +42,7 @@ it('maps MusicBrainz artist life span without inventing missing values', functio
             'country' => 'GB',
             'life-span' => ['begin' => '2001', 'ended' => false],
         ],
-        receivedAt: new \DateTimeImmutable('2026-08-26T00:00:00+00:00'),
+        receivedAt: new DateTimeImmutable('2026-08-26T00:00:00+00:00'),
     );
 
     $fields = (new MusicBrainzProviderMapper)->map($payload)->toArray()['fields'];

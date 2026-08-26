@@ -20,7 +20,7 @@ it('builds a deterministic governed plan with zero direct canonical mutations', 
             'length' => 181000,
             'isrcs' => ['USAAA2600001'],
         ],
-        receivedAt: new \DateTimeImmutable('2026-08-26T00:00:00+00:00'),
+        receivedAt: new DateTimeImmutable('2026-08-26T00:00:00+00:00'),
     );
     $previewBuilder = new ProviderImportPreviewBuilder(
         new ProviderSpecificMapperRegistry([new MusicBrainzProviderMapper]),
