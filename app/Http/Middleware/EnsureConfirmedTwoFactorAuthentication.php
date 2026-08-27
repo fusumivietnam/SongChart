@@ -14,8 +14,7 @@ final class EnsureConfirmedTwoFactorAuthentication
     {
         $user = $request->user();
 
-        $requiresTwoFactor = ! app()->environment('local')
-            || (string) config('songchart.security.admin_2fa_mode', 'required') === 'required';
+        $requiresTwoFactor = (string) config('songchart.security.admin_2fa_mode', 'required') === 'required';
 
         if (! $requiresTwoFactor) {
             return $next($request);
