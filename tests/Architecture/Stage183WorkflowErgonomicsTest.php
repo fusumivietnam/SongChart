@@ -8,6 +8,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     $demoEnv = file_get_contents(base_path('.env.demo.example'));
     $appProvider = file_get_contents(base_path('app/Providers/AppServiceProvider.php'));
     $twoFactorMiddleware = file_get_contents(base_path('app/Http/Middleware/EnsureConfirmedTwoFactorAuthentication.php'));
+    $adminSidebar = file_get_contents(base_path('resources/views/components/admin/sidebar.blade.php'));
+    $adminDashboard = file_get_contents(base_path('resources/views/admin/dashboard.blade.php'));
+    $providerAdmin = file_get_contents(base_path('resources/views/admin/operations/providers.blade.php'));
 
     expect($cli)
         ->toContain('./songchart close')
@@ -39,6 +42,22 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     expect($twoFactorMiddleware)
         ->toContain("config('songchart.security.admin_2fa_mode', 'required') === 'required'")
         ->not->toContain("! app()->environment('local')");
+
+    expect($adminSidebar)
+        ->toContain("'label' => 'Nguồn dữ liệu & API'")
+        ->toContain("route('admin.providers.index')");
+
+    expect($adminDashboard)
+        ->toContain('Cấu hình nguồn dữ liệu')
+        ->toContain('Nguồn dữ liệu & API')
+        ->toContain('manage-providers');
+
+    expect($providerAdmin)
+        ->toContain('Cấu hình nguồn dữ liệu & API')
+        ->toContain('musicbrainz_user_agent')
+        ->toContain('youtube_api_key')
+        ->toContain('provider_manager')
+        ->toContain('super_admin');
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
     $candidateBlock = (string) ($candidateMatch['block'] ?? '');
