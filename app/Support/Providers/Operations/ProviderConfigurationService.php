@@ -90,7 +90,15 @@ final readonly class ProviderConfigurationService
         });
     }
 
-    /** @param array<string,mixed> $configuration @return array<string,mixed> */
+    /**
+     * @param array<string, mixed> $configuration
+     * @return array{
+     *     settings: array<string, mixed>,
+     *     configured_secret_keys: list<string>,
+     *     credential_pool_counts: array<string, int>,
+     *     is_enabled: bool
+     * }
+     */
     private function safeState(Provider $provider, array $configuration): array
     {
         $secretsState = $configuration['_secrets'] ?? null;
