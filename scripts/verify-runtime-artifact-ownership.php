@@ -8,15 +8,21 @@ $runtimePrefixes = [
     'storage/logs/',
     '.songchart-backups/',
 ];
-$allowedTracked = [];
+$allowedTracked = [
+    'storage/framework/cache/data/.gitignore',
+    'storage/framework/sessions/.gitignore',
+    'storage/framework/views/.gitignore',
+    'storage/logs/.gitignore',
+];
 
-$output = shell_exec('git -C '.escapeshellarg($root).' ls-files -z');
-if ($output === null) {
+$command = 'git -C '.escapeshellarg($root).' ls-files -z';
+exec($command, $lines, $status);
+if ($status !== 0) {
     fwrite(STDERR, "Runtime artifact ownership verification failed: unable to enumerate tracked files.\n");
     exit(1);
 }
 
-$tracked = array_values(array_filter(explode("\0", $output), static fn (string $path): bool => $path !== ''));
+$tracked = array_values(array_filter(explode("\0", implode("\n", $lines)), static fn (string $path): bool => $path !== ''));
 $violations = [];
 
 foreach ($tracked as $path) {
