@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "aebfc529c54a660b595a816d45fa6c9d7f483cd4363c093745fb16c4f308b45e",
+    "source_fingerprint": "51b7cef65f00524bf51fdabb0f7bb9bc07ab19a1ca2d5a94215cd35fb9ba0e42",
     "candidate": {
         "stage": "18.3",
         "candidate": "v1",
@@ -1036,6 +1036,6 @@
         "docs/project/engineering/verification-topology.json": "6aad35fb4230ce8c4c4f330070830b1fdebae0056a9eff142af0b62daf3914e7",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "b8421030a8edd0184417e9d0dc4c71b8b0e35b08b8cd2d43c22afac086f597ef",
-        "songchart": "351e0ce3da38ebda3c6ba6b34c6fd7f3168ce16fa3bdf8670be1cfb610114a6b"
+        "songchart": "341b47324aaad0acabc38750bd18903eba05d3fa40a26df26bba2d5426a44d6b"
     }
 }
