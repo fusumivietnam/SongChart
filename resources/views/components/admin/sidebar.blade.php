@@ -13,7 +13,7 @@ $groups = [
         ['key' => 'catalog', 'label' => 'Nội dung', 'icon' => 'database', 'href' => route('admin.catalog.index')],
     ]],
     ['label' => 'Vận hành dữ liệu', 'items' => array_values(array_filter([
-        $canManageProviders ? ['key' => 'providers', 'label' => 'Nguồn dữ liệu & API', 'icon' => 'external', 'href' => route('admin.providers.index')] : null,
+        $canManageProviders ? ['key' => 'providers', 'label' => 'Nguồn dữ liệu', 'icon' => 'external', 'href' => route('admin.providers.index')] : null,
         $canManageProviders ? ['key' => 'import-workbench', 'label' => 'Nhập dữ liệu', 'icon' => 'collection', 'href' => route('admin.imports.preview')] : null,
         $canManageCatalog ? ['key' => 'canonical-admissions', 'label' => 'Duyệt vào dữ liệu chuẩn', 'icon' => 'shield', 'href' => route('admin.canonical-admissions.index')] : null,
         $canManageProviders ? ['key' => 'imports', 'label' => 'Lịch sử tác vụ', 'icon' => 'database', 'href' => route('admin.imports.index')] : null,
@@ -22,8 +22,8 @@ $groups = [
     ]))],
     ['label' => 'Quản trị', 'items' => array_values(array_filter([
         ['key' => 'users', 'label' => 'Người dùng & quyền', 'icon' => 'user', 'href' => route('admin.users.index')],
+        ($canManageSystem || $canManageProviders) ? ['key' => 'system', 'label' => 'Thiết lập hệ thống', 'icon' => 'settings', 'href' => route('admin.system.index')] : null,
         $canManageSystem ? ['key' => 'extensions', 'label' => 'Tiện ích hệ thống', 'icon' => 'plug', 'href' => route('admin.extensions.index')] : null,
-        $canManageSystem ? ['key' => 'system', 'label' => 'Sức khỏe hệ thống', 'icon' => 'settings', 'href' => route('admin.system.index')] : null,
         $canViewAudit ? ['key' => 'audit', 'label' => 'Nhật ký đặc quyền', 'icon' => 'shield', 'href' => route('admin.audit.index')] : null,
     ]))],
 ];
