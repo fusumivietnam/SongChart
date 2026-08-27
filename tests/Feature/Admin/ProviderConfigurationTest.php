@@ -5,9 +5,11 @@ declare(strict_types=1);
 use App\Domain\Providers\Enums\ProviderStatus;
 use App\Enums\UserRole;
 use App\Models\Provider;
+use App\Models\Providers\ProviderCredential;
 use App\Models\User;
 use App\Support\Providers\Configuration\ProviderRuntimeConfiguration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
 
 uses(RefreshDatabase::class);
 
@@ -34,27 +36,28 @@ function stage181Provider(string $slug, string $name): Provider
     ]);
 }
 
-it('shows provider setup controls without exposing stored secrets', function (): void {
+it('shows provider setup controls in system settings without exposing stored secrets', function (): void {
     stage181Provider('musicbrainz', 'MusicBrainz');
     stage181Provider('youtube', 'YouTube');
 
     $this->actingAs(stage181ProviderConfigurationAdmin())
-        ->get(route('admin.providers.index'))
+        ->get(route('admin.system.index'))
         ->assertOk()
-        ->assertSee('Thiết lập nguồn dữ liệu')
-        ->assertSee('Thông tin nhận diện ứng dụng')
-        ->assertSee('YouTube Data API key')
+        ->assertSee('API & tích hợp')
+        ->assertSee('MusicBrainz User-Agent')
+        ->assertSee('YouTube Data API credential pool')
         ->assertSee('Secret được mã hóa');
 });
 
-it('stores a YouTube API key encrypted and resolves it only through runtime configuration', function (): void {
+it('stores a YouTube API key encrypted in the provider credential pool', function (): void {
     $provider = stage181Provider('youtube', 'YouTube');
     $secret = 'AIzaSyStage181ExampleSecretKey000000';
 
     $this->actingAs(stage181ProviderConfigurationAdmin())
         ->withSession(['auth.password_confirmed_at' => time()])
         ->post(route('admin.providers.configuration.update', $provider), [
-            'youtube_api_key' => $secret,
+            'youtube_api_keys' => $secret,
+            'provider_operational_state' => 'enabled',
             'rationale' => 'Cấu hình YouTube cho môi trường vận hành.',
             'idempotency_key' => (string) str()->uuid(),
         ])
@@ -62,8 +65,17 @@ it('stores a YouTube API key encrypted and resolves it only through runtime conf
 
     $provider->refresh();
     $rawConfiguration = json_encode($provider->configuration, JSON_THROW_ON_ERROR);
-    expect($rawConfiguration)->not->toContain($secret);
-    expect(app(ProviderRuntimeConfiguration::class)->secret('youtube', 'api_key'))->toBe($secret);
+    expect($rawConfiguration)->not->toContain($secret)
+        ->and(app(ProviderRuntimeConfiguration::class)->hasSecret('youtube', 'api_key'))->toBeFalse();
+
+    $credential = ProviderCredential::query()
+        ->where('provider_id', $provider->getKey())
+        ->where('kind', 'api_key')
+        ->sole();
+
+    expect((string) $credential->encrypted_secret)->not->toBe($secret)
+        ->and(Crypt::decryptString((string) $credential->encrypted_secret))->toBe($secret)
+        ->and($credential->is_enabled)->toBeTrue();
 
     $this->assertDatabaseHas('provider_operation_audits', [
         'provider_id' => $provider->getKey(),
@@ -79,6 +91,7 @@ it('stores MusicBrainz operator identity as a non-secret runtime setting', funct
         ->withSession(['auth.password_confirmed_at' => time()])
         ->post(route('admin.providers.configuration.update', $provider), [
             'musicbrainz_user_agent' => $userAgent,
+            'provider_operational_state' => 'enabled',
             'rationale' => 'Cấu hình nhận diện MusicBrainz cho vận hành.',
             'idempotency_key' => (string) str()->uuid(),
         ])
