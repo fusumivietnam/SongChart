@@ -12,6 +12,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     $adminDashboard = file_get_contents(base_path('resources/views/admin/dashboard.blade.php'));
     $providerAdmin = file_get_contents(base_path('resources/views/admin/operations/providers.blade.php'));
     $systemAdmin = file_get_contents(base_path('resources/views/admin/operations/system.blade.php'));
+    $providerConfigurationRequest = file_get_contents(base_path('app/Http/Requests/Admin/ProviderConfigurationRequest.php'));
+    $providerConfigurationController = file_get_contents(base_path('app/Http/Controllers/Admin/ProviderConfigurationController.php'));
+    $providerConfigurationService = file_get_contents(base_path('app/Support/Providers/Operations/ProviderConfigurationService.php'));
 
     expect($cli)
         ->toContain('./songchart close')
@@ -68,10 +71,24 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('API & tích hợp')
         ->toContain('musicbrainz_user_agent')
         ->toContain('youtube_api_key')
+        ->toContain('provider_operational_state')
+        ->toContain('Lưu cấu hình & trạng thái')
         ->toContain('Admin DB (mã hóa)')
         ->toContain('.env fallback')
         ->toContain("route('admin.providers.configuration.update'")
         ->toContain('manage-providers');
+
+    expect($providerConfigurationRequest)
+        ->toContain('provider_operational_state')
+        ->toContain("Rule::in(['enabled', 'disabled'])");
+
+    expect($providerConfigurationController)
+        ->toContain("enabled: (string) \$validated['provider_operational_state'] === 'enabled'");
+
+    expect($providerConfigurationService)
+        ->toContain('bool $enabled')
+        ->toContain("'is_enabled' => \$enabled")
+        ->toContain('Provider runtime configuration and operational state updated.');
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
     $candidateBlock = (string) ($candidateMatch['block'] ?? '');
