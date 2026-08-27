@@ -56,6 +56,17 @@ printf '[SongChart Linux Setup] Preparing Composer/npm cache ownership for UID:G
 "${COMPOSE[@]}" run --rm app npm run build
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
 "${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force
+
+LOCAL_ADMIN_EMAIL="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_EMAIL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+if [[ -n "$LOCAL_ADMIN_EMAIL" ]]; then
+  LOCAL_ADMIN_NAME="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_NAME=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+  LOCAL_ADMIN_ROLE="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_ROLE=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+  [[ -n "$LOCAL_ADMIN_NAME" ]] || LOCAL_ADMIN_NAME='SongChart Admin'
+  [[ -n "$LOCAL_ADMIN_ROLE" ]] || LOCAL_ADMIN_ROLE='super_admin'
+  printf '[SongChart Linux Setup] Ensuring configured local administrator %s.\n' "$LOCAL_ADMIN_EMAIL"
+  "${COMPOSE[@]}" run --rm app php artisan admin:ensure-local "$LOCAL_ADMIN_EMAIL" "--name=$LOCAL_ADMIN_NAME" "--role=$LOCAL_ADMIN_ROLE"
+fi
+
 if [[ "$IS_CODESPACES" == true ]]; then
   "${COMPOSE[@]}" up -d app queue
 else
@@ -64,7 +75,7 @@ fi
 "${COMPOSE[@]}" ps
 if [[ "$IS_CODESPACES" == true ]]; then
   printf '\nReady: %s (private Codespaces forwarded port 8000, project %s)\n' "$SONGCHART_CODESPACES_APP_URL" "$PROJECT"
-  printf 'The live demo exists only while this Codespace and the SongChart app service are running.\n'
+  printf 'Development data persists in the songchart_dev_pgdata Docker volume for the life of this Docker/Codespaces environment.\n'
 else
   printf '\nReady: https://%s:8443 (project %s)\n' "$DOMAIN" "$PROJECT"
   printf 'If Windows browser cannot resolve the host, add once to Windows hosts: 127.0.0.1 %s\n' "$DOMAIN"

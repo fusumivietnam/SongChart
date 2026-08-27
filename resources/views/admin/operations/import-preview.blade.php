@@ -12,8 +12,7 @@
                 <p class="mt-1 text-sm leading-6 text-indigo-800">Tên ca sĩ, nhóm nhạc hoặc tên bài hát là đủ để bắt đầu. SongChart sẽ tìm định danh bên nguồn và tải dữ liệu chi tiết; bạn không cần biết MBID hay JSON.</p>
             </div>
 
-            <form method="POST" action="{{ route('admin.imports.search') }}" class="mt-6 space-y-5">
-                @csrf
+            <form method="GET" action="{{ route('admin.imports.search') }}" class="mt-6 space-y-5">
                 <fieldset>
                     <legend class="text-sm font-bold text-slate-900">Bạn đang có thông tin gì?</legend>
                     <div class="mt-3 grid gap-3 sm:grid-cols-3">

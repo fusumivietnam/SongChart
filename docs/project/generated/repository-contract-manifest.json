@@ -25,7 +25,7 @@
         },
         "runtime-environment": {
             "source": "docs/project/stack/runtime-environments.json",
-            "fingerprint": "10eb132003501ede5ca4ba7dfe89cb428b5a37806f8dbd5249aee0b4c656179f",
+            "fingerprint": "01af2b58cd4c43bc8ed31066727e7cc818abfcf2c227ee8714bcbfd929c63ce0",
             "consumers": [
                 "compose.verify.yml",
                 "docker/verify/Dockerfile",
@@ -131,7 +131,7 @@
         },
         "docker-development": {
             "source": "docs/project/stack/docker-development-contract.json",
-            "fingerprint": "71409b291514de6d311060f4be758b1e2d7e12ee4b0e4c78a0a15069cb3ce765",
+            "fingerprint": "3955893c7d8687afa409eb703a47c9555fcda072fa156dc1d0576b3f94cc6705",
             "consumers": [
                 "songchart",
                 "docs/project/stack/runtime-environments.json",
@@ -150,7 +150,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "1712e55c7a1a85e82734ddb5fa0375ff3e97ed3773289164f567d37fd7d3652c",
+            "fingerprint": "abbde3d5e3b91c7a969ffc121f70c18b1d60c193d69859bce2b2ebcda5551614",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -188,7 +188,7 @@
         },
         "operational-contracts": {
             "source": "docs/project/domain/operational-contracts.json",
-            "fingerprint": "92798bbc817d97153eab25ad41333f7258c7c0cec9b4aa9caa38c57b3460741c",
+            "fingerprint": "118ec605481889759c70b511bfcdcb109820c7b46dd25574181d977f8d938e32",
             "consumers": []
         },
         "use-case-contracts": {
@@ -198,7 +198,7 @@
         },
         "schema-ownership": {
             "source": "docs/project/domain/schema-ownership.json",
-            "fingerprint": "15b788eb8cb679c4a700693f24c08608a0597a966508c6d8b0316c828c62d65e",
+            "fingerprint": "c59b5622ddb1a2016e3bbef14daa71de018172c90dc2b4068d739a0e931f647d",
             "consumers": [
                 "scripts/project-context.php",
                 "scripts/verify-runtime-project-context.php"
@@ -236,7 +236,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "8005b223750f40b3f46b9066112211445aac555101735836a278d9554e5ec8ba",
+            "fingerprint": "3f5926de52d022d91709732489a0823d95224522864f15e5b7f7568c0b3e986a",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -1556,6 +1556,20 @@
             ]
         },
         {
+            "target": "tests/Architecture/Stage183WorkflowErgonomicsTest.php",
+            "rule": "stage-18.3-workflow",
+            "classification": "behavioral",
+            "semantic_authorities": [
+                "docker-development",
+                "runtime-environment",
+                "verification-topology",
+                "verification-command-surface",
+                "operational-contracts",
+                "authorization",
+                "application-data-boundary"
+            ]
+        },
+        {
             "target": "tests/Architecture/TechnologyStackAuthorityTest.php",
             "rule": "runtime-stack",
             "classification": "behavioral",
@@ -1624,5 +1638,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "48393ff1863f33347bf53ff56e8dced8df8d4a68f3687767169d152d800040f1"
+    "graph_fingerprint": "b31ac590248f93f923cbac8b62f9114aec98b374deaa0695d31492683f2fd8f7"
 }

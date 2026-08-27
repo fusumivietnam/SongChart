@@ -48,13 +48,31 @@
       "songchart_dev_composer_cache"
     ],
     "postgres_volume_mount": "/var/lib/postgresql",
-    "postgres_pgdata": "/var/lib/postgresql/18/docker"
+    "postgres_pgdata": "/var/lib/postgresql/18/docker",
+    "data_backup_entrypoint": "songchart dev db backup",
+    "data_restore_entrypoint": "songchart dev db restore",
+    "local_admin_bootstrap": "SONGCHART_LOCAL_ADMIN_EMAIL + admin:ensure-local; no repository password"
+  },
+  "demo": {
+    "compose_file": "compose.demo.yml",
+    "environment_template": ".env.demo.example",
+    "database": "songchart_docker",
+    "database_role": "development-shared",
+    "shares_development_database": true,
+    "shares_verification_database": false,
+    "default_queue_worker": false,
+    "host_port": 8001,
+    "setup_entrypoint": "songchart demo setup",
+    "start_entrypoint": "songchart demo up",
+    "stop_entrypoint": "songchart demo down",
+    "url_entrypoint": "songchart demo url"
   },
   "codespaces": {
     "status": "development-adapter",
     "auto_detect_env": "CODESPACES=true",
     "compose_override": "compose.codespaces.yml",
     "app_host_port": 8000,
+    "demo_host_port": 8001,
     "port_visibility": "private-by-default",
     "https_owner": "GitHub Codespaces port forwarding proxy",
     "local_tls_required": false,
@@ -63,10 +81,18 @@
     "start_entrypoints": [
       "songchart dev setup",
       "songchart dev ready",
-      "songchart dev up"
+      "songchart dev up",
+      "songchart demo setup",
+      "songchart demo up"
     ],
     "stop_entrypoint": "songchart dev down",
     "url_entrypoint": "songchart dev url",
+    "stop_entrypoints": [
+      "songchart dev down",
+      "songchart demo down"
+    ],
+    "development_url_entrypoint": "songchart dev url",
+    "demo_url_entrypoint": "songchart demo url",
     "cost_model": "Codespace compute is consumed only while the Codespace is running; repository services do not keep a stopped Codespace alive. Use the GitHub Codespaces idle timeout for automatic shutdown."
   },
   "verification": {
@@ -75,8 +101,9 @@
     "database_role": "testing",
     "entrypoint": "songchart verify",
     "stage_entrypoint": "songchart test",
+    "streamlined_closure_entrypoint": "songchart close",
     "isolated_from_development_database": true,
-    "derived_manifest_refresh": "inside Docker before stage/canonical verification and after Pint normalization"
+    "derived_manifest_refresh": "inside Docker before stage/canonical verification; only candidate --prepare may commit generated repository authority"
   },
   "cli": {
     "linux_entrypoint": "songchart",
@@ -92,11 +119,20 @@
       "dev shell",
       "dev url",
       "dev test",
+      "dev db backup",
+      "dev db restore",
+      "demo setup",
+      "demo up",
+      "demo down",
+      "demo status",
+      "demo logs",
+      "demo url",
       "artisan",
       "composer",
       "npm",
       "context",
       "candidate",
+      "close",
       "test",
       "verify"
     ]

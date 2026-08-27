@@ -5,46 +5,51 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 ## Accepted baseline
 
 - `main` contains merged Stage `18.2 — Public Search & Canonical Surfaces` via PR #9.
-- Stage 18.2 candidate and canonical verification passed with all 27 registered gates successful before merge.
-- Stage 18.2 adds PostgreSQL-backed exact → prefix → substring relevance, deterministic canonical tie-breaks, query-wide facets and canonical public search/detail URLs without provider request-path coupling.
+- Post-18.2 verification-idempotence corrective merged via PR #10.
+- Stage 18.2 candidate/canonical verification passed with all 27 registered gates successful, and exact-HEAD runtime evidence now leaves tracked Git state clean.
 - Development authority is Linux/WSL2 + Docker through the repository `./songchart` CLI. GitHub Codespaces is the preferred remote adapter; native Windows Batch/PowerShell, Laragon execution paths, ZIP handoff and patch-installer workflows are retired.
 
 ## Current stage
 
-- Stage `18.2 — Public Search & Canonical Surfaces`
+- Stage `18.3 — Public Metadata & SEO Readiness`
 - Candidate: `v1`
-- Branch: `chore/post-18.2-verification-idempotence`
-- Candidate closure: accepted on the merged Stage 18.2 target tree; this branch is a bounded post-acceptance workflow corrective and adds no product behavior.
+- Branch: `stage-18.3-public-metadata-seo-readiness`
+- Candidate closure: pending.
 
 ## Implemented slices
 
-- Stage 18.2 production PostgreSQL relevance and deterministic search ordering accepted;
-- global query facets preserved while entity filters scope displayed results;
-- strict-Eloquent-safe search projection metadata and canonical public detail routes accepted;
-- canonical verification runtime evidence is being separated from tracked `candidate-verification.json`;
-- canonical evidence recording now refuses closure when verification has mutated tracked source.
+- explicit local Super Admin bootstrap reuses `admin:ensure-local`; it is enabled only when `SONGCHART_LOCAL_ADMIN_EMAIL` is configured and never stores a default privileged password;
+- development PostgreSQL backup/restore is exposed through `./songchart dev db backup|restore`, with automatic pre-restore backup;
+- governed demo runtime is self-service through `./songchart demo setup|up|down|status|logs|url`, uses the development `songchart_docker` database through the shared Docker network, and never uses `songchart_verify_test`;
+- demo starts no second queue worker by default, preventing duplicate provider/import job consumers against the shared development database;
+- public canonical detail pages now expose deterministic document title, meta description, canonical link, robots, Open Graph/Twitter metadata and provider-neutral JSON-LD;
+- Artist person/group structured data is separated as `Person` versus `MusicGroup`; Release, Recording and Work map to explicit Schema.org music types;
+- public catalog root pages are indexable; filtered catalog URLs and `/search` are `noindex,follow` with query-free canonical roots;
+- `/sitemap.xml` publishes supported canonical public surfaces and excludes private collections/admin/search permutations;
+- `/robots.txt` explicitly excludes admin/account/development/search crawling and advertises the canonical sitemap;
+- workflow ergonomics are streamlined: ordinary `candidate` is read-only, focused tests support `--no-build`, and `./songchart close` prepares generated authority then runs canonical closure with the canonical-owned stage lane exactly once.
 
 ## Current blockers / risks
 
-- The verification-idempotence corrective still requires one candidate/canonical cycle proving `./songchart verify` PASS leaves `git status` clean.
-- Runtime verification evidence must only be accepted when stage, candidate and recorded Git commit match the current exact HEAD.
-- Shared demo remains optional/unconfigured and does not block product development.
+- New Stage 18.3 focused Feature/Architecture tests and PHPStan/Larastan have not yet been executed on the current exact tree.
+- Codespaces development PostgreSQL remains a Docker-volume lifecycle asset: `dev down`, candidate and canonical verification preserve it, while Codespace rebuild/deletion or explicit Docker volume removal can still destroy it; use `./songchart dev db backup` for recoverable checkpoints.
+- The governed 8001 demo path requires one live Codespaces verification of canonical host metadata before Stage 18.3 closure.
+- Sitemap is a single URL set; if canonical volume approaches the protocol limit, split/index pagination belongs to a later scale correction rather than premature complexity now.
 
 ## Latest focused evidence
 
-- Stage 18.2 focused PostgreSQL search/public-catalog tests passed after the strict-Eloquent search-rank corrective.
-- PHPStan/Larastan closure passed after explicit comparator iterable types were restored.
-- Stage 18.2 candidate verification passed.
-- Stage 18.2 canonical verification passed with 27/27 gates and `closure_ready=true`.
-- PR #9 merged Stage 18.2 into `main` on 2026-08-26.
+- Stage 18.2 canonical verification passed with 27/27 gates.
+- Post-18.2 idempotence corrective canonical verification passed on exact HEAD with `git status` clean and `source=runtime-exact-head`.
+- PR #10 merged the corrective into `main` on 2026-08-26.
+- Stage 18.3 implementation and regression coverage are committed on the stage branch; runtime validation is pending.
 
 ## Next required action
 
-1. Verify the post-18.2 idempotence corrective: candidate and canonical verification must pass without modifying tracked files.
-2. Confirm runtime evidence is stored under ignored runtime state and is accepted only for the exact current HEAD.
-3. Merge the bounded corrective after the clean-tree invariant is demonstrated.
-4. Branch from updated `main` for `Stage 18.3 — Public Metadata & SEO Readiness`.
-5. Keep Stage 18.3 product-focused: canonical metadata, structured data, indexability, sitemap and duplicate/canonical-link verification.
+1. Pull the latest Stage 18.3 branch into Codespaces and configure optional local admin bootstrap in `.env.docker` when desired.
+2. Run the focused metadata/sitemap/workflow tests, then PHPStan/Larastan; fix root causes without weakening gates.
+3. Run `./songchart demo setup`, open `./songchart demo url`, and verify the rendered canonical/OG/JSON-LD/sitemap/robots host is the forwarded 8001 Codespaces host while data matches development.
+4. If focused/live evidence is green, run `./songchart close`; this refreshes/commits generated authority and runs canonical closure without a separate duplicate candidate-stage run.
+5. Close Stage 18.3 only after canonical PASS leaves tracked Git state clean with exact-HEAD runtime evidence.
 
 ## Documentation checkpoint discipline
 

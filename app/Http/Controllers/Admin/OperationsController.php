@@ -14,6 +14,7 @@ use App\Support\Providers\Catalog\MusicBrainzArtistWorkbench;
 use App\Support\Providers\Catalog\MusicBrainzRecordingWorkbench;
 use App\Support\Providers\Catalog\MusicBrainzReleaseWorkbench;
 use App\Support\Providers\Catalog\MusicBrainzWorkWorkbench;
+use App\Support\Providers\Configuration\ProviderCredentialResolver;
 use App\Support\Providers\Configuration\ProviderRuntimeConfiguration;
 use App\Support\Providers\Destinations\YouTubeDestinationWorkbench;
 use Illuminate\Contracts\View\View;
@@ -41,10 +42,7 @@ final class OperationsController extends Controller
 
     public function providers(Request $request, ProviderOperationsConsole $console, AdminOperationsPresentation $presentation): View
     {
-        return view('admin.operations.providers', [
-            ...$console->providers($request->query()),
-            'presentation' => $presentation,
-        ]);
+        return view('admin.operations.providers', [...$console->providers($request->query()), 'presentation' => $presentation]);
     }
 
     public function provider(
@@ -64,7 +62,6 @@ final class OperationsController extends Controller
         $data = $console->provider($provider);
         $providerSlug = (string) ($data['provider']->slug ?? '');
         $runtimeConfiguration->apply($providerSlug);
-
         $musicBrainzQuery = trim((string) $request->query('musicbrainz_query', ''));
         $musicBrainzResults = [];
         $musicBrainzReleaseGroupQuery = trim((string) $request->query('musicbrainz_release_group_query', ''));
@@ -81,11 +78,9 @@ final class OperationsController extends Controller
         $youtubeRecording = null;
         $youtubeCandidates = [];
         $youtubeError = null;
-
         if ($providerSlug === 'musicbrainz') {
             $providerRateState = $requestGate->state($ratePolicies->for('musicbrainz', 'artist.search'));
         }
-
         if ($providerSlug === 'musicbrainz') {
             try {
                 if ($musicBrainzQuery !== '') {
@@ -103,7 +98,6 @@ final class OperationsController extends Controller
                 $musicBrainzError = $exception->getMessage();
             }
         }
-
         if ($providerSlug === 'youtube' && $youtubeRecordingId !== '') {
             try {
                 $youtube = $youtubeWorkbench->search($youtubeRecordingId);
@@ -115,41 +109,25 @@ final class OperationsController extends Controller
         }
 
         return view('admin.operations.provider-show', [
-            ...$data,
-            'presentation' => $presentation,
-            'musicBrainzQuery' => $musicBrainzQuery,
-            'musicBrainzResults' => $musicBrainzResults,
-            'musicBrainzReleaseGroupQuery' => $musicBrainzReleaseGroupQuery,
-            'musicBrainzReleaseQuery' => $musicBrainzReleaseQuery,
-            'musicBrainzReleaseGroupResults' => $musicBrainzReleaseGroupResults,
-            'musicBrainzReleaseResults' => $musicBrainzReleaseResults,
-            'musicBrainzRecordingQuery' => $musicBrainzRecordingQuery,
-            'musicBrainzRecordingResults' => $musicBrainzRecordingResults,
-            'musicBrainzWorkQuery' => $musicBrainzWorkQuery,
-            'musicBrainzWorkResults' => $musicBrainzWorkResults,
-            'musicBrainzError' => $musicBrainzError,
-            'providerRateState' => $providerRateState,
-            'youtubeRecordingId' => $youtubeRecordingId,
-            'youtubeRecording' => $youtubeRecording,
-            'youtubeCandidates' => $youtubeCandidates,
-            'youtubeError' => $youtubeError,
+            ...$data, 'presentation' => $presentation, 'musicBrainzQuery' => $musicBrainzQuery, 'musicBrainzResults' => $musicBrainzResults,
+            'musicBrainzReleaseGroupQuery' => $musicBrainzReleaseGroupQuery, 'musicBrainzReleaseQuery' => $musicBrainzReleaseQuery,
+            'musicBrainzReleaseGroupResults' => $musicBrainzReleaseGroupResults, 'musicBrainzReleaseResults' => $musicBrainzReleaseResults,
+            'musicBrainzRecordingQuery' => $musicBrainzRecordingQuery, 'musicBrainzRecordingResults' => $musicBrainzRecordingResults,
+            'musicBrainzWorkQuery' => $musicBrainzWorkQuery, 'musicBrainzWorkResults' => $musicBrainzWorkResults,
+            'musicBrainzError' => $musicBrainzError, 'providerRateState' => $providerRateState,
+            'youtubeRecordingId' => $youtubeRecordingId, 'youtubeRecording' => $youtubeRecording,
+            'youtubeCandidates' => $youtubeCandidates, 'youtubeError' => $youtubeError,
         ]);
     }
 
     public function imports(Request $request, ProviderOperationsConsole $console, AdminOperationsPresentation $presentation): View
     {
-        return view('admin.operations.imports', [
-            ...$console->imports($request->query()),
-            'presentation' => $presentation,
-        ]);
+        return view('admin.operations.imports', [...$console->imports($request->query()), 'presentation' => $presentation]);
     }
 
     public function importRun(string $run, ProviderOperationsConsole $console, AdminOperationsPresentation $presentation): View
     {
-        return view('admin.operations.import-show', [
-            ...$console->importRun($run),
-            'presentation' => $presentation,
-        ]);
+        return view('admin.operations.import-show', [...$console->importRun($run), 'presentation' => $presentation]);
     }
 
     public function quarantine(Request $request, ProviderOperationsConsole $console): View
@@ -162,8 +140,19 @@ final class OperationsController extends Controller
         return view('admin.operations.users', $information->users());
     }
 
-    public function system(AdminInformationArchitecture $information): View
-    {
-        return view('admin.operations.system', $information->system());
+    public function system(
+        AdminInformationArchitecture $information,
+        ProviderOperationsConsole $console,
+        ProviderRuntimeConfiguration $runtimeConfiguration,
+        ProviderCredentialResolver $credentials,
+    ): View {
+        $providerData = $console->providers([]);
+
+        return view('admin.operations.system', [
+            ...$information->system(),
+            'providers' => $providerData['providers'],
+            'runtimeConfiguration' => $runtimeConfiguration,
+            'youtubeCredentialCount' => $credentials->configuredCount('youtube', 'api_key'),
+        ]);
     }
 }

@@ -1,6 +1,11 @@
 @extends('layouts.frontend')
 @php($activeNav='search')
-@section('title', $query ? 'Tìm kiếm: '.$query : 'Tìm kiếm')
+@section('title', $query ? 'Tìm kiếm: '.$query.' | '.config('app.name') : 'Tìm kiếm | '.config('app.name'))
+@section('description', 'Tìm nghệ sĩ, bản phát hành, bản thu, tác phẩm và bộ sưu tập trong canonical catalog SongChart.')
+@push('head')
+<link rel="canonical" href="{{ route('search') }}">
+<meta name="robots" content="noindex,follow">
+@endpush
 @section('content')
 <div class="sc-container py-8 md:py-12">
     <nav aria-label="Breadcrumb" class="text-sm text-[var(--sc-text-secondary)]"><a href="{{ route('home') }}">Trang chủ</a> <span aria-hidden="true">/</span> Tìm kiếm</nav>
@@ -42,7 +47,7 @@
 
             <aside class="space-y-5">
                 <x-ui.card><h2 class="font-bold">Tìm kiếm liên quan</h2><div class="mt-3 flex flex-wrap gap-2">@foreach($result['related'] as $related)<a class="rounded-full bg-[var(--sc-bg-subtle)] px-3 py-2 text-sm font-semibold" href="{{ route('search',['q'=>$related]) }}">{{ $related }}</a>@endforeach</div></x-ui.card>
-                <x-ui.card><h2 class="font-bold">Về kết quả</h2><p class="mt-3 text-sm leading-6 text-[var(--sc-text-secondary)]">Kết quả hiện dùng canonical fixture nội bộ. Không có lượt nghe, chart hoặc độ phổ biến giả lập.</p><p class="mt-3 text-xs leading-5 text-[var(--sc-text-muted)]">Nhãn “chưa xác minh” cho biết metadata còn thiếu, không có nghĩa nội dung không tồn tại.</p></x-ui.card>
+                <x-ui.card><h2 class="font-bold">Về kết quả</h2><p class="mt-3 text-sm leading-6 text-[var(--sc-text-secondary)]">Không có lượt nghe, chart hoặc độ phổ biến giả lập. Kết quả dùng canonical catalog nội bộ; public request không gọi provider API.</p><p class="mt-3 text-xs leading-5 text-[var(--sc-text-muted)]">Nhãn “chưa xác minh” cho biết metadata còn thiếu, không có nghĩa nội dung không tồn tại.</p></x-ui.card>
             </aside>
         </div>
     @endif

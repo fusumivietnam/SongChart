@@ -1,5 +1,38 @@
 @extends('layouts.frontend')
-@section('title', $entity['title'])
+@section('title', $entity['title'].' · '.$entity['label'].' | '.config('app.name'))
+@section('description', \Illuminate\Support\Str::limit(strip_tags((string) $entity['description']), 160, ''))
+@push('head')
+@php
+    $canonicalUrl = url()->current();
+    $schemaType = match ($entity['type']) {
+        'artist' => \App\Support\Catalog\PublicEntityUrl::isGroupArtistType((string) ($entity['artist_type'] ?? '')) ? 'MusicGroup' : 'Person',
+        'release', 'release_group' => 'MusicAlbum',
+        'recording' => 'MusicRecording',
+        'work' => 'MusicComposition',
+        default => 'CreativeWork',
+    };
+    $seoDescription = \Illuminate\Support\Str::limit(strip_tags((string) $entity['description']), 160, '');
+    $structuredData = [
+        '@context' => 'https://schema.org',
+        '@type' => $schemaType,
+        '@id' => $canonicalUrl.'#entity',
+        'url' => $canonicalUrl,
+        'name' => $entity['title'],
+        'description' => $seoDescription,
+    ];
+@endphp
+<link rel="canonical" href="{{ $canonicalUrl }}">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ config('app.name') }}">
+<meta property="og:title" content="{{ $entity['title'] }} · {{ $entity['label'] }}">
+<meta property="og:description" content="{{ $seoDescription }}">
+<meta property="og:url" content="{{ $canonicalUrl }}">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{ $entity['title'] }} · {{ $entity['label'] }}">
+<meta name="twitter:description" content="{{ $seoDescription }}">
+<script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+@endpush
 @section('content')
 <div class="sc-container py-8 md:py-12" data-entity-type="{{ $entity['type'] }}" data-entity-slug="{{ $entity['slug'] }}">
 <nav aria-label="Breadcrumb" class="text-sm text-[var(--sc-text-secondary)]"><a href="{{ route('home') }}">Trang chủ</a> <span aria-hidden="true">/</span> <a href="{{ route('search',['type'=>$entity['type'],'q'=>$entity['title']]) }}">{{ $entity['label'] }}</a> <span aria-hidden="true">/</span> <span aria-current="page">{{ $entity['title'] }}</span></nav>

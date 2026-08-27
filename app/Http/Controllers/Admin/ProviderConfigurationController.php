@@ -25,15 +25,21 @@ final class ProviderConfigurationController extends Controller
 
         $settings = [];
         $secrets = [];
+        $credentialPools = [];
 
         if ($provider->slug === 'musicbrainz') {
             $settings['user_agent'] = trim((string) ($validated['musicbrainz_user_agent'] ?? ''));
         } elseif ($provider->slug === 'youtube') {
-            $apiKey = trim((string) ($validated['youtube_api_key'] ?? ''));
-            $secrets['api_key'] = $apiKey !== '' ? $apiKey : null;
+            $poolText = trim((string) ($validated['youtube_api_keys'] ?? ''));
+            if ($poolText !== '') {
+                $credentialPools['api_key'] = array_values(array_filter(array_map(
+                    static fn (string $value): string => trim($value),
+                    preg_split('/\R+/', $poolText) ?: [],
+                ), static fn (string $value): bool => $value !== ''));
+            }
         } else {
             throw ValidationException::withMessages([
-                'provider' => 'Nguồn dữ liệu này chưa có thiết lập vận hành qua giao diện ở Stage 18.1.',
+                'provider' => 'Nguồn dữ liệu này chưa có adapter cấu hình vận hành qua Admin UI.',
             ]);
         }
 
@@ -41,11 +47,13 @@ final class ProviderConfigurationController extends Controller
             provider: $provider,
             settings: $settings,
             secrets: $secrets,
+            credentialPools: $credentialPools,
+            enabled: (string) $validated['provider_operational_state'] === 'enabled',
             actor: $actor,
             rationale: (string) $validated['rationale'],
             idempotencyKey: (string) $validated['idempotency_key'],
         );
 
-        return back()->with('status', 'Đã lưu thiết lập nguồn dữ liệu. Thay đổi sẽ được dùng cho các yêu cầu provider tiếp theo.');
+        return back()->with('status', 'Đã lưu cấu hình, credential pool và trạng thái vận hành của nguồn dữ liệu.');
     }
 }

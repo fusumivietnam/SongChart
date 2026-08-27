@@ -293,6 +293,22 @@
       ]
     },
     {
+      "id": "stage-18.3-workflow",
+      "targets": [
+        "tests/Architecture/Stage183WorkflowErgonomicsTest.php"
+      ],
+      "classification": "behavioral",
+      "semantic_authorities": [
+        "docker-development",
+        "runtime-environment",
+        "verification-topology",
+        "verification-command-surface",
+        "operational-contracts",
+        "authorization",
+        "application-data-boundary"
+      ]
+    },
+    {
       "id": "local-safety",
       "targets": [
         "scripts/verify-local-*.php",

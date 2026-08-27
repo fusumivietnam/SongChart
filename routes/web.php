@@ -26,6 +26,8 @@ use App\Http\Controllers\Development\MusicBrainzArtistImportController;
 use App\Http\Controllers\Development\StatusController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PublicCatalog\BrowseController;
+use App\Http\Controllers\PublicCatalog\RobotsController;
+use App\Http\Controllers\PublicCatalog\SitemapController;
 use App\Http\Controllers\Search\EntityController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\ShellPreviewController;
@@ -34,6 +36,8 @@ use App\Support\DomainContracts\DomainContractRegistry;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/robots.txt', RobotsController::class)->name('robots');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/search', SearchController::class)->name('search');
 Route::get('/artists', [BrowseController::class, 'artists'])->name('artists.index');
 Route::get('/groups', [BrowseController::class, 'groups'])->name('groups.index');
@@ -83,7 +87,7 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::post('/providers/{provider}/youtube/destinations/approve', YouTubeDestinationController::class)->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.youtube.destinations.approve')->middleware(['can:manage-providers', 'password.confirm']);
         Route::get('/imports', [OperationsController::class, 'imports'])->name('imports.index');
         Route::get('/imports/preview', [ProviderImportPreviewController::class, 'index'])->name('imports.preview');
-        Route::post('/imports/search', [ProviderImportDiscoveryController::class, 'search'])->name('imports.search');
+        Route::get('/imports/search', [ProviderImportDiscoveryController::class, 'search'])->name('imports.search');
         Route::post('/imports/select', [ProviderImportDiscoveryController::class, 'select'])->name('imports.select');
         Route::post('/imports/preview', [ProviderImportPreviewController::class, 'preview'])->name('imports.preview.build');
         Route::post('/imports/preview/execute', [ProviderImportPlanController::class, 'execute'])->name('imports.preview.execute')->middleware(['can:manage-providers', 'password.confirm']);

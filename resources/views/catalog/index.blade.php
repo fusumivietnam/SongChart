@@ -1,4 +1,15 @@
 @extends('layouts.frontend')
+@section('title', $title.' | '.config('app.name'))
+@section('description', \Illuminate\Support\Str::limit(strip_tags((string) $description), 160, ''))
+@push('head')
+<link rel="canonical" href="{{ url()->current() }}">
+<meta name="robots" content="{{ $query === '' ? 'index,follow,max-image-preview:large' : 'noindex,follow' }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ config('app.name') }}">
+<meta property="og:title" content="{{ $title }} | {{ config('app.name') }}">
+<meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags((string) $description), 160, '') }}">
+<meta property="og:url" content="{{ url()->current() }}">
+@endpush
 
 @section('content')
 <div class="sc-container py-8 md:py-12" data-public-catalog-index="{{ $entityType }}">

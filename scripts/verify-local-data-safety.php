@@ -35,8 +35,13 @@ foreach (['must end with _test', 'same as the development database'] as $needle)
 if (! str_contains($safety, 'database_role')) {
     $errors[] = 'Test database safety verifier must validate the database marker role.';
 }
-if (! str_contains($middleware, "app()->environment('local')") || ! str_contains($middleware, 'admin_2fa_mode')) {
-    $errors[] = '2FA bypass must be explicitly local-only and configuration-driven.';
+if (
+    ! str_contains($middleware, "app()->environment(['local', 'demo', 'testing'])")
+    || ! str_contains($middleware, 'admin_2fa_mode')
+    || ! str_contains($middleware, '$twoFactorMode = (string) config(\'songchart.security.admin_2fa_mode\', \'required\')')
+    || ! str_contains($middleware, '$requiresTwoFactor = $twoFactorMode === \'required\' || ! $mayDisableTwoFactor')
+) {
+    $errors[] = '2FA bypass must be explicitly bounded to local/demo/testing runtimes and configuration-driven.';
 }
 foreach (['password and two-factor state were preserved', "app()->environment('local', 'testing')"] as $needle) {
     if (! str_contains($ensureAdmin, $needle)) {
