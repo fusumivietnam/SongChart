@@ -43,7 +43,7 @@ it('shows provider setup controls in system settings without exposing stored sec
     $this->actingAs(stage181ProviderConfigurationAdmin())
         ->get(route('admin.system.index'))
         ->assertOk()
-        ->assertSee('API & tích hợp')
+        ->assertSeeText('API & tích hợp')
         ->assertSee('MusicBrainz User-Agent')
         ->assertSee('YouTube Data API credential pool')
         ->assertSee('Secret được mã hóa');
