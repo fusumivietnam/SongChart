@@ -162,8 +162,17 @@ final class OperationsController extends Controller
         return view('admin.operations.users', $information->users());
     }
 
-    public function system(AdminInformationArchitecture $information): View
-    {
-        return view('admin.operations.system', $information->system());
+    public function system(
+        AdminInformationArchitecture $information,
+        ProviderOperationsConsole $console,
+        ProviderRuntimeConfiguration $runtimeConfiguration,
+    ): View {
+        $providerData = $console->providers([]);
+
+        return view('admin.operations.system', [
+            ...$information->system(),
+            'providers' => $providerData['providers'],
+            'runtimeConfiguration' => $runtimeConfiguration,
+        ]);
     }
 }
