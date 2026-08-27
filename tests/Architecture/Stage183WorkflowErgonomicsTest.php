@@ -56,6 +56,10 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('Cấu hình nguồn dữ liệu & API')
         ->toContain('musicbrainz_user_agent')
         ->toContain('youtube_api_key')
+        ->toContain('Admin DB')
+        ->toContain('.env')
+        ->toContain('Không cần nhớ biến môi trường')
+        ->toContain('Trạng thái, bật/tắt và test nguồn')
         ->toContain('provider_manager')
         ->toContain('super_admin');
 
