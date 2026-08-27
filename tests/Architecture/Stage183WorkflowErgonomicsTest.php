@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 it('keeps candidate read-only and exposes optimized closure and demo workflows', function (): void {
     $cli = file_get_contents(base_path('songchart'));
+    $dev = file_get_contents(base_path('compose.dev.yml'));
     $demo = file_get_contents(base_path('compose.demo.yml'));
     $demoEnv = file_get_contents(base_path('.env.demo.example'));
+    $databaseConfig = file_get_contents(base_path('config/database.php'));
+    $queueConfig = file_get_contents(base_path('config/queue.php'));
     $appProvider = file_get_contents(base_path('app/Providers/AppServiceProvider.php'));
     $twoFactorMiddleware = file_get_contents(base_path('app/Http/Middleware/EnsureConfirmedTwoFactorAuthentication.php'));
     $adminSidebar = file_get_contents(base_path('resources/views/components/admin/sidebar.blade.php'));
@@ -26,6 +29,8 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('./songchart dev db backup')
         ->toContain('./songchart demo setup')
         ->toContain('demo up -d redis app')
+        ->toContain('dev up -d postgres redis app queue')
+        ->toContain('single shared development queue worker authority')
         ->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
         ->toContain('/tmp/composer-cache /tmp/npm-cache')
         ->toContain('chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID')
@@ -38,6 +43,19 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('SONGCHART_ADMIN_2FA_MODE=disabled')
         ->not->toContain('APP_URL=http://127.0.0.1:8001')
         ->not->toContain('APP_URL=http://localhost:8001');
+
+    expect($databaseConfig)
+        ->toContain("'queue' => [")
+        ->toContain("env('REDIS_QUEUE_HOST'")
+        ->toContain("env('REDIS_QUEUE_DB', '0')");
+
+    expect($queueConfig)
+        ->toContain("env('REDIS_QUEUE_CONNECTION', 'queue')");
+
+    expect($dev)
+        ->toContain('songchart-shared-queue')
+        ->toContain('REDIS_QUEUE_CONNECTION: queue')
+        ->toContain('REDIS_QUEUE_HOST: redis');
 
     expect($appProvider)
         ->toContain("environment('demo')")
@@ -131,6 +149,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('APP_URL: "${SONGCHART_DEMO_APP_URL}"')
         ->toContain('php artisan migrate --force')
         ->toContain('DB_DATABASE: songchart_docker')
+        ->toContain('REDIS_QUEUE_CONNECTION: queue')
+        ->toContain('REDIS_QUEUE_HOST: songchart-shared-queue')
         ->toContain('name: "${SONGCHART_DEV_PROJECT:-songchart-dev}_default"')
+        ->not->toContain("\n  queue:\n")
         ->not->toContain('songchart_verify_test');
 });
