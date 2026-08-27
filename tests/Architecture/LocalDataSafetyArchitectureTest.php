@@ -20,10 +20,11 @@ it('keeps PostgreSQL tests isolated from the development database', function ():
         ->toBeLessThan(array_search('@stage:verify', $canonical, true));
 });
 
-it('keeps development two factor bypass local only', function (): void {
+it('keeps development two factor bypass bounded to approved non-production runtimes', function (): void {
     $middleware = (string) file_get_contents(base_path('app/Http/Middleware/EnsureConfirmedTwoFactorAuthentication.php'));
 
-    expect($middleware)->toContain("app()->environment('local')")
-        ->and($middleware)->toContain('admin_2fa_mode')
-        ->and($middleware)->not->toContain("environment('testing')");
+    expect($middleware)
+        ->toContain("$twoFactorMode = (string) config('songchart.security.admin_2fa_mode', 'required')")
+        ->toContain("app()->environment(['local', 'demo', 'testing'])")
+        ->toContain("$requiresTwoFactor = $twoFactorMode === 'required' || ! $mayDisableTwoFactor");
 });
