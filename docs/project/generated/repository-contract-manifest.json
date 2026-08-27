@@ -188,7 +188,7 @@
         },
         "operational-contracts": {
             "source": "docs/project/domain/operational-contracts.json",
-            "fingerprint": "92798bbc817d97153eab25ad41333f7258c7c0cec9b4aa9caa38c57b3460741c",
+            "fingerprint": "118ec605481889759c70b511bfcdcb109820c7b46dd25574181d977f8d938e32",
             "consumers": []
         },
         "use-case-contracts": {
@@ -198,7 +198,7 @@
         },
         "schema-ownership": {
             "source": "docs/project/domain/schema-ownership.json",
-            "fingerprint": "15b788eb8cb679c4a700693f24c08608a0597a966508c6d8b0316c828c62d65e",
+            "fingerprint": "c59b5622ddb1a2016e3bbef14daa71de018172c90dc2b4068d739a0e931f647d",
             "consumers": [
                 "scripts/project-context.php",
                 "scripts/verify-runtime-project-context.php"
@@ -1638,5 +1638,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "3564f7cfbbf7e69fc48ec23a3e96880716eb4f537bcbae7cc11a81790cea6d0d"
+    "graph_fingerprint": "b31ac590248f93f923cbac8b62f9114aec98b374deaa0695d31492683f2fd8f7"
 }
