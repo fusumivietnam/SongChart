@@ -21,6 +21,7 @@
                    "provider_import_failures":  "operational-contracts",
                    "provider_import_requests":  "operational-contracts",
                    "provider_import_checkpoints":  "operational-contracts",
+                   "provider_credentials":  "operational-contracts",
                    "external_identifiers":  "operational-contracts",
                    "entity_relationships":  "operational-contracts",
                    "metadata_conflicts":  "operational-contracts",
