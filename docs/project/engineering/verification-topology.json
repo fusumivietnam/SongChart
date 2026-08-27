@@ -1,12 +1,39 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "lanes": {
     "impact": {
       "owner": "scripts/resolve-repository-impact.php",
-      "purpose": "Resolve affected authorities/consumers before implementation.",
+      "purpose": "Resolve planned and actual-diff authorities/consumers/focused checks before closure.",
       "commands": [
-        "php scripts/resolve-repository-impact.php <changed-paths>"
-      ]
+        "./songchart impact <changed-paths>",
+        "./songchart impact --diff"
+      ],
+      "rules": {
+        "planned_before_implementation": true,
+        "actual_diff_after_implementation": true,
+        "include_untracked_files": true,
+        "include_reverse_verification_consumers": true
+      }
+    },
+    "reconcile": {
+      "owner": "./songchart reconcile",
+      "purpose": "Regenerate committed project/repository authority from the current exact tree and expose the diff without committing.",
+      "rules": {
+        "automatic_commit": false,
+        "manual_generated_json_merge": false
+      }
+    },
+    "diagnostic": {
+      "owner": "./songchart audit",
+      "purpose": "Collect all quality/static/governance failures in one iteration without replacing strict closure.",
+      "rules": {
+        "fail_fast": false,
+        "closure_evidence": false,
+        "must_not_call_stage": true,
+        "must_not_call_canonical": true,
+        "must_not_call_full_postgres": true,
+        "must_not_call_frontend_build": true
+      }
     },
     "focused": {
       "owner": "task-specific",
@@ -44,7 +71,8 @@
         "npm run build"
       ],
       "owns": [
-        "historical migration immutability and forward-only migration policy"
+        "historical migration immutability and forward-only migration policy",
+        "runtime artifact tracked-tree ownership"
       ]
     },
     "stage": {
@@ -115,7 +143,7 @@
   },
   "evidence_reuse": {
     "enabled": false,
-    "reason": "Deferred until topology is stable; correctness before cache optimization."
+    "reason": "Deferred until impact/reconcile/audit topology is stable; correctness before cache optimization."
   },
   "removed_aliases": [
     "verify",
