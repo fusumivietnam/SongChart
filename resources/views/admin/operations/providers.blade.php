@@ -7,7 +7,7 @@
 @can('manage-providers')
 <section class="mt-6" aria-labelledby="provider-setup-heading">
     <div class="mb-3 flex flex-wrap items-end justify-between gap-3">
-        <div><h2 id="provider-setup-heading" class="text-lg font-bold">Thiết lập nguồn dữ liệu</h2><p class="mt-1 text-sm text-slate-500">Cấu hình các thông tin cần thiết ngay trong Admin. Secret được mã hóa và không hiển thị lại sau khi lưu.</p></div>
+        <div><h2 id="provider-setup-heading" class="text-lg font-bold">Cấu hình nguồn dữ liệu & API</h2><p class="mt-1 text-sm text-slate-500">Bật/tắt nguồn, cấu hình thông tin nhận diện hoặc credential cần thiết ngay trong Admin. Secret được mã hóa và không hiển thị lại sau khi lưu.</p></div>
         <a href="{{ route('admin.imports.preview') }}" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white">Đi tới Nhập dữ liệu</a>
     </div>
     <div class="grid gap-4 lg:grid-cols-2">
@@ -47,6 +47,10 @@
     </div>
     <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">Spotify, Apple Music, SoundCloud và Wikidata vẫn xuất hiện trong registry nhưng chưa có cấu hình nhập dữ liệu đầy đủ ở Stage 18.1. UI sẽ chỉ mở khi adapter tương ứng được triển khai và kiểm chứng.</div>
 </section>
+@else
+<div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+    Bạn có quyền truy cập Admin nhưng chưa có capability <strong>manage-providers</strong>. Hãy dùng tài khoản vai trò <strong>provider_manager</strong>, <strong>system_operator</strong> hoặc <strong>super_admin</strong> để cấu hình nguồn dữ liệu.
+</div>
 @endcan
 
 <x-ui.card class="mt-6"><form method="GET" class="grid gap-3 p-4 md:grid-cols-4"><input class="rounded border p-2" name="q" value="{{ $filters['term'] }}" placeholder="Tên nguồn dữ liệu"><select class="rounded border p-2" name="status"><option value="">Mọi trạng thái</option>@foreach(\App\Domain\Providers\Enums\ProviderStatus::cases() as $case)<option value="{{ $case->value }}" @selected($filters['status']===$case->value)>{{ $presentation->providerStatus($case, true)['label'] }}</option>@endforeach</select><select class="rounded border p-2" name="enabled"><option value="">Hoạt động và tạm ngừng</option><option value="1" @selected($filters['enabled']==='1')>Đang sử dụng</option><option value="0" @selected($filters['enabled']==='0')>Đang tạm ngừng</option></select><button class="rounded border px-4 py-2" type="submit">Lọc</button></form></x-ui.card>
