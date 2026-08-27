@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class ProviderConfigurationRequest extends FormRequest
 {
@@ -19,6 +20,7 @@ final class ProviderConfigurationRequest extends FormRequest
         return [
             'musicbrainz_user_agent' => ['nullable', 'string', 'min:12', 'max:255'],
             'youtube_api_key' => ['nullable', 'string', 'min:20', 'max:512'],
+            'provider_operational_state' => ['required', 'string', Rule::in(['enabled', 'disabled'])],
             'rationale' => ['required', 'string', 'min:10', 'max:2000'],
             'idempotency_key' => ['required', 'string', 'max:96'],
         ];
@@ -30,6 +32,7 @@ final class ProviderConfigurationRequest extends FormRequest
         return [
             'musicbrainz_user_agent' => 'thông tin nhận diện MusicBrainz',
             'youtube_api_key' => 'YouTube API key',
+            'provider_operational_state' => 'trạng thái vận hành provider',
             'rationale' => 'lý do thay đổi',
             'idempotency_key' => 'mã chống lặp',
         ];
