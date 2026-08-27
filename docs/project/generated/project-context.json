@@ -1,9 +1,9 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "fc3d2faac2d5fe549d1df8170183e4e000517815e8677b57d1e8b15d36a3a20e",
+    "source_fingerprint": "aebfc529c54a660b595a816d45fa6c9d7f483cd4363c093745fb16c4f308b45e",
     "candidate": {
-        "stage": "18.2",
+        "stage": "18.3",
         "candidate": "v1",
         "informational_not_fingerprinted": true
     },
@@ -49,7 +49,8 @@
             "logs",
             "shell",
             "url",
-            "test"
+            "test",
+            "db"
         ],
         "canonical_verify": "./songchart verify",
         "context": "./songchart context --json"
@@ -577,6 +578,24 @@
                 ],
                 "owner": "operational-contracts"
             },
+            "provider_credentials": {
+                "migration": "2026_08_27_000100_create_provider_credentials_table.php",
+                "columns": [
+                    "id",
+                    "provider_id",
+                    "kind",
+                    "label",
+                    "encrypted_secret",
+                    "is_enabled",
+                    "priority",
+                    "cooldown_until",
+                    "last_used_at",
+                    "failure_count",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": null
+            },
             "provider_destinations": {
                 "migration": "2026_08_18_000100_create_provider_destinations.php",
                 "columns": [
@@ -974,10 +993,10 @@
                 "owner": "domain-contracts"
             }
         },
-        "ownership_complete": true
+        "ownership_complete": false
     },
     "source_hashes": {
-        "compose.dev.yml": "30237ae2eb72ca97f57593e7e60ede545901f8c213d1fbceb02b17ac6ebea397",
+        "compose.dev.yml": "ab4f723841feb976aa749489597c3f462a3255a35df68b1a60d1410137eef89f",
         "compose.verify.yml": "d7d2a4a73a19fa24414a9087df76af68d688c3814e151740edd4cbdbf1cad112",
         "composer.json": "69495c54b35a7c69bb17eeb36c2ba30696d994fb641d2523dab5437a5dbb0654",
         "composer.lock": "21f1b62cb8159ec964ee3f0d381965ae07bab1150cf20ab04dab254d4c3c44e9",
@@ -1005,6 +1024,7 @@
         "database/migrations/2026_08_24_000100_create_enrichment_attempts_table.php": "ddba94e6a180a817c9b2b8ffadb9f0a4ce5f2ac603326aaa21850d1b2244019c",
         "database/migrations/2026_08_24_000200_add_execution_outcomes_to_enrichment_attempts.php": "b129a152f69ff877c73052662efba1179d070bc14a1ca18af425374f3e4218bd",
         "database/migrations/2026_08_26_000100_create_canonical_admission_decisions_table.php": "faa967c798f821519f854f8545cc35c554ed7810eb6bb5c49a60cf342ab93c5b",
+        "database/migrations/2026_08_27_000100_create_provider_credentials_table.php": "10346e2aa9eacd8880d31ecb478126681e099f1ca04c80444e57df961015110b",
         "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
         "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
         "database/seeders/ProviderRegistrySeeder.php": "f7517aa8ab1ff83ae14957839c536d088d9d9f3531ddd988d5dfa7095d098e66",
@@ -1012,10 +1032,10 @@
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "5e86c2077e3db060bef11991ca0e50788b4e6c9d015d495838158e298556022c",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
         "docs/project/engineering/ai-development-contract.json": "77525674fae35514b66947a49863989f0b9b2c43067ba7f6fc225fd221e4a82a",
-        "docs/project/engineering/verification-command-surface.json": "698d2e6601f4b3245ee7797d700b15f243a489ee512743fcc5b22f28fce833c6",
+        "docs/project/engineering/verification-command-surface.json": "f18f5c039a219e9d8412643db76a5973802e9b795019b1eafeb2aee13822473a",
         "docs/project/engineering/verification-topology.json": "6aad35fb4230ce8c4c4f330070830b1fdebae0056a9eff142af0b62daf3914e7",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
-        "docs/project/stack/runtime-environments.json": "4bb2a277fa3647aee6ac250d33908d4d14bca6a5cb086e57a2d2536ec41afe3f",
-        "songchart": "04dfde7582c03ae9101e651e2d10b46bbf42376d5153854063513eeef0b7a881"
+        "docs/project/stack/runtime-environments.json": "b8421030a8edd0184417e9d0dc4c71b8b0e35b08b8cd2d43c22afac086f597ef",
+        "songchart": "351e0ce3da38ebda3c6ba6b34c6fd7f3168ce16fa3bdf8670be1cfb610114a6b"
     }
 }
