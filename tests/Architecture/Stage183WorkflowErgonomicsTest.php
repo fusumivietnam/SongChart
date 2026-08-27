@@ -15,6 +15,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     $providerConfigurationRequest = file_get_contents(base_path('app/Http/Requests/Admin/ProviderConfigurationRequest.php'));
     $providerConfigurationController = file_get_contents(base_path('app/Http/Controllers/Admin/ProviderConfigurationController.php'));
     $providerConfigurationService = file_get_contents(base_path('app/Support/Providers/Operations/ProviderConfigurationService.php'));
+    $credentialResolver = file_get_contents(base_path('app/Support/Providers/Configuration/ProviderCredentialResolver.php'));
+    $youtubeDiscovery = file_get_contents(base_path('app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php'));
+    $credentialMigration = file_get_contents(base_path('database/migrations/2026_08_27_000100_create_provider_credentials_table.php'));
 
     expect($cli)
         ->toContain('./songchart close')
@@ -64,31 +67,52 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('Thiết lập hệ thống → API & tích hợp')
         ->toContain("route('admin.system.index')")
         ->not->toContain('name="musicbrainz_user_agent"')
-        ->not->toContain('name="youtube_api_key"');
+        ->not->toContain('name="youtube_api_keys"');
 
     expect($systemAdmin)
         ->toContain('id="api-integrations"')
         ->toContain('API & tích hợp')
         ->toContain('musicbrainz_user_agent')
-        ->toContain('youtube_api_key')
+        ->toContain('youtube_api_keys')
+        ->toContain('credential pool')
         ->toContain('provider_operational_state')
         ->toContain('Lưu cấu hình & trạng thái')
-        ->toContain('Admin DB (mã hóa)')
         ->toContain('.env fallback')
         ->toContain("route('admin.providers.configuration.update'")
         ->toContain('manage-providers');
 
     expect($providerConfigurationRequest)
+        ->toContain('youtube_api_keys')
         ->toContain('provider_operational_state')
         ->toContain("Rule::in(['enabled', 'disabled'])");
 
     expect($providerConfigurationController)
+        ->toContain("\$credentialPools['api_key']")
         ->toContain("enabled: (string) \$validated['provider_operational_state'] === 'enabled'");
 
     expect($providerConfigurationService)
-        ->toContain('bool $enabled')
+        ->toContain('array $credentialPools')
+        ->toContain('ProviderCredential::query()')
         ->toContain("'is_enabled' => \$enabled")
-        ->toContain('Provider runtime configuration and operational state updated.');
+        ->toContain('credential_pool_counts');
+
+    expect($credentialResolver)
+        ->toContain("where('is_enabled', true)")
+        ->toContain("whereNull('cooldown_until')")
+        ->toContain("orderByRaw('last_used_at asc nulls first')")
+        ->toContain('Crypt::decryptString');
+
+    expect($youtubeDiscovery)
+        ->toContain('ProviderCredentialResolver')
+        ->toContain("\$this->credentials->resolve('youtube', 'api_key'")
+        ->toContain("\$this->quota->consume('search.list')")
+        ->toContain("\$this->quota->consume('videos.list')");
+
+    expect($credentialMigration)
+        ->toContain("Schema::create('provider_credentials'")
+        ->toContain('encrypted_secret')
+        ->toContain('cooldown_until')
+        ->toContain('last_used_at');
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
     $candidateBlock = (string) ($candidateMatch['block'] ?? '');
@@ -105,6 +129,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
 
     expect($demo)
         ->toContain('APP_URL: "${SONGCHART_DEMO_APP_URL}"')
+        ->toContain('php artisan migrate --force')
         ->toContain('DB_DATABASE: songchart_docker')
         ->toContain('name: "${SONGCHART_DEV_PROJECT:-songchart-dev}_default"')
         ->not->toContain('songchart_verify_test');
