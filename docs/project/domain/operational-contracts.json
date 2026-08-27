@@ -3,343 +3,87 @@
   "surfaces": {
     "catalog.external_identifiers": {
       "table": "external_identifiers",
-      "fields": [
-        "id",
-        "entity_type",
-        "entity_id",
-        "namespace",
-        "value",
-        "metadata_source_id",
-        "is_primary",
-        "verification_state",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","entity_type","entity_id","namespace","value","metadata_source_id","is_primary","verification_state","created_at","updated_at"]
     },
     "catalog.entity_relationships": {
       "table": "entity_relationships",
-      "fields": [
-        "id",
-        "subject_type",
-        "subject_id",
-        "relationship_type",
-        "object_type",
-        "object_id",
-        "metadata_source_id",
-        "verification_state",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","subject_type","subject_id","relationship_type","object_type","object_id","metadata_source_id","verification_state","created_at","updated_at"]
     },
     "catalog.metadata_conflicts": {
       "table": "metadata_conflicts",
-      "fields": [
-        "id",
-        "entity_type",
-        "entity_id",
-        "field_name",
-        "left_assertion_id",
-        "right_assertion_id",
-        "status",
-        "resolution_note",
-        "resolved_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","entity_type","entity_id","field_name","left_assertion_id","right_assertion_id","status","resolution_note","resolved_at","created_at","updated_at"]
     },
     "catalog.canonical_admission_decisions": {
       "table": "canonical_admission_decisions",
-      "fields": [
-        "id",
-        "metadata_assertion_id",
-        "entity_type",
-        "entity_id",
-        "field_name",
-        "status",
-        "canonical_value",
-        "decision_reason",
-        "reviewer_id",
-        "reviewed_at",
-        "applied_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","metadata_assertion_id","entity_type","entity_id","field_name","status","canonical_value","decision_reason","reviewer_id","reviewed_at","applied_at","created_at","updated_at"]
     },
     "provider.providers": {
       "table": "providers",
-      "fields": [
-        "id",
-        "slug",
-        "name",
-        "category",
-        "status",
-        "is_enabled",
-        "feature_flag",
-        "official_docs_url",
-        "policy_reviewed_at",
-        "configuration",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","slug","name","category","status","is_enabled","feature_flag","official_docs_url","policy_reviewed_at","configuration","created_at","updated_at"]
     },
     "provider.provider_capabilities": {
       "table": "provider_capabilities",
-      "fields": [
-        "id",
-        "provider_id",
-        "capability",
-        "status",
-        "requires_user_consent",
-        "market_dependent",
-        "cache_ttl_seconds",
-        "configuration",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_id","capability","status","requires_user_consent","market_dependent","cache_ttl_seconds","configuration","created_at","updated_at"]
     },
     "provider.provider_entities": {
       "table": "provider_entities",
-      "fields": [
-        "id",
-        "provider_id",
-        "entity_type",
-        "external_id",
-        "canonical_url",
-        "market",
-        "raw_fingerprint",
-        "fetched_at",
-        "expires_at",
-        "status",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_id","entity_type","external_id","canonical_url","market","raw_fingerprint","fetched_at","expires_at","status","created_at","updated_at"]
     },
     "provider.provider_sync_runs": {
       "table": "provider_sync_runs",
-      "fields": [
-        "id",
-        "provider_id",
-        "operation",
-        "status",
-        "started_at",
-        "finished_at",
-        "processed_count",
-        "failed_count",
-        "error_summary",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_id","operation","status","started_at","finished_at","processed_count","failed_count","error_summary","created_at","updated_at"]
+    },
+    "provider.provider_credentials": {
+      "table": "provider_credentials",
+      "fields": ["id","provider_id","kind","label","encrypted_secret","is_enabled","priority","cooldown_until","last_used_at","failure_count","created_at","updated_at"]
     },
     "ingestion.provider_import_runs": {
       "table": "provider_import_runs",
-      "fields": [
-        "id",
-        "provider_id",
-        "operation",
-        "status",
-        "requested_by_type",
-        "requested_by_id",
-        "cursor_start",
-        "cursor_end",
-        "configuration_hash",
-        "configuration",
-        "statistics",
-        "error_summary",
-        "started_at",
-        "finished_at",
-        "created_at",
-        "updated_at",
-        "heartbeat_at",
-        "resume_after",
-        "cancellation_requested_at",
-        "attempts"
-      ]
+      "fields": ["id","provider_id","operation","status","requested_by_type","requested_by_id","cursor_start","cursor_end","configuration_hash","configuration","statistics","error_summary","started_at","finished_at","created_at","updated_at","heartbeat_at","resume_after","cancellation_requested_at","attempts"]
     },
     "ingestion.provider_import_items": {
       "table": "provider_import_items",
-      "fields": [
-        "id",
-        "provider_import_run_id",
-        "provider_import_payload_id",
-        "provider_entity_type",
-        "provider_entity_id",
-        "status",
-        "canonical_entity_type",
-        "canonical_entity_id",
-        "normalizer_version",
-        "attempts",
-        "result",
-        "processed_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_import_run_id","provider_import_payload_id","provider_entity_type","provider_entity_id","status","canonical_entity_type","canonical_entity_id","normalizer_version","attempts","result","processed_at","created_at","updated_at"]
     },
     "ingestion.provider_import_payloads": {
       "table": "provider_import_payloads",
-      "fields": [
-        "id",
-        "provider_import_run_id",
-        "provider_import_request_id",
-        "provider_entity_type",
-        "provider_entity_id",
-        "payload_hash",
-        "payload",
-        "schema_version",
-        "received_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_import_run_id","provider_import_request_id","provider_entity_type","provider_entity_id","payload_hash","payload","schema_version","received_at","created_at","updated_at"]
     },
     "ingestion.provider_import_failures": {
       "table": "provider_import_failures",
-      "fields": [
-        "id",
-        "provider_import_run_id",
-        "provider_import_item_id",
-        "provider_import_request_id",
-        "stage",
-        "kind",
-        "error_code",
-        "message",
-        "context",
-        "retryable",
-        "occurred_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_import_run_id","provider_import_item_id","provider_import_request_id","stage","kind","error_code","message","context","retryable","occurred_at","created_at","updated_at"]
     },
     "identity.identity_conflict_reviews": {
       "table": "identity_conflict_reviews",
-      "fields": [
-        "id",
-        "provider_entity_id",
-        "entity_type",
-        "status",
-        "candidate_entity_ids",
-        "evidence",
-        "opened_at",
-        "resolved_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_entity_id","entity_type","status","candidate_entity_ids","evidence","opened_at","resolved_at","created_at","updated_at"]
     },
     "identity.identity_conflict_decisions": {
       "table": "identity_conflict_decisions",
-      "fields": [
-        "id",
-        "identity_conflict_review_id",
-        "actor_id",
-        "action",
-        "selected_entity_id",
-        "rationale",
-        "before_snapshot",
-        "after_snapshot",
-        "created_at"
-      ]
+      "fields": ["id","identity_conflict_review_id","actor_id","action","selected_entity_id","rationale","before_snapshot","after_snapshot","created_at"]
     },
     "auth.users": {
       "table": "users",
-      "fields": [
-        "id",
-        "name",
-        "email",
-        "email_verified_at",
-        "password",
-        "role",
-        "is_active",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","name","email","email_verified_at","password","role","is_active","created_at","updated_at"]
     },
     "ingestion.provider_import_requests": {
       "table": "provider_import_requests",
-      "fields": [
-        "id",
-        "provider_import_run_id",
-        "sequence",
-        "method",
-        "endpoint",
-        "query",
-        "request_headers",
-        "response_status",
-        "response_headers",
-        "duration_ms",
-        "attempt",
-        "requested_at",
-        "responded_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_import_run_id","sequence","method","endpoint","query","request_headers","response_status","response_headers","duration_ms","attempt","requested_at","responded_at","created_at","updated_at"]
     },
     "ingestion.provider_import_checkpoints": {
       "table": "provider_import_checkpoints",
-      "fields": [
-        "id",
-        "provider_import_run_id",
-        "checkpoint_key",
-        "cursor",
-        "state",
-        "committed_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_import_run_id","checkpoint_key","cursor","state","committed_at","created_at","updated_at"]
     },
     "catalog.entity_matches": {
       "table": "entity_matches",
-      "fields": [
-        "id",
-        "provider_entity_id",
-        "entity_type",
-        "entity_id",
-        "status",
-        "match_method",
-        "confidence",
-        "evidence",
-        "active_match_key",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_entity_id","entity_type","entity_id","status","match_method","confidence","evidence","active_match_key","created_at","updated_at"]
     },
     "provider.provider_operation_audits": {
       "table": "provider_operation_audits",
-      "fields": [
-        "id",
-        "provider_id",
-        "provider_import_run_id",
-        "actor_user_id",
-        "action",
-        "idempotency_key",
-        "before_state",
-        "after_state",
-        "rationale",
-        "occurred_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_id","provider_import_run_id","actor_user_id","action","idempotency_key","before_state","after_state","rationale","occurred_at","created_at","updated_at"]
     },
     "provider.provider_destinations": {
       "table": "provider_destinations",
-      "fields": [
-        "id",
-        "provider_id",
-        "entity_type",
-        "entity_id",
-        "provider_resource_id",
-        "url",
-        "title",
-        "channel_id",
-        "channel_title",
-        "duration_ms",
-        "is_embeddable",
-        "privacy_status",
-        "match_score",
-        "review_state",
-        "evidence",
-        "verified_at",
-        "last_checked_at",
-        "created_at",
-        "updated_at"
-      ]
+      "fields": ["id","provider_id","entity_type","entity_id","provider_resource_id","url","title","channel_id","channel_title","duration_ms","is_embeddable","privacy_status","match_score","review_state","evidence","verified_at","last_checked_at","created_at","updated_at"]
     }
   }
 }
