@@ -38,7 +38,8 @@ if (! str_contains($safety, 'database_role')) {
 if (
     ! str_contains($middleware, "app()->environment(['local', 'demo', 'testing'])")
     || ! str_contains($middleware, 'admin_2fa_mode')
-    || ! str_contains($middleware, '$twoFactorMode === \'disabled\'')
+    || ! str_contains($middleware, "$twoFactorMode = (string) config('songchart.security.admin_2fa_mode', 'required')")
+    || ! str_contains($middleware, "$requiresTwoFactor = $twoFactorMode === 'required' || ! $mayDisableTwoFactor")
 ) {
     $errors[] = '2FA bypass must be explicitly bounded to local/demo/testing runtimes and configuration-driven.';
 }
