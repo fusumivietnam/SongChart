@@ -29,6 +29,7 @@ use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
 use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
@@ -59,5 +60,11 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::shouldBeStrict(! $this->app->isProduction());
+
+        if ($this->app->environment('demo')) {
+            Vite::createAssetPathsUsing(
+                static fn (string $path, ?bool $secure = null): string => '/'.ltrim($path, '/'),
+            );
+        }
     }
 }
