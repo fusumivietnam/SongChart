@@ -172,6 +172,14 @@ refresh_candidate_authority(){
   printf '[SongChart candidate] Refreshing compiled repository authority.\n'
   dev run --rm app php scripts/compile-repository-contracts.php --refresh-check
 }
+reconcile_authority(){
+  printf '[SongChart reconcile] Regenerating repository authority from the current exact working tree.\n'
+  refresh_candidate_authority
+  git -C "$ROOT" diff --check
+  printf '[SongChart reconcile] Generated authority diff/status (no automatic commit):\n'
+  git -C "$ROOT" status --short -- docs/project/generated || true
+  git -C "$ROOT" diff -- docs/project/generated || true
+}
 prepare_candidate_authority(){
   local before after unexpected
   before="$(git -C "$ROOT" status --porcelain --untracked-files=all)"
@@ -203,6 +211,9 @@ help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart ai status
   ./songchart ai doctor
+  ./songchart impact [--diff] [--json] <planned-paths...>
+  ./songchart reconcile
+  ./songchart audit
   ./songchart dev setup|ready|up|down|status|logs|shell|url
   ./songchart dev url
   ./songchart dev test [--no-build] [test-path]
@@ -215,6 +226,12 @@ SongChart Linux-first development CLI
   ./songchart close
   ./songchart test
   ./songchart verify [--no-build] [--keep-services]
+
+AI/workflow convergence:
+  ./songchart impact <paths...>     resolve planned authorities, reverse consumers and focused checks
+  ./songchart impact --diff        resolve actual stage/working-tree impact after implementation
+  ./songchart reconcile            regenerate generated authority and show the resulting diff without committing
+  ./songchart audit                collect all quality/static/governance failures without fail-fast
 
 Development/live test:
   ./songchart dev ready     start persistent development runtime on port 8000
@@ -253,6 +270,9 @@ case "$cmd" in
    doctor) exec bash "$ROOT/scripts/ai-doctor.sh" "$@" ;;
    *) die 'Usage: ./songchart ai [status|doctor]' ;;
   esac ;;
+ impact) require_docker; ensure_dev_config; dev_exec_or_run php scripts/resolve-repository-impact.php "$@" ;;
+ reconcile) require_docker; ensure_dev_config; [[ $# -eq 0 ]] || die 'Usage: ./songchart reconcile'; reconcile_authority ;;
+ audit) require_docker; ensure_dev_config; [[ $# -eq 0 ]] || die 'Usage: ./songchart audit'; dev_exec_or_run php scripts/run-workflow-audit.php ;;
  dev)
   sub="${1:-}"; shift || true; require_docker
   case "$sub" in
