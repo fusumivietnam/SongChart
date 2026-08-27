@@ -65,8 +65,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain("'/'.ltrim(\$path, '/')");
 
     expect($twoFactorMiddleware)
-        ->toContain("config('songchart.security.admin_2fa_mode', 'required') === 'required'")
-        ->not->toContain("! app()->environment('local')");
+        ->toContain('$twoFactorMode = (string) config(\'songchart.security.admin_2fa_mode\', \'required\')')
+        ->toContain("app()->environment(['local', 'demo', 'testing'])")
+        ->toContain('$requiresTwoFactor = $twoFactorMode === \'required\' || ! $mayDisableTwoFactor');
 
     expect($adminSidebar)
         ->toContain("'label' => 'Nguồn dữ liệu'")
