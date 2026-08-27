@@ -62,7 +62,10 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
         return $items[0];
     }
 
-    /** @param list<string> $ids @return list<VideoDestinationCandidate> */
+    /**
+     * @param list<string> $ids
+     * @return list<VideoDestinationCandidate>
+     */
     private function verifiedCandidates(array $ids, Recording $recording): array
     {
         $this->quota->consume('videos.list');
