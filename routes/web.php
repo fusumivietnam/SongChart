@@ -87,7 +87,7 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::post('/providers/{provider}/youtube/destinations/approve', YouTubeDestinationController::class)->where('provider', app(DomainContractRegistry::class)->adminUlidPattern())->name('providers.youtube.destinations.approve')->middleware(['can:manage-providers', 'password.confirm']);
         Route::get('/imports', [OperationsController::class, 'imports'])->name('imports.index');
         Route::get('/imports/preview', [ProviderImportPreviewController::class, 'index'])->name('imports.preview');
-        Route::post('/imports/search', [ProviderImportDiscoveryController::class, 'search'])->name('imports.search');
+        Route::get('/imports/search', [ProviderImportDiscoveryController::class, 'search'])->name('imports.search');
         Route::post('/imports/select', [ProviderImportDiscoveryController::class, 'select'])->name('imports.select');
         Route::post('/imports/preview', [ProviderImportPreviewController::class, 'preview'])->name('imports.preview.build');
         Route::post('/imports/preview/execute', [ProviderImportPlanController::class, 'execute'])->name('imports.preview.execute')->middleware(['can:manage-providers', 'password.confirm']);
