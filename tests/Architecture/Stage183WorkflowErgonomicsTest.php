@@ -11,6 +11,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     $adminSidebar = file_get_contents(base_path('resources/views/components/admin/sidebar.blade.php'));
     $adminDashboard = file_get_contents(base_path('resources/views/admin/dashboard.blade.php'));
     $providerAdmin = file_get_contents(base_path('resources/views/admin/operations/providers.blade.php'));
+    $systemAdmin = file_get_contents(base_path('resources/views/admin/operations/system.blade.php'));
 
     expect($cli)
         ->toContain('./songchart close')
@@ -44,24 +45,33 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->not->toContain("! app()->environment('local')");
 
     expect($adminSidebar)
-        ->toContain("'label' => 'Nguồn dữ liệu & API'")
-        ->toContain("route('admin.providers.index')");
+        ->toContain("'label' => 'Nguồn dữ liệu'")
+        ->toContain("'label' => 'Thiết lập hệ thống'")
+        ->toContain("route('admin.providers.index')")
+        ->toContain("route('admin.system.index')");
 
     expect($adminDashboard)
-        ->toContain('Cấu hình nguồn dữ liệu')
-        ->toContain('Nguồn dữ liệu & API')
+        ->toContain('Thiết lập API & tích hợp')
+        ->toContain("route('admin.system.index')")
+        ->toContain('#api-integrations')
         ->toContain('manage-providers');
 
     expect($providerAdmin)
-        ->toContain('Cấu hình nguồn dữ liệu & API')
+        ->toContain('Cấu hình API nằm trong Thiết lập hệ thống')
+        ->toContain('Thiết lập hệ thống → API & tích hợp')
+        ->toContain("route('admin.system.index')")
+        ->not->toContain('name="musicbrainz_user_agent"')
+        ->not->toContain('name="youtube_api_key"');
+
+    expect($systemAdmin)
+        ->toContain('id="api-integrations"')
+        ->toContain('API & tích hợp')
         ->toContain('musicbrainz_user_agent')
         ->toContain('youtube_api_key')
-        ->toContain('Admin DB')
-        ->toContain('.env')
-        ->toContain('Không cần nhớ biến môi trường')
-        ->toContain('Trạng thái, bật/tắt và test nguồn')
-        ->toContain('provider_manager')
-        ->toContain('super_admin');
+        ->toContain('Admin DB (mã hóa)')
+        ->toContain('.env fallback')
+        ->toContain("route('admin.providers.configuration.update'")
+        ->toContain('manage-providers');
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
     $candidateBlock = (string) ($candidateMatch['block'] ?? '');
