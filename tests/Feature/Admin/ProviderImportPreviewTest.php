@@ -70,10 +70,10 @@ it('shows search-first import as a first-class admin navigation destination', fu
 
 it('explains lyrics search honestly when no approved lyrics provider exists', function (): void {
     $this->actingAs(stage1813ProviderAdmin())
-        ->post(route('admin.imports.search'), [
+        ->get(route('admin.imports.search', [
             'intent' => 'lyrics',
             'query' => 'hello from the other side',
-        ])
+        ]))
         ->assertOk()
         ->assertSee('chưa có nguồn tìm kiếm lời bài hát được duyệt');
 });
