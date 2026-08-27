@@ -24,7 +24,7 @@ it('keeps development two factor bypass bounded to approved non-production runti
     $middleware = (string) file_get_contents(base_path('app/Http/Middleware/EnsureConfirmedTwoFactorAuthentication.php'));
 
     expect($middleware)
-        ->toContain("$twoFactorMode = (string) config('songchart.security.admin_2fa_mode', 'required')")
+        ->toContain('$twoFactorMode = (string) config(\'songchart.security.admin_2fa_mode\', \'required\')')
         ->toContain("app()->environment(['local', 'demo', 'testing'])")
-        ->toContain("$requiresTwoFactor = $twoFactorMode === 'required' || ! $mayDisableTwoFactor");
+        ->toContain('$requiresTwoFactor = $twoFactorMode === \'required\' || ! $mayDisableTwoFactor');
 });
