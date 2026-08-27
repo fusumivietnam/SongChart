@@ -29,6 +29,7 @@ use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
 use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -62,6 +63,14 @@ final class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict(! $this->app->isProduction());
 
         if ($this->app->environment('demo')) {
+            $demoUrl = rtrim((string) config('app.url'), '/');
+            $scheme = parse_url($demoUrl, PHP_URL_SCHEME);
+
+            if ($demoUrl !== '' && in_array($scheme, ['http', 'https'], true)) {
+                URL::forceRootUrl($demoUrl);
+                URL::forceScheme($scheme);
+            }
+
             Vite::createAssetPathsUsing(
                 static fn (string $path, ?bool $secure = null): string => '/'.ltrim($path, '/'),
             );
