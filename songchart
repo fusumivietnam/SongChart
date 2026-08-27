@@ -122,8 +122,8 @@ else:
 p.write_text(t)
 PY2
   printf '[SongChart demo] URL authority: %s\n' "$SONGCHART_DEMO_APP_URL"
-  printf '[SongChart demo] Ensuring development PostgreSQL authority is running.\n'
-  dev up -d postgres
+  printf '[SongChart demo] Ensuring shared development DB and queue authority are running.\n'
+  dev up -d postgres redis app queue
   demo build app
   printf '[SongChart demo] Repairing dependency/runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
   demo run --rm --user root app sh -lc \
@@ -216,7 +216,7 @@ SongChart Linux-first development CLI
 Development/live test:
   ./songchart dev ready     start persistent development runtime on port 8000
   ./songchart demo setup    prepare production-like public demo on port 8001 using development PostgreSQL data
-  ./songchart demo up       start demo app without a second queue worker
+  ./songchart demo up       start demo app and ensure the single shared development queue worker authority
 
 Focused verification:
   ./songchart dev test <path>              build/reuse Docker cache, then run isolated focused lane
@@ -281,7 +281,7 @@ case "$cmd" in
   sub="${1:-status}"; shift || true; require_docker
   case "$sub" in
    setup) setup_demo ;;
-   up) ensure_dev_config; ensure_demo_config; dev up -d postgres; demo up -d redis app; demo ps; printf '\nLive demo: '; demo_url ;;
+   up) ensure_dev_config; ensure_demo_config; printf '[SongChart demo] Ensuring shared development DB and queue authority are running.\n'; dev up -d postgres redis app queue; demo up -d redis app; demo ps; printf '\nLive demo: '; demo_url ;;
    down) demo down --remove-orphans ;;
    status) ensure_demo_config; demo ps ;;
    logs) ensure_demo_config; demo logs --follow --tail 200 "$@" ;;
