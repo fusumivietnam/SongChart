@@ -122,8 +122,8 @@ else:
 p.write_text(t)
 PY2
   printf '[SongChart demo] URL authority: %s\n' "$SONGCHART_DEMO_APP_URL"
-  printf '[SongChart demo] Ensuring single shared development queue worker authority is running.\n'
-  dev up -d postgres redis app queue
+  printf '[SongChart demo] Ensuring development PostgreSQL authority is running.\n'
+  dev up -d postgres
   demo build app
   printf '[SongChart demo] Repairing dependency/runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
   demo run --rm --user root app sh -lc \
@@ -201,12 +201,14 @@ prepare_candidate_authority(){
 }
 help(){ cat <<'EOF'
 SongChart Linux-first development CLI
-  ./songchart ai status|doctor
+  ./songchart ai status
+  ./songchart ai doctor
   ./songchart dev setup|ready|up|down|status|logs|shell|url
   ./songchart dev url
   ./songchart dev test [--no-build] [test-path]
   ./songchart dev db backup|restore [dump-path]
   ./songchart demo setup|up|down|status|logs|url
+  ./songchart demo url
   ./songchart artisan|composer|npm <args...>
   ./songchart context [args...]
   ./songchart candidate [--prepare]
@@ -219,6 +221,11 @@ Development/live test:
   ./songchart dev url       print the governed development URL for local/Codespaces
   ./songchart demo setup    prepare production-like public demo on port 8001 using development PostgreSQL data
   ./songchart demo up       start demo app and ensure the single shared development queue worker authority
+  ./songchart demo url      print the governed demo URL for local/Codespaces
+
+AI session:
+  ./songchart ai status     print current stage, Git, context and verification status
+  ./songchart ai doctor     produce the secret-redacted diagnostic bundle through scripts/ai-doctor.sh
 
 Focused verification:
   ./songchart dev test <path>              build/reuse Docker cache, then run isolated focused lane
