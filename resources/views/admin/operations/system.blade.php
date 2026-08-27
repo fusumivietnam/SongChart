@@ -50,7 +50,7 @@
                                 <p class="text-xs leading-5 text-slate-500">MusicBrainz không cần API key. Dùng email liên hệ thật; rate limit và timeout do policy hệ thống quản lý.</p>
                             @else
                                 <label class="block text-sm font-semibold">YouTube Data API credential pool
-                                    <textarea name="youtube_api_keys" rows="5" autocomplete="off" class="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5 font-mono text-sm" placeholder="Một API key mỗi dòng. Để trống nếu không muốn thay đổi pool hiện tại.">{{ old('youtube_api_keys') }}</textarea>
+                                    <textarea name="youtube_api_keys" rows="5" autocomplete="off" class="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5 font-mono text-sm" placeholder="Một API key mỗi dòng. Để trống nếu không muốn thay đổi pool hiện tại."></textarea>
                                 </label>
                                 <p class="text-xs leading-5 text-slate-500">Nhập một hoặc nhiều key, mỗi dòng một key. Khi có giá trị, danh sách mới sẽ thay thế pool hiện tại. Secret được mã hóa, không đọc ngược ra UI. Resolver chỉ chọn key đang enabled và không cooldown; quota guard của YouTube vẫn là authority và rotation không được dùng để né quota/ToS.</p>
                             @endif
