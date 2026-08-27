@@ -7,6 +7,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     $demo = file_get_contents(base_path('compose.demo.yml'));
     $demoEnv = file_get_contents(base_path('.env.demo.example'));
     $appProvider = file_get_contents(base_path('app/Providers/AppServiceProvider.php'));
+    $twoFactorMiddleware = file_get_contents(base_path('app/Http/Middleware/EnsureConfirmedTwoFactorAuthentication.php'));
 
     expect($cli)
         ->toContain('./songchart close')
@@ -24,6 +25,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
 
     expect($demoEnv)
         ->toContain("APP_URL=\n")
+        ->toContain('SONGCHART_ADMIN_2FA_MODE=disabled')
         ->not->toContain('APP_URL=http://127.0.0.1:8001')
         ->not->toContain('APP_URL=http://localhost:8001');
 
@@ -33,6 +35,10 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('URL::forceScheme($scheme)')
         ->toContain('Vite::createAssetPathsUsing')
         ->toContain("'/'.ltrim(\$path, '/')");
+
+    expect($twoFactorMiddleware)
+        ->toContain("config('songchart.security.admin_2fa_mode', 'required') === 'required'")
+        ->not->toContain("! app()->environment('local')");
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
     $candidateBlock = (string) ($candidateMatch['block'] ?? '');
