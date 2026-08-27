@@ -26,6 +26,10 @@ services:
       start_period: 5s
     volumes:
       - songchart_dev_redis:/data
+    networks:
+      default:
+        aliases:
+          - songchart-shared-queue
 
   app:
     user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
@@ -49,6 +53,10 @@ services:
       REDIS_PORT: "6379"
       REDIS_CACHE_DB: "1"
       REDIS_CACHE_CONNECTION: cache
+      REDIS_QUEUE_CONNECTION: queue
+      REDIS_QUEUE_HOST: redis
+      REDIS_QUEUE_PORT: "6379"
+      REDIS_QUEUE_DB: "0"
       QUEUE_CONNECTION: redis
       CACHE_STORE: redis
       SESSION_DRIVER: database
@@ -114,6 +122,10 @@ services:
       REDIS_PORT: "6379"
       REDIS_CACHE_DB: "1"
       REDIS_CACHE_CONNECTION: cache
+      REDIS_QUEUE_CONNECTION: queue
+      REDIS_QUEUE_HOST: redis
+      REDIS_QUEUE_PORT: "6379"
+      REDIS_QUEUE_DB: "0"
       QUEUE_CONNECTION: redis
       CACHE_STORE: redis
       SESSION_DRIVER: database
