@@ -22,13 +22,24 @@ Describe the single outcome this task owns.
 
 - List every planned production, test, documentation, configuration, and verifier file.
 
+## Planned impact
+
+- Planned changed paths:
+- Expected semantic authorities:
+- Expected reverse verification consumers:
+- Expected focused checks:
+- Record `./songchart impact <planned-paths...>` evidence before implementation when paths are known.
+
 ## Allowed incidental files
 
 - List formatter-only, generated, lockfile, manifest, or delivery metadata files that may change without expanding product scope.
 
-## Scope deviations
+## Post-diff impact and scope deviations
 
-- Record any changed file outside the planned surface with reason, impact, and verification. Use `None` when there are no deviations.
+- Run `./songchart impact --diff` after implementation and before closure.
+- Record newly impacted authorities/consumers/checks that were not in the planned impact.
+- Record every changed file outside the planned surface with reason, impact, and verification.
+- Use `None` only when actual diff confirms no deviations.
 
 ## Authority and official sources
 
@@ -85,11 +96,14 @@ Describe the single outcome this task owns.
 
 ## Verification plan
 
-- Impact lane:
+- Planned impact lane: `./songchart impact <planned-paths...>`.
+- Actual-diff lane: `./songchart impact --diff`.
+- Generated authority reconcile: `./songchart reconcile` when registered source inputs changed.
+- Collect-all diagnostic lane: `./songchart audit` when broad static/governance feedback is useful.
 - Focused implementation gates:
-- Stage closure owner: `composer stage:verify`
-- Canonical closure owner: `composer canonical:verify`
-- Packaging owner: `composer release:package`
+- Stage closure owner: `composer stage:verify` / `./songchart candidate`.
+- Canonical closure owner: `composer canonical:verify` / `./songchart verify` or governed `./songchart close`.
+- Packaging owner: `composer release:package`.
 - Explicitly avoided duplicate/nested gates:
 
 ## Tests and verification
@@ -103,6 +117,13 @@ Describe the single outcome this task owns.
 ## Documentation impact
 
 - Authorities, ADRs, status, indexes, and operational notes to update.
+
+## Delivery and handoff
+
+- Current writer/owner for overlapping source surfaces:
+- Handoff commit SHA when switching AI/device/writer:
+- Rebase/cherry-pick plan if branch diverged:
+- Exact closed HEAD expected before PR merge:
 
 ## Rollback
 
