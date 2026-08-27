@@ -6,6 +6,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
     $cli = file_get_contents(base_path('songchart'));
     $demo = file_get_contents(base_path('compose.demo.yml'));
     $demoEnv = file_get_contents(base_path('.env.demo.example'));
+    $appProvider = file_get_contents(base_path('app/Providers/AppServiceProvider.php'));
 
     expect($cli)
         ->toContain('./songchart close')
@@ -25,6 +26,11 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain("APP_URL=\n")
         ->not->toContain('APP_URL=http://127.0.0.1:8001')
         ->not->toContain('APP_URL=http://localhost:8001');
+
+    expect($appProvider)
+        ->toContain("environment('demo')")
+        ->toContain('Vite::createAssetPathsUsing')
+        ->toContain("'/'.ltrim(\$path, '/')");
 
     expect(preg_match('/^ candidate\)\n(?<block>.*?)^ close\)\n/ms', $cli, $candidateMatch))->toBe(1);
     $candidateBlock = (string) ($candidateMatch['block'] ?? '');
