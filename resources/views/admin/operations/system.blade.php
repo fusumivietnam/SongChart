@@ -17,8 +17,6 @@
         <div class="grid gap-4 xl:grid-cols-2">
             @forelse($providers->whereIn('slug', ['musicbrainz', 'youtube']) as $provider)
                 @php($configuration = is_array($provider->configuration) ? $provider->configuration : [])
-                @php($secretKeys = is_array($configuration['_secrets'] ?? null) ? array_keys($configuration['_secrets']) : [])
-                @php($hasAdminSecret = $provider->slug === 'youtube' && in_array('api_key', $secretKeys, true))
                 @php($hasEnvYoutubeKey = $provider->slug === 'youtube' && (string) config('songchart.providers.youtube.api_key', '') !== '')
                 @php($musicBrainzFallback = (string) config('songchart.providers.musicbrainz.user_agent', 'SongChartWeb/1.0 (contact@example.com)'))
                 <x-ui.card>
@@ -26,17 +24,17 @@
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <h3 class="font-bold">{{ $provider->name }}</h3>
-                                <p class="mt-1 text-sm text-slate-500">{{ $provider->slug === 'musicbrainz' ? 'Nhận diện ứng dụng khi gọi MusicBrainz API.' : 'Credential cho YouTube Data API.' }}</p>
+                                <p class="mt-1 text-sm text-slate-500">{{ $provider->slug === 'musicbrainz' ? 'Nhận diện ứng dụng khi gọi MusicBrainz API.' : 'Credential pool cho YouTube Data API.' }}</p>
                             </div>
                             <x-ui.badge :variant="$provider->is_enabled ? 'success' : 'warning'">{{ $provider->is_enabled ? 'Đang hoạt động' : 'Đang tạm ngừng' }}</x-ui.badge>
                         </div>
 
                         @if($provider->slug === 'youtube')
-                            <div class="mt-4 rounded-xl border p-3 text-sm {{ $hasAdminSecret ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : ($hasEnvYoutubeKey ? 'border-blue-200 bg-blue-50 text-blue-900' : 'border-amber-200 bg-amber-50 text-amber-900') }}">
-                                @if($hasAdminSecret)
-                                    Credential: <strong>Admin DB (mã hóa)</strong>.
+                            <div class="mt-4 rounded-xl border p-3 text-sm {{ ($youtubeCredentialCount ?? 0) > 0 ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : ($hasEnvYoutubeKey ? 'border-blue-200 bg-blue-50 text-blue-900' : 'border-amber-200 bg-amber-50 text-amber-900') }}">
+                                @if(($youtubeCredentialCount ?? 0) > 0)
+                                    Credential pool: <strong>{{ $youtubeCredentialCount }} key trong Admin DB (mã hóa)</strong>.
                                 @elseif($hasEnvYoutubeKey)
-                                    Credential: <strong>.env fallback</strong>. Nhập key để chuyển authority sang Admin DB.
+                                    Credential: <strong>.env fallback</strong>. Thêm pool bên dưới để chuyển authority sang Admin DB.
                                 @else
                                     Credential: <strong>chưa cấu hình</strong>.
                                 @endif
@@ -51,10 +49,10 @@
                                 </label>
                                 <p class="text-xs leading-5 text-slate-500">MusicBrainz không cần API key. Dùng email liên hệ thật; rate limit và timeout do policy hệ thống quản lý.</p>
                             @else
-                                <label class="block text-sm font-semibold">YouTube Data API key
-                                    <input type="password" name="youtube_api_key" autocomplete="new-password" class="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5" placeholder="{{ $hasAdminSecret ? 'Đã cấu hình — để trống nếu không đổi' : 'Dán API key tại đây' }}">
+                                <label class="block text-sm font-semibold">YouTube Data API credential pool
+                                    <textarea name="youtube_api_keys" rows="5" autocomplete="off" class="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5 font-mono text-sm" placeholder="Một API key mỗi dòng. Để trống nếu không muốn thay đổi pool hiện tại.">{{ old('youtube_api_keys') }}</textarea>
                                 </label>
-                                <p class="text-xs leading-5 text-slate-500">Secret chỉ được ghi mới khi có giá trị; form không đọc ngược credential đã lưu.</p>
+                                <p class="text-xs leading-5 text-slate-500">Nhập một hoặc nhiều key, mỗi dòng một key. Khi có giá trị, danh sách mới sẽ thay thế pool hiện tại. Secret được mã hóa, không đọc ngược ra UI. Resolver chỉ chọn key đang enabled và không cooldown; quota guard của YouTube vẫn là authority và rotation không được dùng để né quota/ToS.</p>
                             @endif
 
                             <label class="block text-sm font-semibold">Trạng thái vận hành
@@ -79,7 +77,7 @@
                 <x-ui.card><div class="p-5"><h3 class="font-bold">Chưa có integration khả dụng</h3><p class="mt-2 text-sm text-slate-600">Provider Registry chưa có MusicBrainz hoặc YouTube. Chạy bootstrap provider registry trước khi cấu hình.</p></div></x-ui.card>
             @endforelse
         </div>
-        <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600">Các tích hợp chưa có adapter vận hành hoàn chỉnh sẽ chưa mở form credential. Khi adapter được triển khai, credential phải đi vào khu Thiết lập hệ thống này. Provider có nhiều credential sẽ dùng credential pool có policy riêng; không dùng rotation để vượt quota hoặc điều khoản của nhà cung cấp.</div>
+        <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600">Các tích hợp chưa có adapter vận hành hoàn chỉnh sẽ chưa mở form credential. Khi adapter được triển khai, credential phải đi vào khu Thiết lập hệ thống này. Provider có nhiều credential dùng credential pool có policy riêng; không dùng rotation để vượt quota hoặc điều khoản của nhà cung cấp.</div>
     @else
         <x-ui.card><div class="p-5"><h3 class="font-bold">API & tích hợp</h3><p class="mt-2 text-sm leading-6 text-slate-600">Tài khoản hiện tại không có quyền <code>manage-providers</code>. Super Admin hoặc Provider Manager mới có thể thay đổi credential và trạng thái tích hợp.</p></div></x-ui.card>
     @endcan
