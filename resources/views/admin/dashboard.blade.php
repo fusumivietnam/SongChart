@@ -6,7 +6,7 @@
         <x-slot:actions>
             <div class="flex flex-wrap gap-2">
                 @can('manage-providers')
-                    <a href="{{ route('admin.providers.index') }}"><x-ui.button size="sm">Cấu hình nguồn dữ liệu</x-ui.button></a>
+                    <a href="{{ route('admin.system.index') }}#api-integrations"><x-ui.button size="sm">Thiết lập API & tích hợp</x-ui.button></a>
                     <a href="{{ route('admin.imports.preview') }}"><x-ui.button size="sm" variant="secondary">Nhập dữ liệu</x-ui.button></a>
                 @endcan
                 <a href="{{ route('home') }}"><x-ui.button size="sm" variant="secondary">Mở trang công khai</x-ui.button></a>
@@ -16,7 +16,7 @@
 
     @cannot('manage-providers')
         <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            Tài khoản hiện tại có quyền vào Admin nhưng chưa có quyền <strong>manage-providers</strong>, nên phần cấu hình nguồn dữ liệu và API không được hiển thị.
+            Tài khoản hiện tại có quyền vào Admin nhưng chưa có quyền <strong>manage-providers</strong>, nên thiết lập API/tích hợp và thao tác nguồn dữ liệu đang ở chế độ chỉ đọc.
         </div>
     @endcannot
 
@@ -27,7 +27,7 @@
     <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Tình trạng dữ liệu" data-dashboard-section="metrics">@foreach($metrics as $metric)<x-ui.card><div data-dashboard-metric="{{ $metric['key'] }}" class="flex h-full flex-col"><p class="text-sm font-semibold text-slate-500">{{ $metric['label'] }}</p><p class="mt-3 text-3xl font-extrabold tracking-tight">{{ number_format($metric['value']) }}</p><p class="mt-auto pt-3 text-xs text-slate-500">{{ $metric['note'] }}</p></div></x-ui.card>@endforeach</section>
 
     <div class="mt-6 grid gap-6 xl:grid-cols-2">
-        <section aria-labelledby="provider-heading"><x-ui.card><div class="p-5"><div class="flex items-start justify-between gap-4"><div><h2 id="provider-heading" class="text-xl font-bold">Nguồn dữ liệu & API</h2><p class="mt-1 text-sm text-slate-500">Bật/tắt nguồn, cấu hình API/nhận diện và kiểm tra trạng thái trước khi nhập dữ liệu.</p></div>@can('manage-providers')<a class="text-sm font-semibold underline" href="{{ route('admin.providers.index') }}">Cấu hình</a>@endcan</div><div class="mt-5 space-y-3">@forelse($providers->take(6) as $provider)<div class="flex items-center gap-3 rounded-xl bg-slate-50 p-3"><span class="h-2.5 w-2.5 rounded-full {{ $provider->is_enabled ? 'bg-emerald-500' : 'bg-amber-500' }}"></span><div class="min-w-0 flex-1"><p class="truncate text-sm font-semibold">{{ $provider->name }}</p><p class="text-xs text-slate-500">{{ $provider->is_enabled ? 'Đang sử dụng' : 'Đang tạm ngừng' }}</p></div></div>@empty<x-ui.empty-state title="Chưa có nguồn dữ liệu" description="Nguồn dữ liệu sẽ xuất hiện ở đây sau khi được đăng ký." />@endforelse</div></div></x-ui.card></section>
+        <section aria-labelledby="provider-heading"><x-ui.card><div class="p-5"><div class="flex items-start justify-between gap-4"><div><h2 id="provider-heading" class="text-xl font-bold">Nguồn dữ liệu</h2><p class="mt-1 text-sm text-slate-500">Theo dõi trạng thái provider; credential và thông tin kết nối được quản lý riêng trong Thiết lập hệ thống.</p></div>@can('manage-providers')<a class="text-sm font-semibold underline" href="{{ route('admin.providers.index') }}">Xem nguồn</a>@endcan</div><div class="mt-5 space-y-3">@forelse($providers->take(6) as $provider)<div class="flex items-center gap-3 rounded-xl bg-slate-50 p-3"><span class="h-2.5 w-2.5 rounded-full {{ $provider->is_enabled ? 'bg-emerald-500' : 'bg-amber-500' }}"></span><div class="min-w-0 flex-1"><p class="truncate text-sm font-semibold">{{ $provider->name }}</p><p class="text-xs text-slate-500">{{ $provider->is_enabled ? 'Đang sử dụng' : 'Đang tạm ngừng' }}</p></div></div>@empty<x-ui.empty-state title="Chưa có nguồn dữ liệu" description="Nguồn dữ liệu sẽ xuất hiện ở đây sau khi được đăng ký." />@endforelse</div></div></x-ui.card></section>
         <section aria-labelledby="notice-heading"><x-ui.card><div class="p-5"><h2 id="notice-heading" class="text-xl font-bold">Tình trạng chung</h2><div class="mt-4 space-y-3">@foreach($systemNotices as $notice)<div class="rounded-xl border border-slate-200 p-4" data-severity="{{ $notice['severity'] }}"><p class="text-sm font-bold">{{ $notice['title'] }}</p><p class="mt-1 text-sm leading-6 text-slate-500">{{ $notice['description'] }}</p></div>@endforeach</div></div></x-ui.card></section>
     </div>
 
