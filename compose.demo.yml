@@ -43,7 +43,7 @@ services:
       COMPOSER_CACHE_DIR: /tmp/composer-cache
       HOME: /tmp
       NPM_CONFIG_CACHE: /tmp/npm-cache
-    command: ["sh", "-lc", "php artisan db:seed --class=ProviderRegistrySeeder --force && php artisan optimize:clear && cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
+    command: ["sh", "-lc", "php artisan migrate --force && php artisan db:seed --class=ProviderRegistrySeeder --force && php artisan optimize:clear && cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
     ports:
       - "127.0.0.1:${SONGCHART_DEMO_PORT:-8001}:8000"
     depends_on:
