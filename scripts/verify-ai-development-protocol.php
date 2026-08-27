@@ -15,11 +15,16 @@ if (! is_file($contractPath) || ! is_file($protocolPath)) {
     $protocol = (string) file_get_contents($protocolPath);
 
     foreach ([
-        'php scripts/resolve-repository-impact.php',
+        './songchart impact <planned-path',
+        './songchart impact --diff',
+        './songchart reconcile',
+        './songchart audit',
         'composer stage:verify',
         'composer canonical:verify',
         'composer release:package',
         'Do not add another verifier',
+        'one writer per overlapping source surface',
+        'Runtime/generated artifact ownership',
     ] as $needle) {
         if (! str_contains($protocol, $needle)) {
             $errors[] = "AI development protocol is missing required workflow invariant [{$needle}].";
@@ -28,6 +33,22 @@ if (! is_file($contractPath) || ! is_file($protocolPath)) {
 
     if (($contract['documentation_rule'] ?? null) === null) {
         $errors[] = 'AI development contract must define the thin-bootstrap documentation rule.';
+    }
+
+    $expectedPhases = [
+        'research_orient',
+        'planned_impact',
+        'implement',
+        'post_diff_impact',
+        'reconcile_generated_authority',
+        'collect_all_audit',
+        'focused_verification',
+        'candidate',
+        'canonical',
+        'delivery',
+    ];
+    if (($contract['workflow']['ordered_phases'] ?? null) !== $expectedPhases) {
+        $errors[] = 'AI development contract workflow phases drifted from the governed golden path.';
     }
 }
 
@@ -56,11 +77,16 @@ if (! is_file($root.'/scripts/ai-status.sh')) {
 }
 
 $songchart = (string) file_get_contents($root.'/songchart');
-if (! str_contains($songchart, 'ai status') || ! str_contains($songchart, 'scripts/ai-status.sh')) {
-    $errors[] = 'Linux songchart CLI must expose ai status through scripts/ai-status.sh.';
-}
-if (! str_contains($songchart, 'ai doctor') || ! str_contains($songchart, 'scripts/ai-doctor.sh')) {
-    $errors[] = 'Linux songchart CLI must expose ai doctor through scripts/ai-doctor.sh.';
+foreach ([
+    'ai status' => 'scripts/ai-status.sh',
+    'ai doctor' => 'scripts/ai-doctor.sh',
+    'impact)' => 'scripts/resolve-repository-impact.php',
+    'reconcile)' => 'reconcile_authority',
+    'audit)' => 'scripts/run-workflow-audit.php',
+] as $surface => $implementation) {
+    if (! str_contains($songchart, $surface) || ! str_contains($songchart, $implementation)) {
+        $errors[] = "Linux songchart CLI must expose [{$surface}] through [{$implementation}].";
+    }
 }
 
 foreach (['songchart.bat', 'scripts/songchart.ps1', 'scripts/ai-status.ps1'] as $retiredWindowsEntrypoint) {
@@ -112,20 +138,17 @@ if (! is_dir($skillsRoot)) {
         $skillPath = $skillDirectory.'/SKILL.md';
         if (! is_file($skillPath)) {
             $errors[] = "AI skill [{$expectedName}] is missing SKILL.md.";
-
             continue;
         }
 
         $source = (string) file_get_contents($skillPath);
         if (! str_starts_with($source, "---\n")) {
             $errors[] = "AI skill [{$expectedName}] must start with YAML frontmatter at byte 0.";
-
             continue;
         }
 
         if (preg_match('/\A---\n(?<frontmatter>.*?)\n---(?:\n|\z)/s', $source, $matches) !== 1) {
             $errors[] = "AI skill [{$expectedName}] has invalid YAML frontmatter delimiters.";
-
             continue;
         }
 
@@ -137,7 +160,6 @@ if (! is_dir($skillsRoot)) {
             }
             if (preg_match('/^(?<key>[A-Za-z0-9_-]+):\s*(?<value>.*)$/', $line, $fieldMatch) !== 1) {
                 $errors[] = "AI skill [{$expectedName}] frontmatter contains unsupported YAML structure [{$line}].";
-
                 continue 2;
             }
             $fields[$fieldMatch['key']] = trim((string) $fieldMatch['value'], " \t\n\r\0\x0B\"'");
