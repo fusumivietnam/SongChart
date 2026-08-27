@@ -29,6 +29,8 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
 
     expect($appProvider)
         ->toContain("environment('demo')")
+        ->toContain('URL::forceRootUrl($demoUrl)')
+        ->toContain('URL::forceScheme($scheme)')
         ->toContain('Vite::createAssetPathsUsing')
         ->toContain("'/'.ltrim(\$path, '/')");
 
