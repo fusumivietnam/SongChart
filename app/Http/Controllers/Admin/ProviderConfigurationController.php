@@ -41,11 +41,12 @@ final class ProviderConfigurationController extends Controller
             provider: $provider,
             settings: $settings,
             secrets: $secrets,
+            enabled: (string) $validated['provider_operational_state'] === 'enabled',
             actor: $actor,
             rationale: (string) $validated['rationale'],
             idempotencyKey: (string) $validated['idempotency_key'],
         );
 
-        return back()->with('status', 'Đã lưu cấu hình nguồn dữ liệu trong Admin DB. Cấu hình này sẽ được ưu tiên hơn .env fallback cho các yêu cầu provider tiếp theo.');
+        return back()->with('status', 'Đã lưu cấu hình và trạng thái vận hành của nguồn dữ liệu. Admin DB là authority ưu tiên hơn .env fallback cho các yêu cầu provider tiếp theo.');
     }
 }
