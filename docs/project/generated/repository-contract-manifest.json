@@ -236,7 +236,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "8005b223750f40b3f46b9066112211445aac555101735836a278d9554e5ec8ba",
+            "fingerprint": "3f5926de52d022d91709732489a0823d95224522864f15e5b7f7568c0b3e986a",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -1557,9 +1557,17 @@
         },
         {
             "target": "tests/Architecture/Stage183WorkflowErgonomicsTest.php",
-            "rule": "",
-            "classification": "unresolved",
-            "semantic_authorities": []
+            "rule": "stage-18.3-workflow",
+            "classification": "behavioral",
+            "semantic_authorities": [
+                "docker-development",
+                "runtime-environment",
+                "verification-topology",
+                "verification-command-surface",
+                "operational-contracts",
+                "authorization",
+                "application-data-boundary"
+            ]
         },
         {
             "target": "tests/Architecture/TechnologyStackAuthorityTest.php",
@@ -1630,5 +1638,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "7b246958e5d638bcfa2ecf9da79edc71658ac5330f7120cfe021e726770716f5"
+    "graph_fingerprint": "3564f7cfbbf7e69fc48ec23a3e96880716eb4f537bcbae7cc11a81790cea6d0d"
 }
