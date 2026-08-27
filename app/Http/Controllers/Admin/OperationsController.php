@@ -24,13 +24,21 @@ use Throwable;
 final class OperationsController extends Controller
 {
     public const PROVIDERS_USE_CASE = 'admin.providers.index';
+
     public const PROVIDER_SHOW_USE_CASE = 'admin.providers.show';
+
     public const IMPORTS_USE_CASE = 'admin.imports.index';
+
     public const IMPORT_SHOW_USE_CASE = 'admin.imports.show';
+
     public const QUARANTINE_USE_CASE = 'admin.quarantine.index';
+
     public const USERS_USE_CASE = 'admin.users.index';
 
-    public function catalog(AdminInformationArchitecture $information): View { return view('admin.operations.catalog', $information->catalog()); }
+    public function catalog(AdminInformationArchitecture $information): View
+    {
+        return view('admin.operations.catalog', $information->catalog());
+    }
 
     public function providers(Request $request, ProviderOperationsConsole $console, AdminOperationsPresentation $presentation): View
     {
@@ -70,20 +78,36 @@ final class OperationsController extends Controller
         $youtubeRecording = null;
         $youtubeCandidates = [];
         $youtubeError = null;
-        if ($providerSlug === 'musicbrainz') { $providerRateState = $requestGate->state($ratePolicies->for('musicbrainz', 'artist.search')); }
+        if ($providerSlug === 'musicbrainz') {
+            $providerRateState = $requestGate->state($ratePolicies->for('musicbrainz', 'artist.search'));
+        }
         if ($providerSlug === 'musicbrainz') {
             try {
-                if ($musicBrainzQuery !== '') { $musicBrainzResults = $workbench->search($musicBrainzQuery); }
-                elseif ($musicBrainzReleaseGroupQuery !== '') { $musicBrainzReleaseGroupResults = $releaseWorkbench->searchReleaseGroups($musicBrainzReleaseGroupQuery); }
-                elseif ($musicBrainzReleaseQuery !== '') { $musicBrainzReleaseResults = $releaseWorkbench->searchReleases($musicBrainzReleaseQuery); }
-                elseif ($musicBrainzRecordingQuery !== '') { $musicBrainzRecordingResults = $recordingWorkbench->search($musicBrainzRecordingQuery); }
-                elseif ($musicBrainzWorkQuery !== '') { $musicBrainzWorkResults = $workWorkbench->search($musicBrainzWorkQuery); }
-            } catch (Throwable $exception) { $musicBrainzError = $exception->getMessage(); }
+                if ($musicBrainzQuery !== '') {
+                    $musicBrainzResults = $workbench->search($musicBrainzQuery);
+                } elseif ($musicBrainzReleaseGroupQuery !== '') {
+                    $musicBrainzReleaseGroupResults = $releaseWorkbench->searchReleaseGroups($musicBrainzReleaseGroupQuery);
+                } elseif ($musicBrainzReleaseQuery !== '') {
+                    $musicBrainzReleaseResults = $releaseWorkbench->searchReleases($musicBrainzReleaseQuery);
+                } elseif ($musicBrainzRecordingQuery !== '') {
+                    $musicBrainzRecordingResults = $recordingWorkbench->search($musicBrainzRecordingQuery);
+                } elseif ($musicBrainzWorkQuery !== '') {
+                    $musicBrainzWorkResults = $workWorkbench->search($musicBrainzWorkQuery);
+                }
+            } catch (Throwable $exception) {
+                $musicBrainzError = $exception->getMessage();
+            }
         }
         if ($providerSlug === 'youtube' && $youtubeRecordingId !== '') {
-            try { $youtube = $youtubeWorkbench->search($youtubeRecordingId); $youtubeRecording = $youtube['recording']; $youtubeCandidates = $youtube['candidates']; }
-            catch (Throwable $exception) { $youtubeError = $exception->getMessage(); }
+            try {
+                $youtube = $youtubeWorkbench->search($youtubeRecordingId);
+                $youtubeRecording = $youtube['recording'];
+                $youtubeCandidates = $youtube['candidates'];
+            } catch (Throwable $exception) {
+                $youtubeError = $exception->getMessage();
+            }
         }
+
         return view('admin.operations.provider-show', [
             ...$data, 'presentation' => $presentation, 'musicBrainzQuery' => $musicBrainzQuery, 'musicBrainzResults' => $musicBrainzResults,
             'musicBrainzReleaseGroupQuery' => $musicBrainzReleaseGroupQuery, 'musicBrainzReleaseQuery' => $musicBrainzReleaseQuery,
@@ -97,15 +121,24 @@ final class OperationsController extends Controller
     }
 
     public function imports(Request $request, ProviderOperationsConsole $console, AdminOperationsPresentation $presentation): View
-    { return view('admin.operations.imports', [...$console->imports($request->query()), 'presentation' => $presentation]); }
+    {
+        return view('admin.operations.imports', [...$console->imports($request->query()), 'presentation' => $presentation]);
+    }
 
     public function importRun(string $run, ProviderOperationsConsole $console, AdminOperationsPresentation $presentation): View
-    { return view('admin.operations.import-show', [...$console->importRun($run), 'presentation' => $presentation]); }
+    {
+        return view('admin.operations.import-show', [...$console->importRun($run), 'presentation' => $presentation]);
+    }
 
     public function quarantine(Request $request, ProviderOperationsConsole $console): View
-    { return view('admin.operations.quarantine', $console->quarantine($request->query())); }
+    {
+        return view('admin.operations.quarantine', $console->quarantine($request->query()));
+    }
 
-    public function users(AdminInformationArchitecture $information): View { return view('admin.operations.users', $information->users()); }
+    public function users(AdminInformationArchitecture $information): View
+    {
+        return view('admin.operations.users', $information->users());
+    }
 
     public function system(
         AdminInformationArchitecture $information,
@@ -114,6 +147,7 @@ final class OperationsController extends Controller
         ProviderCredentialResolver $credentials,
     ): View {
         $providerData = $console->providers([]);
+
         return view('admin.operations.system', [
             ...$information->system(),
             'providers' => $providerData['providers'],

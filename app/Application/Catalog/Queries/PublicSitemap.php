@@ -59,8 +59,8 @@ final class PublicSitemap
     }
 
     /**
-     * @param list<string> $urls
-     * @param class-string<Model> $modelClass
+     * @param  list<string>  $urls
+     * @param  class-string<Model>  $modelClass
      */
     private function appendCanonicalUrls(array &$urls, EntityType $type, string $modelClass): void
     {

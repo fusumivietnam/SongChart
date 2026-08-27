@@ -19,9 +19,9 @@ final readonly class ProviderConfigurationService
     public function __construct(private PrivilegedAuditLogger $privilegedAudit) {}
 
     /**
-     * @param array<string, scalar|null> $settings
-     * @param array<string, string|null> $secrets
-     * @param array<string, list<string>> $credentialPools
+     * @param  array<string, scalar|null>  $settings
+     * @param  array<string, string|null>  $secrets
+     * @param  array<string, list<string>>  $credentialPools
      */
     public function apply(
         Provider $provider,
@@ -41,6 +41,7 @@ final readonly class ProviderConfigurationService
                 if ($existingAudit->action !== 'configure' || (string) $existingAudit->provider_id !== (string) $locked->getKey()) {
                     throw new LogicException('Idempotency key has already been used for a different operation.');
                 }
+
                 return;
             }
             if ($enabled && ProviderStatus::from((string) $locked->getRawOriginal('status')) === ProviderStatus::Retired) {
@@ -50,18 +51,28 @@ final readonly class ProviderConfigurationService
             $configuration = $locked->configuration ?? [];
             $before = $this->safeState($locked, $configuration);
             foreach ($settings as $key => $value) {
-                if ($value === null || $value === '') { unset($configuration[$key]); } else { $configuration[$key] = $value; }
+                if ($value === null || $value === '') {
+                    unset($configuration[$key]);
+                } else {
+                    $configuration[$key] = $value;
+                }
             }
             $secretsState = $configuration['_secrets'] ?? null;
             $encryptedSecrets = is_array($secretsState) ? $secretsState : [];
             foreach ($secrets as $key => $value) {
-                if ($value === null || $value === '') { continue; }
+                if ($value === null || $value === '') {
+                    continue;
+                }
                 $encryptedSecrets[$key] = Crypt::encryptString($value);
             }
-            if ($encryptedSecrets !== []) { $configuration['_secrets'] = $encryptedSecrets; }
+            if ($encryptedSecrets !== []) {
+                $configuration['_secrets'] = $encryptedSecrets;
+            }
 
             foreach ($credentialPools as $kind => $values) {
-                if ($values === []) { continue; }
+                if ($values === []) {
+                    continue;
+                }
                 ProviderCredential::query()->where('provider_id', $locked->getKey())->where('kind', $kind)->delete();
                 foreach (array_values(array_unique($values)) as $index => $value) {
                     ProviderCredential::query()->create([
@@ -106,6 +117,7 @@ final readonly class ProviderConfigurationService
         unset($configuration['_secrets']);
         $credentialCounts = ProviderCredential::query()->where('provider_id', $provider->getKey())
             ->selectRaw('kind, count(*) as aggregate')->groupBy('kind')->pluck('aggregate', 'kind')->map(fn ($v) => (int) $v)->all();
+
         return [
             'settings' => $configuration,
             'configured_secret_keys' => array_values(array_filter(array_keys($secrets), 'is_string')),

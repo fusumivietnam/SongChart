@@ -34,7 +34,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
         ->toContain('/tmp/composer-cache /tmp/npm-cache')
         ->toContain('chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID')
-        ->toContain('APP_URL=' . "' + demo_url")
+        ->toContain('APP_URL='."' + demo_url")
         ->toContain('SONGCHART_DEMO_APP_URL="https://${CODESPACE_NAME}-8001.')
         ->not->toContain('demo up -d redis app queue');
 

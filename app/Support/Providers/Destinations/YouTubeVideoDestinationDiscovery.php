@@ -98,6 +98,7 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
             );
         }
         usort($candidates, static fn (VideoDestinationCandidate $a, VideoDestinationCandidate $b): int => $b->score <=> $a->score);
+
         return $candidates;
     }
 
@@ -109,12 +110,15 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
         $titleScore = $needle !== '' && str_contains($haystack, $needle) ? 50 : 0;
         $artist = $this->normalize($this->artistCredit($recording));
         $artistScore = $artist !== '' && (str_contains($haystack, $artist) || str_contains($this->normalize($channelTitle), $artist)) ? 25 : 0;
-        $durationScore = 0; $durationDelta = null; $canonicalDuration = $recording->duration_ms;
+        $durationScore = 0;
+        $durationDelta = null;
+        $canonicalDuration = $recording->duration_ms;
         if (is_int($canonicalDuration) && $canonicalDuration > 0 && $durationMs !== null) {
             $durationDelta = abs($canonicalDuration - $durationMs);
             $durationScore = $durationDelta <= 3000 ? 20 : ($durationDelta <= 10000 ? 10 : 0);
         }
         $officialMetadataSignal = preg_match('/\b(official|topic|vevo)\b/i', $videoTitle.' '.$channelTitle) === 1 ? 5 : 0;
+
         return [min(100, $titleScore + $artistScore + $durationScore + $officialMetadataSignal), [
             'title_match' => $titleScore, 'artist_match' => $artistScore, 'duration_match' => $durationScore,
             'duration_delta_ms' => $durationDelta, 'official_metadata_signal' => $officialMetadataSignal,
@@ -125,22 +129,37 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
     private function artistCredit(Recording $recording): string
     {
         $recording->loadMissing('artists');
+
         return trim($recording->artists->map(function (Artist $artist): string {
-            $pivot = $artist->getRelation('pivot'); $creditedName = $artist->name; $joinPhrase = '';
+            $pivot = $artist->getRelation('pivot');
+            $creditedName = $artist->name;
+            $joinPhrase = '';
             if ($pivot instanceof Pivot) {
-                $pivotCreditedName = $pivot->getAttribute('credited_name'); $pivotJoinPhrase = $pivot->getAttribute('join_phrase');
-                if (is_string($pivotCreditedName) && $pivotCreditedName !== '') { $creditedName = $pivotCreditedName; }
-                if (is_string($pivotJoinPhrase)) { $joinPhrase = $pivotJoinPhrase; }
+                $pivotCreditedName = $pivot->getAttribute('credited_name');
+                $pivotJoinPhrase = $pivot->getAttribute('join_phrase');
+                if (is_string($pivotCreditedName) && $pivotCreditedName !== '') {
+                    $creditedName = $pivotCreditedName;
+                }
+                if (is_string($pivotJoinPhrase)) {
+                    $joinPhrase = $pivotJoinPhrase;
+                }
             }
+
             return $creditedName.$joinPhrase;
         })->implode(''));
     }
 
-    private function normalize(string $value): string { return trim((string) preg_replace('/[^\pL\pN]+/u', ' ', mb_strtolower($value))); }
+    private function normalize(string $value): string
+    {
+        return trim((string) preg_replace('/[^\pL\pN]+/u', ' ', mb_strtolower($value)));
+    }
 
     private function durationMilliseconds(string $duration): ?int
     {
-        if ($duration === '' || preg_match('/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/', $duration, $m) !== 1) { return null; }
+        if ($duration === '' || preg_match('/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/', $duration, $m) !== 1) {
+            return null;
+        }
+
         return (((int) ($m[1] ?? 0) * 3600) + ((int) ($m[2] ?? 0) * 60) + (int) ($m[3] ?? 0)) * 1000;
     }
 
