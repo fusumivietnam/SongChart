@@ -16,7 +16,7 @@ final class EnsureConfirmedTwoFactorAuthentication
 
         $twoFactorMode = (string) config('songchart.security.admin_2fa_mode', 'required');
         $mayDisableTwoFactor = app()->environment(['local', 'demo', 'testing']);
-        $requiresTwoFactor = ! ($mayDisableTwoFactor && $twoFactorMode === 'disabled');
+        $requiresTwoFactor = $twoFactorMode === 'required' || ! $mayDisableTwoFactor;
 
         if (! $requiresTwoFactor) {
             return $next($request);
