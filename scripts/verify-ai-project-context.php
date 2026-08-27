@@ -30,7 +30,7 @@ foreach ($required as $relative) {
 }
 
 $songchart = is_file($root.'/songchart') ? (string) file_get_contents($root.'/songchart') : '';
-foreach (['context)', 'scripts/project-context.php', 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test]'] as $signal) {
+foreach (['context)', 'scripts/project-context.php', 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test|db]'] as $signal) {
     if (! str_contains($songchart, $signal)) {
         $errors[] = "SongChart CLI project-context contract is missing [{$signal}].";
     }
