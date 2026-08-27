@@ -169,7 +169,8 @@ function readJson(string $path): array
 
 function normalizePath(string $path): string
 {
-    return ltrim(str_replace('\\', '/', trim($path)), './');
+    $path = str_replace('\\', '/', trim($path));
+    return str_starts_with($path, './') ? substr($path, 2) : $path;
 }
 
 function pathMatches(string $pattern, string $path): bool
@@ -194,6 +195,7 @@ function changedPaths(string $root): array
     foreach ($commands as $command) {
         exec($command, $output, $status);
         if ($status !== 0) {
+            $output = [];
             continue;
         }
         foreach ($output as $path) {
