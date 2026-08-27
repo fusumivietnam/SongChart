@@ -102,7 +102,7 @@ final readonly class ProviderConfigurationService
     }
 
     /**
-     * @param array<string, mixed> $configuration
+     * @param  array<string, mixed>  $configuration
      * @return array{
      *     settings: array<string, mixed>,
      *     configured_secret_keys: list<string>,

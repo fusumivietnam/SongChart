@@ -63,7 +63,7 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
     }
 
     /**
-     * @param list<string> $ids
+     * @param  list<string>  $ids
      * @return list<VideoDestinationCandidate>
      */
     private function verifiedCandidates(array $ids, Recording $recording): array
