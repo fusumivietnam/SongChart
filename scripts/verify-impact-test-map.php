@@ -26,6 +26,7 @@ $allPaths = [];
 foreach ($rules as $index => $rule) {
     if (! is_array($rule) || ! is_array($rule['paths'] ?? null) || ! is_array($rule['required_tests'] ?? null)) {
         $errors[] = 'Every impact-map rule must declare paths and required_tests.';
+
         continue;
     }
 
@@ -39,6 +40,7 @@ foreach ($rules as $index => $rule) {
     foreach ($rule['required_tests'] as $target) {
         if (! is_string($target) || trim($target) === '') {
             $errors[] = "Impact rule [{$ruleName}] contains an empty/non-string required test.";
+
             continue;
         }
 
@@ -50,6 +52,7 @@ foreach ($rules as $index => $rule) {
             } elseif (! array_key_exists($script, $composerScripts)) {
                 $errors[] = "Impact rule [{$ruleName}] references missing Composer command [{$script}].";
             }
+
             continue;
         }
 
@@ -102,5 +105,6 @@ function readJson(string $path): array
     if (! is_array($decoded)) {
         throw new RuntimeException("Expected JSON object at {$path}.");
     }
+
     return $decoded;
 }

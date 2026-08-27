@@ -33,6 +33,7 @@ fwrite(STDOUT, "[SongChart audit] Collecting quality/static/governance diagnosti
 foreach ($quality as $index => $command) {
     if (! is_string($command) || trim($command) === '') {
         $failures[] = '#'.($index + 1).' invalid empty/non-string quality command';
+
         continue;
     }
 
@@ -40,6 +41,7 @@ foreach ($quality as $index => $command) {
     foreach ($forbidden as $blocked) {
         if ($command === $blocked || str_contains($command, $blocked)) {
             $failures[] = "{$command} is a closure/runtime command and must not run inside audit";
+
             continue 2;
         }
     }
@@ -63,7 +65,7 @@ foreach ($quality as $index => $command) {
 fwrite(STDOUT, PHP_EOL."[SongChart audit] Executed {$executed} checks.".PHP_EOL);
 
 if ($failures !== []) {
-    fwrite(STDERR, '[SongChart audit] FAILURES ('.count($failures).'):' . PHP_EOL);
+    fwrite(STDERR, '[SongChart audit] FAILURES ('.count($failures).'):'.PHP_EOL);
     foreach ($failures as $failure) {
         fwrite(STDERR, "- {$failure}".PHP_EOL);
     }

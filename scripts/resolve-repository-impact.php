@@ -15,10 +15,12 @@ $paths = [];
 foreach ($args as $arg) {
     if ($arg === '--diff') {
         $useDiff = true;
+
         continue;
     }
     if ($arg === '--json') {
         $json = true;
+
         continue;
     }
     if ($arg !== '') {
@@ -100,6 +102,7 @@ $result = [
     'matched_impact_rules' => $matchedRules,
     'impacted_authorities' => array_map(static function (string $authority) use ($resolver): array {
         $definition = $resolver->authority($authority);
+
         return [
             'name' => $authority,
             'source' => $definition['source'],
@@ -164,12 +167,14 @@ function readJson(string $path): array
     if (! is_array($decoded)) {
         throw new RuntimeException("Expected JSON object at {$path}.");
     }
+
     return $decoded;
 }
 
 function normalizePath(string $path): string
 {
     $path = str_replace('\\', '/', trim($path));
+
     return str_starts_with($path, './') ? substr($path, 2) : $path;
 }
 
@@ -177,6 +182,7 @@ function pathMatches(string $pattern, string $path): bool
 {
     $pattern = normalizePath($pattern);
     $path = normalizePath($path);
+
     return fnmatch($pattern, $path) || $pattern === $path;
 }
 
@@ -196,6 +202,7 @@ function changedPaths(string $root): array
         exec($command, $output, $status);
         if ($status !== 0) {
             $output = [];
+
             continue;
         }
         foreach ($output as $path) {
@@ -220,6 +227,7 @@ function resolveImpactBase(string $root): ?string
         exec($command, $output, $status);
         if ($status !== 0) {
             $output = [];
+
             continue;
         }
 

@@ -37,7 +37,7 @@ it('guards impact targets and runtime-only artifacts before canonical closure', 
     $composer = json_decode((string) file_get_contents(base_path('composer.json')), true, 512, JSON_THROW_ON_ERROR);
 
     expect($impactVerifier)
-        ->toContain("verification-topology.json")
+        ->toContain('verification-topology.json')
         ->toContain('removed_aliases')
         ->toContain('references retired Composer command')
         ->toContain('references missing Composer command')
