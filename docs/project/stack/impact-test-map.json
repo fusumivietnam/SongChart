@@ -240,7 +240,7 @@
         "tests/Architecture/Postgres18AuthorityTest.php",
         "composer reproducible-environment:verify",
         "composer postgres-major:verify",
-        "composer release:verify"
+        "composer canonical:verify"
       ]
     },
     {
@@ -316,8 +316,8 @@
         "tests/Architecture/RepositoryContractSafetyClosureTest.php",
         "tests/Feature/RepositoryDatabaseContractTest.php",
         "composer repository-contracts:verify",
-        "composer test:postgres-clean",
-        "composer release:verify",
+        "composer test:postgres",
+        "composer canonical:verify",
         "composer database:verify",
         "composer runtime-authority:verify",
         "composer performance:verify"
@@ -353,7 +353,7 @@
         "composer repository-compiler:verify",
         "composer repository-contracts:verify",
         "composer test:architecture",
-        "composer release:verify",
+        "composer canonical:verify",
         "tests/Unit/LaravelMigrationColumnExtractorTest.php"
       ]
     },
@@ -365,6 +365,12 @@
         "docs/project/engineering/verification-topology.json",
         "docs/project/engineering/ai-development-contract.json",
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
+        "docs/project/engineering/DELIVERY_WORKFLOW.md",
+        "docs/project/engineering/verification-command-surface.json",
+        "songchart",
+        "scripts/run-workflow-audit.php",
+        "scripts/resolve-repository-impact.php",
+        "scripts/verify-runtime-artifact-ownership.php",
         "AGENTS.md",
         "CLAUDE.md",
         "GEMINI.md",
@@ -375,7 +381,11 @@
       ],
       "required_tests": [
         "composer verification-topology:verify",
+        "composer verification-surface:verify",
         "composer ai-protocol:verify",
+        "composer impact-map:verify",
+        "composer runtime-artifact:verify",
+        "tests/Architecture/VerificationAiWorkflowConvergenceTest.php",
         "tests/Architecture/VerificationWorkflowTopologyTest.php",
         "tests/Architecture/AiDevelopmentProtocolTest.php",
         "composer stage:verify",
