@@ -88,7 +88,7 @@
         },
         "verification-topology": {
             "source": "docs/project/engineering/verification-topology.json",
-            "fingerprint": "4b068e5fb34bff6ac4d1d108752c7f1a13cc0e5525750b52275a51a84e7735eb",
+            "fingerprint": "4c71882b4039419f695394580d25d3acd76e7acf4929e7441563fe2f4ea79b36",
             "consumers": [
                 "composer.json",
                 "docs/project/stack/release-pipeline-contract.json",
@@ -113,7 +113,7 @@
         },
         "ai-development-protocol": {
             "source": "docs/project/engineering/ai-development-contract.json",
-            "fingerprint": "d5435d4b2fdc34421cdd7f6f5435813566896caf88a0f3c13a3baffb98b3f991",
+            "fingerprint": "4463e4af2786baa2adf302d596828ed1f2106ce57eb528892a9c5f4aa156c573",
             "consumers": [
                 "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
                 "AGENTS.md",
@@ -150,7 +150,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "abbde3d5e3b91c7a969ffc121f70c18b1d60c193d69859bce2b2ebcda5551614",
+            "fingerprint": "2035dba60888e65ac1878210609457cea4e9ac39a07422f057726194f934ebc5",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -226,7 +226,7 @@
         },
         "impact-test-map": {
             "source": "docs/project/stack/impact-test-map.json",
-            "fingerprint": "855bfb43a09dd6e7d195b9b82a6f05f3f4e7d5a58ca55e13e356db821ad679dc",
+            "fingerprint": "85c8bffe6f25188e0520ba70ec2f8f93c5c2c5e2ef07d9388aac26c48a2daf11",
             "consumers": []
         },
         "regression-ledger": {
@@ -932,6 +932,15 @@
             ]
         },
         {
+            "target": "scripts/verify-runtime-artifact-ownership.php",
+            "rule": "runtime-stack",
+            "classification": "behavioral",
+            "semantic_authorities": [
+                "runtime-environment",
+                "stack-manifest"
+            ]
+        },
+        {
             "target": "scripts/verify-runtime-authority-closure.php",
             "rule": "runtime-stack",
             "classification": "behavioral",
@@ -1598,6 +1607,16 @@
             ]
         },
         {
+            "target": "tests/Architecture/VerificationAiWorkflowConvergenceTest.php",
+            "rule": "verification-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "verification-topology",
+                "verification-command-surface",
+                "impact-test-map"
+            ]
+        },
+        {
             "target": "tests/Architecture/VerificationCommandSurfaceTest.php",
             "rule": "verification-governance",
             "classification": "declarative",
@@ -1638,5 +1657,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "b31ac590248f93f923cbac8b62f9114aec98b374deaa0695d31492683f2fd8f7"
+    "graph_fingerprint": "b98c5e13484d96f5cf1360be88ba34e3ad4456238e0c1d3a698247d97b63a513"
 }

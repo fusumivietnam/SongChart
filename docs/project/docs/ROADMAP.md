@@ -9,55 +9,84 @@ Trạng thái: tài liệu định hướng cho hạng mục đang triển khai 
 - Roadmap không thay thế task contract, candidate evidence hay `DEVELOPMENT_STATE.md`.
 - UI/Admin ưu tiên thuật ngữ tiếng Việt rõ nghĩa; code/contract giữ tên kỹ thuật khi cần đối chiếu.
 
-## Stage 18.2 — Public Search & Canonical Surfaces
+## Stage 18.3.1 — Verification & AI Workflow Convergence
 
-Mục tiêu tiếp theo: biến nền canonical/provider đã được governance thành trải nghiệm tìm kiếm và duyệt catalog có giá trị trực tiếp cho người dùng.
+Mục tiêu: hội tụ research → impact → implementation → post-diff → reconcile → audit → focused verify → candidate → canonical → delivery thành một golden path có dependency awareness cho người phát triển và AI.
 
 Trọng tâm:
 
-- production search trên PostgreSQL với ranking và tie-break rõ ràng, deterministic;
-- hoàn thiện canonical public pages cho Artist, Group, Release, Recording và Work;
-- search facets, pagination, empty states và canonical URLs nhất quán;
-- giữ public read models độc lập với raw provider payload và provider-specific transport;
-- mọi destination/media hiển thị phải tiếp tục đi qua availability, freshness, provenance và policy hiện hành;
-- không mở ingestion pipeline thứ hai và không cho search layer mutate canonical data.
+- planned-path và actual-diff impact resolution;
+- semantic authority + reverse verification consumer + focused-check routing;
+- collect-all diagnostic audit nhưng giữ strict quality/candidate/canonical fail-fast;
+- generated-authority reconcile từ exact tree;
+- impact map không được chứa command/test target chết;
+- runtime/generated artifact ownership không được làm canonical mutate tracked tree;
+- one-writer-per-surface và exact-commit AI/device handoff;
+- official/native capability review trong task contract.
 
-Điều kiện an toàn:
+Không thuộc stage này:
 
-- PostgreSQL vẫn là database authority cho verification/release;
-- public search không truy cập provider API trực tiếp trong request path;
-- canonical URLs không phụ thuộc provider identity;
-- provider payload không tự động mutate canonical entities;
-- Stage 18.2 chỉ bắt đầu sau khi post-18.1 repository hygiene được xác nhận sạch.
+- evidence caching/reuse;
+- aggressive CI path pruning;
+- merge queue khi chưa có nhu cầu concurrency thực tế;
+- workflow framework mới;
+- product feature mới.
 
-## Stage 18.3 — Public Metadata & SEO Readiness
+## Stage 18.4 — Admin Completion & Operational Convergence
 
-- structured data cho canonical entity pages;
-- canonical metadata, title/description và OpenGraph/social metadata;
-- sitemap và indexability policy;
-- duplicate-content/canonical-link verification;
-- production SEO verification trước public indexing rộng rãi.
+Mục tiêu: Admin vận hành được sản phẩm mà không phải dựa vào Tinker hoặc sửa `.env` cho các thao tác thường xuyên.
 
-## Stage 18.4 — Provider Destination & Media Quality
+Trọng tâm:
+
+- Dashboard operational;
+- System Settings;
+- Provider management và operational health;
+- credential management/pool UX phù hợp authority hiện có;
+- import workflow, progress, retry và failure UX;
+- canonical admission;
+- identity conflicts;
+- catalog administration;
+- users/roles;
+- privileged audit.
+
+Không block release bởi OAuth, credential rotation phức tạp, scheduler nâng cao hoặc provider breadth mới nếu chưa có use case bắt buộc.
+
+## Stage 18.5 — Public Product / Frontend Release Pass
+
+- information architecture và homepage;
+- catalog/search UX;
+- Artist/Group/Release/Recording/Work public pages;
+- responsive/mobile;
+- accessibility;
+- performance/Core Web Vitals;
+- loading/empty/error states;
+- visual SEO polish và release QA.
+
+## Stage 18.6 — Provider Destination & Media Quality
 
 - destination/media selector theo availability, freshness và provenance;
 - deterministic preference/ranking giữa approved destinations;
 - operational visibility cho stale/unavailable destinations;
-- mở rộng provider breadth theo evidence quality và official API capability, không theo số lượng connector.
+- YouTube/media destination approval quality;
+- mở rộng provider breadth chỉ khi evidence quality và official API capability chứng minh nhu cầu.
 
-## Nhóm 19.x — Giá trị cho người dùng cá nhân
+## Nhóm 19.x — Production readiness / first release
+
+- deployment topology;
+- queue/scheduler production;
+- observability và alerting;
+- backup/recovery;
+- secrets/environment hardening;
+- security review;
+- production smoke verification;
+- release package/tag từ accepted `main` exact tree.
+
+## Nhóm sau release — Giá trị cho người dùng cá nhân
 
 - follow Artist/Group;
 - save nội dung và private collections;
 - discovery dựa trên hành động rõ ràng của người dùng;
 - chỉ kết nối provider account khi API chính thức và policy cho phép.
-
-## Nhóm 20.x — Production readiness
-
-- deployment, queue và scheduler production;
-- observability và provider operational metrics;
-- security headers, backup và recovery;
-- production SEO/indexing rollout và recovery verification.
 
 ## Quy tắc roadmap
 

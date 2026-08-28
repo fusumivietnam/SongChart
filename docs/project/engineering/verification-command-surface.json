@@ -1,9 +1,13 @@
 {
-    "schema_version": 1,
+    "schema_version": 2,
     "public_entrypoints": {
         "development": [
             "songchart ai status",
             "songchart ai doctor",
+            "songchart impact",
+            "songchart impact --diff",
+            "songchart reconcile",
+            "songchart audit",
             "songchart dev setup",
             "songchart dev ready",
             "songchart dev up",
@@ -20,6 +24,12 @@
             "songchart demo logs",
             "songchart demo url",
             "songchart context"
+        ],
+        "diagnostic": [
+            "songchart impact",
+            "songchart impact --diff",
+            "songchart reconcile",
+            "songchart audit"
         ],
         "focused": [
             "songchart dev test",
@@ -46,6 +56,7 @@
         "repository-contracts:verify",
         "verification-topology:verify",
         "ai-protocol:verify",
+        "runtime-artifact:verify",
         "artifact-provenance:verify"
     ],
     "removed_aliases": {
@@ -74,7 +85,8 @@
         "active_docs_must_use_public_entrypoints": true,
         "removed_aliases_must_not_be_defined": true,
         "historical_docs_may_reference_removed_commands": true,
-        "new_verifier_requires_registered_authority_owner": true
+        "new_verifier_requires_registered_authority_owner": true,
+        "diagnostic_entrypoints_do_not_replace_closure": true
     },
     "host_entrypoints": {
         "primary_linux_wsl": "./songchart",

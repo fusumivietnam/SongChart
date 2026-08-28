@@ -28,10 +28,10 @@ $errors = [];
 $allowed = $contract['allowed_status'] ?? [];
 
 $currentStage = null;
-if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $matches) === 1) {
+if (preg_match('/(?ms)^## Current stage\s+.*?^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/', $developmentState, $matches) === 1) {
     $currentStage = $matches[1];
 } else {
-    $errors[] = 'Unable to resolve the current stage from DEVELOPMENT_STATE.md.';
+    $errors[] = 'Unable to resolve the current stage from DEVELOPMENT_STATE.md current-stage section.';
 }
 
 if (is_string($currentStage) && ($definition['stage'] ?? null) !== $currentStage) {

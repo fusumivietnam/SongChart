@@ -33,10 +33,10 @@ foreach (['Current stage:', 'Candidate delivery:', '## Current development stage
 }
 
 $currentStage = null;
-if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—\s+[^`]+`/m', $developmentState, $match) === 1) {
+if (preg_match('/(?ms)^## Current stage\s+.*?^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—\s+[^`]+`/', $developmentState, $match) === 1) {
     $currentStage = $match[1];
 } else {
-    $errors[] = 'DEVELOPMENT_STATE.md must declare the current numeric stage and title.';
+    $errors[] = 'DEVELOPMENT_STATE.md must declare the current numeric stage and title in the Current stage section.';
 }
 
 if (! str_contains($startHere, 'docs/project/DEVELOPMENT_STATE.md')) {
@@ -59,7 +59,7 @@ if (is_string($currentStage)) {
     }
 }
 
-foreach (['## Expected files', '## Allowed incidental files', '## Scope deviations'] as $section) {
+foreach (['## Expected files', '## Allowed incidental files', '## Post-diff impact and scope deviations'] as $section) {
     if (! str_contains($taskTemplate, $section)) {
         $errors[] = "TASK_CONTRACT_TEMPLATE.md must include {$section}.";
     }

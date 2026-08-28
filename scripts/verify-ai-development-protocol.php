@@ -15,11 +15,19 @@ if (! is_file($contractPath) || ! is_file($protocolPath)) {
     $protocol = (string) file_get_contents($protocolPath);
 
     foreach ([
-        'php scripts/resolve-repository-impact.php',
+        './songchart impact <planned-path',
+        './songchart impact --diff',
+        './songchart reconcile',
+        './songchart audit',
         'composer stage:verify',
         'composer canonical:verify',
         'composer release:package',
         'Do not add another verifier',
+        'one writer per overlapping source surface',
+        'Runtime/generated artifact ownership',
+        'mutation envelope',
+        'Post-closure seal',
+        'non-interactive',
     ] as $needle) {
         if (! str_contains($protocol, $needle)) {
             $errors[] = "AI development protocol is missing required workflow invariant [{$needle}].";
@@ -28,6 +36,29 @@ if (! is_file($contractPath) || ! is_file($protocolPath)) {
 
     if (($contract['documentation_rule'] ?? null) === null) {
         $errors[] = 'AI development contract must define the thin-bootstrap documentation rule.';
+    }
+
+    $expectedPhases = [
+        'research_orient',
+        'preflight_authority_consistency',
+        'planned_impact',
+        'implement',
+        'post_diff_impact',
+        'reconcile_generated_authority',
+        'mutation_boundary_check',
+        'collect_all_audit',
+        'focused_verification',
+        'candidate',
+        'canonical',
+        'post_closure_seal',
+        'delivery',
+    ];
+    if (($contract['workflow']['ordered_phases'] ?? null) !== $expectedPhases) {
+        $errors[] = 'AI development contract workflow phases drifted from the governed golden path.';
+    }
+
+    if (($contract['workflow']['mutation_envelopes'] ?? null) !== ['read-only', 'generated-only', 'runtime-only', 'closure']) {
+        $errors[] = 'AI development contract must define the four governed command mutation envelopes.';
     }
 }
 
@@ -56,11 +87,16 @@ if (! is_file($root.'/scripts/ai-status.sh')) {
 }
 
 $songchart = (string) file_get_contents($root.'/songchart');
-if (! str_contains($songchart, 'ai status') || ! str_contains($songchart, 'scripts/ai-status.sh')) {
-    $errors[] = 'Linux songchart CLI must expose ai status through scripts/ai-status.sh.';
-}
-if (! str_contains($songchart, 'ai doctor') || ! str_contains($songchart, 'scripts/ai-doctor.sh')) {
-    $errors[] = 'Linux songchart CLI must expose ai doctor through scripts/ai-doctor.sh.';
+foreach ([
+    'ai status' => 'scripts/ai-status.sh',
+    'ai doctor' => 'scripts/ai-doctor.sh',
+    'impact)' => 'scripts/resolve-repository-impact.php',
+    'reconcile)' => 'reconcile_authority',
+    'audit)' => 'scripts/run-workflow-audit.php',
+] as $surface => $implementation) {
+    if (! str_contains($songchart, $surface) || ! str_contains($songchart, $implementation)) {
+        $errors[] = "Linux songchart CLI must expose [{$surface}] through [{$implementation}].";
+    }
 }
 
 foreach (['songchart.bat', 'scripts/songchart.ps1', 'scripts/ai-status.ps1'] as $retiredWindowsEntrypoint) {
