@@ -178,7 +178,7 @@ reconcile_authority(){
   git -C "$ROOT" diff --check
   printf '[SongChart reconcile] Generated authority diff/status (no automatic commit):\n'
   git -C "$ROOT" status --short -- docs/project/generated || true
-  git -C "$ROOT" diff -- docs/project/generated || true
+  git -C "$ROOT" --no-pager diff -- docs/project/generated || true
 }
 prepare_candidate_authority(){
   local before after unexpected

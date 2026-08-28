@@ -12,6 +12,7 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('./songchart reconcile')
         ->toContain('./songchart audit')
         ->toContain('Regenerating repository authority from the current exact working tree')
+        ->toContain('git -C "$ROOT" --no-pager diff -- docs/project/generated')
         ->toContain('collect all quality/static/governance failures without fail-fast');
 
     expect($impact)
