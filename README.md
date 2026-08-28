@@ -173,6 +173,12 @@ Run focused tests while iterating:
 ./songchart composer exec phpstan analyse
 ```
 
+Canonical full verification remains available through the repository entrypoint:
+
+```bash
+./songchart verify
+```
+
 Close only after the stage is actually ready:
 
 ```bash
