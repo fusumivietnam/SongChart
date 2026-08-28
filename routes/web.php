@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\ProviderImportDiscoveryController;
 use App\Http\Controllers\Admin\ProviderImportPlanController;
 use App\Http\Controllers\Admin\ProviderImportPreviewController;
 use App\Http\Controllers\Admin\ProviderMutationController;
+use App\Http\Controllers\Admin\UserAdministrationController;
 use App\Http\Controllers\Admin\YouTubeDestinationController;
 use App\Http\Controllers\DesignLabController;
 use App\Http\Controllers\Development\MusicBrainzArtistImportController;
@@ -98,6 +99,8 @@ Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor
         Route::get('/identity-conflicts/{review}', [IdentityConflictReviewController::class, 'show'])->where('review', app(DomainContractRegistry::class)->adminUlidPattern())->name('identity-conflicts.show');
         Route::post('/identity-conflicts/{review}/decisions', [IdentityConflictReviewController::class, 'decide'])->where('review', app(DomainContractRegistry::class)->adminUlidPattern())->name('identity-conflicts.decide')->middleware(['can:manage-identity-conflicts', 'password.confirm']);
         Route::get('/users', [OperationsController::class, 'users'])->name('users.index');
+        Route::patch('/users/{user}/role', [UserAdministrationController::class, 'role'])->name('users.role.update')->middleware(['can:manage-user-roles', 'password.confirm']);
+        Route::patch('/users/{user}/active', [UserAdministrationController::class, 'active'])->name('users.active.update')->middleware(['can:manage-user-activation', 'password.confirm']);
         Route::get('/system', [OperationsController::class, 'system'])->name('system.index');
         Route::get('/audit', PrivilegedAuditController::class)->name('audit.index')->middleware('can:view-audit');
         Route::get('/extensions', [ExtensionController::class, 'index'])->name('extensions.index');
