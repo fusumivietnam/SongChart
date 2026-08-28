@@ -36,7 +36,22 @@ For dependency, infrastructure, framework-capability, runtime, database, queue/c
 - `docs/project/stack/STACK_OVERVIEW.md`
 - `docs/project/stack/CAPABILITY_OWNERSHIP.md`
 
-## 2.1 Machine-readable project context
+### 2.1 Preflight authority consistency
+
+Before implementation begins, confirm that the current-stage machine/document authorities agree and that cheap governance checks are not already broken:
+
+```bash
+./songchart composer candidate-contract:verify
+./songchart composer repository-state:verify
+./songchart composer runtime-artifact:verify
+./songchart composer impact-map:verify
+```
+
+These are preflight consistency checks, not closure evidence. They exist to stop AI/developers from building on stale stage metadata, dead impact routes or tracked runtime artifacts.
+
+Machine-critical state must not be recovered through ambiguous first-match Markdown parsing. If one document contains accepted history and current state together, a verifier must either parse the owning section explicitly or read a machine-readable authority. The current authority is not to be rewritten into an obsolete format merely to satisfy a stale consumer.
+
+### 2.2 Machine-readable project context
 
 Before modifying architecture, persistence, Docker, providers, migrations, seeders, or verification infrastructure, run/read `./songchart context --json`.
 
@@ -56,7 +71,7 @@ Before modifying architecture, persistence, Docker, providers, migrations, seede
 - Historical migrations listed in `docs/project/stack/migration-lifecycle-contract.json` are immutable. Schema corrections must be new guarded forward migrations; do not edit frozen history.
 - Keep source, owning authority and focused regression coverage in the same logical change when they define one invariant.
 
-## 3.1 Mandatory post-diff impact closure
+### 3.1 Mandatory post-diff impact closure
 
 Planned impact is not sufficient evidence after implementation. Before declaring an implementation slice complete, resolve the actual branch/working-tree diff:
 
@@ -68,7 +83,7 @@ The actual-diff lane must include committed stage changes relative to the main i
 
 If actual impact differs from planned impact, record the deviation in the task contract or current-stage state. Do not hide newly affected consumers just because they were not in the original plan.
 
-## 3.2 Generated authority reconcile
+### 3.2 Generated authority reconcile
 
 After changing registered authority/context inputs, run:
 
@@ -78,9 +93,24 @@ After changing registered authority/context inputs, run:
 
 `reconcile` regenerates committed generated authority from the current exact tree and shows the generated diff. It does not automatically commit. Review the diff, then commit only expected generated outputs.
 
+`reconcile` is a non-interactive workflow command. Its diff must be emitted without an interactive pager, using the Git-native `--no-pager` behavior, so automation/AI cannot appear to hang at `(END)`.
+
 Never hand-merge derived generated JSON when it can be regenerated from final authoritative source.
 
-## 3.3 Collect-all audit
+### 3.3 Mutation boundary check
+
+Every workflow command introduced or changed must declare one mutation envelope in the current task contract:
+
+- `read-only`: no tracked repository mutation;
+- `generated-only`: may change only explicitly governed generated paths;
+- `runtime-only`: may change only ignored runtime evidence/state;
+- `closure`: may create runtime evidence, but the verified tracked tree must remain unchanged.
+
+After any command that is allowed to mutate files, inspect `git status --short` and compare the changed paths with that command's envelope. Unexpected tracked mutation is a failure at that point; do not defer discovery until canonical closure.
+
+Non-interactive workflow commands must not open pagers or prompts unless interaction is explicitly part of their command contract.
+
+### 3.4 Collect-all audit
 
 Use:
 
@@ -97,7 +127,7 @@ Audit runs the quality/static/governance command set without fail-fast so multip
 - it must not call the production frontend build as a nested closure;
 - it does not replace fail-fast `quality:verify`, candidate or canonical verification.
 
-## 3.4 Linux/Docker development runtime
+### 3.5 Linux/Docker development runtime
 
 Linux or WSL2 with Docker Engine + Compose v2 is the sole development, test and canonical host workflow. GitHub Codespaces is the preferred remote adapter. Use the repository `./songchart` CLI instead of host PHP/Composer/Node/PostgreSQL/Redis commands:
 
@@ -113,7 +143,7 @@ Linux or WSL2 with Docker Engine + Compose v2 is the sole development, test and 
 
 Native Windows Batch/PowerShell entrypoints and Laragon runtime compatibility are retired. Windows development, if needed, runs through WSL2 and the same Linux `./songchart` entrypoint.
 
-## 3.5 Git delivery and AI/device handoff
+### 3.6 Git delivery and AI/device handoff
 
 Read `docs/project/engineering/DELIVERY_WORKFLOW.md` before handing off or closing any implementation stage.
 
@@ -128,7 +158,7 @@ Read `docs/project/engineering/DELIVERY_WORKFLOW.md` before handing off or closi
 - Do not copy source ZIPs, incremental ZIPs, patch installers, or cross-device stashes for normal development handoff.
 - `composer release:package` is post-canonical release packaging only; it is not a source synchronization mechanism.
 
-## 3.6 Verification command surface
+### 3.7 Verification command surface
 
 Use the public workflow entrypoints:
 
@@ -194,6 +224,8 @@ Laravel/runtime storage such as `storage/framework/**`, `storage/logs/**` and lo
 
 Canonical may generate runtime evidence/snapshots, but it must not mutate tracked runtime files before candidate evidence is recorded. Committed generated repository authority belongs under the explicitly governed generated documentation surface and is regenerated from source.
 
+Directory sentinel files such as explicitly allowlisted `.gitignore` placeholders may remain tracked; mutable runtime evidence/snapshots must not be allowlisted merely to silence the guard.
+
 ### Authorization authority
 
 Authorization is Laravel Gate-first. Read `docs/project/security/authorization-contract.json` before changing privileged access.
@@ -234,6 +266,9 @@ Read `docs/project/domain/application-data-boundary.json` before adding persiste
 RESEARCH / ORIENT
   ai doctor + context + current task/authority + official/native capability review
         ↓
+PREFLIGHT AUTHORITY CONSISTENCY
+  candidate-contract + repository-state + runtime-artifact + impact-map
+        ↓
 PLAN
   ./songchart impact <planned paths>
         ↓
@@ -245,6 +280,9 @@ POST-DIFF
         ↓
 RECONCILE
   ./songchart reconcile when generated inputs changed
+        ↓
+MUTATION BOUNDARY
+  git status --short vs declared command mutation envelope
         ↓
 AUDIT
   ./songchart audit for collect-all static/governance feedback
@@ -258,8 +296,11 @@ CANDIDATE
 CANONICAL
   ./songchart verify or governed ./songchart close
         ↓
+POST-CLOSURE SEAL
+  record HEAD + clean tracked tree + no source changes after PASS
+        ↓
 DELIVERY
-  push exact closed HEAD → PR CI → merge → optional package/tag
+  push exact closed HEAD → PR checks on latest SHA → merge → optional package/tag
 ```
 
 ### Focused lane
@@ -296,7 +337,20 @@ or the governed close wrapper when the task calls for generated refresh plus can
 
 The canonical Docker shell installs locked dependencies, normalizes with the locked formatter, then invokes exactly `composer canonical:verify`. `canonical:verify` calls `stage:verify` once and owns the remaining runtime/package/migration/evidence gates.
 
-After canonical PASS, do not amend/rebase/change the verified tree before merge without rerunning closure. Push the exact closed HEAD and verify the PR head SHA matches it.
+### Post-closure seal
+
+After canonical PASS:
+
+```bash
+git rev-parse HEAD
+git status --short
+```
+
+Record the exact closed HEAD. The tracked tree must remain clean except for explicitly ignored runtime evidence.
+
+Any tracked source, authority, generated, formatter, rebase, amend or corrective change after canonical PASS invalidates the closure evidence for the previous HEAD. Do not reason that a change is "docs-only" or "small enough" to reuse closure evidence. Re-run post-diff impact, reconcile when applicable, focused verification, candidate and canonical closure on the new HEAD.
+
+Push the exact closed HEAD and verify PR required checks are running/passing on the latest commit SHA before merge.
 
 ### Packaging
 
@@ -312,23 +366,38 @@ When a gate fails:
 
 1. preserve the exact assertion/SQLSTATE/static-analysis evidence;
 2. identify the authority that owns the invariant;
-3. inspect whether the failure is source behavior, stale consumer, stale generated authority, dead impact command, or runtime-artifact ownership;
-4. correct the authority/resolver/consumer rather than adding a parallel literal;
-5. add a regression ledger entry only when a permanent machine guard exists;
-6. keep the correction on the current stage branch unless a separate revision is explicitly required;
-7. rerun actual-diff impact after the correction expands the changed surface;
-8. do not use `--force` as normal recovery.
+3. classify the failure before patching:
+   - source behavior;
+   - formatter-only drift;
+   - stale consumer/verifier;
+   - parser/authority ambiguity;
+   - stale generated authority;
+   - dead impact command/test route;
+   - runtime-artifact ownership;
+   - unexpected mutation outside a command envelope;
+   - non-interactive UX defect such as pager/prompt blocking;
+   - closure invalidation after a post-PASS change;
+4. if the authority is current and the consumer is stale, fix the consumer rather than reverting the authority to an obsolete structure;
+5. if generated authority is stale, regenerate it rather than hand-editing/hand-merging generated JSON;
+6. correct the authority/resolver/consumer rather than adding a parallel literal;
+7. add a regression ledger entry only when a permanent machine guard exists;
+8. keep the correction on the current stage branch unless a separate revision is explicitly required;
+9. rerun actual-diff impact after the correction expands the changed surface;
+10. do not use `--force` as normal recovery.
 
 ## 6. Verification budget
 
 Do not trade correctness for speed. Reduce duplicated execution, not gate coverage.
 
+- preflight: cheap authority/state/routing consistency before coding;
 - documentation-only change: documentation/authority focused gates;
 - PHP implementation: planned impact → focused Pint/PHPStan + focused tests → actual-diff impact;
 - schema/package change: add PostgreSQL/package-focused gates;
+- generated-authority input change: reconcile → mutation boundary check;
 - broad static/governance diagnosis: `./songchart audit`;
 - candidate closure: `composer stage:verify` / `./songchart candidate`;
-- release closure: canonical Docker → `composer canonical:verify` / `./songchart verify` or `./songchart close`.
+- release closure: canonical Docker → `composer canonical:verify` / `./songchart verify` or `./songchart close`;
+- after canonical PASS: post-closure seal and latest-SHA delivery only.
 
 Evidence caching/reuse, sophisticated CI path pruning and merge-queue adoption remain deferred until this topology demonstrates stable dependency resolution and exact-tree closure. Correctness and diagnosability come before execution caching.
 
