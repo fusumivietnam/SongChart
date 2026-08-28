@@ -48,6 +48,24 @@ final class AdminDashboardSnapshot
                     'action' => 'Xem tác vụ',
                 ],
                 [
+                    'key' => 'provider-sync-failures',
+                    'label' => 'Đồng bộ nguồn thất bại gần đây',
+                    'count' => $failedSyncs,
+                    'description' => 'Các lần đồng bộ provider gần đây có trạng thái thất bại và cần kiểm tra nguồn hoặc lịch sử tác vụ.',
+                    'severity' => $failedSyncs > 0 ? 'danger' : 'success',
+                    'href' => route('admin.providers.index'),
+                    'action' => 'Xem nguồn',
+                ],
+                [
+                    'key' => 'pending-operations',
+                    'label' => 'Hoạt động hệ thống đang xử lý',
+                    'count' => $pendingOperations,
+                    'description' => 'Các hoạt động tiện ích đang ở trạng thái chờ hoặc đang chạy; theo dõi nếu kéo dài bất thường.',
+                    'severity' => $pendingOperations > 0 ? 'warning' : 'success',
+                    'href' => route('admin.extensions.index'),
+                    'action' => 'Theo dõi',
+                ],
+                [
                     'key' => 'quarantine',
                     'label' => 'Dữ liệu cần con người rà soát',
                     'count' => $quarantinedItems,
@@ -85,14 +103,12 @@ final class AdminDashboardSnapshot
     /** @return Collection<int, Provider> */
     private function providers(): Collection
     {
-
         return Provider::query()->orderBy('name')->get();
     }
 
     /** @return Collection<int, ProviderSyncRun> */
     private function recentSyncs(): Collection
     {
-
         return ProviderSyncRun::query()
             ->with('provider:id,name')
             ->latest('started_at')
@@ -103,7 +119,6 @@ final class AdminDashboardSnapshot
     /** @return Collection<int, ExtensionOperation> */
     private function recentOperations(): Collection
     {
-
         return ExtensionOperation::query()
             ->with('extension:id,name')
             ->latest('started_at')
@@ -159,11 +174,5 @@ final class AdminDashboardSnapshot
         }
 
         return is_string($status) ? $status : 'unknown';
-    }
-
-    /** @param class-string $model */
-    private function count(string $table, string $model): int
-    {
-        return $model::query()->count();
     }
 }
