@@ -41,6 +41,22 @@ Describe the single outcome this task owns.
 - Record every changed file outside the planned surface with reason, impact, and verification.
 - Use `None` only when actual diff confirms no deviations.
 
+## Command mutation envelopes
+
+For every workflow command introduced or changed, classify its allowed repository mutation surface before implementation:
+
+| Command | Envelope | Allowed tracked mutation | Interactive output allowed |
+|---|---|---|---|
+| Example | `read-only` / `generated-only` / `runtime-only` / `closure` | Exact paths or `none` | yes / no |
+
+Rules:
+
+- `read-only`: no tracked source mutation.
+- `generated-only`: may change only explicitly governed generated paths and must show the diff without committing unless the owning contract says otherwise.
+- `runtime-only`: may change only ignored runtime evidence/state; tracked mutation is a failure.
+- `closure`: may create runtime evidence but the verified tracked tree must remain unchanged.
+- Non-interactive workflow commands must disable pagers/prompts unless interaction is an explicit part of the contract.
+
 ## Authority and official sources
 
 ### Repository authorities
@@ -113,6 +129,15 @@ Describe the single outcome this task owns.
 - Pint and static analysis.
 - PostgreSQL/runtime checks; optional compatibility checks must be labeled non-authoritative.
 - Checks not performed must be listed explicitly.
+
+## Post-closure seal
+
+After canonical PASS:
+
+- Record the exact closed HEAD SHA.
+- Verify `git status --short` has no unexpected tracked mutation.
+- Any source, authority, generated, formatter, rebase or amend change after canonical invalidates the prior closure evidence and requires reclosure.
+- Push the exact closed HEAD and verify PR/required status checks target the latest SHA before merge.
 
 ## Documentation impact
 
