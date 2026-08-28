@@ -25,6 +25,8 @@ Complete the administrator-facing operational surfaces required to run SongChart
 - User/role operations use the existing Laravel Gate authorization authority and preserve last-super-admin/business invariants.
 - Privileged audit is discoverable and useful for tracing administrator mutations.
 - Existing operational commands may remain for engineering/recovery, but normal supported administrator workflows must not require Tinker or direct `.env` editing.
+- AI/dev status is visible in `docs/project/DEVELOPMENT_STATE.md` as Done / In progress / Next with a compact stage graph.
+- Reusable use-case/debug/failure learnings are evidence-driven; a durable rule requires promotion into its real authority plus a permanent machine guard.
 - All new/changed admin operations have focused regression coverage, impact routing, generated-authority reconciliation where required, and exact-tree candidate/canonical closure.
 
 ## Affected modules and boundaries
@@ -39,6 +41,7 @@ Complete the administrator-facing operational surfaces required to run SongChart
 - User/role administration.
 - Privileged audit viewer.
 - Authorization, application-data-boundary, query-budget and audit authorities where applicable.
+- AI/dev operational state and evidence-learning documentation.
 
 ## Expected files
 
@@ -51,9 +54,10 @@ Complete the administrator-facing operational surfaces required to run SongChart
 - `docs/project/domain/application-data-boundary.json` when new read/write surfaces are registered
 - `docs/project/performance/query-budget-contract.json` when new operational read models require budgets
 - applicable provider/operational machine authorities
-- `tests/Feature/Admin/**`
+- `tests/Feature/Admin/**` and existing Admin feature suites touched by accepted slices
 - `tests/Architecture/**` for durable boundaries only
 - `docs/project/DEVELOPMENT_STATE.md`
+- `docs/project/engineering/AI_LEARNING_LEDGER.md`
 - `docs/foundation/STAGE_18_4_VALIDATION_REPORT.md`
 - `docs/project/generated/**` after reconcile when registered inputs change
 
@@ -86,6 +90,7 @@ Complete the administrator-facing operational surfaces required to run SongChart
 - `PROJECT_AUTHORITY.md`
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
 - `docs/project/engineering/DELIVERY_WORKFLOW.md`
+- `docs/project/engineering/AI_LEARNING_LEDGER.md` as evidence/history only, never as a parallel rule authority
 - `docs/project/security/authorization-contract.json`
 - `docs/project/domain/application-data-boundary.json`
 - `docs/project/performance/query-budget-contract.json`
@@ -98,14 +103,22 @@ Use `composer.lock`, `package-lock.json` and `./songchart context --json` as ver
 
 ### Official external sources
 
-Review official Laravel/package/provider sources only for capabilities actually changed in a slice, and record them here before custom implementation.
+| Owner | Official source | Capability supported | Reviewed on |
+|---|---|---|---|
+| Laravel 13 | https://laravel.com/docs/13.x/authorization | Gates/policies and authorization of administrator actions | 2026-08-28 |
+| Laravel 13 | https://laravel.com/docs/13.x/validation | Request/Form Request validation and authorization boundaries | 2026-08-28 |
+| Laravel 13 | https://laravel.com/docs/13.x/queues | failed jobs, bounded retries and queue recovery primitives | 2026-08-28 |
+| Laravel 13 | https://laravel.com/docs/13.x/configuration | configuration/environment ownership and config-cache semantics | 2026-08-28 |
+| Laravel 13 | https://laravel.com/docs/13.x/http-client | bounded upstream HTTP retry primitives where provider adapters need them | 2026-08-28 |
+
+Official documentation establishes Laravel behavior only. SongChart-specific role capability matrices, provider retry classes, canonical admission semantics, credential ownership and audit requirements remain repository-owned contracts.
 
 ### Native capability assessment
 
 - Capability owner: Laravel application boundaries + existing SongChart Admin/read-model/action/provider/audit infrastructure.
-- Native/first-party capability available: expected to be mostly yes/partial.
-- Selected primitive: reuse existing Gates, controllers-as-transport, read models, actions/services, queues and operational contracts.
-- Why it satisfies the requirement: Stage 18.4 is convergence/completion, not a new admin framework.
+- Native/first-party capability available: mostly yes/partial.
+- Selected primitives: existing Gates, middleware/password confirmation, validation, queues/failed-job primitives, controllers-as-transport, read models, actions/services, Blade, configuration and current provider/audit infrastructure.
+- Why they satisfy the requirement: Stage 18.4 is convergence/completion, not a new admin framework.
 
 ### Custom implementation justification
 
@@ -133,6 +146,7 @@ For every accepted Admin slice, record:
 - No secret credential material may be rendered in Admin; expose status/identity metadata only where permitted.
 - Privileged mutations require existing audit semantics or an explicit extension of the audit authority.
 - Controllers remain transport adapters; direct persistence/query-builder violations are prohibited.
+- Deployment-owned secrets and environment-only configuration must not become database-editable merely for UI convenience.
 
 ## Verification plan
 
@@ -157,9 +171,11 @@ For every accepted Admin slice, record:
 ## Documentation impact
 
 - Keep this contract as scope/acceptance owner.
-- Update `docs/project/DEVELOPMENT_STATE.md` as slices/blockers/evidence change.
+- Update `docs/project/DEVELOPMENT_STATE.md` as Done / In progress / Next, blocker, evidence and next action change.
+- Keep a compact graph in Development State so a new AI/dev can orient without reconstructing chronology.
+- Use `AI_LEARNING_LEDGER.md` for evidence/history of reusable failure classes only; promote durable rules into their owning authority.
 - Update validation report with executed evidence.
-- Move completed 18.3.1 chronology to Development History and keep Roadmap future-looking.
+- Keep Roadmap future-looking and Development History chronological.
 
 ## Command mutation envelope
 
