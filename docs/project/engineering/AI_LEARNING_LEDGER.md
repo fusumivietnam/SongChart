@@ -1,12 +1,12 @@
 # AI Learning Ledger
 
-Status: evidence ledger only. This file is not a parallel source of truth. Durable rules must be promoted into their owning repository authority and protected by an executable guard/test before they are treated as workflow law.
+Status: provisional evidence ledger only. This file is not a parallel source of truth. Durable rules must be promoted into their owning repository authority and protected by an executable guard/test before they are treated as workflow law. Guarded reusable failure classes belong in `docs/project/engineering/regression-ledger.json`.
 
 ## Purpose
 
 Capture recurring use cases, debug findings and failed-verification patterns so AI/developers can recognize known failure classes early, reduce repetitive diagnosis and avoid speculative fixes.
 
-The ledger records evidence and learning history. It does not override `PROJECT_AUTHORITY.md`, task contracts, machine contracts, domain authorities or verification topology.
+The ledger records evidence and learning history. It does not override `PROJECT_AUTHORITY.md`, task contracts, machine contracts, domain authorities, `regression-ledger.json`, or verification topology. Use `docs/project/engineering/ENGINEERING_GRAPH.md` to traverse between learning, regression, authority and verification owners.
 
 ## Admission rule
 
@@ -20,6 +20,36 @@ A learning may be added only when all of the following are known:
 6. permanent guard/test/verifier when the learning is meant to become durable.
 
 If item 6 does not exist, record the finding as provisional and do not teach future AI to treat it as a mandatory rule.
+
+## Promotion rule
+
+```text
+PROVISIONAL LEARNING
+       |
+       +--> evidence preserved
+       +--> owner identified
+       +--> correction applied
+       +--> focused verification passes
+       |
+       v
+PERMANENT MACHINE GUARD EXISTS?
+       |                         |
+      no                        yes
+       |                         |
+       v                         v
+remain provisional       promote invariant to
+                         owning authority
+                                |
+                                +--> reusable failure class?
+                                         |          |
+                                        no         yes
+                                         |          |
+                                         v          v
+                                      close      add/update
+                                                 regression-ledger.json
+```
+
+After promotion, this Markdown ledger should point to the durable authority/regression entry rather than restating a second normative copy of the rule.
 
 ## Learning lifecycle
 
@@ -54,8 +84,11 @@ PERMANENT MACHINE GUARD?
       no                yes
        |                 |
        v                 v
-PROVISIONAL          PROMOTE RULE
-LEARNING             TO OWNER
+PROVISIONAL          PROMOTE TO OWNER
+LEARNING                 |
+                         +--> regression-ledger.json when reusable
+                         +--> verification consumer graph
+                         +--> owning machine authority
                          |
                          v
                    CLOSE EXACT HEAD
@@ -78,13 +111,15 @@ LEARNING             TO OWNER
 
 ## Accepted learnings
 
+The entries below are historical pointers. Their durable rule ownership remains in the named machine guard/authority, not in this Markdown file.
+
 ### L-001 — Runtime evidence must not become tracked source
 
 - Evidence: canonical/runtime verification previously surfaced mutable snapshots under tracked `storage/framework/**`.
 - Root cause: runtime evidence and source ownership were mixed.
 - Owner: runtime artifact ownership / verification workflow.
 - Durable guard: `scripts/verify-runtime-artifact-ownership.php`.
-- Rule promoted: mutable runtime evidence remains runtime-only; exact `.gitignore` directory sentinels may be allowlisted.
+- Promotion: runtime/generated artifact ownership authority; reusable regression should be represented by the machine regression ledger.
 
 ### L-002 — Current state must be parsed from its owning section
 
@@ -92,7 +127,7 @@ LEARNING             TO OWNER
 - Root cause: first-match Markdown parsing across mixed historical/current content.
 - Owner: candidate/repository-state consumers.
 - Durable guard: corrected section-scoped parser plus workflow regression coverage.
-- Rule promoted: machine-critical state uses machine authority where possible; Markdown consumers parse the explicit owner section.
+- Promotion: AI workflow/current-state parsing rule; reusable regression should be represented by the machine regression ledger.
 
 ### L-003 — Generated authority follows source, not manual conflict resolution
 
@@ -100,7 +135,7 @@ LEARNING             TO OWNER
 - Root cause: generated fingerprints were stale by design after source evolution.
 - Owner: repository compiler / generated authority workflow.
 - Durable guard: `./songchart reconcile` + repository compiler verification.
-- Rule promoted: regenerate generated JSON from the final tree; do not hand-merge it.
+- Promotion: repository compiler/generated-authority rule.
 
 ### L-004 — Non-interactive commands must not open a pager
 
@@ -108,7 +143,7 @@ LEARNING             TO OWNER
 - Root cause: diagnostic command inherited Git pager behavior.
 - Owner: SongChart CLI workflow UX.
 - Durable guard: workflow regression requires Git-native `--no-pager` for reconcile diff.
-- Rule promoted: automation/AI workflow commands must return control without hidden pager interaction.
+- Promotion: AI workflow command-interaction rule.
 
 ### L-005 — Closure evidence belongs to one exact HEAD
 
@@ -116,7 +151,7 @@ LEARNING             TO OWNER
 - Root cause: valid change occurred after closure.
 - Owner: exact-tree candidate/canonical delivery authority.
 - Durable guard: post-closure seal discipline and PR latest-head checks.
-- Rule promoted: any tracked change after PASS invalidates old closure evidence.
+- Promotion: candidate/canonical delivery authority.
 
 ## Stage 18.4 provisional learning queue
 
@@ -124,7 +159,7 @@ Use this section for findings that are not yet durable rules.
 
 | ID | Use case / failure | Status | Required before promotion |
 |---|---|---|---|
-| P-184-001 | Admin operational state exists but may not be actionable from the dashboard | active | complete inventory, focused UX test, confirm owner/action routes |
+| P-184-001 | Admin operational state exists but may not be actionable from the dashboard | validating | focused UX test + confirm attention/action routes + promote only if durable guard remains |
 | P-184-002 | User/role Admin surface is currently read-only | active | accepted mutation use cases + Gate/business invariant/audit design |
 | P-184-003 | System Settings mixes runtime diagnostics and configurable provider settings | active | classify supported runtime-configurable vs environment-owned settings |
 
