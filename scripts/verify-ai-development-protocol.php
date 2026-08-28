@@ -25,6 +25,9 @@ if (! is_file($contractPath) || ! is_file($protocolPath)) {
         'Do not add another verifier',
         'one writer per overlapping source surface',
         'Runtime/generated artifact ownership',
+        'mutation envelope',
+        'Post-closure seal',
+        'non-interactive',
     ] as $needle) {
         if (! str_contains($protocol, $needle)) {
             $errors[] = "AI development protocol is missing required workflow invariant [{$needle}].";
@@ -37,18 +40,25 @@ if (! is_file($contractPath) || ! is_file($protocolPath)) {
 
     $expectedPhases = [
         'research_orient',
+        'preflight_authority_consistency',
         'planned_impact',
         'implement',
         'post_diff_impact',
         'reconcile_generated_authority',
+        'mutation_boundary_check',
         'collect_all_audit',
         'focused_verification',
         'candidate',
         'canonical',
+        'post_closure_seal',
         'delivery',
     ];
     if (($contract['workflow']['ordered_phases'] ?? null) !== $expectedPhases) {
         $errors[] = 'AI development contract workflow phases drifted from the governed golden path.';
+    }
+
+    if (($contract['workflow']['mutation_envelopes'] ?? null) !== ['read-only', 'generated-only', 'runtime-only', 'closure']) {
+        $errors[] = 'AI development contract must define the four governed command mutation envelopes.';
     }
 }
 
