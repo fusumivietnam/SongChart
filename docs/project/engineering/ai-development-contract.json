@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "authority": "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
   "before_implementation": [
     "Read PROJECT_AUTHORITY.md.",
@@ -8,7 +8,8 @@
     "Run ./songchart ai doctor and read ./songchart context --json for architecture/runtime-sensitive work.",
     "Run ./songchart impact for planned changed paths when they are known.",
     "Review official/native capability ownership before custom infrastructure.",
-    "Review docs/project/stack/STACK_OVERVIEW.md and docs/project/stack/CAPABILITY_OWNERSHIP.md when the change affects dependencies, infrastructure, framework capabilities, runtime, database, queues, caching, frontend stack, or package ownership."
+    "Review docs/project/stack/STACK_OVERVIEW.md and docs/project/stack/CAPABILITY_OWNERSHIP.md when the change affects dependencies, infrastructure, framework capabilities, runtime, database, queues, caching, frontend stack, or package ownership.",
+    "Confirm current-stage machine/document authorities agree before implementation; ambiguous first-match Markdown parsing is not acceptable for machine-critical state."
   ],
   "implementation_rules": [
     "Do not duplicate registered authority literals.",
@@ -30,26 +31,40 @@
     "Run ./songchart impact --diff after implementation and reconcile newly impacted authorities, consumers and focused checks.",
     "Run ./songchart reconcile after registered generated-authority inputs change; review generated diffs and never hand-merge derived generated JSON when regeneration is available.",
     "Use ./songchart audit for collect-all diagnostic feedback when useful; audit does not replace fail-fast quality, candidate or canonical closure.",
-    "Runtime paths such as storage/framework, storage/logs and local backup directories must remain untracked unless explicitly declared as committed generated authority."
+    "Runtime paths such as storage/framework, storage/logs and local backup directories must remain untracked unless explicitly declared as committed generated authority.",
+    "Every workflow command introduced or changed must declare a mutation envelope: read-only, generated-only, runtime-only, or closure. Unexpected tracked mutation outside that envelope is a failure.",
+    "Non-interactive workflow commands must not open pagers or prompts unless interaction is explicitly part of the command contract.",
+    "Machine-critical state parsed from Markdown must be scoped to the owning section or replaced by machine-readable authority; do not use first-match parsing across documents containing historical/current state together.",
+    "Any tracked change after canonical PASS invalidates prior closure evidence; re-run post-diff impact, reconcile when needed, focused verification, candidate and canonical closure on the new HEAD."
   ],
   "workflow": {
     "ordered_phases": [
       "research_orient",
+      "preflight_authority_consistency",
       "planned_impact",
       "implement",
       "post_diff_impact",
       "reconcile_generated_authority",
+      "mutation_boundary_check",
       "collect_all_audit",
       "focused_verification",
       "candidate",
       "canonical",
+      "post_closure_seal",
       "delivery"
     ],
     "planned_impact": "./songchart impact <planned-paths...>",
     "post_diff_impact": "./songchart impact --diff",
     "reconcile": "./songchart reconcile",
     "audit": "./songchart audit",
-    "handoff_authority": "docs/project/engineering/DELIVERY_WORKFLOW.md"
+    "handoff_authority": "docs/project/engineering/DELIVERY_WORKFLOW.md",
+    "mutation_envelopes": [
+      "read-only",
+      "generated-only",
+      "runtime-only",
+      "closure"
+    ],
+    "post_closure_rule": "Any tracked-tree change after canonical PASS invalidates the evidence for the previous HEAD."
   },
   "verification": {
     "during_implementation": "impact-driven focused gates only",
@@ -64,13 +79,22 @@
     "application_data_boundary_authority": "docs/project/domain/application-data-boundary.json",
     "query_budget_authority": "docs/project/performance/query-budget-contract.json",
     "project_context_authority": "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md",
-    "impact_map_authority": "docs/project/stack/impact-test-map.json"
+    "impact_map_authority": "docs/project/stack/impact-test-map.json",
+    "post_closure_seal": [
+      "record exact HEAD SHA",
+      "verify tracked tree is clean",
+      "push exact closed HEAD",
+      "require PR checks on latest commit SHA"
+    ]
   },
   "failure_protocol": [
     "Preserve exact failing evidence.",
     "Identify the owning authority before patching.",
-    "Classify failures as source behavior, stale consumer, stale generated authority, dead impact command, or runtime-artifact ownership where applicable.",
+    "Classify failures as source behavior, stale consumer, stale generated authority, dead impact command, runtime-artifact ownership, formatter-only drift, parser/authority ambiguity, unexpected mutation, or closure invalidation where applicable.",
     "Prefer extending the existing resolver/contract over adding duplicate guards.",
+    "If the authority is current and the consumer is stale, fix the consumer rather than reverting the authority to an obsolete format.",
+    "If generated authority is stale, regenerate it; do not hand-edit or hand-merge generated JSON.",
+    "If a workflow command unexpectedly blocks for pager/input, treat that as an ergonomics defect for non-interactive commands.",
     "Record a regression class only when a durable machine guard exists.",
     "Re-run actual-diff impact when a correction expands the changed surface.",
     "Use same-stage corrective candidates; do not use --force as normal recovery."
