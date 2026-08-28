@@ -9,29 +9,6 @@ Trạng thái: tài liệu định hướng cho hạng mục đang triển khai 
 - Roadmap không thay thế task contract, candidate evidence hay `DEVELOPMENT_STATE.md`.
 - UI/Admin ưu tiên thuật ngữ tiếng Việt rõ nghĩa; code/contract giữ tên kỹ thuật khi cần đối chiếu.
 
-## Stage 18.3.1 — Verification & AI Workflow Convergence
-
-Mục tiêu: hội tụ research → impact → implementation → post-diff → reconcile → audit → focused verify → candidate → canonical → delivery thành một golden path có dependency awareness cho người phát triển và AI.
-
-Trọng tâm:
-
-- planned-path và actual-diff impact resolution;
-- semantic authority + reverse verification consumer + focused-check routing;
-- collect-all diagnostic audit nhưng giữ strict quality/candidate/canonical fail-fast;
-- generated-authority reconcile từ exact tree;
-- impact map không được chứa command/test target chết;
-- runtime/generated artifact ownership không được làm canonical mutate tracked tree;
-- one-writer-per-surface và exact-commit AI/device handoff;
-- official/native capability review trong task contract.
-
-Không thuộc stage này:
-
-- evidence caching/reuse;
-- aggressive CI path pruning;
-- merge queue khi chưa có nhu cầu concurrency thực tế;
-- workflow framework mới;
-- product feature mới.
-
 ## Stage 18.4 — Admin Completion & Operational Convergence
 
 Mục tiêu: Admin vận hành được sản phẩm mà không phải dựa vào Tinker hoặc sửa `.env` cho các thao tác thường xuyên.
