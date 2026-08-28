@@ -47,13 +47,16 @@ Status: operational checkpoint only. Repository authorities remain authoritative
         `--> [FINAL] audit -> candidate -> canonical -> exact-head delivery
 ```
 
+For repository-wide traversal, read `docs/project/engineering/ENGINEERING_GRAPH.md`; it connects current stage, authority dependencies, impact routing, verification consumers, regression history and closure without replacing their machine owners.
+
 ## Done
 
 - Stage 18.4 task contract and validation report initialized from accepted `main`.
 - Candidate authority advanced to Stage 18.4 with all closure gates reset to `not_run`.
 - Existing Admin inventory confirms delivered foundations already include Dashboard, provider/import operations, canonical admission, identity conflicts, catalog, users, system settings and privileged audit routes/views.
 - First Stage 18.4 product slice exposes previously hidden dashboard attention signals for recent provider-sync failures and pending/running extension operations.
-- `docs/project/engineering/AI_LEARNING_LEDGER.md` now records reusable use-case/debug/failure learnings without becoming a parallel authority; durable rules require an owning authority plus permanent machine guard.
+- `docs/project/engineering/AI_LEARNING_LEDGER.md` records only provisional learning/history; durable reusable failures promote to `regression-ledger.json`, their owning authority and permanent verification guard.
+- `docs/project/engineering/ENGINEERING_GRAPH.md` now provides a graph-of-graphs traversal layer over existing machine authorities instead of introducing another truth source.
 
 ## In progress
 
@@ -87,6 +90,12 @@ Expected focused verification:
 
 ## Current blockers / risks
 
+- Graph fragmentation: authority dependencies, verification consumers, impact routing and regression history are separate machine graphs; use `ENGINEERING_GRAPH.md` for traversal and do not duplicate their data into another machine authority.
+- Learning/regression duplication: provisional AI learnings must promote to `regression-ledger.json` + owner + guard instead of becoming a second rule set.
+- Current-state Markdown drift remains possible; current mitigations are explicit-section parsing and repository-state/candidate verification. A machine-readable development-state migration is deferred to a dedicated task rather than introduced mid-slice.
+- Semantic edge typing is incomplete: existing graphs mainly express ownership/dependents, while `generated-from`, `guarded-by`, `invalidates` and `promotes-to` are reasoning conventions rather than one unified schema. Do not expand schemas without concrete cross-stage query use cases.
+- Cyclic authority is forbidden: consumers/verifiers may check authority but must never become upstream truth for their own authority inputs; generated outputs remain derived leaves.
+- Verification fan-out can grow too broad; keep one semantic owner per invariant and use focused impact during iteration rather than adding duplicate verifiers.
 - Provider credential UX must never expose secrets and must remain within existing credential-pool/provider authorities.
 - Canonical admission, identity conflicts, catalog and user-role mutations must preserve Laravel Gate authorization, application write boundaries and privileged audit evidence.
 - Dashboard/operational read models can create query amplification; use existing registered read-model/query-budget authorities instead of adding controller queries.
@@ -96,7 +105,7 @@ Expected focused verification:
 
 ## AI/dev learning discipline
 
-Use `docs/project/engineering/AI_LEARNING_LEDGER.md` to recognize known failure classes early.
+Use `docs/project/engineering/ENGINEERING_GRAPH.md` for traversal and `docs/project/engineering/AI_LEARNING_LEDGER.md` only for provisional findings.
 
 ```text
 USE CASE / FAILURE
@@ -118,8 +127,11 @@ PERMANENT GUARD?
    /             \
  no               yes
  |                 |
-provisional     promote rule
-learning        to real authority
+provisional     promote to owner
+learning            |
+                    +--> regression-ledger.json when reusable
+                    +--> verification consumer graph
+                    `--> permanent guard
 ```
 
 Do not teach future AI from a one-off workaround, raw log or unverified assumption. Official framework/provider behavior should be checked against current official sources; SongChart-specific semantics remain owned by repository authorities.
@@ -130,6 +142,7 @@ Do not teach future AI from a one-off workaround, raw log or unverified assumpti
 - PR #12 merged into `main` at `155c9daa14186ae48843ed227eb1af9584e95e03`.
 - Stage 18.4 branch was created directly from that accepted merge commit.
 - Stage 18.4-A source + focused regression have been committed remotely; local Docker verification is still pending.
+- Graph topology review identified graph fragmentation, learning/regression duplication, current-state Markdown drift, missing typed semantic edges, cyclic-authority risk and verification fan-out as explicit engineering risks; controls are documented without adding duplicate machine truth.
 
 ## Next required action
 
@@ -137,7 +150,8 @@ Do not teach future AI from a one-off workaround, raw log or unverified assumpti
 2. Run preflight authority consistency and `./songchart context --json`.
 3. Run `./songchart impact --diff` and the focused Admin UX test.
 4. Run Pint/PHPStan for the touched PHP/test surface.
-5. If focused evidence is green, continue to provider/credential inventory rather than broadening the dashboard slice.
+5. Run documentation/repository-state verification because graph traversal docs changed.
+6. If focused evidence is green, continue to provider/credential inventory rather than broadening the dashboard slice.
 
 ## Documentation checkpoint discipline
 
@@ -149,7 +163,7 @@ For every logical implementation commit:
 - keep `docs/project/DEVELOPMENT_STATE.md` as the operational current-state owner;
 - keep `docs/project/docs/ROADMAP.md` limited to current/future direction, not delivered chronology;
 - keep completed-stage chronology in `docs/project/DEVELOPMENT_HISTORY.md` after governed acceptance;
-- use the AI learning ledger only as evidence/history; promote durable rules into their owning authority;
+- use the AI learning ledger only as provisional evidence/history; promote durable rules into their owning authority and regression graph;
 - never duplicate workflow authority into `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` or nested compatibility copies.
 
 Before handing work to another AI/device, `./songchart ai status` must show the intended branch/stage and no unresolved checkpoint/context drift. Prefer the secret-redacted `./songchart ai doctor` bundle over manually copying raw environment/log output.
