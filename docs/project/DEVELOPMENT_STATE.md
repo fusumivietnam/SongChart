@@ -5,48 +5,45 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 ## Accepted baseline
 
 - Stage `18.3 — Public Metadata & SEO Readiness` merged to `main` via PR #11 after exact-head canonical closure passed.
-- Public canonical metadata/SEO, provider-neutral canonical surfaces, System Settings provider configuration, credential-pool convergence, bounded non-production 2FA disable mode, demo runtime and candidate runtime evidence are accepted baseline.
+- Stage `18.3.1 — Verification & AI Workflow Convergence` merged to `main` via PR #12 from exact canonical-verified head `3333e91736a2f02df6959ce98a2ffef7aad07a38`; merge commit `155c9daa14186ae48843ed227eb1af9584e95e03`.
+- The accepted development workflow now owns planned/actual impact, reverse verification consumers, generated-authority reconcile, collect-all audit, runtime artifact ownership, one-writer handoff, non-interactive diagnostics and exact-HEAD closure sealing.
 - Development authority remains Linux/WSL2 + Docker through `./songchart`; GitHub Codespaces is the preferred remote adapter.
 
 ## Current stage
 
-- Stage `18.3.1 — Verification & AI Workflow Convergence`
+- Stage `18.4 — Admin Completion & Operational Convergence`
 - Candidate: `v1`
-- Branch: `stage-18.3.1-verification-ai-workflow-convergence`
+- Branch: `stage-18.4-admin-completion-operational-convergence`
 - Candidate closure: pending.
 
 ## Implemented slices
 
-- Stage 18.3.1 task contract records non-goals, official sources, native capability assessment and exact acceptance criteria.
-- `./songchart impact` exposes planned path impact; `./songchart impact --diff` resolves actual branch/working-tree changes after implementation.
-- Impact resolution now combines impact-map path patterns, registered semantic authorities, reverse verification consumers and focused checks.
-- `./songchart reconcile` regenerates project context/repository generated authority from the current tree and shows the generated diff without committing.
-- `./songchart audit` runs the existing `quality:verify` child checks in collect-all diagnostic mode while explicitly refusing stage/canonical/full-PostgreSQL/frontend-build nesting.
-- Impact-map verification now rejects retired/missing Composer commands and missing test targets/globs.
-- Runtime artifact ownership verification rejects tracked `storage/framework/**`, `storage/logs/**` and local backup artifacts; this permanently guards the Stage 18.3 canonical schema-snapshot mutation class.
-- Delivery authority now defines one-writer-per-surface, safe rebase/cherry-pick synchronization, generated-artifact regeneration and exact-closed-HEAD push discipline.
-- AI protocol/task template now require research/native capability review, planned impact, actual-diff impact, reconcile, audit, focused verification, candidate, canonical and delivery.
+- Stage 18.4 task contract and validation report initialized from accepted `main`.
+- Candidate authority advanced to Stage 18.4 with all closure gates reset to `not_run`.
+- Scope is constrained to completing existing administrator/operator workflows and converging them on established authorization, data-boundary, provider, audit and verification authorities.
 
 ## Current blockers / risks
 
-- The new workflow code and authority changes have not yet been executed through Pint/PHPStan/Architecture/quality verification on the exact branch tree.
-- Enhanced impact-map verification is expected to surface historical stale command/test routes; those must be corrected in the map rather than weakening the verifier.
-- Generated project context/repository manifest will be stale until `./songchart reconcile` or candidate preparation runs from the exact final source tree.
-- `./songchart audit` intentionally favors diagnosability over runtime speed and must not be treated as closure evidence.
+- Existing Admin surfaces must be inventoried before implementation so Stage 18.4 closes gaps instead of rebuilding already-delivered functionality.
+- Provider credential UX must never expose secrets and must remain within existing credential-pool/provider authorities.
+- Canonical admission, identity conflicts, catalog and user-role mutations must preserve Laravel Gate authorization, application write boundaries and privileged audit evidence.
+- Dashboard/operational read models can create query amplification if not routed through existing read-model/query-budget authorities.
+- No new provider breadth, custom admin framework, OAuth program or advanced scheduler should enter scope without a task-contract deviation backed by a real use case.
 
 ## Latest focused evidence
 
-- Stage 18.3 exact-head canonical verification and `./songchart close` passed before PR #11 merge.
-- Stage 18.3.1 implementation commits are present on the stage branch; runtime/focused verification is pending.
+- Stage 18.3.1 exact-head candidate/canonical/close passed on `3333e91736a2f02df6959ce98a2ffef7aad07a38` before PR #12 merge.
+- PR #12 merged into `main` at `155c9daa14186ae48843ed227eb1af9584e95e03`.
+- Stage 18.4 branch was created directly from that accepted merge commit.
 
 ## Next required action
 
-1. Fetch/switch to `stage-18.3.1-verification-ai-workflow-convergence` in Codespaces.
-2. Run `./songchart impact --diff` and inspect all newly surfaced authorities/consumers/checks.
-3. Run the impact-map verifier and Stage 18.3.1 Architecture test; repair stale map targets/aliases at their source.
-4. Run `./songchart reconcile`, review generated diffs, and commit only expected generated authority.
-5. Run `./songchart audit` to collect independent quality/static/governance failures in one pass, then fix root causes.
-6. Run focused Pint/PHPStan/tests, then `./songchart candidate` / `./songchart close` only when the exact tree is clean.
+1. Sync/switch local work to `stage-18.4-admin-completion-operational-convergence`.
+2. Run preflight authority consistency and `./songchart context --json`.
+3. Inventory current Admin routes/controllers/read models/actions/views/tests and classify each planned Stage 18.4 area as complete, partial or missing.
+4. Run planned impact for the first smallest coherent operational slice.
+5. Implement source + authority + focused regression together, then run actual-diff impact.
+6. Reconcile generated authority only when registered inputs change; run audit/focused verification before candidate closure.
 
 ## Documentation checkpoint discipline
 
