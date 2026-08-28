@@ -11,6 +11,7 @@ This index lists active documentation ownership. Historical stage records are in
 - `docs/project/DEVELOPMENT_HISTORY.md` — accepted development chronology.
 - `docs/project/RELEASE_BASELINE_STATUS.md` — release baseline requirements.
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` — development and AI workflow.
+- `docs/project/engineering/AI_LEARNING_LEDGER.md` — evidence/history for reusable use-case/debug/failure learnings; not a parallel rule authority.
 - `docs/project/engineering/DELIVERY_WORKFLOW.md` — Git handoff, candidate, canonical, and release flow.
 - `docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md` — generated project-context contract.
 
