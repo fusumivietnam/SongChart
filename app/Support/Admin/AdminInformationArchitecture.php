@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Admin;
 
 use App\Enums\Capability;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -49,8 +50,11 @@ final class AdminInformationArchitecture
         return [
             'activeAdminNav' => 'users',
             'title' => 'Người dùng',
-            'description' => 'Danh sách read-only tài khoản, trạng thái hoạt động và vai trò hiện tại.',
+            'description' => 'Quản lý trạng thái hoạt động và vai trò tài khoản theo quyền được cấp.',
             'users' => $users,
+            'roles' => UserRole::cases(),
+            'canManageRoles' => Gate::allows(Capability::ManageUserRoles->value),
+            'canManageActivation' => Gate::allows(Capability::ManageUserActivation->value),
             'metrics' => [
                 ['label' => 'Tổng tài khoản', 'value' => $users->count()],
                 ['label' => 'Đang hoạt động', 'value' => $users->where('is_active', true)->count()],

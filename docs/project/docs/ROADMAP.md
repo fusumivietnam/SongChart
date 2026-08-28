@@ -7,30 +7,9 @@ Trạng thái: tài liệu định hướng cho hạng mục đang triển khai 
 - Chỉ giữ hạng mục đang triển khai hoặc chưa triển khai.
 - Công việc đã hoàn tất phải chuyển sang Development History sau governed acceptance.
 - Roadmap không thay thế task contract, candidate evidence hay `DEVELOPMENT_STATE.md`.
+- Product stage không bị kéo dài chỉ để triển khai một engineering framework chưa có use case thực tế.
+- Cross-stage engineering improvements được áp dụng dần khi chúng giảm trực tiếp navigation/debug/verification cost; không tạo thêm stage sản phẩm nếu không cần.
 - UI/Admin ưu tiên thuật ngữ tiếng Việt rõ nghĩa; code/contract giữ tên kỹ thuật khi cần đối chiếu.
-
-## Stage 18.3.1 — Verification & AI Workflow Convergence
-
-Mục tiêu: hội tụ research → impact → implementation → post-diff → reconcile → audit → focused verify → candidate → canonical → delivery thành một golden path có dependency awareness cho người phát triển và AI.
-
-Trọng tâm:
-
-- planned-path và actual-diff impact resolution;
-- semantic authority + reverse verification consumer + focused-check routing;
-- collect-all diagnostic audit nhưng giữ strict quality/candidate/canonical fail-fast;
-- generated-authority reconcile từ exact tree;
-- impact map không được chứa command/test target chết;
-- runtime/generated artifact ownership không được làm canonical mutate tracked tree;
-- one-writer-per-surface và exact-commit AI/device handoff;
-- official/native capability review trong task contract.
-
-Không thuộc stage này:
-
-- evidence caching/reuse;
-- aggressive CI path pruning;
-- merge queue khi chưa có nhu cầu concurrency thực tế;
-- workflow framework mới;
-- product feature mới.
 
 ## Stage 18.4 — Admin Completion & Operational Convergence
 
@@ -38,18 +17,23 @@ Mục tiêu: Admin vận hành được sản phẩm mà không phải dựa và
 
 Trọng tâm:
 
-- Dashboard operational;
-- System Settings;
+- Dashboard operational và attention routing;
+- System Settings, với phân tách rõ runtime-configurable vs deployment/secret-owned configuration;
 - Provider management và operational health;
-- credential management/pool UX phù hợp authority hiện có;
+- credential management/pool UX phù hợp authority hiện có và không render secrets;
 - import workflow, progress, retry và failure UX;
 - canonical admission;
 - identity conflicts;
 - catalog administration;
-- users/roles;
+- users/roles trên các mutation use case được chấp nhận rõ ràng;
 - privileged audit.
 
-Không block release bởi OAuth, credential rotation phức tạp, scheduler nâng cao hoặc provider breadth mới nếu chưa có use case bắt buộc.
+Chiến lược closure:
+
+- ưu tiên hoàn thiện các edge vận hành còn thiếu trên surface đã tồn tại thay vì mở subsystem mới;
+- mỗi slice phải nhỏ, có action path rõ, focused regression và không mở rộng scope nếu inventory cho thấy capability đã đủ;
+- nếu acceptance criteria cốt lõi đã đạt, đóng 18.4 sớm và chuyển phần engineering optimization không bắt buộc sang cross-stage track;
+- không block release bởi OAuth, credential rotation phức tạp, scheduler nâng cao, AI operations automation hoặc provider breadth mới nếu chưa có use case bắt buộc.
 
 ## Stage 18.5 — Public Product / Frontend Release Pass
 
@@ -62,6 +46,8 @@ Không block release bởi OAuth, credential rotation phức tạp, scheduler n�
 - loading/empty/error states;
 - visual SEO polish và release QA.
 
+Engineering graph/navigation improvements tiếp tục được dùng nền, nhưng không được làm 18.5 trở thành một architecture rewrite.
+
 ## Stage 18.6 — Provider Destination & Media Quality
 
 - destination/media selector theo availability, freshness và provenance;
@@ -69,6 +55,33 @@ Không block release bởi OAuth, credential rotation phức tạp, scheduler n�
 - operational visibility cho stale/unavailable destinations;
 - YouTube/media destination approval quality;
 - mở rộng provider breadth chỉ khi evidence quality và official API capability chứng minh nhu cầu.
+
+## Cross-stage engineering track — không phải product stage
+
+Các cải tiến dưới đây được triển khai dần khi có evidence về lợi ích. Chúng không mặc định block product closure:
+
+1. **Graph navigation** — truy vấn từ path/use case/failure tới owner, authority, reverse consumers, regressions và focused checks; ưu tiên projection/compile từ graph hiện có thay vì tạo source-of-truth mới.
+2. **AI development routing** — `.agents/skills/*` và AI development protocol giúp AI chọn đúng bounded context/layer, official source và debug route; AI learning chỉ phục vụ development navigation/debug.
+3. **Machine current-state projection** — cân nhắc machine-readable development state khi manual Markdown thực sự gây drift; Markdown vẫn là human projection.
+4. **Mutation-envelope enforcement** — tự phát hiện command gây tracked mutation ngoài contract khi usage evidence đủ mạnh.
+5. **Root-cause audit clustering** — nhóm failure theo owner/root cause để giảm sửa downstream symptom.
+6. **Closure/delivery ergonomics** — machine-readable exact-HEAD seal và delivery helper chỉ sau khi close→push→PR lifecycle đã ổn định qua nhiều stage.
+
+Không tạo `engineering-knowledge-graph.json`, verifier mới hoặc workflow command mới chỉ để phản chiếu dữ liệu đã có. Mỗi surface mới phải chứng minh query/use case không thể đáp ứng tốt bằng owner hiện tại.
+
+## Repository simplification track
+
+Dọn dần, không xóa theo cảm tính. Một surface chỉ được retire khi không còn active runtime/build/authority/navigation/verification consumer.
+
+Ưu tiên rà soát:
+
+- historical root `STAGE_*_CHANGE_MANIFEST.md` và historical stage docs: giữ chronology/evidence nhưng loại khỏi active navigation; cân nhắc archive/consolidate khi verifier không còn phụ thuộc;
+- model-specific instruction files `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`: giữ thin routing only, không duplicate AI workflow;
+- `.agents/skills/*`: giữ ngắn, route tới authority thay vì copy rules;
+- duplicate prose docs: consolidate vào Documentation Index/owner, giữ compatibility link nếu cần;
+- dead verification aliases, compatibility scripts và retired command references: xóa khi verification command-surface/consumer graph chứng minh không còn consumer;
+- overlapping `Application` / `Actions` / `Services` / `Support`: không mass-move; với code mới chọn owner rõ ràng, và chỉ refactor lớp cũ khi một use case thực tế chạm tới nó;
+- stale generated/runtime artifacts: regenerate hoặc bỏ tracked ownership theo authority, không allowlist để né gate.
 
 ## Nhóm 19.x — Production readiness / first release
 
@@ -80,6 +93,8 @@ Không block release bởi OAuth, credential rotation phức tạp, scheduler n�
 - security review;
 - production smoke verification;
 - release package/tag từ accepted `main` exact tree.
+
+AI Operations nếu được triển khai trước/sau production readiness phải bắt đầu ở read-only `observe → explain → recommend`; mọi mutation đi qua cùng governed Laravel Gate/Application Action/Audit surface như Admin, không có direct DB/secret/env bypass.
 
 ## Nhóm sau release — Giá trị cho người dùng cá nhân
 
@@ -95,3 +110,4 @@ Không block release bởi OAuth, credential rotation phức tạp, scheduler n�
 - Một feature chưa đóng nếu PostgreSQL, quality, candidate và canonical verification chưa đạt authority hiện hành.
 - `DEVELOPMENT_STATE.md` phải được cập nhật cùng logical changeset khi blocker/evidence/next action thay đổi.
 - Roadmap không lưu debug diary hoặc verification transcript; các dữ kiện vận hành ngắn hạn thuộc Development State.
+- Engineering improvement phải giảm measurable friction hoặc close một failure class; nếu chỉ tạo thêm chuẩn/contract mà không giảm ambiguity, verification cost hoặc operational risk thì không đưa vào.

@@ -6,6 +6,7 @@ $root = dirname(__DIR__);
 $runtimePrefixes = [
     'storage/framework/',
     'storage/logs/',
+    'storage/upgrade-backups/',
     '.songchart-backups/',
 ];
 $allowedTracked = [

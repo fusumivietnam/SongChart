@@ -11,6 +11,8 @@ This index lists active documentation ownership. Historical stage records are in
 - `docs/project/DEVELOPMENT_HISTORY.md` — accepted development chronology.
 - `docs/project/RELEASE_BASELINE_STATUS.md` — release baseline requirements.
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` — development and AI workflow.
+- `docs/project/engineering/ENGINEERING_GRAPH.md` — human-readable graph-of-graphs traversal for authority, impact, verification, regression and current-stage topology; not a parallel machine authority.
+- `docs/project/engineering/AI_LEARNING_LEDGER.md` — provisional evidence/history for reusable use-case/debug/failure learnings; guarded durable regressions are promoted to `regression-ledger.json` and their owning authority.
 - `docs/project/engineering/DELIVERY_WORKFLOW.md` — Git handoff, candidate, canonical, and release flow.
 - `docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md` — generated project-context contract.
 
@@ -45,6 +47,8 @@ This index lists active documentation ownership. Historical stage records are in
 - `docs/project/engineering/verification-command-surface.json`
 - `docs/project/engineering/verification-consumer-graph.json`
 - `docs/project/engineering/repository-contract-compiler.json`
+- `docs/project/engineering/regression-ledger.json`
+- `docs/project/governance/authority-dependencies.json`
 
 ### Runtime
 

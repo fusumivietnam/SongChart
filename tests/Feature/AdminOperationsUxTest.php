@@ -29,6 +29,8 @@ it('presents the admin dashboard as an attention center', function (): void {
         ->assertOk()
         ->assertSee('data-admin-dashboard="attention-first"', false)
         ->assertSee('Cần xử lý')
+        ->assertSee('Đồng bộ nguồn thất bại gần đây')
+        ->assertSee('Hoạt động hệ thống đang xử lý')
         ->assertSee('Dữ liệu cần rà soát')
         ->assertSee('Chi tiết kỹ thuật');
 });
