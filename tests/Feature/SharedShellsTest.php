@@ -10,7 +10,15 @@ uses(RefreshDatabase::class);
 
 it('renders the public frontend shell', function (): void {
     /** @var TestCase $this */
-    $this->get('/')->assertOk()->assertSee('Điều hướng chính', false)->assertSee('Tìm kiếm toàn cục', false);
+    $response = $this->get('/');
+
+    $response->assertOk()
+        ->assertSee('Điều hướng chính', false)
+        ->assertSee('Điều hướng di động', false)
+        ->assertSee('Tìm kiếm toàn cục', false)
+        ->assertSee('aria-current="page"', false);
+
+    expect(substr_count($response->getContent(), 'aria-current="page"'))->toBe(2);
 });
 
 it('renders the admin shell for an admin user', function (): void {
