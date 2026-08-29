@@ -17,6 +17,7 @@ $items = [
         <nav class="hidden items-center gap-1 lg:flex" aria-label="Điều hướng chính">
             @foreach($items as $item)
                 <a href="{{ isset($item['route']) ? route($item['route']) : $item['href'] }}"
+                   @if($active === $item['key']) aria-current="page" @endif
                    @class(['sc-nav-link', 'is-active' => $active === $item['key']])>
                     {{ $item['label'] }}
                 </a>
