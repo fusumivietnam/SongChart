@@ -12,29 +12,26 @@ if [[ ${#checks[@]} -eq 0 ]]; then
     exit 0
 fi
 
-canonical_required=false
+closure_checks=()
+filtered_checks=()
 for check in "${checks[@]}"; do
-    if [[ "$check" == 'composer canonical:verify' || "$check" == 'songchart verify' ]]; then
-        canonical_required=true
-        break
-    fi
+    case "$check" in
+        'composer canonical:verify'|'songchart verify'|'songchart close')
+            closure_checks+=("$check")
+            ;;
+        *)
+            filtered_checks+=("$check")
+            ;;
+    esac
 done
+checks=("${filtered_checks[@]}")
 
-if [[ "$canonical_required" == true ]]; then
-    filtered_checks=()
-    for check in "${checks[@]}"; do
-        if [[ "$check" == 'composer stage:verify' || "$check" == 'songchart test' ]]; then
-            continue
-        fi
-        filtered_checks+=("$check")
-    done
-    checks=("${filtered_checks[@]}")
-fi
-
-printf '[SongChart impact verify] Required focused checks (%d):\n' "${#checks[@]}"
+printf '[SongChart impact verify] Required pre-closure checks (%d):\n' "${#checks[@]}"
 printf -- '- %s\n' "${checks[@]}"
-if [[ "$canonical_required" == true ]]; then
-    printf '[SongChart impact verify] Stage verification is not repeated because canonical verification owns the stage lane.\n'
+if [[ ${#closure_checks[@]} -gt 0 ]]; then
+    printf '[SongChart impact verify] Deferred closure-only checks (%d):\n' "${#closure_checks[@]}"
+    printf -- '- %s\n' "${closure_checks[@]}"
+    printf '[SongChart impact verify] Canonical verification is closure-only; run it through candidate/close on an exact committed tree.\n'
 fi
 
 focused_image_ready=false
@@ -71,9 +68,6 @@ for check in "${checks[@]}"; do
         'composer stage:verify')
             "$SONGCHART" test
             ;;
-        'composer canonical:verify')
-            "$SONGCHART" verify
-            ;;
         composer\ *)
             read -r -a args <<< "${check#composer }"
             "$SONGCHART" composer "${args[@]}"
@@ -92,4 +86,4 @@ for check in "${checks[@]}"; do
     esac
 done
 
-printf '\n[SongChart impact verify] PASSED.\n'
+printf '\n[SongChart impact verify] PASSED pre-closure verification.\n'
