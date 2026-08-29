@@ -11,7 +11,7 @@
                 0 kết quả
             @endif
         </p>
-        <h1 class="sc-page-title mt-1">Kết quả cho “{{ $query }}”</h1>
+        <h1 id="search-results-title" class="sc-page-title mt-1">Kết quả cho “{{ $query }}”</h1>
         <p class="mt-2 text-sm text-[var(--sc-text-secondary)]">Bộ lọc: {{ $labels[$type] ?? $labels['all'] }}</p>
     </div>
     @if($type !== 'all')
