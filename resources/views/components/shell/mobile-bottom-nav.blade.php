@@ -10,7 +10,9 @@ $items = [
 @endphp
 <nav class="sc-mobile-nav lg:hidden" aria-label="Điều hướng di động">
     @foreach($items as $item)
-        <a href="{{ $item['href'] }}" @class(['sc-mobile-nav-item', 'is-active' => $active === $item['key']])>
+        <a href="{{ $item['href'] }}"
+           @if($active === $item['key']) aria-current="page" @endif
+           @class(['sc-mobile-nav-item', 'is-active' => $active === $item['key']])>
             <x-icons.icon :name="$item['icon']" class="h-5 w-5" />
             <span>{{ $item['label'] }}</span>
         </a>
