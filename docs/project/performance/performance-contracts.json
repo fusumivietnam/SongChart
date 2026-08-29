@@ -1,10 +1,16 @@
 {
-  "version": 1,
+  "version": 2,
   "rules": {
     "strict_eloquent_non_production": true,
     "schema_probing_in_hot_paths": false,
     "unbounded_collections_in_admin_read_models": false,
     "select_star_in_admin_read_models": false
+  },
+  "public_frontend_release": {
+    "third_party_blocking_assets": false,
+    "images_require_dimensions": true,
+    "reduced_motion_required": true,
+    "mobile_safe_area_required": true
   },
   "use_cases": {
     "admin.providers.index": {
