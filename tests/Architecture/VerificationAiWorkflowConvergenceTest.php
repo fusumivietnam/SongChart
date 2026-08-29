@@ -35,7 +35,7 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain("'composer stage:verify'")
         ->toContain('run_test_target')
         ->toContain('git -C "$ROOT" ls-files -- "$target"')
-        ->not->toContain("\"\$SONGCHART\" verify")
+        ->not->toContain('"$SONGCHART" verify')
         ->not->toContain('eval ');
 
     expect($audit)
