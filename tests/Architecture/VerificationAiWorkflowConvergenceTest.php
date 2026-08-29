@@ -28,12 +28,14 @@ it('exposes the dependency-aware workflow golden path', function (): void {
 
     expect($impactRunner)
         ->toContain('required_focused_checks')
-        ->toContain('canonical_required=true')
-        ->toContain("'composer canonical:verify' || \"\$check\" == 'songchart verify'")
-        ->toContain("'composer stage:verify' || \"\$check\" == 'songchart test'")
-        ->toContain('Stage verification is not repeated because canonical verification owns the stage lane.')
+        ->toContain('closure_checks=()')
+        ->toContain("'composer canonical:verify'|'songchart verify'|'songchart close'")
+        ->toContain('Deferred closure-only checks')
+        ->toContain('Canonical verification is closure-only; run it through candidate/close on an exact committed tree.')
+        ->toContain("'composer stage:verify'")
         ->toContain('run_test_target')
         ->toContain('git -C "$ROOT" ls-files -- "$target"')
+        ->not->toContain("\"\$SONGCHART\" verify")
         ->not->toContain('eval ');
 
     expect($audit)
