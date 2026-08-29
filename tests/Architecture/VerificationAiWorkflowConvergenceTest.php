@@ -29,9 +29,9 @@ it('exposes the dependency-aware workflow golden path', function (): void {
     expect($impactRunner)
         ->toContain('required_focused_checks')
         ->toContain('canonical_required=true')
-        ->toContain("\$check == 'composer stage:verify'")
+        ->toContain("'composer canonical:verify' || \"\$check\" == 'songchart verify'")
+        ->toContain("'composer stage:verify' || \"\$check\" == 'songchart test'")
         ->toContain('Stage verification is not repeated because canonical verification owns the stage lane.')
-        ->toContain("'composer canonical:verify'")
         ->toContain('run_test_target')
         ->toContain('git -C "$ROOT" ls-files -- "$target"')
         ->not->toContain('eval ');
