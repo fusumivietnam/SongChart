@@ -19,32 +19,32 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('collect all quality/static/governance failures without fail-fast');
 
     expect($impact)
-        ->toContain("if (\$arg === '--diff')")
+        ->toContain('if ($arg === \'--diff\')')
         ->toContain('matched_impact_rules')
         ->toContain('reverse_verification_consumers')
         ->toContain('required_focused_checks')
-        ->toContain("'origin/main'")
-        ->toContain("git -C '.escapeshellarg(\$root).' ls-files --others --exclude-standard");
+        ->toContain('\'origin/main\'')
+        ->toContain('git -C \'.escapeshellarg($root).\' ls-files --others --exclude-standard');
 
     expect($impactRunner)
         ->toContain('required_focused_checks')
         ->toContain('closure_checks=()')
-        ->toContain("'composer canonical:verify'|'songchart verify'|'songchart close'")
+        ->toContain('\'composer canonical:verify\'|\'songchart verify\'|\'songchart close\'')
         ->toContain('Deferred closure-only checks')
         ->toContain('Canonical verification is closure-only; run it through candidate/close on an exact committed tree.')
-        ->toContain("'composer stage:verify'")
+        ->toContain('\'composer stage:verify\'')
         ->toContain('run_test_target')
         ->toContain('git -C "$ROOT" ls-files -- "$target"')
         ->not->toContain('"$SONGCHART" verify')
         ->not->toContain('eval ');
 
     expect($audit)
-        ->toContain("\$composer['scripts']['quality:verify']")
+        ->toContain('$composer[\'scripts\'][\'quality:verify\']')
         ->toContain('[SongChart audit] FAILURES')
-        ->toContain("'@stage:verify'")
-        ->toContain("'@canonical:verify'")
-        ->toContain("'@test:postgres'")
-        ->toContain("'npm run build'");
+        ->toContain('\'@stage:verify\'')
+        ->toContain('\'@canonical:verify\'')
+        ->toContain('\'@test:postgres\'')
+        ->toContain('\'npm run build\'');
 });
 
 it('guards impact targets and runtime-only artifacts before canonical closure', function (): void {
@@ -60,8 +60,8 @@ it('guards impact targets and runtime-only artifacts before canonical closure', 
         ->toContain('references missing test target');
 
     expect($runtimeVerifier)
-        ->toContain("'storage/framework/'")
-        ->toContain("'storage/logs/'")
+        ->toContain('\'storage/framework/\'')
+        ->toContain('\'storage/logs/\'')
         ->toContain('git -C ')
         ->toContain('ls-files -z');
 
