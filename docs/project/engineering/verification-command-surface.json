@@ -6,6 +6,7 @@
             "songchart ai doctor",
             "songchart impact",
             "songchart impact --diff",
+            "songchart impact --verify",
             "songchart reconcile",
             "songchart audit",
             "songchart dev setup",
@@ -32,6 +33,7 @@
             "songchart audit"
         ],
         "focused": [
+            "songchart impact --verify",
             "songchart dev test",
             "songchart dev test --no-build",
             "songchart test"
