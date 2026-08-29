@@ -5,10 +5,13 @@ declare(strict_types=1);
 it('exposes the dependency-aware workflow golden path', function (): void {
     $cli = (string) file_get_contents(base_path('songchart'));
     $impact = (string) file_get_contents(base_path('scripts/resolve-repository-impact.php'));
+    $impactRunner = (string) file_get_contents(base_path('scripts/run-impact-verification.sh'));
     $audit = (string) file_get_contents(base_path('scripts/run-workflow-audit.php'));
 
     expect($cli)
-        ->toContain('./songchart impact [--diff] [--json]')
+        ->toContain('./songchart impact [--diff|--verify] [--json]')
+        ->toContain('./songchart impact --verify')
+        ->toContain('scripts/run-impact-verification.sh')
         ->toContain('./songchart reconcile')
         ->toContain('./songchart audit')
         ->toContain('Regenerating repository authority from the current exact working tree')
@@ -22,6 +25,14 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('required_focused_checks')
         ->toContain("'origin/main'")
         ->toContain("git -C '.escapeshellarg(\$root).' ls-files --others --exclude-standard");
+
+    expect($impactRunner)
+        ->toContain('required_focused_checks')
+        ->toContain("'composer stage:verify'")
+        ->toContain("'composer canonical:verify'")
+        ->toContain('run_test_target')
+        ->toContain('git -C "$ROOT" ls-files -- "$target"')
+        ->not->toContain('eval ');
 
     expect($audit)
         ->toContain("\$composer['scripts']['quality:verify']")
