@@ -12,8 +12,30 @@ if [[ ${#checks[@]} -eq 0 ]]; then
     exit 0
 fi
 
+canonical_required=false
+for check in "${checks[@]}"; do
+    if [[ "$check" == 'composer canonical:verify' || "$check" == 'songchart verify' ]]; then
+        canonical_required=true
+        break
+    fi
+done
+
+if [[ "$canonical_required" == true ]]; then
+    filtered_checks=()
+    for check in "${checks[@]}"; do
+        if [[ "$check" == 'composer stage:verify' || "$check" == 'songchart test' ]]; then
+            continue
+        fi
+        filtered_checks+=("$check")
+    done
+    checks=("${filtered_checks[@]}")
+fi
+
 printf '[SongChart impact verify] Required focused checks (%d):\n' "${#checks[@]}"
 printf -- '- %s\n' "${checks[@]}"
+if [[ "$canonical_required" == true ]]; then
+    printf '[SongChart impact verify] Stage verification is not repeated because canonical verification owns the stage lane.\n'
+fi
 
 focused_image_ready=false
 run_focused_test(){
