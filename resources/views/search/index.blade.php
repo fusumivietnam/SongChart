@@ -30,7 +30,7 @@
                 </x-ui.card>
             </aside>
 
-            <main id="search-results">
+            <section id="search-results" aria-labelledby="search-results-title">
                 <x-search.result-summary :query="$query" :type="$type" :result="$result" />
 
                 @if($result['total']===0)
@@ -43,7 +43,7 @@
                     </section>
                     <x-search.pagination :query="$query" :type="$type" :sort="$sort" :page="$result['page']" :last-page="$result['last_page']" />
                 @endif
-            </main>
+            </section>
 
             <aside class="space-y-5">
                 <x-ui.card><h2 class="font-bold">Tìm kiếm liên quan</h2><div class="mt-3 flex flex-wrap gap-2">@foreach($result['related'] as $related)<a class="rounded-full bg-[var(--sc-bg-subtle)] px-3 py-2 text-sm font-semibold" href="{{ route('search',['q'=>$related]) }}">{{ $related }}</a>@endforeach</div></x-ui.card>
