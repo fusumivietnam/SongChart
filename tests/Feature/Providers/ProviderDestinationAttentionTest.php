@@ -8,6 +8,7 @@ use App\Models\ProviderDestination;
 use App\Support\Admin\ProviderDestinationAttention;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
@@ -25,7 +26,7 @@ it('classifies unknown stale unavailable and ready provider destinations for ope
     $base = [
         'provider_id' => $provider->getKey(),
         'entity_type' => EntityType::Recording,
-        'entity_id' => '01JRECORDING000000000000001',
+        'entity_id' => (string) Str::ulid(),
         'url' => 'https://www.youtube.com/watch?v=video',
         'is_embeddable' => true,
         'privacy_status' => 'public',
