@@ -31,15 +31,12 @@ final readonly class EloquentProviderDestinationSelector
         $modelsById = [];
 
         foreach ($destinations as $destination) {
-            if (! $destination instanceof ProviderDestination) {
-                continue;
-            }
-
             $provider = $destination->getRelation('provider');
             if (! $provider instanceof Provider) {
                 continue;
             }
 
+            $providerStatus = $provider->getAttribute('status');
             $privacyStatus = $destination->getAttribute('privacy_status');
             $url = $destination->getAttribute('url');
             $verifiedAt = $destination->getAttribute('verified_at');
@@ -48,7 +45,8 @@ final readonly class EloquentProviderDestinationSelector
             $snapshot = new ProviderDestinationSnapshot(
                 id: (string) $destination->getKey(),
                 providerKey: $provider->slug,
-                providerApproved: $provider->status === ProviderStatus::Approved,
+                providerApproved: $providerStatus instanceof ProviderStatus
+                    && $providerStatus === ProviderStatus::Approved,
                 providerEnabled: $provider->is_enabled,
                 reviewState: (string) $destination->getAttribute('review_state'),
                 privacyStatus: is_string($privacyStatus) ? $privacyStatus : null,
