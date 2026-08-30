@@ -49,11 +49,8 @@
       "preflight_authority_consistency",
       "planned_impact",
       "implement",
-      "source_hygiene_and_consumer_ownership",
       "post_diff_impact",
-      "source_commit",
       "reconcile_generated_authority",
-      "generated_commit_if_needed",
       "mutation_boundary_check",
       "collect_all_audit",
       "focused_verification",
@@ -73,6 +70,7 @@
       "exactly-one verification-consumer ownership for new verifier/Architecture tests",
       "repository-compiler verification before expensive quality verification"
     ],
+    "source_generated_order": "Format and commit authoritative source/contract/consumer changes first; reconcile and commit derived generated authority second.",
     "writer_sync_boundary": "Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.",
     "mutation_envelopes": [
       "read-only",
