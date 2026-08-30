@@ -47,42 +47,66 @@ Observed closure:
 - Tracked tree: clean at seal.
 - Local/upstream relationship: synchronized at seal.
 
-Any tracked 18.6.3 change is a new tree and does not reuse 18.6.2 closure evidence.
+### 18.6.3 — YouTube/media verification quality convergence
+
+Implemented source intent:
+
+- `VideoDestinationDiscovery` separates public approval verification from exact-resource inspection;
+- YouTube search remains actionable/public-only, while inspection preserves observed privacy and embeddability evidence for re-verification;
+- approval requires explicit public privacy evidence but permits public non-embeddable media as outbound-only evidence;
+- `YouTubeDestinationWorkbench::reverify()` refreshes observed provider metadata and `last_checked_at` without changing canonical Recording linkage, review state, or original `verified_at` approval evidence;
+- missing/inaccessible YouTube resources remain persisted as historical evidence and are marked fail-closed/unavailable rather than silently deleted;
+- provider resource/channel/title evidence remains external media evidence and never becomes canonical Recording identity;
+- no route, scheduler, schema or provider expansion was introduced.
+
+Observed closure:
+
+- Pre-closure impact verification: PASS.
+- Candidate verification contract: PASS.
+- Canonical verification: PASS.
+- Exact closed HEAD: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
+- Tracked tree: clean at seal.
+- Local/upstream relationship: synchronized at seal.
+
+Any tracked 18.6.4 change is a new tree and does not reuse 18.6.3 closure evidence.
 
 ## Active slice
 
-### 18.6.3 — YouTube/media verification quality convergence
+### 18.6.4 — Public selected-destination projection + explainability
 
-Implemented source intent now under verification:
+Planned source intent:
 
-- `VideoDestinationDiscovery` now exposes a provider inspection path distinct from approval verification;
-- YouTube search still returns actionable public candidates, while exact-resource inspection preserves observed privacy and embeddability evidence even when the media is no longer public/playable;
-- approval requires the resource to exist and be explicitly public, but public non-embeddable media is now allowed as outbound-only evidence instead of being rejected;
-- `YouTubeDestinationWorkbench::reverify()` refreshes observed provider metadata and `last_checked_at` without changing canonical Recording linkage, review state, or the original human-verification timestamp;
-- a missing/inaccessible YouTube resource is retained as historical destination evidence but is marked fail-closed with unknown privacy, non-embeddable state, `availability=unavailable`, and a refreshed `last_checked_at`;
-- provider/channel/title/resource evidence stays external evidence and never becomes canonical Recording identity;
-- no route, scheduler, schema or provider expansion is introduced by 18.6.3.
+- keep `ProviderDestinationPreference` as the sole owner of public eligibility and deterministic preference semantics;
+- expose the winning destination through a stable provider-neutral public projection rather than leaking persistence/provider model shape directly;
+- distinguish `playable` from `outbound_only` in the projection;
+- expose bounded public explainability for selection and ineligibility using stable policy reason semantics rather than duplicating checks in controllers/views/read models;
+- expose only safe public provenance needed for product UX; internal credentials, quota/rate state, operator audit details and unrestricted evidence payloads must not leak;
+- represent no-eligible-destination explicitly and fail closed on unknown evidence;
+- preserve provider destination/media as external evidence, never canonical Recording identity;
+- reuse current schema/routes/application read path unless repository authority proves a gap.
 
-Focused regression added for:
+Expected focused regression:
 
-- public embeddable candidate evidence;
-- public non-embeddable approval as outbound-only;
-- private re-verification preserving canonical linkage while becoming public-ineligible;
-- missing resource re-verification becoming unavailable without deleting evidence or mutating canonical identity.
+- best eligible playable destination is selected deterministically;
+- best eligible non-embeddable destination is projected as outbound-only;
+- no eligible destination produces an explicit empty/no-selection state rather than unsafe fallback;
+- policy reason codes remain stable and are consumed rather than reimplemented by the public projection;
+- unsafe/internal evidence is absent from public output;
+- Recording canonical identity remains unchanged by destination projection.
 
 ## Focused verification evidence
 
-Pending on the current 18.6.3 tree. Do not record PASS until observed.
+Pending on the current 18.6.4 tree. Do not record PASS until observed.
 
-Required focused checks:
+Expected verification sequence after implementation:
 
 ```text
-./songchart composer exec pint -- app/Contracts/Providers/Destinations/VideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeDestinationWorkbench.php tests/Feature/Providers/YouTubeVideoDestinationTest.php
-./songchart composer exec pint -- --test app/Contracts/Providers/Destinations/VideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeDestinationWorkbench.php tests/Feature/Providers/YouTubeVideoDestinationTest.php
-./songchart dev test tests/Feature/Providers/YouTubeVideoDestinationTest.php
-./songchart dev test tests/Unit/Providers/ProviderDestinationPreferenceTest.php
-./songchart dev test tests/Feature/Catalog/RecordingMediaExperienceTest.php
-./songchart composer exec phpstan analyse app/Contracts/Providers/Destinations/VideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeDestinationWorkbench.php
+Pint write on changed PHP
+Pint --test on changed PHP
+focused public Recording media/destination projection regressions
+existing ProviderDestinationPreference regression
+existing RecordingMediaExperience regression
+focused PHPStan on changed production PHP
 ./songchart impact --diff
 ./songchart reconcile
 ./songchart impact --verify
@@ -94,13 +118,15 @@ Required focused checks:
 - Candidate metadata was advanced from Stage 18.5 to Stage 18.6 before generated project context was committed.
 - Formatter drift and PHPStan type-contract errors were corrected at source before 18.6.1 closure.
 - 18.6.2 verification corrected a redundant nullsafe enum access and an invalid overlength ULID test fixture without weakening PHPStan or schema authority.
+- 18.6.3 verification corrected a timestamp round-trip precision defect in its regression fixture by comparing persisted `verified_at` evidence; production timestamp semantics and schema were left unchanged.
 
 ## Candidate / canonical closure
 
 - 18.6.1 exact closure: `17d9606a9094f879d9a467cf4ba47e7753bdecb0` PASS.
 - 18.6.2 exact closure: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1` PASS.
-- 18.6.3 candidate: not run on the current changed tree.
-- 18.6.3 canonical: not run on the current changed tree.
-- 18.6.3 exact closed HEAD: not established.
+- 18.6.3 exact closure: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff` PASS.
+- 18.6.4 candidate: not run on the current changed tree.
+- 18.6.4 canonical: not run on the current changed tree.
+- 18.6.4 exact closed HEAD: not established.
 
 Any later tracked change invalidates closure evidence for the previous exact HEAD and must be reflected here before calling the new tree closed.
