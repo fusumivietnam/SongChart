@@ -53,20 +53,40 @@ Any tracked 18.6.3 change is a new tree and does not reuse 18.6.2 closure eviden
 
 ### 18.6.3 — YouTube/media verification quality convergence
 
-Planned source intent:
+Implemented source intent now under verification:
 
-- converge YouTube destination verification around explicit provider evidence for privacy, availability and embeddability;
-- keep public-but-non-embeddable media outbound-only rather than treating it as playable;
-- fail closed on missing/unknown or contradictory provider evidence;
-- refresh destination verification timestamps/evidence through the existing authorized/audited provider write boundary;
-- preserve provider resource/channel/title evidence without promoting a YouTube Video into canonical Recording identity;
-- reuse existing provider credentials, request gate/rate policy and destination schema; no scheduler, route or schema expansion is planned.
+- `VideoDestinationDiscovery` now exposes a provider inspection path distinct from approval verification;
+- YouTube search still returns actionable public candidates, while exact-resource inspection preserves observed privacy and embeddability evidence even when the media is no longer public/playable;
+- approval requires the resource to exist and be explicitly public, but public non-embeddable media is now allowed as outbound-only evidence instead of being rejected;
+- `YouTubeDestinationWorkbench::reverify()` refreshes observed provider metadata and `last_checked_at` without changing canonical Recording linkage, review state, or the original human-verification timestamp;
+- a missing/inaccessible YouTube resource is retained as historical destination evidence but is marked fail-closed with unknown privacy, non-embeddable state, `availability=unavailable`, and a refreshed `last_checked_at`;
+- provider/channel/title/resource evidence stays external evidence and never becomes canonical Recording identity;
+- no route, scheduler, schema or provider expansion is introduced by 18.6.3.
+
+Focused regression added for:
+
+- public embeddable candidate evidence;
+- public non-embeddable approval as outbound-only;
+- private re-verification preserving canonical linkage while becoming public-ineligible;
+- missing resource re-verification becoming unavailable without deleting evidence or mutating canonical identity.
 
 ## Focused verification evidence
 
 Pending on the current 18.6.3 tree. Do not record PASS until observed.
 
-Expected focused checks will be narrowed after inventory, then must include the affected YouTube destination adapter/workbench/write tests plus existing destination preference/media-selection regressions, Pint, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, and `./songchart impact --verify`.
+Required focused checks:
+
+```text
+./songchart composer exec pint -- app/Contracts/Providers/Destinations/VideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeDestinationWorkbench.php tests/Feature/Providers/YouTubeVideoDestinationTest.php
+./songchart composer exec pint -- --test app/Contracts/Providers/Destinations/VideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeDestinationWorkbench.php tests/Feature/Providers/YouTubeVideoDestinationTest.php
+./songchart dev test tests/Feature/Providers/YouTubeVideoDestinationTest.php
+./songchart dev test tests/Unit/Providers/ProviderDestinationPreferenceTest.php
+./songchart dev test tests/Feature/Catalog/RecordingMediaExperienceTest.php
+./songchart composer exec phpstan analyse app/Contracts/Providers/Destinations/VideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php app/Support/Providers/Destinations/YouTubeDestinationWorkbench.php
+./songchart impact --diff
+./songchart reconcile
+./songchart impact --verify
+```
 
 ## Known correctives during Stage 18.6
 
