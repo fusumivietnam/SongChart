@@ -56,15 +56,15 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ### 18.6.4 — Public selected-destination projection + explainability
 
-This slice makes the existing destination eligibility/preference decision observable to public read models without creating a second selection policy:
+The source slice is implemented and now requires focused verification:
 
-- keep `ProviderDestinationPreference` as the single semantic owner of public eligibility and deterministic ordering;
-- project the selected destination into a stable public-facing read shape that distinguishes playable embed from outbound-only media;
-- expose bounded, non-sensitive explainability for why the selected destination won and why otherwise relevant destinations were not public-eligible;
-- preserve provider provenance needed by the public product while avoiding internal credential, quota, review-operator or audit detail leakage;
-- ensure no public read model reimplements freshness, privacy, provider approval, review-state or URL-safety rules;
-- keep provider media external to canonical Recording identity;
-- avoid new schema, provider, scheduler or opaque ranking behavior in this slice.
+- `PublicProviderDestinationProjection` gives the public read path explicit `playable`, `outbound_only`, and `no_selection` states plus stable reason codes;
+- `EloquentProviderDestinationSelector::project()` reuses `ProviderDestinationPreference` for eligibility, freshness, embeddability and deterministic selection while preserving the existing `select()` API for other consumers;
+- no-selection explainability is derived from `ProviderDestinationPreference::publicEligibilityIssues()` and does not reimplement policy checks;
+- `RecordingMediaExperience` exposes only public-safe projection fields and reason text, never raw evidence, credentials, quota/rate state or operator audit data;
+- the public media component now renders explicit selected/no-selection state and keeps outbound-only destinations linkable without iframe playback;
+- focused regression covers playable, outbound-only, stale no-selection, private no-selection and deterministic eligible fallback;
+- no route, migration, provider, scheduler or canonical identifier was introduced.
 
 ## Current blockers / risks
 
@@ -85,15 +85,16 @@ This slice makes the existing destination eligibility/preference decision observ
 - 18.6.3 candidate verification contract passed on that exact tree.
 - 18.6.3 canonical verification passed on that exact tree.
 - Tracked tree was clean and local/upstream were synchronized at the 18.6.3 seal.
-- 18.6.4 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
+- 18.6.4 implementation and focused regressions are committed on the stage branch; no 18.6.4 PASS is recorded yet.
 
 ## Next required action
 
-1. Inventory the current public Recording media/read projection and every consumer of selected provider destination data.
-2. Identify the smallest provider-neutral read DTO/projection boundary that can expose selected destination mode, safe public provenance and explainability without duplicating policy.
-3. Add regression for playable selection, outbound-only selection, no eligible destination, deterministic winner, and stable public reason exposure without internal evidence leakage.
-4. Implement the projection through the existing application/support read path; do not add schema or routes unless current authority proves insufficient.
-5. Run Pint, focused tests, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` before closure.
+1. Sync local workspace to the exact current stage-branch HEAD before local edits.
+2. Run Pint write then `--test` on the changed 18.6.4 PHP files.
+3. Run `tests/Feature/Catalog/RecordingMediaExperienceTest.php` and existing `tests/Unit/Providers/ProviderDestinationPreferenceTest.php`.
+4. Run focused PHPStan on `PublicProviderDestinationProjection`, selector and `RecordingMediaExperience`.
+5. Run `./songchart impact --diff`, then `./songchart reconcile` and commit only expected generated authority changes if any.
+6. Run `./songchart impact --verify`; only then advance to candidate/canonical closure.
 
 ## Documentation checkpoint discipline
 
