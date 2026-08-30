@@ -80,7 +80,7 @@ Focused verification is in progress. No Stage 18.6 candidate/canonical closure i
 - Admin remediation must use existing authorization/audit/write boundaries and Vietnamese operator-facing language.
 - New route/schema/provider fields cannot be introduced silently.
 
-## Latest evidence
+## Latest focused evidence
 
 - Stage 18.5/18.5.1 exact sealed head: `67df5ae72f9dbdc29c43e7afbc7e645203e37cff`.
 - Candidate verification contract passed on that exact tree.
