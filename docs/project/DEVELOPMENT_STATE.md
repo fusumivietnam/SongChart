@@ -15,7 +15,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Branch: `stage-18.6-provider-destination-media-quality`.
 - Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
-- Candidate closure: 18.6.2 closed on exact head `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`; any 18.6.3 tracked change requires new closure evidence.
+- Candidate closure: 18.6.2 closed on exact head `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`; 18.6.3 is a new changed tree and requires new closure evidence.
 - Strategy: improve destination/media eligibility, deterministic preference, freshness/provenance and operator visibility over existing provider infrastructure before considering provider breadth.
 
 ## Stage map
@@ -54,22 +54,22 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ### 18.6.3 — YouTube/media verification quality convergence
 
-This slice makes provider media evidence trustworthy enough to participate in public selection without treating provider media as canonical Recording identity:
+The source slice is implemented and now requires focused verification:
 
-- inspect the existing YouTube search/approval/write path and normalize verification evidence before persistence;
-- require explicit public privacy evidence before a destination can be considered available;
-- preserve embeddability separately from availability so a public non-embeddable video may remain outbound-only;
-- ensure verification refresh updates `last_checked_at` and observed media state through existing authorized/audited write boundaries;
-- preserve provenance such as provider resource ID, channel/title and verification evidence without promoting them into canonical identity;
-- fail closed when provider response omits or contradicts privacy/availability/embeddability evidence;
-- do not add a scheduler, new provider, new canonical identifier, or opaque ranking behavior in this slice.
+- `VideoDestinationDiscovery` separates public approval verification from exact-resource inspection;
+- YouTube search remains actionable/public-only, while inspection can preserve observed private/non-embeddable state for re-verification;
+- approval requires explicit public privacy evidence but no longer rejects a public non-embeddable destination, which is valid outbound-only evidence under the 18.6.1 policy;
+- `YouTubeDestinationWorkbench::reverify()` refreshes provider metadata and `last_checked_at` without changing canonical Recording linkage, `review_state`, or original `verified_at` approval evidence;
+- missing/inaccessible provider resources remain persisted as historical destination evidence and are marked unavailable/fail-closed instead of being silently deleted;
+- no new route, migration, scheduler, provider, or canonical identifier was introduced.
 
 ## Current blockers / risks
 
 - YouTube Video identity must remain external media evidence and must never become canonical Recording identity.
 - Privacy, availability and embeddability are distinct facts; do not collapse them into one boolean.
 - Missing verification evidence must remain unknown/fail-closed, not silently public/available.
-- Refreshing verification must use the existing provider credential, quota/rate, authorization and audit boundaries.
+- `verified_at` must not be rewritten merely because provider availability was rechecked; `last_checked_at` owns provider observation freshness in this slice.
+- Refreshing verification must use the existing provider credential and quota/rate infrastructure.
 - Do not duplicate the 30-day freshness policy outside `ProviderDestinationPreference`.
 - A public but non-embeddable destination may be outbound-only rather than unavailable.
 - New route/schema/provider fields cannot be introduced silently.
@@ -81,15 +81,16 @@ This slice makes provider media evidence trustworthy enough to participate in pu
 - 18.6.2 candidate verification contract passed on that exact tree.
 - 18.6.2 canonical verification passed on that exact tree.
 - Tracked tree was clean and local/upstream were synchronized at the 18.6.2 seal.
-- 18.6.3 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
+- 18.6.3 implementation and focused regressions are now committed on the stage branch; no 18.6.3 PASS is recorded yet.
 
 ## Next required action
 
-1. Inventory the existing YouTube destination search, candidate presentation, approval/write service, provider adapter and focused tests.
-2. Identify the single write owner for verification evidence and the normalized fields already available in `provider_destinations`.
-3. Add focused regression for public/private/unknown privacy, embeddable/non-embeddable, unavailable/missing resource and verification refresh timestamps.
-4. Implement the smallest convergence in the existing adapter/write path; do not add schema or routes unless existing authority proves insufficient.
-5. Run Pint, focused tests, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` before closure.
+1. Sync local workspace to the exact current stage-branch HEAD before editing locally.
+2. Run Pint write then `--test` on the 18.6.3 contract/adapter/workbench/test files.
+3. Run `tests/Feature/Providers/YouTubeVideoDestinationTest.php`, then existing destination preference and Recording media regression tests.
+4. Run focused PHPStan on the changed production PHP files.
+5. Run `./songchart impact --diff`, then `./songchart reconcile` and commit only expected generated authority changes if any.
+6. Run `./songchart impact --verify`; only then advance to candidate/canonical closure.
 
 ## Documentation checkpoint discipline
 
