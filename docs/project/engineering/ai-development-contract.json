@@ -29,6 +29,7 @@
     "When adding scripts/verify-*.php or tests/Architecture/*.php, register it under exactly one existing verification-consumer ownership rule in the same logical source change and run repository-compiler verification before the expensive quality lane.",
     "Before committing changed PHP source, run Pint in write mode on the exact changed PHP paths, inspect the diff, then require Pint --test to pass. Do not discover formatter drift after source commit when it can be normalized beforehand.",
     "Commit authoritative source/contract/consumer changes before generated reconciliation; run ./songchart reconcile from that exact source tree and commit only the expected generated outputs afterward.",
+    "After ./songchart reconcile, docs/project/generated must be clean before ./songchart impact --verify; uncommitted generated authority is an early pre-closure failure, not a candidate-time discovery.",
     "Authorization capabilities are owned by docs/project/security/authorization-contract.json and Laravel Gates; do not reintroduce role capability methods on User/UserRole or direct role authorization checks outside explicit business invariants.",
     "When a refactor removes or renames a method/class/file, perform an exact-target removed-symbol and orphan-file scan across application source before closure; packaging-side reconstructed source is not sufficient evidence of consumer completeness.",
     "HTTP controllers are transport adapters: do not add direct Eloquent/query-builder reads or persistence writes. Put read composition in registered Query/Read Model surfaces and mutations in application actions/services.",
@@ -71,6 +72,7 @@
       "repository-compiler verification before expensive quality verification"
     ],
     "source_generated_order": "Format and commit authoritative source/contract/consumer changes first; reconcile and commit derived generated authority second.",
+    "generated_clean_boundary": "After reconcile, docs/project/generated must have no uncommitted changes before pre-closure verification.",
     "writer_sync_boundary": "Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.",
     "mutation_envelopes": [
       "read-only",
@@ -82,7 +84,7 @@
   },
   "verification": {
     "during_implementation": "impact-driven focused gates only",
-    "pre_closure_fast_fail": "./songchart impact --verify checks diff hygiene, known upstream divergence, changed-PHP Pint cleanliness and repository compiler/consumer ownership before the expensive lane",
+    "pre_closure_fast_fail": "./songchart impact --verify checks diff hygiene, known upstream divergence, committed generated authority, changed-PHP Pint cleanliness and repository compiler/consumer ownership before the expensive lane",
     "diagnostic_collect_all": "./songchart audit",
     "stage_closure": "./songchart candidate or composer stage:verify inside the governed Docker lane",
     "canonical_closure": "./songchart verify, ./songchart close, or composer canonical:verify inside canonical Docker lane",
@@ -105,10 +107,11 @@
   "failure_protocol": [
     "Preserve exact failing evidence.",
     "Identify the owning authority before patching.",
-    "Classify failures as source behavior, stale consumer, stale generated authority, dead impact command, runtime-artifact ownership, formatter-only drift, parser/authority ambiguity, writer divergence, unexpected mutation, or closure invalidation where applicable.",
+    "Classify failures as source behavior, stale consumer, stale generated authority, uncommitted generated authority, dead impact command, runtime-artifact ownership, formatter-only drift, parser/authority ambiguity, writer divergence, unexpected mutation, or closure invalidation where applicable.",
     "Prefer extending the existing resolver/contract over adding duplicate guards.",
     "If the authority is current and the consumer is stale, fix the consumer rather than reverting the authority to an obsolete format.",
     "If generated authority is stale, regenerate it; do not hand-edit or hand-merge generated JSON.",
+    "If reconcile leaves generated authority dirty, commit or restore only the generated envelope before pre-closure verification.",
     "If formatter drift is reported, use Pint write mode on the exact affected PHP path and commit the formatter-authoritative patch before broader verification.",
     "If local and upstream history diverge, stop competing writes, integrate with rebase/cherry-pick as appropriate, and re-establish one-writer ownership before continuing.",
     "If a workflow command unexpectedly blocks for pager/input, treat that as an ergonomics defect for non-interactive commands.",
