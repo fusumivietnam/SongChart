@@ -10,7 +10,7 @@ use App\Domain\Providers\Destinations\ProviderDestinationPreference;
 use App\Domain\Providers\Enums\ProviderStatus;
 use App\Models\Provider;
 use App\Models\ProviderDestination;
-use DateTimeImmutable;
+use Carbon\CarbonImmutable;
 use DateTimeInterface;
 
 final readonly class EloquentProviderDestinationSelector
@@ -64,7 +64,7 @@ final readonly class EloquentProviderDestinationSelector
             $modelsById[$snapshot->id] = $destination;
         }
 
-        $now = new DateTimeImmutable('now');
+        $now = CarbonImmutable::now();
         $selected = $this->preference->select($snapshots, $now);
         if ($selected === null || ! isset($modelsById[$selected->id])) {
             return null;
