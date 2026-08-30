@@ -74,6 +74,33 @@ For changed PHP source:
 
 Do not use broad quality verification to discover formatter drift, unowned verification consumers, stale repository compiler fingerprints, or uncommitted generated authority when cheap deterministic checks can fail first.
 
+## Workflow authority synchronization
+
+A workflow optimization, verification-sequence change, command semantic change, mutation-envelope change, handoff rule, parser/authority rule, or new failure-handling rule is incomplete until its owning documentation authority is updated in the same logical change.
+
+Required rule:
+
+```text
+WORKFLOW / VERIFICATION MECHANISM CHANGE
+        ↓
+UPDATE OWNING .md AUTHORITY
+        ↓
+UPDATE MACHINE-READABLE CONTRACT / ROUTING WHEN APPLICABLE
+        ↓
+UPDATE OR ADD PERMANENT REGRESSION CONSUMER
+        ↓
+RUN FOCUSED GOVERNANCE VERIFICATION
+```
+
+- `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` owns the mandatory AI/developer execution model.
+- This file owns Git delivery, synchronization, closure and corrective workflow semantics.
+- Machine contracts and verifiers must consume those authorities rather than silently introducing a newer workflow only in code/tests.
+- A script/test optimization without matching Markdown authority is workflow drift even when the code is technically correct.
+- A Markdown-only workflow rule that is intended to be permanent should gain a machine-readable contract or regression consumer whenever practical.
+- Do not teach a new workflow only in chat, PR comments, generated context, or model-specific bootstrap files.
+
+When a new failure class reveals a reusable workflow lesson, fix the immediate defect first, then promote the durable rule to its owning `.md` authority and permanent guard before considering the correction complete.
+
 ## Generated authority synchronization point
 
 `./songchart reconcile` owns a `generated-only` mutation envelope. Its output is derived from the exact authoritative source tree and must not leak into candidate discovery as an uncommitted mutation.
