@@ -9,6 +9,20 @@ use DateTimeImmutable;
 
 final class ProviderDestinationPreference
 {
+    public const ISSUE_PROVIDER_UNAPPROVED = 'provider_unapproved';
+
+    public const ISSUE_PROVIDER_DISABLED = 'provider_disabled';
+
+    public const ISSUE_REVIEW_UNAPPROVED = 'review_unapproved';
+
+    public const ISSUE_PRIVACY_NOT_PUBLIC = 'privacy_not_public';
+
+    public const ISSUE_FRESHNESS_UNKNOWN = 'freshness_unknown';
+
+    public const ISSUE_FRESHNESS_STALE = 'freshness_stale';
+
+    public const ISSUE_UNSAFE_URL = 'unsafe_url';
+
     private const FRESHNESS_DAYS = 30;
 
     /**
@@ -45,12 +59,36 @@ final class ProviderDestinationPreference
 
     public function isPublicEligible(ProviderDestinationSnapshot $candidate, DateTimeImmutable $now): bool
     {
-        return $candidate->providerApproved
-            && $candidate->providerEnabled
-            && $candidate->reviewState === 'approved'
-            && $candidate->privacyStatus === 'public'
-            && $this->isFresh($candidate, $now)
-            && $this->hasSafeOutboundUrl($candidate);
+        return $this->publicEligibilityIssues($candidate, $now) === [];
+    }
+
+    /** @return list<string> */
+    public function publicEligibilityIssues(ProviderDestinationSnapshot $candidate, DateTimeImmutable $now): array
+    {
+        $issues = [];
+
+        if (! $candidate->providerApproved) {
+            $issues[] = self::ISSUE_PROVIDER_UNAPPROVED;
+        }
+        if (! $candidate->providerEnabled) {
+            $issues[] = self::ISSUE_PROVIDER_DISABLED;
+        }
+        if ($candidate->reviewState !== 'approved') {
+            $issues[] = self::ISSUE_REVIEW_UNAPPROVED;
+        }
+        if ($candidate->privacyStatus !== 'public') {
+            $issues[] = self::ISSUE_PRIVACY_NOT_PUBLIC;
+        }
+        if ($candidate->lastCheckedAt === null) {
+            $issues[] = self::ISSUE_FRESHNESS_UNKNOWN;
+        } elseif (! $this->isFresh($candidate, $now)) {
+            $issues[] = self::ISSUE_FRESHNESS_STALE;
+        }
+        if (! $this->hasSafeOutboundUrl($candidate)) {
+            $issues[] = self::ISSUE_UNSAFE_URL;
+        }
+
+        return $issues;
     }
 
     public function canEmbed(ProviderDestinationSnapshot $candidate, DateTimeImmutable $now): bool
