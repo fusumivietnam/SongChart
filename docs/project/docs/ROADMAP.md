@@ -11,50 +11,28 @@ Trạng thái: tài liệu định hướng cho hạng mục đang triển khai 
 - Cross-stage engineering improvements được áp dụng dần khi chúng giảm trực tiếp navigation/debug/verification cost; không tạo thêm stage sản phẩm nếu không cần.
 - UI/Admin ưu tiên thuật ngữ tiếng Việt rõ nghĩa; code/contract giữ tên kỹ thuật khi cần đối chiếu.
 
-## Stage 18.4 — Admin Completion & Operational Convergence
+## Stage 18.6 — Provider Destination & Media Quality
 
-Mục tiêu: Admin vận hành được sản phẩm mà không phải dựa vào Tinker hoặc sửa `.env` cho các thao tác thường xuyên.
+Mục tiêu: biến destination/media đã được duyệt thành một lớp trải nghiệm đáng tin cậy, có lựa chọn deterministic, freshness/provenance rõ ràng và khả năng vận hành khi destination hỏng/stale.
 
 Trọng tâm:
 
-- Dashboard operational và attention routing;
-- System Settings, với phân tách rõ runtime-configurable vs deployment/secret-owned configuration;
-- Provider management và operational health;
-- credential management/pool UX phù hợp authority hiện có và không render secrets;
-- import workflow, progress, retry và failure UX;
-- canonical admission;
-- identity conflicts;
-- catalog administration;
-- users/roles trên các mutation use case được chấp nhận rõ ràng;
-- privileged audit.
+- destination/media selector theo availability, freshness, provenance và review state;
+- deterministic preference/ranking giữa approved destinations;
+- public projection chỉ dùng destination đủ điều kiện và giải thích được;
+- operational visibility cho stale/unavailable/private/non-embeddable destinations;
+- YouTube/media destination approval quality;
+- privacy status, embeddability và provider resource semantics phải fail closed;
+- không coi YouTube Video hoặc provider media resource là canonical Recording identity;
+- mở rộng provider breadth chỉ khi evidence quality và official API capability chứng minh nhu cầu.
 
 Chiến lược closure:
 
-- ưu tiên hoàn thiện các edge vận hành còn thiếu trên surface đã tồn tại thay vì mở subsystem mới;
-- mỗi slice phải nhỏ, có action path rõ, focused regression và không mở rộng scope nếu inventory cho thấy capability đã đủ;
-- nếu acceptance criteria cốt lõi đã đạt, đóng 18.4 sớm và chuyển phần engineering optimization không bắt buộc sang cross-stage track;
-- không block release bởi OAuth, credential rotation phức tạp, scheduler nâng cao, AI operations automation hoặc provider breadth mới nếu chưa có use case bắt buộc.
-
-## Stage 18.5 — Public Product / Frontend Release Pass
-
-- information architecture và homepage;
-- catalog/search UX;
-- Artist/Group/Release/Recording/Work public pages;
-- responsive/mobile;
-- accessibility;
-- performance/Core Web Vitals;
-- loading/empty/error states;
-- visual SEO polish và release QA.
-
-Engineering graph/navigation improvements tiếp tục được dùng nền, nhưng không được làm 18.5 trở thành một architecture rewrite.
-
-## Stage 18.6 — Provider Destination & Media Quality
-
-- destination/media selector theo availability, freshness và provenance;
-- deterministic preference/ranking giữa approved destinations;
-- operational visibility cho stale/unavailable destinations;
-- YouTube/media destination approval quality;
-- mở rộng provider breadth chỉ khi evidence quality và official API capability chứng minh nhu cầu.
+- inventory authority/data hiện có trước khi thêm schema/route/policy;
+- ưu tiên policy/selection convergence trên destination evidence đã tồn tại;
+- mỗi slice phải có focused regression cho eligibility/preference hoặc operator/public state mà nó thay đổi;
+- không biến 18.6 thành provider expansion framework hoặc recommendation engine;
+- unknown freshness/availability không được mặc định thành fresh/available.
 
 ## Cross-stage engineering track — không phải product stage
 
@@ -65,7 +43,7 @@ Các cải tiến dưới đây được triển khai dần khi có evidence v�
 3. **Machine current-state projection** — cân nhắc machine-readable development state khi manual Markdown thực sự gây drift; Markdown vẫn là human projection.
 4. **Mutation-envelope enforcement** — tự phát hiện command gây tracked mutation ngoài contract khi usage evidence đủ mạnh.
 5. **Root-cause audit clustering** — nhóm failure theo owner/root cause để giảm sửa downstream symptom.
-6. **Closure/delivery ergonomics** — machine-readable exact-HEAD seal và delivery helper chỉ sau khi close→push→PR lifecycle đã ổn định qua nhiều stage.
+6. **Closure/delivery ergonomics** — tiếp tục dùng exact-HEAD seal, impact/reconcile/candidate/canonical workflow đã được harden ở 18.5.1; chỉ mở rộng khi có failure class mới có evidence.
 
 Không tạo `engineering-knowledge-graph.json`, verifier mới hoặc workflow command mới chỉ để phản chiếu dữ liệu đã có. Mỗi surface mới phải chứng minh query/use case không thể đáp ứng tốt bằng owner hiện tại.
 
@@ -84,6 +62,8 @@ Dọn dần, không xóa theo cảm tính. Một surface chỉ được retire k
 - stale generated/runtime artifacts: regenerate hoặc bỏ tracked ownership theo authority, không allowlist để né gate.
 
 ## Nhóm 19.x — Production readiness / first release
+
+Sau khi Stage 18.6 đóng, roadmap chuyển sang production readiness thay vì mở thêm product-foundation stage nếu không có blocker thực tế.
 
 - deployment topology;
 - queue/scheduler production;
