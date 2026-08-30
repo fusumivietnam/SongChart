@@ -11,7 +11,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ## Current stage
 
-- Stage `18.6 — Provider Destination & Media Quality`.
+- Stage `18.6 — Provider Destination & Media Quality`
 - Branch: `stage-18.6-provider-destination-media-quality`.
 - Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
@@ -23,9 +23,9 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 ```text
 18.6 PROVIDER DESTINATION & MEDIA QUALITY
         |
-        +--> [NOW] inventory destination/media authority + existing runtime behavior
+        +--> [DONE] inventory destination/media authority + existing runtime behavior
         |
-        +--> [NEXT] deterministic eligibility/preference contract
+        +--> [IN PROGRESS] 18.6.1 deterministic eligibility/preference contract
         |
         +--> [NEXT] freshness + stale/unavailable operational state
         |
@@ -43,31 +43,37 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Stage 18.5/18.5.1 accepted through PR #14 after exact-head candidate/canonical closure and green PR CI.
 - Stage 18.6 branch created directly from accepted `main` merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Stage 18.6 task contract initialized with provider-neutral destination/media quality boundaries and explicit non-goals.
+- Destination/media inventory confirmed the existing `provider_destinations` schema can express the 18.6.1 eligibility/preference slice without schema expansion.
+- 18.6.1 source now routes public Recording media selection through a provider-neutral eligibility/preference policy instead of selecting the latest approved destination directly.
 - Workflow hardening from 18.5.1 remains cross-stage engineering authority; 18.6 does not reopen that framework unless a new evidence-backed failure class appears.
 
 ## In progress
 
-### Destination/media authority and runtime inventory
+### 18.6.1 — Destination Eligibility + Deterministic Preference
 
-Before changing selection or persistence, trace the existing provider destination model, YouTube verification/approval path, public Recording projection, Admin provider operations, freshness/check timestamps, provenance/review state, and their verification consumers.
+Public destination selection must fail closed on provider approval/enabled state, destination review state, public privacy state, freshness and safe HTTPS outbound URL before deterministic ranking. Embeddability is a preference/playability signal after eligibility, not a substitute for public eligibility.
 
-Decision rule:
+Current ranking order for eligible destinations:
 
 ```text
-DESTINATION QUALITY USE CASE
-        |
-        v
-EXISTING AUTHORITY / DATA
-        |
-        +--> sufficient ----> deterministic policy + regression only
-        +--> partial -------> smallest contract/source extension
-        `--> missing -------> authority first, then schema/runtime change
+EMBEDDABLE / PLAYABLE
+        ↓
+LAST CHECKED RECENCY
+        ↓
+MATCH SCORE
+        ↓
+VERIFIED RECENCY
+        ↓
+PROVIDER KEY + DESTINATION ID STABLE TIE-BREAK
 ```
+
+Focused verification is in progress. No Stage 18.6 candidate/canonical closure is recorded yet.
 
 ## Current blockers / risks
 
 - Do not equate provider media resources (especially YouTube Video) with canonical Recording identity.
-- Do not prefer a destination that is private, unavailable, non-embeddable, stale beyond accepted policy, unapproved or otherwise policy-invalid.
+- Do not prefer a destination that is private, unavailable, stale beyond accepted policy, unapproved or otherwise policy-invalid.
+- Non-embeddable but otherwise eligible destinations may remain safe outbound destinations; they must not be presented as playable/embed destinations.
 - Unknown freshness/availability must not silently mean fresh/available.
 - Provider expansion must not precede an evidence-quality use case and official API capability review.
 - Public selection must remain deterministic and explainable; no fabricated popularity or opaque recommendation score.
@@ -82,14 +88,15 @@ EXISTING AUTHORITY / DATA
 - GitHub Actions PR workflow run #159 completed successfully for that head.
 - PR #14 merged to `main` as `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Stage 18.6 bootstrap branch created from that accepted merge commit.
+- Stage 18.6.1 source and focused regressions are committed on the stage branch; broad verification remains pending.
 
 ## Next required action
 
-1. Sync local workspace to `stage-18.6-provider-destination-media-quality`.
-2. Run `./songchart ai doctor` and `./songchart context --json`.
-3. Run planned impact on existing destination/media domain, support, public projection and Admin surfaces before editing.
-4. Inventory current destination eligibility/freshness/provenance semantics and identify the smallest first vertical slice.
-5. Implement only that bounded slice with focused tests, then run `./songchart impact --diff` and the impact-selected verification lane.
+1. Sync local workspace to the latest `stage-18.6-provider-destination-media-quality` HEAD.
+2. Run the focused 18.6.1 Unit and Recording media feature tests.
+3. Run Pint/PHPStan and `./songchart impact --diff`.
+4. Run `./songchart impact --verify` after focused checks pass.
+5. Record only verification actually observed in `STAGE_18_6_VALIDATION_REPORT.md`; do not advance to 18.6.2 until the 18.6.1 verification lane is green.
 
 ## Documentation checkpoint discipline
 
