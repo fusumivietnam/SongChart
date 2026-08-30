@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "authority": "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
   "before_implementation": [
     "Read PROJECT_AUTHORITY.md.",
@@ -42,6 +42,7 @@
     "Every workflow command introduced or changed must declare a mutation envelope: read-only, generated-only, runtime-only, or closure. Unexpected tracked mutation outside that envelope is a failure.",
     "Non-interactive workflow commands must not open pagers or prompts unless interaction is explicitly part of the command contract.",
     "Machine-critical state parsed from Markdown must be scoped to the owning section or replaced by machine-readable authority; do not use first-match parsing across documents containing historical/current state together.",
+    "Any workflow or verification mechanism change must update its owning Markdown authority in the same logical change, then update applicable machine-readable contracts/routing and a permanent regression consumer. A script/test-only workflow change is incomplete.",
     "Any tracked change after canonical PASS invalidates prior closure evidence; re-run post-diff impact, reconcile when needed, focused verification, candidate and canonical closure on the new HEAD."
   ],
   "workflow": {
@@ -74,6 +75,7 @@
     "source_generated_order": "Format and commit authoritative source/contract/consumer changes first; reconcile and commit derived generated authority second.",
     "generated_clean_boundary": "After reconcile, docs/project/generated must have no uncommitted changes before pre-closure verification.",
     "writer_sync_boundary": "Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.",
+    "workflow_authority_sync": "A workflow/verification mechanism change is incomplete unless the owning Markdown authority, applicable machine contract/routing, and permanent regression consumer are updated in the same logical change.",
     "mutation_envelopes": [
       "read-only",
       "generated-only",
