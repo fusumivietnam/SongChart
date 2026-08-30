@@ -12,7 +12,7 @@ final class ProviderDestinationPreference
     private const FRESHNESS_DAYS = 30;
 
     /**
-     * @param list<ProviderDestinationSnapshot> $candidates
+     * @param  list<ProviderDestinationSnapshot>  $candidates
      */
     public function select(array $candidates, DateTimeImmutable $now): ?ProviderDestinationSnapshot
     {

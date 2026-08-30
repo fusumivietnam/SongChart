@@ -29,7 +29,7 @@ function stage186DestinationSnapshot(array $overrides = []): ProviderDestination
 }
 
 it('fails closed for stale private disabled and unsafe destinations', function (): void {
-    $policy = new ProviderDestinationPreference();
+    $policy = new ProviderDestinationPreference;
     $now = new DateTimeImmutable('2026-08-30T12:00:00+00:00');
 
     expect($policy->isPublicEligible(stage186DestinationSnapshot(['lastCheckedAt' => null]), $now))->toBeFalse()
@@ -42,7 +42,7 @@ it('fails closed for stale private disabled and unsafe destinations', function (
 });
 
 it('allows a fresh public outbound destination without treating it as embeddable', function (): void {
-    $policy = new ProviderDestinationPreference();
+    $policy = new ProviderDestinationPreference;
     $now = new DateTimeImmutable('2026-08-30T12:00:00+00:00');
     $candidate = stage186DestinationSnapshot(['embeddable' => false]);
 
@@ -51,7 +51,7 @@ it('allows a fresh public outbound destination without treating it as embeddable
 });
 
 it('selects an embeddable eligible destination before a newer outbound-only candidate', function (): void {
-    $policy = new ProviderDestinationPreference();
+    $policy = new ProviderDestinationPreference;
     $now = new DateTimeImmutable('2026-08-30T12:00:00+00:00');
 
     $selected = $policy->select([
@@ -73,7 +73,7 @@ it('selects an embeddable eligible destination before a newer outbound-only cand
 });
 
 it('uses stable provider and destination identifiers as the final tie break', function (): void {
-    $policy = new ProviderDestinationPreference();
+    $policy = new ProviderDestinationPreference;
     $now = new DateTimeImmutable('2026-08-30T12:00:00+00:00');
 
     $selected = $policy->select([
