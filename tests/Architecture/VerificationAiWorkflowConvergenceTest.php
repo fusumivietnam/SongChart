@@ -43,6 +43,9 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('behind > 0')
         ->toContain('Branch is diverged from its upstream')
         ->toContain('Branch is behind its upstream')
+        ->toContain('status --short --untracked-files=all -- docs/project/generated')
+        ->toContain('Generated repository authority has uncommitted changes')
+        ->toContain('Commit or restore generated authority before pre-closure verification')
         ->toContain('changed_paths')
         ->toContain('exec pint -- --test')
         ->toContain('repository-compiler:verify')
@@ -62,13 +65,18 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('exactly-one verification-consumer ownership for new verifier/Architecture tests')
         ->and($aiContract['workflow']['source_generated_order'] ?? null)
         ->toBe('Format and commit authoritative source/contract/consumer changes first; reconcile and commit derived generated authority second.')
+        ->and($aiContract['workflow']['generated_clean_boundary'] ?? null)
+        ->toBe('After reconcile, docs/project/generated must have no uncommitted changes before pre-closure verification.')
         ->and($aiContract['workflow']['writer_sync_boundary'] ?? null)
         ->toBe('Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.');
 
     expect($delivery)
         ->toContain('## Source hygiene before commit')
+        ->toContain('## Generated authority synchronization point')
         ->toContain('Pint write mode')
         ->toContain('exact changed PHP')
+        ->toContain('docs/project/generated clean')
+        ->toContain('Candidate remains a clean-tree closure guard, not the first detector')
         ->toContain('local-only commits on that same branch must be pushed or intentionally integrated')
         ->toContain('repository compiler fingerprints are stale')
         ->toContain('workflow/documentation hardening change made after canonical PASS is still a tracked change');
