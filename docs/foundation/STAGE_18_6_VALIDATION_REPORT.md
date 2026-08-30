@@ -27,13 +27,9 @@ Observed closure:
 - Tracked tree: clean at seal.
 - Local/upstream relationship: synchronized at seal.
 
-Any tracked 18.6.2 change is a new tree and does not reuse the 18.6.1 closure evidence.
-
-## Active slice
-
 ### 18.6.2 — Freshness + stale/unavailable operational state
 
-Implemented source intent now under verification:
+Implemented source intent:
 
 - `ProviderDestinationPreference` remains the single owner of the 30-day freshness and public eligibility semantics;
 - the domain policy emits stable reason codes for provider approval/enabled state, review state, privacy, freshness and outbound URL safety;
@@ -42,34 +38,49 @@ Implemented source intent now under verification:
 - unknown freshness is fail-closed; stale evidence stays persisted but is not public eligible;
 - no migration, route, scheduler or remediation mutation is introduced by 18.6.2.
 
+Observed closure:
+
+- Pre-closure impact verification: PASS.
+- Candidate verification contract: PASS.
+- Canonical verification: PASS.
+- Exact closed HEAD: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
+- Tracked tree: clean at seal.
+- Local/upstream relationship: synchronized at seal.
+
+Any tracked 18.6.3 change is a new tree and does not reuse 18.6.2 closure evidence.
+
+## Active slice
+
+### 18.6.3 — YouTube/media verification quality convergence
+
+Planned source intent:
+
+- converge YouTube destination verification around explicit provider evidence for privacy, availability and embeddability;
+- keep public-but-non-embeddable media outbound-only rather than treating it as playable;
+- fail closed on missing/unknown or contradictory provider evidence;
+- refresh destination verification timestamps/evidence through the existing authorized/audited provider write boundary;
+- preserve provider resource/channel/title evidence without promoting a YouTube Video into canonical Recording identity;
+- reuse existing provider credentials, request gate/rate policy and destination schema; no scheduler, route or schema expansion is planned.
+
 ## Focused verification evidence
 
-Pending on the current 18.6.2 tree. Do not record PASS until observed.
+Pending on the current 18.6.3 tree. Do not record PASS until observed.
 
-Required focused checks:
-
-```text
-./songchart composer exec pint -- <exact changed PHP>
-./songchart composer exec pint -- --test <exact changed PHP>
-./songchart dev test tests/Unit/Providers/ProviderDestinationPreferenceTest.php
-./songchart dev test tests/Feature/Providers/ProviderDestinationAttentionTest.php
-./songchart composer exec phpstan analyse
-./songchart impact --diff
-./songchart reconcile
-./songchart impact --verify
-```
+Expected focused checks will be narrowed after inventory, then must include the affected YouTube destination adapter/workbench/write tests plus existing destination preference/media-selection regressions, Pint, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, and `./songchart impact --verify`.
 
 ## Known correctives during Stage 18.6
 
 - Repository-state governance exposed the Stage 18.6 current-stage marker/checkpoint heading drift; the owner document was corrected rather than weakening the verifier.
 - Candidate metadata was advanced from Stage 18.5 to Stage 18.6 before generated project context was committed.
 - Formatter drift and PHPStan type-contract errors were corrected at source before 18.6.1 closure.
+- 18.6.2 verification corrected a redundant nullsafe enum access and an invalid overlength ULID test fixture without weakening PHPStan or schema authority.
 
 ## Candidate / canonical closure
 
 - 18.6.1 exact closure: `17d9606a9094f879d9a467cf4ba47e7753bdecb0` PASS.
-- 18.6.2 candidate: not run on the current changed tree.
-- 18.6.2 canonical: not run on the current changed tree.
-- 18.6.2 exact closed HEAD: not established.
+- 18.6.2 exact closure: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1` PASS.
+- 18.6.3 candidate: not run on the current changed tree.
+- 18.6.3 canonical: not run on the current changed tree.
+- 18.6.3 exact closed HEAD: not established.
 
 Any later tracked change invalidates closure evidence for the previous exact HEAD and must be reflected here before calling the new tree closed.
