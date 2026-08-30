@@ -78,7 +78,7 @@ final readonly class ProviderDestinationAttention
                 'id' => $snapshot->id,
                 'title' => (string) ($destination->getAttribute('title') ?: $snapshot->resourceId),
                 'resource_id' => $snapshot->resourceId,
-                'entity_type' => $destination->getAttribute('entity_type')?->value ?? (string) $destination->getAttribute('entity_type'),
+                'entity_type' => $destination->getAttribute('entity_type')->value,
                 'entity_id' => (string) $destination->getAttribute('entity_id'),
                 'review_state' => $snapshot->reviewState,
                 'privacy_status' => $snapshot->privacyStatus,
