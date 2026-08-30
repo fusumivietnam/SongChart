@@ -25,7 +25,7 @@ final class ProviderDestinationPreference
             $leftRank = $this->rank($left, $now);
             $rightRank = $this->rank($right, $now);
 
-            foreach (array_keys($leftRank) as $index) {
+            for ($index = 0; $index < 4; $index++) {
                 $comparison = $rightRank[$index] <=> $leftRank[$index];
                 if ($comparison !== 0) {
                     return $comparison;
