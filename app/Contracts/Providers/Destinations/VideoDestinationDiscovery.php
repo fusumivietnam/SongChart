@@ -13,4 +13,6 @@ interface VideoDestinationDiscovery
     public function candidates(Recording $recording, int $limit = 5): array;
 
     public function verify(string $resourceId, Recording $recording): VideoDestinationCandidate;
+
+    public function inspect(string $resourceId, Recording $recording): ?VideoDestinationCandidate;
 }
