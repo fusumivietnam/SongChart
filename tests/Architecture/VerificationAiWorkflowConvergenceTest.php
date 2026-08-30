@@ -28,6 +28,13 @@ it('exposes the dependency-aware workflow golden path', function (): void {
 
     expect($impactRunner)
         ->toContain('required_focused_checks')
+        ->toContain('Running fast preflight guards')
+        ->toContain('git -C "$ROOT" diff --check')
+        ->toContain("'@{upstream}...HEAD'")
+        ->toContain('Checking Pint on changed PHP paths before the expensive lane.')
+        ->toContain('composer exec pint -- --test')
+        ->toContain('Checking repository compiler and verification-consumer ownership before the expensive lane.')
+        ->toContain('composer repository-compiler:verify')
         ->toContain('closure_checks=()')
         ->toContain("'composer canonical:verify'|'songchart verify'|'songchart close'")
         ->toContain('Deferred closure-only checks')
