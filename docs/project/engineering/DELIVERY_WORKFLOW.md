@@ -67,11 +67,12 @@ For changed PHP source:
 3. run Pint `--test` after normalization;
 4. if the change adds `scripts/verify-*.php` or `tests/Architecture/*.php`, register it under exactly one existing `verification-consumer-graph.json` ownership rule before broad verification;
 5. run repository compiler/consumer ownership verification before the expensive quality lane;
-6. commit the authoritative source/contract/test/consumer state;
-7. only then run `./songchart reconcile` and commit expected generated outputs separately when needed;
-8. require `git status --short -- docs/project/generated` to be empty before `./songchart impact --verify`.
+6. if repository compiler fingerprints are stale, reconcile the owning source/contract inputs and regenerate derived authority before broad quality verification rather than treating the stale fingerprint as a downstream test defect;
+7. commit the authoritative source/contract/test/consumer state;
+8. only then run `./songchart reconcile` and commit expected generated outputs separately when needed;
+9. require `git status --short -- docs/project/generated` to be empty before `./songchart impact --verify`.
 
-Do not use broad quality verification to discover formatter drift, unowned verification consumers, or uncommitted generated authority when cheap deterministic checks can fail first.
+Do not use broad quality verification to discover formatter drift, unowned verification consumers, stale repository compiler fingerprints, or uncommitted generated authority when cheap deterministic checks can fail first.
 
 ## Generated authority synchronization point
 
