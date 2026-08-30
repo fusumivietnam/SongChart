@@ -7,6 +7,9 @@ it('exposes the dependency-aware workflow golden path', function (): void {
     $impact = (string) file_get_contents(base_path('scripts/resolve-repository-impact.php'));
     $impactRunner = (string) file_get_contents(base_path('scripts/run-impact-verification.sh'));
     $audit = (string) file_get_contents(base_path('scripts/run-workflow-audit.php'));
+    $delivery = (string) file_get_contents(base_path('docs/project/engineering/DELIVERY_WORKFLOW.md'));
+    $taskTemplate = (string) file_get_contents(base_path('docs/templates/TASK_CONTRACT_TEMPLATE.md'));
+    $aiContract = json_decode((string) file_get_contents(base_path('docs/project/engineering/ai-development-contract.json')), true, 512, JSON_THROW_ON_ERROR);
 
     expect($cli)
         ->toContain('./songchart impact [--diff|--verify] [--json]')
@@ -28,6 +31,7 @@ it('exposes the dependency-aware workflow golden path', function (): void {
 
     expect($impactRunner)
         ->toContain('required_focused_checks')
+        ->toContain('changed_paths')
         ->toContain('Running fast preflight guards')
         ->toContain('git -C "$ROOT" diff --check')
         ->toContain("'@{upstream}...HEAD'")
@@ -52,6 +56,27 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain("'@canonical:verify'")
         ->toContain("'@test:postgres'")
         ->toContain("'npm run build'");
+
+    expect($aiContract['workflow']['pre_commit_hygiene'] ?? [])
+        ->toContain('Pint write mode on exact changed PHP paths')
+        ->toContain('exactly-one verification-consumer ownership for new verifier/Architecture tests')
+        ->and($aiContract['workflow']['source_generated_order'] ?? null)
+        ->toBe('Format and commit authoritative source/contract/consumer changes first; reconcile and commit derived generated authority second.')
+        ->and($aiContract['workflow']['writer_sync_boundary'] ?? null)
+        ->toBe('Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.');
+
+    expect($delivery)
+        ->toContain('## Source hygiene before commit')
+        ->toContain('Pint write mode on exact changed PHP files')
+        ->toContain('local-only commits on that same branch must be pushed or intentionally integrated')
+        ->toContain('repository compiler fingerprints are stale')
+        ->toContain('workflow/documentation hardening change made after canonical PASS is still a tracked change');
+
+    expect($taskTemplate)
+        ->toContain('## Source hygiene and verifier ownership before commit')
+        ->toContain('PINT WRITE ON CHANGED PHP')
+        ->toContain('VERIFIER OWNER (when applicable)')
+        ->toContain('Pre-closure dynamic lane: `./songchart impact --verify`');
 });
 
 it('guards impact targets and runtime-only artifacts before canonical closure', function (): void {
