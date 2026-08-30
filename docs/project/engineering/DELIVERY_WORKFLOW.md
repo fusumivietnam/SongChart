@@ -35,6 +35,8 @@ actual-diff impact + generated-authority reconcile
     ↓
 generated-only commit when needed
     ↓
+require docs/project/generated clean
+    ↓
 impact --verify fast preflight + collect-all audit/focused gates
     ↓
 push to GitHub / Draft PR when useful
@@ -66,9 +68,23 @@ For changed PHP source:
 4. if the change adds `scripts/verify-*.php` or `tests/Architecture/*.php`, register it under exactly one existing `verification-consumer-graph.json` ownership rule before broad verification;
 5. run repository compiler/consumer ownership verification before the expensive quality lane;
 6. commit the authoritative source/contract/test/consumer state;
-7. only then run `./songchart reconcile` and commit expected generated outputs separately when needed.
+7. only then run `./songchart reconcile` and commit expected generated outputs separately when needed;
+8. require `git status --short -- docs/project/generated` to be empty before `./songchart impact --verify`.
 
-Do not use broad quality verification to discover formatter drift or unowned verification consumers when cheap deterministic checks can fail first.
+Do not use broad quality verification to discover formatter drift, unowned verification consumers, or uncommitted generated authority when cheap deterministic checks can fail first.
+
+## Generated authority synchronization point
+
+`./songchart reconcile` owns a `generated-only` mutation envelope. Its output is derived from the exact authoritative source tree and must not leak into candidate discovery as an uncommitted mutation.
+
+After reconcile:
+
+- inspect the generated diff and `git diff --check`;
+- if only expected `docs/project/generated/` files changed, commit them as a generated-only commit;
+- if generated output is unexpected, restore/fix the owning source or authority rather than hand-editing generated JSON;
+- do not run `./songchart impact --verify`, audit-to-candidate handoff, or candidate while `docs/project/generated/` is dirty.
+
+`./songchart impact --verify` must fail before its expensive quality lane when generated authority has uncommitted changes. Candidate remains a clean-tree closure guard, not the first detector for a known reconcile mutation.
 
 ## One writer per surface
 
@@ -106,11 +122,12 @@ Before switching device or execution agent:
 4. ensure every new verifier/Architecture test has exactly one ownership rule;
 5. commit the intended logical source state;
 6. run `./songchart reconcile` when registered generated inputs changed and commit only expected generated outputs;
-7. push the current stage branch;
-8. verify there are no local-only commits left before another writer starts;
-9. communicate the exact commit SHA that owns the handoff;
-10. on the next environment, fetch and fast-forward/rebase/cherry-pick only after reviewing divergence;
-11. use `./songchart ai doctor` for runtime/test evidence that is not represented in Git.
+7. verify `docs/project/generated/` is clean;
+8. push the current stage branch;
+9. verify there are no local-only commits left before another writer starts;
+10. communicate the exact commit SHA that owns the handoff;
+11. on the next environment, fetch and fast-forward/rebase/cherry-pick only after reviewing divergence;
+12. use `./songchart ai doctor` for runtime/test evidence that is not represented in Git.
 
 Never use cross-device stash as a handoff mechanism.
 
@@ -121,23 +138,13 @@ During iteration use the dependency-aware workflow:
 ```bash
 ./songchart impact <planned-paths...>
 # implement
-# Pint write mode on exact changed PHP paths
 ./songchart impact --diff
-# commit authoritative source/contract/consumer state
 ./songchart reconcile
-# commit expected generated outputs when needed
+# commit expected docs/project/generated changes
 ./songchart impact --verify
 ./songchart audit
 ./songchart dev test <test-path>
 ```
-
-`./songchart impact --verify` is a pre-closure lane. It must defer canonical-only checks and fail fast before expensive quality work when:
-
-- `git diff --check` fails;
-- the known upstream is behind/diverged;
-- changed PHP is not Pint-clean;
-- repository compiler fingerprints are stale;
-- a verifier/Architecture test has missing or ambiguous ownership.
 
 `./songchart audit` is diagnostic and collect-all. It does not replace fail-fast `quality:verify`, candidate or canonical closure.
 
@@ -171,8 +178,6 @@ Canonical evidence is valid for the exact commit/tree that was verified. After c
 3. do not amend/rebase/add generated commits after canonical PASS without rerunning closure;
 4. ensure the PR head SHA is the canonical-verified SHA before merge.
 
-A workflow/documentation hardening change made after canonical PASS is still a tracked change. It belongs on a follow-up/corrective branch or candidate and must obtain fresh closure evidence before merge; never mutate the already sealed exact HEAD and reuse its evidence.
-
 Required status checks and protected-branch controls remain GitHub-owned integration safeguards: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
 
 ## Release artifacts
@@ -185,7 +190,7 @@ Release artifacts must never contain local secrets, `.env`, `.env.docker`, priva
 
 A same-stage correction remains on the current stage branch as a logical commit unless governance explicitly requires a separate revision. Re-run only the affected focused gates during iteration, then re-run exact-tree candidate/canonical closure before merge.
 
-When a previous exact HEAD is already canonical-sealed, preserve that commit unchanged. New workflow or documentation hardening starts from that SHA on a corrective/follow-up branch and receives new candidate/canonical evidence before integration.
+A workflow/documentation hardening change made after canonical PASS is still a tracked change. It must be implemented on a follow-up branch/revision from the exact closed HEAD (or otherwise rerun full closure) rather than silently mutating the sealed stage branch.
 
 ## Native Windows workflow
 
