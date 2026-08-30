@@ -15,7 +15,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Branch: `stage-18.6-provider-destination-media-quality`.
 - Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
-- Candidate closure: not started.
+- Candidate closure: 18.6.1 closed on exact head `17d9606a9094f879d9a467cf4ba47e7753bdecb0`; any 18.6.2 tracked change requires new closure evidence.
 - Strategy: improve destination/media eligibility, deterministic preference, freshness/provenance and operator visibility over existing provider infrastructure before considering provider breadth.
 
 ## Stage map
@@ -25,15 +25,15 @@ Status: operational checkpoint only. Repository authorities remain authoritative
         |
         +--> [DONE] inventory destination/media authority + existing runtime behavior
         |
-        +--> [IN PROGRESS] 18.6.1 deterministic eligibility/preference contract
+        +--> [DONE] 18.6.1 deterministic eligibility/preference contract
         |
-        +--> [NEXT] freshness + stale/unavailable operational state
+        +--> [IN PROGRESS] 18.6.2 freshness + stale/unavailable operational state
         |
         +--> [NEXT] YouTube/media verification quality convergence
         |
         +--> [NEXT] public selected-destination projection + explainability
         |
-        +--> [NEXT] Admin attention/remediation UX
+        +--> [NEXT] Admin remediation mutation UX where justified
         |
         `--> [FINAL] focused QA -> candidate -> canonical -> exact-head delivery
 ```
@@ -43,60 +43,50 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Stage 18.5/18.5.1 accepted through PR #14 after exact-head candidate/canonical closure and green PR CI.
 - Stage 18.6 branch created directly from accepted `main` merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Stage 18.6 task contract initialized with provider-neutral destination/media quality boundaries and explicit non-goals.
-- Destination/media inventory confirmed the existing `provider_destinations` schema can express the 18.6.1 eligibility/preference slice without schema expansion.
-- 18.6.1 source now routes public Recording media selection through a provider-neutral eligibility/preference policy instead of selecting the latest approved destination directly.
-- Workflow hardening from 18.5.1 remains cross-stage engineering authority; 18.6 does not reopen that framework unless a new evidence-backed failure class appears.
+- Destination/media inventory confirmed the existing `provider_destinations` schema can express the 18.6.1/18.6.2 quality slices without schema expansion.
+- 18.6.1 routes public Recording media selection through provider-neutral fail-closed eligibility and deterministic preference.
+- 18.6.1 candidate and canonical verification passed on exact clean/pushed head `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
+- Workflow hardening from 18.5.1 remains cross-stage engineering authority.
 
 ## In progress
 
-### 18.6.1 — Destination Eligibility + Deterministic Preference
+### 18.6.2 — Freshness + stale/unavailable operational state
 
-Public destination selection must fail closed on provider approval/enabled state, destination review state, public privacy state, freshness and safe HTTPS outbound URL before deterministic ranking. Embeddability is a preference/playability signal after eligibility, not a substitute for public eligibility.
+This slice exposes destination quality to operators without introducing a second freshness policy owner:
 
-Current ranking order for eligible destinations:
-
-```text
-EMBEDDABLE / PLAYABLE
-        ↓
-LAST CHECKED RECENCY
-        ↓
-MATCH SCORE
-        ↓
-VERIFIED RECENCY
-        ↓
-PROVIDER KEY + DESTINATION ID STABLE TIE-BREAK
-```
-
-Focused verification is in progress. No Stage 18.6 candidate/canonical closure is recorded yet.
+- `ProviderDestinationPreference` owns public eligibility and freshness semantics and now emits explainable issue codes;
+- Admin destination attention reuses those issue codes to classify `Chưa kiểm tra`, `Quá hạn kiểm tra`, `Không khả dụng`, `Sẵn sàng phát` and `Chỉ mở ngoài`;
+- unknown `last_checked_at` remains fail-closed;
+- stale destinations remain persisted evidence but are excluded from public selection;
+- non-embeddable but otherwise eligible destinations remain outbound-only, not unavailable;
+- no route, migration, scheduler or remediation mutation is added in this slice.
 
 ## Current blockers / risks
 
+- Do not duplicate the 30-day freshness window in Admin presentation/read models.
 - Do not equate provider media resources (especially YouTube Video) with canonical Recording identity.
-- Do not prefer a destination that is private, unavailable, stale beyond accepted policy, unapproved or otherwise policy-invalid.
-- Non-embeddable but otherwise eligible destinations may remain safe outbound destinations; they must not be presented as playable/embed destinations.
 - Unknown freshness/availability must not silently mean fresh/available.
+- A destination may be stale evidence without being deleted; operator attention and public eligibility are separate concerns.
 - Provider expansion must not precede an evidence-quality use case and official API capability review.
-- Public selection must remain deterministic and explainable; no fabricated popularity or opaque recommendation score.
-- Admin remediation must use existing authorization/audit/write boundaries and Vietnamese operator-facing language.
+- Admin remediation mutations, if later added, must preserve authorization/audit/write boundaries and Vietnamese operator-facing language.
 - New route/schema/provider fields cannot be introduced silently.
 
 ## Latest focused evidence
 
-- Stage 18.5/18.5.1 exact sealed head: `67df5ae72f9dbdc29c43e7afbc7e645203e37cff`.
+- Stage 18.6.1 exact sealed head: `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
 - Candidate verification contract passed on that exact tree.
 - Canonical verification passed on that exact tree.
-- GitHub Actions PR workflow run #159 completed successfully for that head.
-- PR #14 merged to `main` as `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
-- Stage 18.6 bootstrap branch created from that accepted merge commit.
-- Stage 18.6.1 source and focused regressions are committed on the stage branch; broad verification remains pending.
+- Tracked tree was clean and local/upstream were synchronized at the 18.6.1 seal.
+- 18.6.2 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
 
 ## Next required action
 
-1. Sync local workspace to the latest `stage-18.6-provider-destination-media-quality` HEAD.
-2. Run the focused 18.6.1 Unit and Recording media feature tests.
-3. Run Pint/PHPStan and `./songchart impact --diff`.
-4. Run `./songchart impact --verify` after focused checks pass.
-5. Record only verification actually observed in `STAGE_18_6_VALIDATION_REPORT.md`; do not advance to 18.6.2 until the 18.6.1 verification lane is green.
+1. Sync local workspace to the latest stage branch before editing locally.
+2. Run Pint write + `--test` on exact 18.6.2 PHP files.
+3. Run `tests/Unit/Providers/ProviderDestinationPreferenceTest.php` and `tests/Feature/Providers/ProviderDestinationAttentionTest.php`.
+4. Run focused PHPStan, then `./songchart impact --diff` and reconcile any newly surfaced authority/consumer.
+5. Run `./songchart reconcile`, commit expected generated-only changes, then `./songchart impact --verify`.
+6. Record only observed verification in `STAGE_18_6_VALIDATION_REPORT.md` before candidate/canonical closure.
 
 ## Documentation checkpoint discipline
 
