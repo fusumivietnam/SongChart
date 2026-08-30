@@ -36,18 +36,9 @@ final class YouTubeDestinationWorkbench
     public function approve(string $providerId, string $recordingId, string $videoId): ProviderDestination
     {
         $this->runtimeConfiguration->apply('youtube');
-        $provider = Provider::query()->find($providerId);
-        if (! $provider instanceof Provider || $provider->slug !== 'youtube' || ! $provider->is_enabled) {
-            throw new RuntimeException('Enabled YouTube provider registry row was not found.');
-        }
-        $recording = Recording::query()->with('artists')->find($recordingId);
-        if (! $recording instanceof Recording) {
-            throw new RuntimeException('Canonical Recording was not found.');
-        }
+        $provider = $this->youtubeProvider($providerId);
+        $recording = $this->recording($recordingId);
         $candidate = $this->discovery->verify($videoId, $recording);
-        if (! $candidate->embeddable) {
-            throw new RuntimeException('Selected YouTube video is not embeddable and cannot be approved as the primary Stage 17.7 destination.');
-        }
 
         return DB::transaction(static fn (): ProviderDestination => ProviderDestination::query()->updateOrCreate(
             [
@@ -71,5 +62,85 @@ final class YouTubeDestinationWorkbench
                 'last_checked_at' => now(),
             ],
         ));
+    }
+
+    public function reverify(string $destinationId): ProviderDestination
+    {
+        $this->runtimeConfiguration->apply('youtube');
+        $destination = ProviderDestination::query()->with('provider')->find($destinationId);
+        if (! $destination instanceof ProviderDestination) {
+            throw new RuntimeException('Provider destination was not found.');
+        }
+
+        $provider = $destination->getRelation('provider');
+        if (! $provider instanceof Provider || $provider->slug !== 'youtube' || ! $provider->is_enabled) {
+            throw new RuntimeException('Enabled YouTube provider registry row was not found.');
+        }
+
+        $entityType = $destination->getAttribute('entity_type');
+        if ($entityType !== EntityType::Recording) {
+            throw new RuntimeException('YouTube destination is not attached to a canonical Recording.');
+        }
+
+        $recording = $this->recording((string) $destination->getAttribute('entity_id'));
+        $candidate = $this->discovery->inspect(
+            (string) $destination->getAttribute('provider_resource_id'),
+            $recording,
+        );
+        $checkedAt = now();
+
+        if ($candidate === null) {
+            $evidence = $destination->getAttribute('evidence');
+            $existingEvidence = is_array($evidence) ? $evidence : [];
+            $destination->forceFill([
+                'is_embeddable' => false,
+                'privacy_status' => null,
+                'evidence' => [
+                    ...$existingEvidence,
+                    'provider' => 'youtube',
+                    'availability' => 'unavailable',
+                    'privacy_status' => 'unknown',
+                    'embeddable' => false,
+                ],
+                'last_checked_at' => $checkedAt,
+            ])->save();
+
+            return $destination->refresh();
+        }
+
+        $destination->forceFill([
+            'url' => $candidate->url,
+            'title' => $candidate->title,
+            'channel_id' => $candidate->channelId,
+            'channel_title' => $candidate->channelTitle,
+            'duration_ms' => $candidate->durationMs,
+            'is_embeddable' => $candidate->embeddable,
+            'privacy_status' => $candidate->privacyStatus !== '' ? $candidate->privacyStatus : null,
+            'match_score' => $candidate->score,
+            'evidence' => $candidate->evidence,
+            'last_checked_at' => $checkedAt,
+        ])->save();
+
+        return $destination->refresh();
+    }
+
+    private function youtubeProvider(string $providerId): Provider
+    {
+        $provider = Provider::query()->find($providerId);
+        if (! $provider instanceof Provider || $provider->slug !== 'youtube' || ! $provider->is_enabled) {
+            throw new RuntimeException('Enabled YouTube provider registry row was not found.');
+        }
+
+        return $provider;
+    }
+
+    private function recording(string $recordingId): Recording
+    {
+        $recording = Recording::query()->with('artists')->find($recordingId);
+        if (! $recording instanceof Recording) {
+            throw new RuntimeException('Canonical Recording was not found.');
+        }
+
+        return $recording;
     }
 }
