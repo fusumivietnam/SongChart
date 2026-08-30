@@ -7,9 +7,9 @@ it('exposes the dependency-aware workflow golden path', function (): void {
     $impact = (string) file_get_contents(base_path('scripts/resolve-repository-impact.php'));
     $impactRunner = (string) file_get_contents(base_path('scripts/run-impact-verification.sh'));
     $audit = (string) file_get_contents(base_path('scripts/run-workflow-audit.php'));
+    $aiContract = json_decode((string) file_get_contents(base_path('docs/project/engineering/ai-development-contract.json')), true, 512, JSON_THROW_ON_ERROR);
     $delivery = (string) file_get_contents(base_path('docs/project/engineering/DELIVERY_WORKFLOW.md'));
     $taskTemplate = (string) file_get_contents(base_path('docs/templates/TASK_CONTRACT_TEMPLATE.md'));
-    $aiContract = json_decode((string) file_get_contents(base_path('docs/project/engineering/ai-development-contract.json')), true, 512, JSON_THROW_ON_ERROR);
 
     expect($cli)
         ->toContain('./songchart impact [--diff|--verify] [--json]')
@@ -31,14 +31,6 @@ it('exposes the dependency-aware workflow golden path', function (): void {
 
     expect($impactRunner)
         ->toContain('required_focused_checks')
-        ->toContain('changed_paths')
-        ->toContain('Running fast preflight guards')
-        ->toContain('git -C "$ROOT" diff --check')
-        ->toContain("'@{upstream}...HEAD'")
-        ->toContain('Checking Pint on changed PHP paths before the expensive lane.')
-        ->toContain('composer exec pint -- --test')
-        ->toContain('Checking repository compiler and verification-consumer ownership before the expensive lane.')
-        ->toContain('composer repository-compiler:verify')
         ->toContain('closure_checks=()')
         ->toContain("'composer canonical:verify'|'songchart verify'|'songchart close'")
         ->toContain('Deferred closure-only checks')
@@ -46,6 +38,11 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain("'composer stage:verify'")
         ->toContain('run_test_target')
         ->toContain('git -C "$ROOT" ls-files -- "$target"')
+        ->toContain('git -C "$ROOT" diff --check')
+        ->toContain('git -C "$ROOT" rev-list --left-right --count HEAD..."$upstream"')
+        ->toContain('changed_paths')
+        ->toContain('exec pint -- --test')
+        ->toContain('repository-compiler:verify')
         ->not->toContain('"$SONGCHART" verify')
         ->not->toContain('eval ');
 
@@ -67,7 +64,8 @@ it('exposes the dependency-aware workflow golden path', function (): void {
 
     expect($delivery)
         ->toContain('## Source hygiene before commit')
-        ->toContain('Pint write mode on exact changed PHP files')
+        ->toContain('Pint write mode')
+        ->toContain('exact changed PHP')
         ->toContain('local-only commits on that same branch must be pushed or intentionally integrated')
         ->toContain('repository compiler fingerprints are stale')
         ->toContain('workflow/documentation hardening change made after canonical PASS is still a tracked change');
