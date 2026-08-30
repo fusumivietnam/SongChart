@@ -8,42 +8,68 @@ Status: in progress. Record only verification actually observed for the active S
 - PR #14 passed GitHub Actions workflow run #159 and merged to `main` as `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Stage 18.6 branch was created from that accepted merge commit.
 
-## Active slice
+## Closed slice evidence
 
 ### 18.6.1 — Destination Eligibility + Deterministic Preference
 
 Implemented source intent:
 
-- replace public Recording destination selection by latest `verified_at` with provider-neutral eligibility + deterministic preference;
-- fail closed for provider-disabled/unapproved, destination-unapproved, non-public/unknown privacy, stale/unknown freshness, or unsafe/non-HTTPS outbound URLs;
-- allow an otherwise eligible non-embeddable destination only as outbound, never as playable/embed media;
-- prefer playable destination, then last-check recency, match score, verification recency, and stable provider/destination tie-break;
-- preserve provider destination evidence as external media evidence and never infer canonical Recording identity from a provider resource.
+- public Recording destination selection uses provider-neutral eligibility + deterministic preference rather than latest `verified_at`;
+- provider-disabled/unapproved, destination-unapproved, non-public/unknown privacy, stale/unknown freshness, and unsafe outbound URLs fail closed;
+- otherwise eligible non-embeddable destinations remain outbound-only, never playable/embed media;
+- provider destination evidence remains external media evidence and never defines canonical Recording identity.
+
+Observed closure:
+
+- Candidate verification contract: PASS.
+- Canonical verification: PASS.
+- Exact closed HEAD: `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
+- Tracked tree: clean at seal.
+- Local/upstream relationship: synchronized at seal.
+
+Any tracked 18.6.2 change is a new tree and does not reuse the 18.6.1 closure evidence.
+
+## Active slice
+
+### 18.6.2 — Freshness + stale/unavailable operational state
+
+Implemented source intent now under verification:
+
+- `ProviderDestinationPreference` remains the single owner of the 30-day freshness and public eligibility semantics;
+- the domain policy emits stable reason codes for provider approval/enabled state, review state, privacy, freshness and outbound URL safety;
+- `ProviderDestinationAttention` is a read-only Admin projection over existing `provider_destinations` evidence;
+- operator state distinguishes `Chưa kiểm tra`, `Quá hạn kiểm tra`, `Không khả dụng`, `Sẵn sàng phát` and `Chỉ mở ngoài`;
+- unknown freshness is fail-closed; stale evidence stays persisted but is not public eligible;
+- no migration, route, scheduler or remediation mutation is introduced by 18.6.2.
 
 ## Focused verification evidence
 
-Pending re-run after the repository-state governance corrective.
+Pending on the current 18.6.2 tree. Do not record PASS until observed.
 
-Required focused checks for this slice:
+Required focused checks:
 
 ```text
+./songchart composer exec pint -- <exact changed PHP>
+./songchart composer exec pint -- --test <exact changed PHP>
 ./songchart dev test tests/Unit/Providers/ProviderDestinationPreferenceTest.php
-./songchart dev test tests/Feature/Catalog/RecordingMediaExperienceTest.php
+./songchart dev test tests/Feature/Providers/ProviderDestinationAttentionTest.php
 ./songchart composer exec phpstan analyse
 ./songchart impact --diff
+./songchart reconcile
 ./songchart impact --verify
 ```
 
-No PASS is recorded here until observed on the current committed tree.
+## Known correctives during Stage 18.6
 
-## Known corrective during verification
-
-`RepositoryStateGovernanceTest` exposed a Stage 18.6 bootstrap metadata mismatch: the unique current-stage line in `docs/project/DEVELOPMENT_STATE.md` ended with punctuation after the closing backtick, so the governance regex resolved zero current-stage markers. The marker was restored to the executable contract form and this required Stage 18.6 validation report was created before re-running verification.
+- Repository-state governance exposed the Stage 18.6 current-stage marker/checkpoint heading drift; the owner document was corrected rather than weakening the verifier.
+- Candidate metadata was advanced from Stage 18.5 to Stage 18.6 before generated project context was committed.
+- Formatter drift and PHPStan type-contract errors were corrected at source before 18.6.1 closure.
 
 ## Candidate / canonical closure
 
-- Candidate: not run for Stage 18.6 current tree.
-- Canonical: not run for Stage 18.6 current tree.
-- Exact closed HEAD: not established.
+- 18.6.1 exact closure: `17d9606a9094f879d9a467cf4ba47e7753bdecb0` PASS.
+- 18.6.2 candidate: not run on the current changed tree.
+- 18.6.2 canonical: not run on the current changed tree.
+- 18.6.2 exact closed HEAD: not established.
 
-Any later tracked change invalidates previous slice evidence and must be reflected here before stage closure.
+Any later tracked change invalidates closure evidence for the previous exact HEAD and must be reflected here before calling the new tree closed.
