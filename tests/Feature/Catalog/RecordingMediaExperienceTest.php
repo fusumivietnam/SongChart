@@ -54,7 +54,7 @@ it('renders a privacy-enhanced iframe for an approved fresh embeddable YouTube d
         ->and($html)->toContain('Mở trên YouTube');
 });
 
-it('fails closed to outbound-only presentation when an approved destination is stale', function (): void {
+it('does not expose an approved destination after its freshness window expires', function (): void {
     $recording = Recording::factory()->create(['slug' => 'stale-video-recording']);
     $provider = stage18YoutubeProvider();
 
@@ -73,15 +73,46 @@ it('fails closed to outbound-only presentation when an approved destination is s
         'last_checked_at' => now()->subDays(45),
     ]);
 
-    $media = app(RecordingMediaExperience::class)->forSlug('stale-video-recording');
+    expect(app(RecordingMediaExperience::class)->forSlug('stale-video-recording'))->toBeNull();
+});
+
+it('does not let a newer private destination shadow an older eligible public destination', function (): void {
+    $recording = Recording::factory()->create(['slug' => 'deterministic-video-recording']);
+    $provider = stage18YoutubeProvider();
+
+    ProviderDestination::query()->create([
+        'provider_id' => $provider->getKey(),
+        'entity_type' => EntityType::Recording,
+        'entity_id' => $recording->getKey(),
+        'provider_resource_id' => 'public123',
+        'url' => 'https://www.youtube.com/watch?v=public123',
+        'title' => 'Eligible public video',
+        'is_embeddable' => true,
+        'privacy_status' => 'public',
+        'match_score' => 91,
+        'review_state' => 'approved',
+        'verified_at' => now()->subDays(2),
+        'last_checked_at' => now()->subDays(2),
+    ]);
+
+    ProviderDestination::query()->create([
+        'provider_id' => $provider->getKey(),
+        'entity_type' => EntityType::Recording,
+        'entity_id' => $recording->getKey(),
+        'provider_resource_id' => 'private999',
+        'url' => 'https://www.youtube.com/watch?v=private999',
+        'title' => 'Newer private video',
+        'is_embeddable' => true,
+        'privacy_status' => 'private',
+        'match_score' => 99,
+        'review_state' => 'approved',
+        'verified_at' => now()->subHour(),
+        'last_checked_at' => now()->subHour(),
+    ]);
+
+    $media = app(RecordingMediaExperience::class)->forSlug('deterministic-video-recording');
 
     expect($media)->not->toBeNull()
-        ->and($media['can_embed'])->toBeFalse()
-        ->and($media['embed_url'])->toBeNull()
-        ->and($media['availability_label'])->toBe('Cần kiểm tra lại');
-
-    $html = Blade::render('<x-provider.media-player :media="$media" />', ['media' => $media]);
-    expect($html)->not->toContain('<iframe')
-        ->and($html)->toContain('Mở trên YouTube')
-        ->and($html)->toContain('Cần kiểm tra lại');
+        ->and($media['title'])->toBe('Eligible public video')
+        ->and($media['embed_url'])->toBe('https://www.youtube-nocookie.com/embed/public123');
 });
