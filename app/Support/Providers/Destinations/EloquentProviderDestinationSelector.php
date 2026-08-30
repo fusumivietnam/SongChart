@@ -11,6 +11,7 @@ use App\Domain\Providers\Enums\ProviderStatus;
 use App\Models\Provider;
 use App\Models\ProviderDestination;
 use DateTimeImmutable;
+use DateTimeInterface;
 
 final readonly class EloquentProviderDestinationSelector
 {
@@ -39,21 +40,24 @@ final readonly class EloquentProviderDestinationSelector
                 continue;
             }
 
+            $privacyStatus = $destination->getAttribute('privacy_status');
+            $url = $destination->getAttribute('url');
+            $verifiedAt = $destination->getAttribute('verified_at');
+            $lastCheckedAt = $destination->getAttribute('last_checked_at');
+
             $snapshot = new ProviderDestinationSnapshot(
                 id: (string) $destination->getKey(),
                 providerKey: $provider->slug,
                 providerApproved: $provider->status === ProviderStatus::Approved,
                 providerEnabled: $provider->is_enabled,
                 reviewState: (string) $destination->getAttribute('review_state'),
-                privacyStatus: is_string($destination->getAttribute('privacy_status'))
-                    ? $destination->getAttribute('privacy_status')
-                    : null,
+                privacyStatus: is_string($privacyStatus) ? $privacyStatus : null,
                 embeddable: $destination->getAttribute('is_embeddable') === true,
-                url: is_string($destination->getAttribute('url')) ? $destination->getAttribute('url') : null,
+                url: is_string($url) ? $url : null,
                 resourceId: (string) $destination->getAttribute('provider_resource_id'),
                 matchScore: (int) $destination->getAttribute('match_score'),
-                verifiedAt: $destination->getAttribute('verified_at'),
-                lastCheckedAt: $destination->getAttribute('last_checked_at'),
+                verifiedAt: $verifiedAt instanceof DateTimeInterface ? $verifiedAt : null,
+                lastCheckedAt: $lastCheckedAt instanceof DateTimeInterface ? $lastCheckedAt : null,
             );
 
             $snapshots[] = $snapshot;
