@@ -15,7 +15,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Branch: `stage-18.6-provider-destination-media-quality`.
 - Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
-- Candidate closure: 18.6.1 closed on exact head `17d9606a9094f879d9a467cf4ba47e7753bdecb0`; any 18.6.2 tracked change requires new closure evidence.
+- Candidate closure: 18.6.2 closed on exact head `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`; any 18.6.3 tracked change requires new closure evidence.
 - Strategy: improve destination/media eligibility, deterministic preference, freshness/provenance and operator visibility over existing provider infrastructure before considering provider breadth.
 
 ## Stage map
@@ -27,9 +27,9 @@ Status: operational checkpoint only. Repository authorities remain authoritative
         |
         +--> [DONE] 18.6.1 deterministic eligibility/preference contract
         |
-        +--> [IN PROGRESS] 18.6.2 freshness + stale/unavailable operational state
+        +--> [DONE] 18.6.2 freshness + stale/unavailable operational state
         |
-        +--> [NEXT] YouTube/media verification quality convergence
+        +--> [IN PROGRESS] 18.6.3 YouTube/media verification quality convergence
         |
         +--> [NEXT] public selected-destination projection + explainability
         |
@@ -43,50 +43,53 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Stage 18.5/18.5.1 accepted through PR #14 after exact-head candidate/canonical closure and green PR CI.
 - Stage 18.6 branch created directly from accepted `main` merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Stage 18.6 task contract initialized with provider-neutral destination/media quality boundaries and explicit non-goals.
-- Destination/media inventory confirmed the existing `provider_destinations` schema can express the 18.6.1/18.6.2 quality slices without schema expansion.
+- Destination/media inventory confirmed the existing `provider_destinations` schema can express the 18.6 quality slices without schema expansion.
 - 18.6.1 routes public Recording media selection through provider-neutral fail-closed eligibility and deterministic preference.
 - 18.6.1 candidate and canonical verification passed on exact clean/pushed head `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
+- 18.6.2 exposes freshness/stale/unavailable operational state through the existing destination evidence model without introducing a second freshness owner.
+- 18.6.2 candidate and canonical verification passed on exact clean/pushed head `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
 - Workflow hardening from 18.5.1 remains cross-stage engineering authority.
 
 ## In progress
 
-### 18.6.2 — Freshness + stale/unavailable operational state
+### 18.6.3 — YouTube/media verification quality convergence
 
-This slice exposes destination quality to operators without introducing a second freshness policy owner:
+This slice makes provider media evidence trustworthy enough to participate in public selection without treating provider media as canonical Recording identity:
 
-- `ProviderDestinationPreference` owns public eligibility and freshness semantics and now emits explainable issue codes;
-- Admin destination attention reuses those issue codes to classify `Chưa kiểm tra`, `Quá hạn kiểm tra`, `Không khả dụng`, `Sẵn sàng phát` and `Chỉ mở ngoài`;
-- unknown `last_checked_at` remains fail-closed;
-- stale destinations remain persisted evidence but are excluded from public selection;
-- non-embeddable but otherwise eligible destinations remain outbound-only, not unavailable;
-- no route, migration, scheduler or remediation mutation is added in this slice.
+- inspect the existing YouTube search/approval/write path and normalize verification evidence before persistence;
+- require explicit public privacy evidence before a destination can be considered available;
+- preserve embeddability separately from availability so a public non-embeddable video may remain outbound-only;
+- ensure verification refresh updates `last_checked_at` and observed media state through existing authorized/audited write boundaries;
+- preserve provenance such as provider resource ID, channel/title and verification evidence without promoting them into canonical identity;
+- fail closed when provider response omits or contradicts privacy/availability/embeddability evidence;
+- do not add a scheduler, new provider, new canonical identifier, or opaque ranking behavior in this slice.
 
 ## Current blockers / risks
 
-- Do not duplicate the 30-day freshness window in Admin presentation/read models.
-- Do not equate provider media resources (especially YouTube Video) with canonical Recording identity.
-- Unknown freshness/availability must not silently mean fresh/available.
-- A destination may be stale evidence without being deleted; operator attention and public eligibility are separate concerns.
-- Provider expansion must not precede an evidence-quality use case and official API capability review.
-- Admin remediation mutations, if later added, must preserve authorization/audit/write boundaries and Vietnamese operator-facing language.
+- YouTube Video identity must remain external media evidence and must never become canonical Recording identity.
+- Privacy, availability and embeddability are distinct facts; do not collapse them into one boolean.
+- Missing verification evidence must remain unknown/fail-closed, not silently public/available.
+- Refreshing verification must use the existing provider credential, quota/rate, authorization and audit boundaries.
+- Do not duplicate the 30-day freshness policy outside `ProviderDestinationPreference`.
+- A public but non-embeddable destination may be outbound-only rather than unavailable.
 - New route/schema/provider fields cannot be introduced silently.
 
 ## Latest focused evidence
 
 - Stage 18.6.1 exact sealed head: `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
-- Candidate verification contract passed on that exact tree.
-- Canonical verification passed on that exact tree.
-- Tracked tree was clean and local/upstream were synchronized at the 18.6.1 seal.
-- 18.6.2 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
+- Stage 18.6.2 exact sealed head: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
+- 18.6.2 candidate verification contract passed on that exact tree.
+- 18.6.2 canonical verification passed on that exact tree.
+- Tracked tree was clean and local/upstream were synchronized at the 18.6.2 seal.
+- 18.6.3 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
 
 ## Next required action
 
-1. Sync local workspace to the latest stage branch before editing locally.
-2. Run Pint write + `--test` on exact 18.6.2 PHP files.
-3. Run `tests/Unit/Providers/ProviderDestinationPreferenceTest.php` and `tests/Feature/Providers/ProviderDestinationAttentionTest.php`.
-4. Run focused PHPStan, then `./songchart impact --diff` and reconcile any newly surfaced authority/consumer.
-5. Run `./songchart reconcile`, commit expected generated-only changes, then `./songchart impact --verify`.
-6. Record only observed verification in `STAGE_18_6_VALIDATION_REPORT.md` before candidate/canonical closure.
+1. Inventory the existing YouTube destination search, candidate presentation, approval/write service, provider adapter and focused tests.
+2. Identify the single write owner for verification evidence and the normalized fields already available in `provider_destinations`.
+3. Add focused regression for public/private/unknown privacy, embeddable/non-embeddable, unavailable/missing resource and verification refresh timestamps.
+4. Implement the smallest convergence in the existing adapter/write path; do not add schema or routes unless existing authority proves insufficient.
+5. Run Pint, focused tests, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` before closure.
 
 ## Documentation checkpoint discipline
 
