@@ -11,6 +11,17 @@ it('renders entity facets with counts for a mixed query', function (): void {
         ->assertSee('aria-label="Danh sách kết quả"', false);
 });
 
+it('uses one document main landmark and labels the search result region', function (): void {
+    $response = $this->get('/search?q=Radiohead');
+
+    $response->assertOk()
+        ->assertSee('<main id="main-content"', false)
+        ->assertSee('<section id="search-results" aria-labelledby="search-results-title">', false)
+        ->assertSee('id="search-results-title"', false);
+
+    expect(substr_count($response->getContent(), '<main'))->toBe(1);
+});
+
 it('preserves query and sorting when switching entity facets', function (): void {
     $this->get('/search?q=Radiohead&sort=year_desc')
         ->assertOk()

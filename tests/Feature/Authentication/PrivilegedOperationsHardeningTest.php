@@ -23,6 +23,8 @@ it('logs out an authenticated user after the account is deactivated', function (
 });
 
 it('requires confirmed two factor authentication for the admin area', function (): void {
+    config()->set('songchart.security.admin_2fa_mode', 'required');
+
     $user = User::factory()->create([
         'role' => UserRole::SuperAdmin,
         'is_active' => true,

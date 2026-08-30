@@ -15,6 +15,24 @@ it('renders the governed artist detail composition on the canonical plural URL',
         ->assertSee('Nguồn và provenance');
 });
 
+it('keeps the public entity page to one main landmark with a labelled entity article', function (): void {
+    $response = $this->get('/groups/radiohead');
+
+    $response->assertOk()
+        ->assertSee('<article class="min-w-0 space-y-10" aria-labelledby="entity-title">', false)
+        ->assertSee('id="entity-title"', false);
+
+    expect(substr_count($response->getContent(), '<main'))->toBe(1);
+});
+
+it('keeps provenance data usable on narrow viewports', function (): void {
+    $this->get('/groups/radiohead')->assertOk()
+        ->assertSee('overflow-x-auto', false)
+        ->assertSee('tabindex="0"', false)
+        ->assertSee('aria-label="Bảng nguồn và provenance có thể cuộn ngang"', false)
+        ->assertSee('min-w-[36rem]', false);
+});
+
 it('renders entity-specific relationships and identifiers on canonical plural URLs', function (string $path, string $expected): void {
     $this->get($path)->assertOk()->assertSee($expected);
 })->with([

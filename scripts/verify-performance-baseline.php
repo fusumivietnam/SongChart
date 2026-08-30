@@ -15,6 +15,73 @@ try {
     exit(1);
 }
 
+$publicFrontend = is_array($contract['public_frontend_release'] ?? null) ? $contract['public_frontend_release'] : [];
+$expectedPublicFrontend = [
+    'third_party_blocking_assets' => false,
+    'images_require_dimensions' => true,
+    'reduced_motion_required' => true,
+    'mobile_safe_area_required' => true,
+];
+foreach ($expectedPublicFrontend as $rule => $expected) {
+    if (($publicFrontend[$rule] ?? null) !== $expected) {
+        $errors[] = "Public frontend performance contract must declare {$rule}.";
+    }
+}
+
+$publicViewRoots = [
+    'resources/views/home.blade.php',
+    'resources/views/layouts/frontend.blade.php',
+    'resources/views/search',
+    'resources/views/entities',
+    'resources/views/errors',
+    'resources/views/components/search',
+    'resources/views/components/shell',
+    'resources/views/components/entity',
+    'resources/views/components/provider',
+];
+$publicViewFiles = [];
+foreach ($publicViewRoots as $relative) {
+    $path = $root.'/'.$relative;
+    if (is_file($path)) {
+        $publicViewFiles[] = $path;
+
+        continue;
+    }
+    if (! is_dir($path)) {
+        continue;
+    }
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS));
+    foreach ($iterator as $file) {
+        if ($file->isFile() && str_ends_with($file->getFilename(), '.blade.php')) {
+            $publicViewFiles[] = $file->getPathname();
+        }
+    }
+}
+
+foreach (array_unique($publicViewFiles) as $path) {
+    $source = (string) file_get_contents($path);
+    $relative = str_replace($root.'/', '', $path);
+    if (preg_match('/<(?:script|link)\b[^>]+(?:src|href)=["\']https?:\/\//i', $source) === 1) {
+        $errors[] = "{$relative} must not add third-party blocking script or stylesheet assets.";
+    }
+    if (preg_match_all('/<img\b[^>]*>/i', $source, $matches) === false) {
+        continue;
+    }
+    foreach ($matches[0] ?? [] as $imageTag) {
+        if (preg_match('/\bwidth\s*=/i', $imageTag) !== 1 || preg_match('/\bheight\s*=/i', $imageTag) !== 1) {
+            $errors[] = "{$relative} contains an image without explicit width and height attributes.";
+        }
+    }
+}
+
+$frontendCss = (string) file_get_contents($root.'/resources/css/app.css');
+if (! str_contains($frontendCss, '@media (prefers-reduced-motion: reduce)')) {
+    $errors[] = 'Public frontend CSS must preserve reduced-motion handling.';
+}
+if (! str_contains($frontendCss, 'env(safe-area-inset-bottom)')) {
+    $errors[] = 'Public frontend CSS must preserve mobile safe-area spacing.';
+}
+
 $useCases = is_array($contract['use_cases'] ?? null) ? $contract['use_cases'] : [];
 foreach (['admin.providers.index', 'admin.imports.index', 'admin.quarantine.index', 'admin.identity-conflicts.index'] as $key) {
     $entry = $useCases[$key] ?? null;
@@ -54,7 +121,6 @@ foreach (['->limit(25)', '->limit(50)'] as $needle) {
     }
 }
 if (preg_match('/->get\(\s*\)/', $providerConsole) === 1 && ! str_contains($providerConsole, "->limit(25)\n            ->get()")) {
-    // Some bounded lookup collections use explicit selected columns; generic unbounded get() remains disallowed.
     $errors[] = 'ProviderOperationsConsole contains an unbounded get() call.';
 }
 

@@ -113,7 +113,7 @@
         },
         "ai-development-protocol": {
             "source": "docs/project/engineering/ai-development-contract.json",
-            "fingerprint": "4463e4af2786baa2adf302d596828ed1f2106ce57eb528892a9c5f4aa156c573",
+            "fingerprint": "77799c370dee503fa743504436348ef55883f505e889fb569f9a3d93360df148",
             "consumers": [
                 "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
                 "AGENTS.md",
@@ -150,7 +150,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "2035dba60888e65ac1878210609457cea4e9ac39a07422f057726194f934ebc5",
+            "fingerprint": "a18649a676a36dca547c99209d08a3aabd8c5c6eb962c76a6776061b761cf974",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -206,7 +206,7 @@
         },
         "performance-contracts": {
             "source": "docs/project/performance/performance-contracts.json",
-            "fingerprint": "ae2b2595c21bb40ade5d66c129aa00708dc2192750f78376eae9fa5203e4ff30",
+            "fingerprint": "6303489af01acac24999a120a54eb8b88ac1a7a59b1ad4a071380c1446e13a32",
             "consumers": []
         },
         "postgres-query-plan": {
@@ -236,7 +236,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "3f5926de52d022d91709732489a0823d95224522864f15e5b7f7568c0b3e986a",
+            "fingerprint": "67e17cf1e867d701c5cc50c5c10691114697edbb85e6fbec23781d915f382b8e",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -1507,6 +1507,15 @@
             ]
         },
         {
+            "target": "tests/Architecture/PublicFrontendPerformanceReleaseTest.php",
+            "rule": "performance",
+            "classification": "behavioral",
+            "semantic_authorities": [
+                "performance-contracts",
+                "postgres-query-plan"
+            ]
+        },
+        {
             "target": "tests/Architecture/PulseObservabilityBoundaryTest.php",
             "rule": "queue-observability",
             "classification": "behavioral",
@@ -1657,5 +1666,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "b98c5e13484d96f5cf1360be88ba34e3ad4456238e0c1d3a698247d97b63a513"
+    "graph_fingerprint": "dcf8942e3ff55e4a8d07e20628d88998645d3f5d72c30b36291150c9c55ab1ae"
 }

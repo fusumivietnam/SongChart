@@ -211,7 +211,7 @@ help(){ cat <<'EOF'
 SongChart Linux-first development CLI
   ./songchart ai status
   ./songchart ai doctor
-  ./songchart impact [--diff] [--json] <planned-paths...>
+  ./songchart impact [--diff|--verify] [--json] <planned-paths...>
   ./songchart reconcile
   ./songchart audit
   ./songchart dev setup|ready|up|down|status|logs|shell|url
@@ -230,6 +230,7 @@ SongChart Linux-first development CLI
 AI/workflow convergence:
   ./songchart impact <paths...>     resolve planned authorities, reverse consumers and focused checks
   ./songchart impact --diff        resolve actual stage/working-tree impact after implementation
+  ./songchart impact --verify      execute the exact focused checks resolved from the current diff
   ./songchart reconcile            regenerate generated authority and show the resulting diff without committing
   ./songchart audit                collect all quality/static/governance failures without fail-fast
 
@@ -270,7 +271,14 @@ case "$cmd" in
    doctor) exec bash "$ROOT/scripts/ai-doctor.sh" "$@" ;;
    *) die 'Usage: ./songchart ai [status|doctor]' ;;
   esac ;;
- impact) require_docker; ensure_dev_config; dev_exec_or_run php scripts/resolve-repository-impact.php "$@" ;;
+ impact)
+  require_docker; ensure_dev_config
+  if [[ "${1:-}" == '--verify' ]]; then
+    shift
+    [[ $# -eq 0 ]] || die 'Usage: ./songchart impact --verify'
+    exec bash "$ROOT/scripts/run-impact-verification.sh"
+  fi
+  dev_exec_or_run php scripts/resolve-repository-impact.php "$@" ;;
  reconcile) require_docker; ensure_dev_config; [[ $# -eq 0 ]] || die 'Usage: ./songchart reconcile'; reconcile_authority ;;
  audit) require_docker; ensure_dev_config; [[ $# -eq 0 ]] || die 'Usage: ./songchart audit'; dev_exec_or_run php scripts/run-workflow-audit.php ;;
  dev)

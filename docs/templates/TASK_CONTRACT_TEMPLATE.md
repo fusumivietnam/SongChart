@@ -34,6 +34,36 @@ Describe the single outcome this task owns.
 
 - List formatter-only, generated, lockfile, manifest, or delivery metadata files that may change without expanding product scope.
 
+## Source hygiene and verifier ownership before commit
+
+Before committing authoritative source/contract/test changes:
+
+- run Pint in write mode on the exact changed PHP files, then inspect the formatter diff;
+- require Pint `--test` to pass after write-mode normalization;
+- when adding `scripts/verify-*.php` or `tests/Architecture/*.php`, register it under exactly one existing rule in `docs/project/engineering/verification-consumer-graph.json` in the same logical source change;
+- run repository compiler/consumer ownership verification before broad quality verification;
+- do not commit generated repository authority until the authoritative source/contract/consumer tree is final for that slice.
+
+Required order:
+
+```text
+SOURCE / CONTRACT / TEST CHANGE
+        ↓
+PINT WRITE ON CHANGED PHP
+        ↓
+PINT --TEST
+        ↓
+VERIFIER OWNER (when applicable)
+        ↓
+SOURCE COMMIT
+        ↓
+./songchart reconcile
+        ↓
+GENERATED-ONLY COMMIT (when needed)
+        ↓
+./songchart impact --verify
+```
+
 ## Post-diff impact and scope deviations
 
 - Run `./songchart impact --diff` after implementation and before closure.
@@ -114,7 +144,10 @@ Rules:
 
 - Planned impact lane: `./songchart impact <planned-paths...>`.
 - Actual-diff lane: `./songchart impact --diff`.
-- Generated authority reconcile: `./songchart reconcile` when registered source inputs changed.
+- Changed-PHP formatter lane: Pint write mode on exact changed PHP paths, followed by Pint `--test`, before source commit.
+- Verification-consumer ownership lane: exactly one owner for every new verifier/Architecture test before broad quality verification.
+- Generated authority reconcile: `./songchart reconcile` only after authoritative source/contract/consumer changes are committed and stable for the slice.
+- Pre-closure dynamic lane: `./songchart impact --verify`; this must fail fast on diff hygiene, known upstream divergence, Pint drift, stale compiler fingerprints or unowned verification consumers before expensive checks.
 - Collect-all diagnostic lane: `./songchart audit` when broad static/governance feedback is useful.
 - Focused implementation gates:
 - Stage closure owner: `composer stage:verify` / `./songchart candidate`.
@@ -147,6 +180,8 @@ After canonical PASS:
 
 - Current writer/owner for overlapping source surfaces:
 - Handoff commit SHA when switching AI/device/writer:
+- Local-only commits before handoff: must be `none`; push/integrate them before another writer performs remote/GitHub writes.
+- Upstream relationship before handoff: branch must not be known-behind or diverged.
 - Rebase/cherry-pick plan if branch diverged:
 - Exact closed HEAD expected before PR merge:
 

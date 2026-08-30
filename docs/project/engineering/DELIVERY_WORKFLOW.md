@@ -23,11 +23,21 @@ stage branch
     ↓
 planned impact + official/native capability review
     ↓
-logical implementation commits + focused verification
+logical implementation source/contract/test changes
+    ↓
+Pint write mode on exact changed PHP paths
+    ↓
+Pint --test + verifier/Architecture ownership closure
+    ↓
+source/contract/consumer commit
     ↓
 actual-diff impact + generated-authority reconcile
     ↓
-collect-all audit + focused gates
+generated-only commit when needed
+    ↓
+require docs/project/generated clean
+    ↓
+impact --verify fast preflight + collect-all audit/focused gates
     ↓
 push to GitHub / Draft PR when useful
     ↓
@@ -46,6 +56,37 @@ release/tag when required
 
 Git history is the rollback and provenance mechanism. Do not reconstruct target state from copied folders or packaging trees.
 
+## Source hygiene before commit
+
+Formatter drift is source mutation, not verification evidence. Normalize it before creating the authoritative source commit whenever possible.
+
+For changed PHP source:
+
+1. run Pint in write mode on the exact changed PHP files;
+2. inspect `git diff` and `git diff --check`;
+3. run Pint `--test` after normalization;
+4. if the change adds `scripts/verify-*.php` or `tests/Architecture/*.php`, register it under exactly one existing `verification-consumer-graph.json` ownership rule before broad verification;
+5. run repository compiler/consumer ownership verification before the expensive quality lane;
+6. if repository compiler fingerprints are stale, reconcile the owning source/contract inputs and regenerate derived authority before broad quality verification rather than treating the stale fingerprint as a downstream test defect;
+7. commit the authoritative source/contract/test/consumer state;
+8. only then run `./songchart reconcile` and commit expected generated outputs separately when needed;
+9. require `git status --short -- docs/project/generated` to be empty before `./songchart impact --verify`.
+
+Do not use broad quality verification to discover formatter drift, unowned verification consumers, stale repository compiler fingerprints, or uncommitted generated authority when cheap deterministic checks can fail first.
+
+## Generated authority synchronization point
+
+`./songchart reconcile` owns a `generated-only` mutation envelope. Its output is derived from the exact authoritative source tree and must not leak into candidate discovery as an uncommitted mutation.
+
+After reconcile:
+
+- inspect the generated diff and `git diff --check`;
+- if only expected `docs/project/generated/` files changed, commit them as a generated-only commit;
+- if generated output is unexpected, restore/fix the owning source or authority rather than hand-editing generated JSON;
+- do not run `./songchart impact --verify`, audit-to-candidate handoff, or candidate while `docs/project/generated/` is dirty.
+
+`./songchart impact --verify` must fail before its expensive quality lane when generated authority has uncommitted changes. Candidate remains a clean-tree closure guard, not the first detector for a known reconcile mutation.
+
 ## One writer per surface
 
 During AI-assisted development, one writer owns a source surface until the next synchronization point.
@@ -53,6 +94,8 @@ During AI-assisted development, one writer owns a source surface until the next 
 - If an AI pushes a corrective commit that touches a file, the local workspace fetches and integrates that commit before making another edit to the same file.
 - If the local branch has diverged after a rebase, do not keep writing competing remote commits to the same files. Prefer a bounded corrective commit and local cherry-pick, or finish the local integration first.
 - Before changing writer, publish the current intended state as a commit SHA and run/review `./songchart impact --diff` when the handoff could expand the affected surface.
+- Before a remote/GitHub writer resumes work, local-only commits on that same branch must be pushed or intentionally integrated. `git log --oneline @{upstream}..HEAD` should be empty at the synchronization point.
+- A branch that is known behind or diverged from its upstream is not a valid remote-writer handoff point. Synchronize first; do not create another competing remote commit.
 - Never resolve generated JSON conflicts by hand when the artifact can be regenerated from authoritative source.
 
 This rule prevents the same-source replay/conflict class seen when upstream formatting/authority fixes and local historical commits are edited concurrently.
@@ -76,11 +119,16 @@ Before switching device or execution agent:
 
 1. inspect `./songchart ai status`;
 2. run `./songchart impact --diff` when the stage has implementation changes;
-3. commit the intended logical state;
-4. push the current stage branch;
-5. communicate the exact commit SHA that owns the handoff;
-6. on the next environment, fetch and fast-forward/reset/cherry-pick only after reviewing divergence;
-7. use `./songchart ai doctor` for runtime/test evidence that is not represented in Git.
+3. normalize changed PHP with Pint write mode and require Pint `--test` to pass;
+4. ensure every new verifier/Architecture test has exactly one ownership rule;
+5. commit the intended logical source state;
+6. run `./songchart reconcile` when registered generated inputs changed and commit only expected generated outputs;
+7. verify `docs/project/generated/` is clean;
+8. push the current stage branch;
+9. verify there are no local-only commits left before another writer starts;
+10. communicate the exact commit SHA that owns the handoff;
+11. on the next environment, fetch and fast-forward/rebase/cherry-pick only after reviewing divergence;
+12. use `./songchart ai doctor` for runtime/test evidence that is not represented in Git.
 
 Never use cross-device stash as a handoff mechanism.
 
@@ -93,6 +141,8 @@ During iteration use the dependency-aware workflow:
 # implement
 ./songchart impact --diff
 ./songchart reconcile
+# commit expected docs/project/generated changes
+./songchart impact --verify
 ./songchart audit
 ./songchart dev test <test-path>
 ```
@@ -140,6 +190,8 @@ Release artifacts must never contain local secrets, `.env`, `.env.docker`, priva
 ## Corrective candidates
 
 A same-stage correction remains on the current stage branch as a logical commit unless governance explicitly requires a separate revision. Re-run only the affected focused gates during iteration, then re-run exact-tree candidate/canonical closure before merge.
+
+A workflow/documentation hardening change made after canonical PASS is still a tracked change. It must be implemented on a follow-up branch/revision from the exact closed HEAD (or otherwise rerun full closure) rather than silently mutating the sealed stage branch.
 
 ## Native Windows workflow
 

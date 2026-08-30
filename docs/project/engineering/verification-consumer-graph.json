@@ -209,7 +209,8 @@
       "targets": [
         "scripts/verify-performance-*.php",
         "scripts/verify-postgres-query-plan-baseline.php",
-        "tests/Architecture/PostgresQueryPlanBaselineTest.php"
+        "tests/Architecture/PostgresQueryPlanBaselineTest.php",
+        "tests/Architecture/PublicFrontendPerformanceReleaseTest.php"
       ],
       "classification": "behavioral",
       "semantic_authorities": [
