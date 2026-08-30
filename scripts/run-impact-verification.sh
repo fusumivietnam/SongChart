@@ -23,6 +23,13 @@ if git -C "$ROOT" rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' >/de
     fi
 fi
 
+generated_status="$(git -C "$ROOT" status --short --untracked-files=all -- docs/project/generated)"
+if [[ -n "$generated_status" ]]; then
+    printf '[SongChart impact verify] Generated repository authority has uncommitted changes. Commit or restore generated authority before pre-closure verification.\n' >&2
+    printf '%s\n' "$generated_status" >&2
+    exit 1
+fi
+
 php_paths=()
 for path in "${changed_paths[@]}"; do
     [[ "$path" == *.php ]] || continue
