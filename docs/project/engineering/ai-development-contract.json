@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "authority": "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
   "before_implementation": [
     "Read PROJECT_AUTHORITY.md.",
@@ -9,7 +9,8 @@
     "Run ./songchart impact for planned changed paths when they are known.",
     "Review official/native capability ownership before custom infrastructure.",
     "Review docs/project/stack/STACK_OVERVIEW.md and docs/project/stack/CAPABILITY_OWNERSHIP.md when the change affects dependencies, infrastructure, framework capabilities, runtime, database, queues, caching, frontend stack, or package ownership.",
-    "Confirm current-stage machine/document authorities agree before implementation; ambiguous first-match Markdown parsing is not acceptable for machine-critical state."
+    "Confirm current-stage machine/document authorities agree before implementation; ambiguous first-match Markdown parsing is not acceptable for machine-critical state.",
+    "Before switching writer or allowing remote GitHub writes, ensure local-only commits are pushed and the known upstream is not behind/diverged."
   ],
   "implementation_rules": [
     "Do not duplicate registered authority literals.",
@@ -21,15 +22,20 @@
     "Use Linux or WSL2 with Docker Engine and Compose v2 as the supported development/runtime/test environment; GitHub Codespaces is the preferred remote adapter and native Windows Batch/PowerShell plus Laragon execution paths are retired.",
     "Use GitHub branches, commits and pull requests for device and AI handoff; do not use source ZIP copying, incremental patch ZIPs, native Windows installers or cross-device stash as the normal synchronization path.",
     "Use one writer per overlapping source surface until a synchronization point; communicate and integrate the exact commit SHA before another writer edits the same files.",
+    "Do not continue remote/GitHub writes while another writer has local-only commits on the same branch; push or integrate that local commit first.",
     "Use only the active verification command surface defined in docs/project/engineering/verification-command-surface.json; do not restore removed aliases or retired native Windows wrappers.",
     "Historical migration files listed in docs/project/stack/migration-lifecycle-contract.json are immutable; schema corrections must use guarded forward migrations and the PostgreSQL upgrade lane.",
     "Every verifier and Architecture test must be routed through docs/project/engineering/verification-consumer-graph.json; authority changes require consumer graph closure before candidate verification.",
+    "When adding scripts/verify-*.php or tests/Architecture/*.php, register it under exactly one existing verification-consumer ownership rule in the same logical source change and run repository-compiler verification before the expensive quality lane.",
+    "Before committing changed PHP source, run Pint in write mode on the exact changed PHP paths, inspect the diff, then require Pint --test to pass. Do not discover formatter drift after source commit when it can be normalized beforehand.",
+    "Commit authoritative source/contract/consumer changes before generated reconciliation; run ./songchart reconcile from that exact source tree and commit only the expected generated outputs afterward.",
     "Authorization capabilities are owned by docs/project/security/authorization-contract.json and Laravel Gates; do not reintroduce role capability methods on User/UserRole or direct role authorization checks outside explicit business invariants.",
     "When a refactor removes or renames a method/class/file, perform an exact-target removed-symbol and orphan-file scan across application source before closure; packaging-side reconstructed source is not sufficient evidence of consumer completeness.",
     "HTTP controllers are transport adapters: do not add direct Eloquent/query-builder reads or persistence writes. Put read composition in registered Query/Read Model surfaces and mutations in application actions/services.",
     "Read ./songchart context --json before architecture/persistence/Docker/provider/migration/seeder/verification changes; do not infer facts provided by context and report drift before feature work.",
     "Run ./songchart impact --diff after implementation and reconcile newly impacted authorities, consumers and focused checks.",
     "Run ./songchart reconcile after registered generated-authority inputs change; review generated diffs and never hand-merge derived generated JSON when regeneration is available.",
+    "Run ./songchart impact --verify only after source formatting, verifier ownership and generated reconciliation are current; its fast preflight must fail before expensive quality work when these prerequisites are stale.",
     "Use ./songchart audit for collect-all diagnostic feedback when useful; audit does not replace fail-fast quality, candidate or canonical closure.",
     "Runtime paths such as storage/framework, storage/logs and local backup directories must remain untracked unless explicitly declared as committed generated authority.",
     "Every workflow command introduced or changed must declare a mutation envelope: read-only, generated-only, runtime-only, or closure. Unexpected tracked mutation outside that envelope is a failure.",
@@ -43,8 +49,11 @@
       "preflight_authority_consistency",
       "planned_impact",
       "implement",
+      "source_hygiene_and_consumer_ownership",
       "post_diff_impact",
+      "source_commit",
       "reconcile_generated_authority",
+      "generated_commit_if_needed",
       "mutation_boundary_check",
       "collect_all_audit",
       "focused_verification",
@@ -58,6 +67,13 @@
     "reconcile": "./songchart reconcile",
     "audit": "./songchart audit",
     "handoff_authority": "docs/project/engineering/DELIVERY_WORKFLOW.md",
+    "pre_commit_hygiene": [
+      "Pint write mode on exact changed PHP paths",
+      "Pint --test",
+      "exactly-one verification-consumer ownership for new verifier/Architecture tests",
+      "repository-compiler verification before expensive quality verification"
+    ],
+    "writer_sync_boundary": "Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.",
     "mutation_envelopes": [
       "read-only",
       "generated-only",
@@ -68,6 +84,7 @@
   },
   "verification": {
     "during_implementation": "impact-driven focused gates only",
+    "pre_closure_fast_fail": "./songchart impact --verify checks diff hygiene, known upstream divergence, changed-PHP Pint cleanliness and repository compiler/consumer ownership before the expensive lane",
     "diagnostic_collect_all": "./songchart audit",
     "stage_closure": "./songchart candidate or composer stage:verify inside the governed Docker lane",
     "canonical_closure": "./songchart verify, ./songchart close, or composer canonical:verify inside canonical Docker lane",
@@ -90,10 +107,12 @@
   "failure_protocol": [
     "Preserve exact failing evidence.",
     "Identify the owning authority before patching.",
-    "Classify failures as source behavior, stale consumer, stale generated authority, dead impact command, runtime-artifact ownership, formatter-only drift, parser/authority ambiguity, unexpected mutation, or closure invalidation where applicable.",
+    "Classify failures as source behavior, stale consumer, stale generated authority, dead impact command, runtime-artifact ownership, formatter-only drift, parser/authority ambiguity, writer divergence, unexpected mutation, or closure invalidation where applicable.",
     "Prefer extending the existing resolver/contract over adding duplicate guards.",
     "If the authority is current and the consumer is stale, fix the consumer rather than reverting the authority to an obsolete format.",
     "If generated authority is stale, regenerate it; do not hand-edit or hand-merge generated JSON.",
+    "If formatter drift is reported, use Pint write mode on the exact affected PHP path and commit the formatter-authoritative patch before broader verification.",
+    "If local and upstream history diverge, stop competing writes, integrate with rebase/cherry-pick as appropriate, and re-establish one-writer ownership before continuing.",
     "If a workflow command unexpectedly blocks for pager/input, treat that as an ergonomics defect for non-interactive commands.",
     "Record a regression class only when a durable machine guard exists.",
     "Re-run actual-diff impact when a correction expands the changed surface.",
