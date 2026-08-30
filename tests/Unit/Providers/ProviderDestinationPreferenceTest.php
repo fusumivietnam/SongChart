@@ -41,6 +41,18 @@ it('fails closed for stale private disabled and unsafe destinations', function (
         ->and($policy->isPublicEligible(stage186DestinationSnapshot(['url' => 'http://www.youtube.com/watch?v=video123']), $now))->toBeFalse();
 });
 
+it('returns explainable issue codes without duplicating freshness policy', function (): void {
+    $policy = new ProviderDestinationPreference;
+    $now = new DateTimeImmutable('2026-08-30T12:00:00+00:00');
+
+    expect($policy->publicEligibilityIssues(stage186DestinationSnapshot(['lastCheckedAt' => null]), $now))
+        ->toContain(ProviderDestinationPreference::ISSUE_FRESHNESS_UNKNOWN)
+        ->and($policy->publicEligibilityIssues(stage186DestinationSnapshot(['lastCheckedAt' => new DateTimeImmutable('2026-07-01T12:00:00+00:00')]), $now))
+        ->toContain(ProviderDestinationPreference::ISSUE_FRESHNESS_STALE)
+        ->and($policy->publicEligibilityIssues(stage186DestinationSnapshot(['privacyStatus' => 'private']), $now))
+        ->toContain(ProviderDestinationPreference::ISSUE_PRIVACY_NOT_PUBLIC);
+});
+
 it('allows a fresh public outbound destination without treating it as embeddable', function (): void {
     $policy = new ProviderDestinationPreference;
     $now = new DateTimeImmutable('2026-08-30T12:00:00+00:00');
