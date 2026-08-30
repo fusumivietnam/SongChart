@@ -4,105 +4,102 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ## Accepted baseline
 
-- Stage `18.3 — Public Metadata & SEO Readiness` merged to `main` via PR #11 after exact-head canonical closure passed.
-- Stage `18.3.1 — Verification & AI Workflow Convergence` merged to `main` via PR #12.
-- Stage `18.4 — Admin Completion & Operational Convergence` merged to `main` via PR #13 from exact canonical-closed head `ac4ea17998a0faef6fc265abbe557a976e6e5610`; accepted merge commit `2ed9e6d3a5fb8cef21fc69dd61317dceca8f5e94`.
-- Development authority remains Linux/WSL2 + Docker through `./songchart`; GitHub Codespaces is the preferred remote adapter.
+- Stage `18.4 — Admin Completion & Operational Convergence` merged to `main` via PR #13 at `2ed9e6d3a5fb8cef21fc69dd61317dceca8f5e94`.
+- Stage `18.5 — Public Product / Frontend Release Pass` plus bounded corrective `18.5.1 — Workflow Hardening` closed on exact canonical-verified head `67df5ae72f9dbdc29c43e7afbc7e645203e37cff`.
+- PR #14 passed GitHub Actions workflow run #159 and merged that exact head to `main` as accepted merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
+- Development authority remains Linux/WSL2 + Docker through `./songchart`; GitHub is the development handoff source of truth.
 
 ## Current stage
 
-- Stage `18.5 — Public Product / Frontend Release Pass`
-- Branch: `stage-18.5-public-product-frontend-release-pass`
-- Base: accepted Stage 18.4 merge commit `2ed9e6d3a5fb8cef21fc69dd61317dceca8f5e94`.
-- Candidate closure: pending.
-- Strategy: release-pass first. Improve existing public surfaces in bounded slices; do not turn 18.5 into an architecture rewrite or provider-expansion program.
+- Stage `18.6 — Provider Destination & Media Quality`.
+- Branch: `stage-18.6-provider-destination-media-quality`.
+- Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
+- Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
+- Candidate closure: not started.
+- Strategy: improve destination/media eligibility, deterministic preference, freshness/provenance and operator visibility over existing provider infrastructure before considering provider breadth.
 
 ## Stage map
 
 ```text
-18.5 PUBLIC PRODUCT / FRONTEND RELEASE PASS
+18.6 PROVIDER DESTINATION & MEDIA QUALITY
         |
-        +--> [IN PROGRESS] homepage + public IA baseline
-        |                    `--> skip-navigation accessibility slice committed
+        +--> [NOW] inventory destination/media authority + existing runtime behavior
         |
-        +--> [NEXT] catalog/search UX + state coverage
+        +--> [NEXT] deterministic eligibility/preference contract
         |
-        +--> [NEXT] canonical entity-page convergence
+        +--> [NEXT] freshness + stale/unavailable operational state
         |
-        +--> [NEXT] responsive/mobile + accessibility pass
+        +--> [NEXT] YouTube/media verification quality convergence
         |
-        +--> [NEXT] performance/Core Web Vitals evidence
+        +--> [NEXT] public selected-destination projection + explainability
         |
-        +--> [NEXT] loading/empty/error + visual SEO polish
+        +--> [NEXT] Admin attention/remediation UX
         |
-        `--> [FINAL] release QA -> candidate -> canonical -> exact-head delivery
+        `--> [FINAL] focused QA -> candidate -> canonical -> exact-head delivery
 ```
 
 ## Done
 
-- Stage 18.4 accepted and merged through PR #13.
-- Stage 18.5 branch created directly from the accepted Stage 18.4 merge commit.
-- Stage 18.5 task contract and validation report initialized.
-- Existing homepage/public-shell inventory confirms a mature search-first public surface already exists; 18.5 should converge and harden it rather than replace it.
-- First concrete release gap closed in source: public shell now exposes a keyboard skip link to the existing main-content landmark, with focused homepage regression coverage.
+- Stage 18.5/18.5.1 accepted through PR #14 after exact-head candidate/canonical closure and green PR CI.
+- Stage 18.6 branch created directly from accepted `main` merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
+- Stage 18.6 task contract initialized with provider-neutral destination/media quality boundaries and explicit non-goals.
+- Workflow hardening from 18.5.1 remains cross-stage engineering authority; 18.6 does not reopen that framework unless a new evidence-backed failure class appears.
 
 ## In progress
 
-### Homepage + public information architecture baseline
+### Destination/media authority and runtime inventory
 
-Inventory the existing homepage, frontend shell and primary public navigation against Stage 18.5 acceptance criteria. Add only concrete release-quality edges around accessibility, responsive behavior, truthful states and navigation consistency.
+Before changing selection or persistence, trace the existing provider destination model, YouTube verification/approval path, public Recording projection, Admin provider operations, freshness/check timestamps, provenance/review state, and their verification consumers.
 
 Decision rule:
 
 ```text
-RELEASE ACCEPTANCE EDGE
+DESTINATION QUALITY USE CASE
         |
         v
-EXISTING PUBLIC SURFACE
+EXISTING AUTHORITY / DATA
         |
-        +--> sufficient ----> record evidence, keep source
-        +--> partial -------> smallest coherent UX/accessibility fix
-        `--> missing -------> accepted minimal public use case first
+        +--> sufficient ----> deterministic policy + regression only
+        +--> partial -------> smallest contract/source extension
+        `--> missing -------> authority first, then schema/runtime change
 ```
 
 ## Current blockers / risks
 
-- Public polish must not introduce fabricated popularity, recommendation or provider-quality signals.
-- Search/catalog changes must preserve deterministic ranking/facets and canonical URL authority.
-- Entity-page convergence must preserve entity-specific semantics and provenance rather than flatten all entity types into one generic template.
-- Responsive/mobile improvements must not hide required navigation or primary search/actions.
-- Visual SEO polish must not duplicate metadata/structured-data authority already accepted in Stage 18.3.
-- Performance work should be evidence-driven; no speculative caching/query framework.
-- Engineering graph/navigation improvements remain cross-stage support only and must not expand 18.5 scope.
+- Do not equate provider media resources (especially YouTube Video) with canonical Recording identity.
+- Do not prefer a destination that is private, unavailable, non-embeddable, stale beyond accepted policy, unapproved or otherwise policy-invalid.
+- Unknown freshness/availability must not silently mean fresh/available.
+- Provider expansion must not precede an evidence-quality use case and official API capability review.
+- Public selection must remain deterministic and explainable; no fabricated popularity or opaque recommendation score.
+- Admin remediation must use existing authorization/audit/write boundaries and Vietnamese operator-facing language.
+- New route/schema/provider fields cannot be introduced silently.
 
-## Latest focused evidence
+## Latest evidence
 
-- Stage 18.4 candidate/canonical/close passed on exact head `ac4ea17998a0faef6fc265abbe557a976e6e5610` before PR #13 merge.
-- PR #13 merged into `main` at `2ed9e6d3a5fb8cef21fc69dd61317dceca8f5e94`.
-- Stage 18.5 task contract bootstrap commit: `e2277305222976125f63c0b01a3efd8223a2d13e`.
-- Public skip-navigation source commit: `738155f7e18f2f18a082167d05eaebce746cf63a`.
-- Focused homepage regression commit: `abb139d41838c8421a10c619d296751d2e3de400`.
-- Local/Codespaces verification for the first slice is pending.
+- Stage 18.5/18.5.1 exact sealed head: `67df5ae72f9dbdc29c43e7afbc7e645203e37cff`.
+- Candidate verification contract passed on that exact tree.
+- Canonical verification passed on that exact tree.
+- GitHub Actions PR workflow run #159 completed successfully for that head.
+- PR #14 merged to `main` as `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
+- Stage 18.6 bootstrap branch created from that accepted merge commit.
 
 ## Next required action
 
-1. Sync Codespaces to `stage-18.5-public-product-frontend-release-pass`.
-2. Run planned/actual impact for the first public-shell/homepage slice.
-3. Run `tests/Feature/HomePageTest.php`, shared-shell/public accessibility regressions, Pint and PHPStan as impacted.
-4. If green, continue inventory of homepage/public IA before touching catalog/search.
-5. Commit only bounded release gaps; update this checkpoint as evidence/next action changes.
+1. Sync local workspace to `stage-18.6-provider-destination-media-quality`.
+2. Run `./songchart ai doctor` and `./songchart context --json`.
+3. Run planned impact on existing destination/media domain, support, public projection and Admin surfaces before editing.
+4. Inventory current destination eligibility/freshness/provenance semantics and identify the smallest first vertical slice.
+5. Implement only that bounded slice with focused tests, then run `./songchart impact --diff` and the impact-selected verification lane.
 
 ## Documentation checkpoint discipline
 
 For every logical implementation slice:
 
 - update the owning task contract only when scope/acceptance changes;
-- update this file when blocker, implemented slice, focused evidence or next action changes;
+- update this file when blocker, implemented slice, evidence or next action changes;
 - keep `README.md` as durable onboarding/overview, not current-stage state storage;
-- keep `docs/project/DEVELOPMENT_STATE.md` as the operational current-state owner;
-- keep `docs/project/docs/ROADMAP.md` limited to current/future direction, not delivered chronology;
-- keep completed-stage chronology in `docs/project/DEVELOPMENT_HISTORY.md` after governed acceptance;
-- use the AI learning ledger only for reusable development evidence; promote durable rules into their owning authority;
-- never duplicate workflow authority into model-specific instruction files.
-
-Before handing work to another AI/device, `./songchart ai status` must show the intended branch/stage and no unresolved checkpoint/context drift. Prefer the secret-redacted `./songchart ai doctor` bundle over manually copying raw environment/log output.
+- keep this file as the operational current-state owner;
+- keep `docs/project/docs/ROADMAP.md` current/future-only;
+- keep completed chronology in `docs/project/DEVELOPMENT_HISTORY.md` after governed acceptance;
+- promote reusable workflow rules into their owning authority and permanent guard rather than duplicating them here;
+- before AI/device handoff, require exact pushed commit state and no unresolved upstream divergence.
