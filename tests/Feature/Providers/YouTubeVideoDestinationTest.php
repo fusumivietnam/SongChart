@@ -137,6 +137,7 @@ it('reverification preserves canonical Recording linkage while private evidence 
         'verified_at' => now()->subDays(5),
         'last_checked_at' => now()->subDays(5),
     ]);
+    $destination->refresh();
     $verifiedAt = $destination->verified_at;
 
     Http::fake([
