@@ -44,6 +44,7 @@ foreach ($publicViewRoots as $relative) {
     $path = $root.'/'.$relative;
     if (is_file($path)) {
         $publicViewFiles[] = $path;
+
         continue;
     }
     if (! is_dir($path)) {
