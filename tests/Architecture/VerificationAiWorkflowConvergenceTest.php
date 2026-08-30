@@ -78,7 +78,8 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('docs/project/generated clean')
         ->toContain('Candidate remains a clean-tree closure guard, not the first detector')
         ->toContain('local-only commits on that same branch must be pushed or intentionally integrated')
-        ->toContain('repository compiler fingerprints are stale')
+        ->toContain('repository compiler/consumer ownership verification')
+        ->toContain('before the expensive quality lane')
         ->toContain('workflow/documentation hardening change made after canonical PASS is still a tracked change');
 
     expect($taskTemplate)
