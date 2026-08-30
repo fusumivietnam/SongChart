@@ -15,7 +15,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Branch: `stage-18.6-provider-destination-media-quality`.
 - Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
-- Candidate closure: 18.6.2 closed on exact head `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`; 18.6.3 is a new changed tree and requires new closure evidence.
+- Candidate closure: 18.6.3 closed on exact head `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`; any 18.6.4 tracked change requires new closure evidence.
 - Strategy: improve destination/media eligibility, deterministic preference, freshness/provenance and operator visibility over existing provider infrastructure before considering provider breadth.
 
 ## Stage map
@@ -29,9 +29,9 @@ Status: operational checkpoint only. Repository authorities remain authoritative
         |
         +--> [DONE] 18.6.2 freshness + stale/unavailable operational state
         |
-        +--> [IN PROGRESS] 18.6.3 YouTube/media verification quality convergence
+        +--> [DONE] 18.6.3 YouTube/media verification quality convergence
         |
-        +--> [NEXT] public selected-destination projection + explainability
+        +--> [IN PROGRESS] 18.6.4 public selected-destination projection + explainability
         |
         +--> [NEXT] Admin remediation mutation UX where justified
         |
@@ -48,49 +48,52 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - 18.6.1 candidate and canonical verification passed on exact clean/pushed head `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
 - 18.6.2 exposes freshness/stale/unavailable operational state through the existing destination evidence model without introducing a second freshness owner.
 - 18.6.2 candidate and canonical verification passed on exact clean/pushed head `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
+- 18.6.3 converges YouTube destination evidence around explicit resource inspection, public approval verification, outbound-only non-embeddable handling, and fail-closed re-verification without changing canonical Recording identity.
+- 18.6.3 pre-closure impact verification, candidate verification and canonical verification passed on exact clean/pushed head `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
 - Workflow hardening from 18.5.1 remains cross-stage engineering authority.
 
 ## In progress
 
-### 18.6.3 — YouTube/media verification quality convergence
+### 18.6.4 — Public selected-destination projection + explainability
 
-The source slice is implemented and now requires focused verification:
+This slice makes the existing destination eligibility/preference decision observable to public read models without creating a second selection policy:
 
-- `VideoDestinationDiscovery` separates public approval verification from exact-resource inspection;
-- YouTube search remains actionable/public-only, while inspection can preserve observed private/non-embeddable state for re-verification;
-- approval requires explicit public privacy evidence but no longer rejects a public non-embeddable destination, which is valid outbound-only evidence under the 18.6.1 policy;
-- `YouTubeDestinationWorkbench::reverify()` refreshes provider metadata and `last_checked_at` without changing canonical Recording linkage, `review_state`, or original `verified_at` approval evidence;
-- missing/inaccessible provider resources remain persisted as historical destination evidence and are marked unavailable/fail-closed instead of being silently deleted;
-- no new route, migration, scheduler, provider, or canonical identifier was introduced.
+- keep `ProviderDestinationPreference` as the single semantic owner of public eligibility and deterministic ordering;
+- project the selected destination into a stable public-facing read shape that distinguishes playable embed from outbound-only media;
+- expose bounded, non-sensitive explainability for why the selected destination won and why otherwise relevant destinations were not public-eligible;
+- preserve provider provenance needed by the public product while avoiding internal credential, quota, review-operator or audit detail leakage;
+- ensure no public read model reimplements freshness, privacy, provider approval, review-state or URL-safety rules;
+- keep provider media external to canonical Recording identity;
+- avoid new schema, provider, scheduler or opaque ranking behavior in this slice.
 
 ## Current blockers / risks
 
+- Explainability must reuse stable reason semantics from `ProviderDestinationPreference`; public/read projections must not become a second policy owner.
+- Public output must distinguish playable embed from outbound-only destination rather than collapsing them into a generic URL.
+- Internal-only provider/operator evidence must not leak through public projection.
 - YouTube Video identity must remain external media evidence and must never become canonical Recording identity.
-- Privacy, availability and embeddability are distinct facts; do not collapse them into one boolean.
 - Missing verification evidence must remain unknown/fail-closed, not silently public/available.
-- `verified_at` must not be rewritten merely because provider availability was rechecked; `last_checked_at` owns provider observation freshness in this slice.
-- Refreshing verification must use the existing provider credential and quota/rate infrastructure.
 - Do not duplicate the 30-day freshness policy outside `ProviderDestinationPreference`.
-- A public but non-embeddable destination may be outbound-only rather than unavailable.
 - New route/schema/provider fields cannot be introduced silently.
 
 ## Latest focused evidence
 
 - Stage 18.6.1 exact sealed head: `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
 - Stage 18.6.2 exact sealed head: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
-- 18.6.2 candidate verification contract passed on that exact tree.
-- 18.6.2 canonical verification passed on that exact tree.
-- Tracked tree was clean and local/upstream were synchronized at the 18.6.2 seal.
-- 18.6.3 implementation and focused regressions are now committed on the stage branch; no 18.6.3 PASS is recorded yet.
+- Stage 18.6.3 exact sealed head: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
+- 18.6.3 pre-closure impact verification passed on that exact tree.
+- 18.6.3 candidate verification contract passed on that exact tree.
+- 18.6.3 canonical verification passed on that exact tree.
+- Tracked tree was clean and local/upstream were synchronized at the 18.6.3 seal.
+- 18.6.4 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
 
 ## Next required action
 
-1. Sync local workspace to the exact current stage-branch HEAD before editing locally.
-2. Run Pint write then `--test` on the 18.6.3 contract/adapter/workbench/test files.
-3. Run `tests/Feature/Providers/YouTubeVideoDestinationTest.php`, then existing destination preference and Recording media regression tests.
-4. Run focused PHPStan on the changed production PHP files.
-5. Run `./songchart impact --diff`, then `./songchart reconcile` and commit only expected generated authority changes if any.
-6. Run `./songchart impact --verify`; only then advance to candidate/canonical closure.
+1. Inventory the current public Recording media/read projection and every consumer of selected provider destination data.
+2. Identify the smallest provider-neutral read DTO/projection boundary that can expose selected destination mode, safe public provenance and explainability without duplicating policy.
+3. Add regression for playable selection, outbound-only selection, no eligible destination, deterministic winner, and stable public reason exposure without internal evidence leakage.
+4. Implement the projection through the existing application/support read path; do not add schema or routes unless current authority proves insufficient.
+5. Run Pint, focused tests, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` before closure.
 
 ## Documentation checkpoint discipline
 
