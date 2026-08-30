@@ -16,7 +16,7 @@
     <x-admin.sidebar :active="$activeAdminNav ?? 'dashboard'" />
     <div class="admin-workspace">
         <x-admin.topbar />
-        <main id="admin-main" class="admin-main">{{ $slot ?? '' }}@yield('content')</main>
+        <main id="admin-main" class="admin-main">{{ $slot ?? '' }}@yield('content')@if(isset($destinationAttention))@include('admin.operations._provider-destination-attention')@endif</main>
     </div>
 </div>
 </body>
