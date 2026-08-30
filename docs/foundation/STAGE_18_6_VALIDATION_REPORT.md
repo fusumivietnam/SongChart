@@ -74,39 +74,36 @@ Any tracked 18.6.4 change is a new tree and does not reuse 18.6.3 closure eviden
 
 ### 18.6.4 — Public selected-destination projection + explainability
 
-Planned source intent:
+Implemented source intent now under verification:
 
-- keep `ProviderDestinationPreference` as the sole owner of public eligibility and deterministic preference semantics;
-- expose the winning destination through a stable provider-neutral public projection rather than leaking persistence/provider model shape directly;
-- distinguish `playable` from `outbound_only` in the projection;
-- expose bounded public explainability for selection and ineligibility using stable policy reason semantics rather than duplicating checks in controllers/views/read models;
-- expose only safe public provenance needed for product UX; internal credentials, quota/rate state, operator audit details and unrestricted evidence payloads must not leak;
-- represent no-eligible-destination explicitly and fail closed on unknown evidence;
-- preserve provider destination/media as external evidence, never canonical Recording identity;
-- reuse current schema/routes/application read path unless repository authority proves a gap.
+- `PublicProviderDestinationProjection` defines explicit public states `playable`, `outbound_only`, and `no_selection` plus bounded reason codes;
+- `EloquentProviderDestinationSelector::project()` derives no-selection reason codes from `ProviderDestinationPreference::publicEligibilityIssues()` and uses the same preference owner for deterministic selection and embeddability;
+- the existing `select()` method remains as a compatibility facade over the new projection so other consumers do not receive a policy fork;
+- `RecordingMediaExperience` exposes public-safe state, reason codes, selection explanation and provider provenance without leaking raw evidence, credentials, quota/rate state, operator review/audit metadata or persistence internals;
+- the public media Blade component renders playable, outbound-only and no-selection states explicitly;
+- provider media remains external evidence and does not mutate canonical Recording identity;
+- no route, migration, scheduler, provider expansion or opaque ranking behavior is introduced.
 
-Expected focused regression:
+Focused regression added for:
 
-- best eligible playable destination is selected deterministically;
-- best eligible non-embeddable destination is projected as outbound-only;
-- no eligible destination produces an explicit empty/no-selection state rather than unsafe fallback;
-- policy reason codes remain stable and are consumed rather than reimplemented by the public projection;
-- unsafe/internal evidence is absent from public output;
-- Recording canonical identity remains unchanged by destination projection.
+- playable fresh approved embeddable YouTube destination;
+- outbound-only fresh approved public non-embeddable destination;
+- stale destination producing `no_selection` plus freshness reason code;
+- private destination producing `no_selection` plus privacy reason code without exposing its URL;
+- newer private destination not shadowing the deterministic eligible public winner.
 
 ## Focused verification evidence
 
 Pending on the current 18.6.4 tree. Do not record PASS until observed.
 
-Expected verification sequence after implementation:
+Required focused checks:
 
 ```text
-Pint write on changed PHP
-Pint --test on changed PHP
-focused public Recording media/destination projection regressions
-existing ProviderDestinationPreference regression
-existing RecordingMediaExperience regression
-focused PHPStan on changed production PHP
+Pint write on changed 18.6.4 PHP
+Pint --test on changed 18.6.4 PHP
+./songchart dev test tests/Feature/Catalog/RecordingMediaExperienceTest.php
+./songchart dev test tests/Unit/Providers/ProviderDestinationPreferenceTest.php
+focused PHPStan on PublicProviderDestinationProjection, EloquentProviderDestinationSelector and RecordingMediaExperience
 ./songchart impact --diff
 ./songchart reconcile
 ./songchart impact --verify
