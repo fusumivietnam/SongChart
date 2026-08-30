@@ -113,7 +113,7 @@
         },
         "ai-development-protocol": {
             "source": "docs/project/engineering/ai-development-contract.json",
-            "fingerprint": "4463e4af2786baa2adf302d596828ed1f2106ce57eb528892a9c5f4aa156c573",
+            "fingerprint": "350070886c296949f738eaf2ba0201f0073b9fc43315b3fb8c2a44d1a5f2f927",
             "consumers": [
                 "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
                 "AGENTS.md",
@@ -1666,5 +1666,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "5cfd3f93c811674e4b3859d441592f8656ae371730a63bf6b46137aa9de7bb70"
+    "graph_fingerprint": "971ec6e55e029b9be495f419513ee519042f615ae8dbe6c227f31262f37315cc"
 }
