@@ -11,7 +11,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ## Current stage
 
-- Stage `19.0 — Production Readiness & First Release`.
+- Stage `19.0 — Production Readiness & First Release`
 - Branch: `stage-19.0-production-readiness-first-release`.
 - Base: accepted Stage 18.6 merge commit `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Task contract: `docs/foundation/STAGE_19_0_TASK_CONTRACT.md`.
