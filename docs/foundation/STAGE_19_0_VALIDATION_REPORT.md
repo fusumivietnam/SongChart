@@ -13,47 +13,61 @@ Status: in progress. Record only verification actually observed for the active S
 
 ### 19.0.1 — Production topology + environment inventory
 
-Planned source intent:
+Implemented source intent now under verification:
 
-- inventory current Docker/Compose, Caddy, PHP/Laravel runtime, PostgreSQL 18, Redis, queue and scheduler assumptions;
-- inventory production-relevant environment keys and their current owners without recording real secret values;
-- identify required long-running processes and dependency relationships for the first supported production topology;
-- identify gaps between the current development/canonical runtime and production needs before selecting deployment implementation;
-- preserve existing provider credential/rate, authorization, audit, canonical identity, migration and verification authorities;
-- do not add product/provider breadth, speculative deployment frameworks or production-only schema behavior during inventory.
+- `docs/operations/PRODUCTION_TOPOLOGY.md` inventories the current Docker/Compose, Caddy, PHP/Laravel web runtime, PostgreSQL 18, Redis, queue, scheduler, health, observability and release/CI surfaces;
+- the current development stack is explicitly classified as development-only because it uses PHP's built-in server plus bind/named mounts for source/dependencies;
+- the supported first-release topology is one immutable SongChart application artifact/image reused by independent `web`, `queue` and `scheduler` processes behind Caddy, with PostgreSQL 18 and Redis as explicit dependencies;
+- web/queue/scheduler process boundaries remain independent even when a first-release deployment places them on one physical host;
+- Caddy remains the selected first-release TLS/reverse-proxy primitive unless later implementation evidence proves a blocker;
+- PostgreSQL major 18 remains release-authoritative and stateful outside the application image;
+- Redis remains independent queue/cache/runtime infrastructure and not the owner of durable canonical data;
+- production environment ownership is categorized into application identity/runtime, PostgreSQL, Redis/async, session/cache, mail/external services, provider schedules and observability;
+- development-only values such as `APP_ENV=local`, `APP_DEBUG=true`, disabled Admin 2FA, local mkcert files, development database credentials, PHP built-in web server and bind-mounted repository/dependency trees are explicitly rejected for production;
+- explicit implementation gaps are mapped to 19.0.2 through 19.0.6 rather than solved speculatively during inventory;
+- no production Dockerfile, production Compose manifest, platform-specific deployment framework, schema change or product/provider breadth is introduced by 19.0.1.
 
-Expected inventory evidence:
+Observed inventory evidence:
 
-- runtime/process map for web, queue worker, scheduler, PostgreSQL, Redis and TLS/reverse proxy;
-- environment/secret key ownership map;
-- existing health/observability/release/backup surfaces and gaps;
-- supported first-release topology decision plus explicit non-goals;
-- narrowed planned paths for the first implementation slice after inventory.
+- `compose.dev.yml` uses PostgreSQL 18.4, Redis 7.4, separate app/queue processes, Caddy 2.11.3 and `/up` health checks;
+- `docker/verify/Dockerfile` is PHP 8.5 CLI verification infrastructure and is not a production web runtime image;
+- `routes/console.php` already owns scheduled provider-health, Discovery rebuild and optional Horizon snapshot commands, proving production needs an independent scheduler lifecycle;
+- `.env.example` currently contains both production-relevant keys and development-safe defaults, so 19.0.2 must define a hardened production environment/secrets contract before runtime manifests are created.
 
 ## Focused verification evidence
 
-Pending on the current Stage 19 tree. No Stage 19 PASS is recorded yet.
+Pending on the current 19.0.1 tree. Do not record PASS until observed.
 
-Initial sequence:
+Required current-tree sequence:
 
 ```text
-sync exact Stage 19 branch head
-inventory production runtime/configuration surfaces
-./songchart impact <narrowed-planned-paths...>
-update current-state/contract checkpoint if inventory changes scope
-implement the smallest justified topology/environment slice
-Pint write + --test on changed PHP where applicable
-focused tests / PHPStan / static runtime checks
+./songchart impact docs/operations/PRODUCTION_TOPOLOGY.md docs/project/DEVELOPMENT_STATE.md docs/foundation/STAGE_19_0_VALIDATION_REPORT.md
+./songchart impact --diff
 ./songchart reconcile
 ./songchart impact --verify
 ```
 
+19.0.1 is documentation/topology authority only; no PHP formatter or PHPStan run is required unless reconcile/impact selects PHP changes outside this intended slice.
+
+## Next slice after verified 19.0.1
+
+### 19.0.2 — Secrets/environment hardening
+
+Expected direction, not yet implemented:
+
+- introduce an explicit production environment template/contract without real secret values;
+- select unambiguous production session/cache/queue/logging defaults;
+- require `APP_ENV=production`, `APP_DEBUG=false`, HTTPS `APP_URL` and non-development Admin/auth settings;
+- make critical production configuration fail closed where justified;
+- define environment injection boundaries before production Docker/Compose/Caddy runtime implementation.
+
 ## Live production evidence position
 
-No real production deployment is claimed by this opening checkpoint. Later production smoke, provider/network access and restore drills must be recorded separately from deterministic candidate/canonical evidence. External network/provider checks remain release-confidence evidence and cannot replace repository verification.
+No real production deployment is claimed by 19.0.1. Later production smoke, provider/network access and restore drills must be recorded separately from deterministic candidate/canonical evidence. External network/provider checks remain release-confidence evidence and cannot replace repository verification.
 
 ## Candidate / canonical closure
 
+- 19.0.1 focused/impact verification: pending on current tree.
 - Stage 19 candidate: not run on the current tree.
 - Stage 19 canonical: not run on the current tree.
 - Stage 19 exact closed HEAD: not established.
