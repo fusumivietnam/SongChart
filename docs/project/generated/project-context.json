@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "f80beceee3cd5352774bac381fb4ac7087a03367d9b8a2c43b4ff87cc6685ab8",
+    "source_fingerprint": "37a3c8b6d208fa259dc9cdc6c4b6eff2368437fceefe4cd17306635b2d005781",
     "candidate": {
         "stage": "18.6",
         "candidate": "v1",
@@ -1027,7 +1027,7 @@
         "database/migrations/2026_08_27_000100_create_provider_credentials_table.php": "10346e2aa9eacd8880d31ecb478126681e099f1ca04c80444e57df961015110b",
         "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
         "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
-        "database/seeders/ProviderRegistrySeeder.php": "f7517aa8ab1ff83ae14957839c536d088d9d9f3531ddd988d5dfa7095d098e66",
+        "database/seeders/ProviderRegistrySeeder.php": "1337fd46a76721466ed147b24e808cb0b632dc45fbcbaa742b79c8d699e684d3",
         "docs/project/domain/schema-ownership.json": "61e2251e139d3ad41a56a675752cb0eb7249b00fae54a31ba5f5050973063f2b",
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "b0278efd3ac42af6e2ef1952d384f743a830ea6b478a0e7ec37f5744ea2b8792",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
