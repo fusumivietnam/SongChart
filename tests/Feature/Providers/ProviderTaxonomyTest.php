@@ -69,7 +69,7 @@ it('fails closed when operational provider evidence is incomplete', function ():
         'is_enabled' => true,
     ]);
 
-    $assessor = new ProviderOperationalAssessor();
+    $assessor = new ProviderOperationalAssessor;
 
     $missingCredential = $assessor->assess($provider, false, true);
     $unknownHealth = $assessor->assess($provider, true, null);
