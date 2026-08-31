@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Catalog\Enums\EntityType;
+use App\Domain\Providers\Enums\ProviderCategory;
 use App\Models\Provider;
 use App\Models\ProviderDestination;
 use App\Support\Admin\ProviderDestinationAttention;
@@ -18,7 +19,7 @@ it('classifies unknown stale unavailable and ready provider destinations for ope
     $provider = Provider::query()->create([
         'slug' => 'youtube',
         'name' => 'YouTube',
-        'category' => 'media',
+        'category' => ProviderCategory::Music->value,
         'status' => 'approved',
         'is_enabled' => true,
     ]);
