@@ -8,9 +8,11 @@ use App\Domain\Audit\Contracts\PrivilegedAuditLogger;
 use App\Domain\Providers\Enums\ProviderStatus;
 use App\Domain\Providers\Ingestion\Enums\ProviderImportRunStatus;
 use App\Models\Provider;
+use App\Models\ProviderDestination;
 use App\Models\Providers\Ingestion\ProviderImportRun;
 use App\Models\Providers\ProviderOperationAudit;
 use App\Models\User;
+use App\Support\Providers\Destinations\YouTubeDestinationWorkbench;
 use App\Support\Providers\Ingestion\ProviderImportOrchestrator;
 use DateTimeInterface;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +23,7 @@ final readonly class ProviderMutationService
     public function __construct(
         private ProviderImportOrchestrator $orchestrator,
         private PrivilegedAuditLogger $privilegedAudit,
+        private YouTubeDestinationWorkbench $youtubeDestinations,
     ) {}
 
     public function mutateProvider(Provider $provider, string $action, User $actor, string $rationale, string $idempotencyKey): void
@@ -50,6 +53,47 @@ final readonly class ProviderMutationService
                 before: $before,
                 after: $after,
                 context: ['idempotency_key' => $idempotencyKey],
+                rationale: $rationale,
+            );
+        });
+    }
+
+    public function reverifyDestination(Provider $provider, string $destinationId, User $actor, string $rationale, string $idempotencyKey): void
+    {
+        DB::transaction(function () use ($provider, $destinationId, $actor, $rationale, $idempotencyKey): void {
+            /** @var Provider $lockedProvider */
+            $lockedProvider = Provider::query()->lockForUpdate()->findOrFail($provider->getKey());
+            /** @var ProviderDestination $destination */
+            $destination = ProviderDestination::query()->lockForUpdate()->findOrFail($destinationId);
+
+            if ((string) $destination->getAttribute('provider_id') !== (string) $lockedProvider->getKey()) {
+                throw new LogicException('Destination does not belong to the requested provider.');
+            }
+            if ($lockedProvider->slug !== 'youtube') {
+                throw new LogicException('Destination re-verification is currently supported only for YouTube.');
+            }
+            if ($this->destinationAlreadyApplied($idempotencyKey, (string) $lockedProvider->getKey(), $destinationId)) {
+                return;
+            }
+
+            $before = $this->destinationState($destination);
+            $reverified = $this->youtubeDestinations->reverify($destinationId);
+            $after = $this->destinationState($reverified);
+            $action = 'destination_reverify';
+
+            $this->audit($lockedProvider, null, $actor, $action, $idempotencyKey, $before, $after, $rationale);
+            $this->privilegedAudit->record(
+                event: 'provider-destination.reverify',
+                description: 'Provider destination re-verification completed.',
+                subject: $reverified,
+                actor: $actor,
+                before: $before,
+                after: $after,
+                context: [
+                    'provider_id' => (string) $lockedProvider->getKey(),
+                    'destination_id' => $destinationId,
+                    'idempotency_key' => $idempotencyKey,
+                ],
                 rationale: $rationale,
             );
         });
@@ -162,12 +206,50 @@ final readonly class ProviderMutationService
         return true;
     }
 
+    private function destinationAlreadyApplied(string $key, string $providerId, string $destinationId): bool
+    {
+        $audit = ProviderOperationAudit::query()->where('idempotency_key', $key)->first();
+        if ($audit === null) {
+            return false;
+        }
+
+        $after = is_array($audit->after_state) ? $audit->after_state : [];
+        if ($audit->action !== 'destination_reverify'
+            || (string) $audit->provider_id !== $providerId
+            || (string) ($after['destination_id'] ?? '') !== $destinationId) {
+            throw new LogicException('Idempotency key has already been used for a different operation.');
+        }
+
+        return true;
+    }
+
     /** @return array<string, mixed> */
     private function providerState(Provider $provider): array
     {
         $status = ProviderStatus::from((string) $provider->getRawOriginal('status'));
 
         return ['status' => $status->value, 'is_enabled' => (bool) $provider->is_enabled];
+    }
+
+    /** @return array<string, mixed> */
+    private function destinationState(ProviderDestination $destination): array
+    {
+        $lastCheckedAt = $destination->getAttribute('last_checked_at');
+        $verifiedAt = $destination->getAttribute('verified_at');
+        $evidence = $destination->getAttribute('evidence');
+
+        return [
+            'destination_id' => (string) $destination->getKey(),
+            'entity_type' => $destination->getAttribute('entity_type')->value,
+            'entity_id' => (string) $destination->getAttribute('entity_id'),
+            'provider_resource_id' => (string) $destination->getAttribute('provider_resource_id'),
+            'review_state' => (string) $destination->getAttribute('review_state'),
+            'privacy_status' => $destination->getAttribute('privacy_status'),
+            'is_embeddable' => $destination->getAttribute('is_embeddable') === true,
+            'availability' => is_array($evidence) ? ($evidence['availability'] ?? null) : null,
+            'verified_at' => $verifiedAt instanceof DateTimeInterface ? $verifiedAt->format(DATE_ATOM) : null,
+            'last_checked_at' => $lastCheckedAt instanceof DateTimeInterface ? $lastCheckedAt->format(DATE_ATOM) : null,
+        ];
     }
 
     /** @return array<string, mixed> */
