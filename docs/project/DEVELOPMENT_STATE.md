@@ -58,15 +58,16 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ### 18.6.5 — Admin remediation mutation UX where justified
 
-This slice adds only narrowly justified operator mutations over the read-only destination attention state already delivered in 18.6.2:
+The smallest justified remediation mutation is now implemented and pending focused verification:
 
-- inventory the existing Admin provider operations routes/controllers/actions, authorization gates and audit write path before adding any remediation control;
-- reuse the existing `YouTubeDestinationWorkbench::reverify()` write owner for YouTube destination refresh rather than persisting directly from a controller/view;
-- expose re-verification only where the destination/provider combination is actually supported and the operator already has the required Admin permission;
-- record remediation through the existing audit boundary and preserve provider credential/quota/rate protections;
-- keep stale/private/missing destination evidence persisted after remediation so operators can understand the observed result instead of silently deleting or replacing evidence;
-- do not add generic approve/reject/delete/provider-switch mutations merely for UI completeness; every mutation must have a concrete operational need and an existing semantic owner;
-- no public route, scheduler, bulk mutation, schema expansion or canonical Recording identity mutation in this slice.
+- the existing `POST /admin/providers/{provider}/operations` mutation route is reused; no new route surface was added;
+- the route keeps the existing `can:manage-providers` and `password.confirm` protections;
+- `ProviderMutationController` accepts the bounded `destination_reverify` action and delegates immediately to `ProviderMutationService`;
+- `ProviderMutationService::reverifyDestination()` locks provider + destination, verifies ownership, supports only YouTube, preserves idempotency, calls `YouTubeDestinationWorkbench::reverify()`, and records both immutable `ProviderOperationAudit` evidence and the existing `PrivilegedAuditLogger` event;
+- Admin destination attention rows expose a per-destination `Kiểm tra lại` form only for YouTube rows currently requiring attention;
+- re-verification preserves canonical entity linkage, review state and original `verified_at`; it refreshes provider-observed evidence and `last_checked_at` only through the existing workbench owner;
+- focused regression covers provider ownership, audit before/after evidence, idempotent repeat submission and a private/non-embeddable refresh outcome;
+- no generic CRUD, bulk remediation, scheduler, schema expansion, provider breadth or public mutation route was introduced.
 
 ## Current blockers / risks
 
@@ -76,6 +77,7 @@ This slice adds only narrowly justified operator mutations over the read-only de
 - A remediation attempt may legitimately result in private/unavailable/outbound-only state; success means evidence was refreshed, not that the destination became public-playable.
 - Stale/unavailable evidence must not be silently deleted to make the attention panel look green.
 - Do not duplicate freshness/privacy/eligibility semantics outside `ProviderDestinationPreference` and the provider verification owner.
+- Live provider smoke testing is useful for release confidence but must not become a network/quota-dependent canonical gate.
 - New route/schema/provider fields cannot be introduced silently.
 
 ## Latest focused evidence
@@ -87,15 +89,16 @@ This slice adds only narrowly justified operator mutations over the read-only de
 - 18.6.4 candidate verification contract passed on that exact tree.
 - 18.6.4 canonical verification passed on that exact tree.
 - Tracked tree was clean and local/upstream were synchronized at the 18.6.4 seal.
-- 18.6.5 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
+- 18.6.5 implementation and focused regression are committed on the stage branch; no 18.6.5 PASS is recorded yet.
 
 ## Next required action
 
-1. Inventory existing Admin provider operations routes/controllers/views, authorization middleware/policies, audit service and `YouTubeDestinationWorkbench` call sites.
-2. Identify the smallest remediation mutation justified by current attention states; default target is single-destination YouTube re-verification through the existing write owner.
-3. Add regression for authorization, audit evidence, successful refresh, private/unavailable refresh outcomes, unsupported-provider fail-closed behavior and preservation of canonical linkage/review state.
-4. Add the smallest Admin UX/action wiring needed for that remediation; avoid generic CRUD or bulk actions.
-5. Run Pint, focused tests, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` before closure.
+1. Sync local workspace to the current stage-branch HEAD.
+2. Run Pint write + `--test` on `ProviderMutationController`, `ProviderMutationService` and `ProviderDestinationRemediationTest`.
+3. Run the new remediation feature regression plus existing YouTube destination and ProviderDestinationAttention regressions.
+4. Run focused PHPStan on the changed production PHP.
+5. Manually smoke the real Admin provider URL once with a real configured YouTube credential, verifying the attention state before/after and the audit entry; do not use live provider access as a CI/canonical gate.
+6. Run `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify`; only after PASS advance to candidate/canonical closure.
 
 ## Documentation checkpoint discipline
 
