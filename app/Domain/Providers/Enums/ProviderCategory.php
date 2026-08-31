@@ -7,6 +7,7 @@ namespace App\Domain\Providers\Enums;
 enum ProviderCategory: string
 {
     case Music = 'music';
+    case Metadata = 'metadata';
     case Analytics = 'analytics';
     case Observability = 'observability';
     case Security = 'security';
