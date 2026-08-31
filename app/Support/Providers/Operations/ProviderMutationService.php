@@ -213,7 +213,8 @@ final readonly class ProviderMutationService
             return false;
         }
 
-        $after = is_array($audit->after_state) ? $audit->after_state : [];
+        $afterState = $audit->getAttribute('after_state');
+        $after = is_array($afterState) ? $afterState : [];
         if ($audit->action !== 'destination_reverify'
             || (string) $audit->provider_id !== $providerId
             || (string) ($after['destination_id'] ?? '') !== $destinationId) {
