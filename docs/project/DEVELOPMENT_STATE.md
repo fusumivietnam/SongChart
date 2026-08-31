@@ -15,7 +15,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Branch: `stage-18.6-provider-destination-media-quality`.
 - Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
-- Candidate closure: 18.6.3 closed on exact head `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`; any 18.6.4 tracked change requires new closure evidence.
+- Candidate closure: 18.6.4 closed on exact head `76f35c4fcf048ddccfb239c2845e8e872587a36c`; any 18.6.5 tracked change requires new closure evidence.
 - Strategy: improve destination/media eligibility, deterministic preference, freshness/provenance and operator visibility over existing provider infrastructure before considering provider breadth.
 
 ## Stage map
@@ -31,9 +31,9 @@ Status: operational checkpoint only. Repository authorities remain authoritative
         |
         +--> [DONE] 18.6.3 YouTube/media verification quality convergence
         |
-        +--> [IN PROGRESS] 18.6.4 public selected-destination projection + explainability
+        +--> [DONE] 18.6.4 public selected-destination projection + explainability
         |
-        +--> [NEXT] Admin remediation mutation UX where justified
+        +--> [IN PROGRESS] 18.6.5 Admin remediation mutation UX where justified
         |
         `--> [FINAL] focused QA -> candidate -> canonical -> exact-head delivery
 ```
@@ -50,30 +50,32 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - 18.6.2 candidate and canonical verification passed on exact clean/pushed head `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
 - 18.6.3 converges YouTube destination evidence around explicit resource inspection, public approval verification, outbound-only non-embeddable handling, and fail-closed re-verification without changing canonical Recording identity.
 - 18.6.3 pre-closure impact verification, candidate verification and canonical verification passed on exact clean/pushed head `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
+- 18.6.4 exposes provider-neutral public destination states `playable`, `outbound_only`, and `no_selection` with bounded explainability sourced from `ProviderDestinationPreference` rather than a second policy owner.
+- 18.6.4 candidate verification and canonical verification passed on exact clean/pushed head `76f35c4fcf048ddccfb239c2845e8e872587a36c`.
 - Workflow hardening from 18.5.1 remains cross-stage engineering authority.
 
 ## In progress
 
-### 18.6.4 — Public selected-destination projection + explainability
+### 18.6.5 — Admin remediation mutation UX where justified
 
-The source slice is implemented and now requires focused verification:
+This slice adds only narrowly justified operator mutations over the read-only destination attention state already delivered in 18.6.2:
 
-- `PublicProviderDestinationProjection` gives the public read path explicit `playable`, `outbound_only`, and `no_selection` states plus stable reason codes;
-- `EloquentProviderDestinationSelector::project()` reuses `ProviderDestinationPreference` for eligibility, freshness, embeddability and deterministic selection while preserving the existing `select()` API for other consumers;
-- no-selection explainability is derived from `ProviderDestinationPreference::publicEligibilityIssues()` and does not reimplement policy checks;
-- `RecordingMediaExperience` exposes only public-safe projection fields and reason text, never raw evidence, credentials, quota/rate state or operator audit data;
-- the public media component now renders explicit selected/no-selection state and keeps outbound-only destinations linkable without iframe playback;
-- focused regression covers playable, outbound-only, stale no-selection, private no-selection and deterministic eligible fallback;
-- no route, migration, provider, scheduler or canonical identifier was introduced.
+- inventory the existing Admin provider operations routes/controllers/actions, authorization gates and audit write path before adding any remediation control;
+- reuse the existing `YouTubeDestinationWorkbench::reverify()` write owner for YouTube destination refresh rather than persisting directly from a controller/view;
+- expose re-verification only where the destination/provider combination is actually supported and the operator already has the required Admin permission;
+- record remediation through the existing audit boundary and preserve provider credential/quota/rate protections;
+- keep stale/private/missing destination evidence persisted after remediation so operators can understand the observed result instead of silently deleting or replacing evidence;
+- do not add generic approve/reject/delete/provider-switch mutations merely for UI completeness; every mutation must have a concrete operational need and an existing semantic owner;
+- no public route, scheduler, bulk mutation, schema expansion or canonical Recording identity mutation in this slice.
 
 ## Current blockers / risks
 
-- Explainability must reuse stable reason semantics from `ProviderDestinationPreference`; public/read projections must not become a second policy owner.
-- Public output must distinguish playable embed from outbound-only destination rather than collapsing them into a generic URL.
-- Internal-only provider/operator evidence must not leak through public projection.
-- YouTube Video identity must remain external media evidence and must never become canonical Recording identity.
-- Missing verification evidence must remain unknown/fail-closed, not silently public/available.
-- Do not duplicate the 30-day freshness policy outside `ProviderDestinationPreference`.
+- Controllers remain transport adapters only; no direct destination persistence/query logic may be introduced there.
+- Re-verification must go through the existing provider adapter/workbench so credential, quota/rate and provider evidence semantics are preserved.
+- Admin actions must remain behind existing authorization and audit boundaries; no unaudited remediation shortcut.
+- A remediation attempt may legitimately result in private/unavailable/outbound-only state; success means evidence was refreshed, not that the destination became public-playable.
+- Stale/unavailable evidence must not be silently deleted to make the attention panel look green.
+- Do not duplicate freshness/privacy/eligibility semantics outside `ProviderDestinationPreference` and the provider verification owner.
 - New route/schema/provider fields cannot be introduced silently.
 
 ## Latest focused evidence
@@ -81,20 +83,19 @@ The source slice is implemented and now requires focused verification:
 - Stage 18.6.1 exact sealed head: `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
 - Stage 18.6.2 exact sealed head: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
 - Stage 18.6.3 exact sealed head: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
-- 18.6.3 pre-closure impact verification passed on that exact tree.
-- 18.6.3 candidate verification contract passed on that exact tree.
-- 18.6.3 canonical verification passed on that exact tree.
-- Tracked tree was clean and local/upstream were synchronized at the 18.6.3 seal.
-- 18.6.4 implementation and focused regressions are committed on the stage branch; no 18.6.4 PASS is recorded yet.
+- Stage 18.6.4 exact sealed head: `76f35c4fcf048ddccfb239c2845e8e872587a36c`.
+- 18.6.4 candidate verification contract passed on that exact tree.
+- 18.6.4 canonical verification passed on that exact tree.
+- Tracked tree was clean and local/upstream were synchronized at the 18.6.4 seal.
+- 18.6.5 starts after that seal and therefore requires new focused/candidate/canonical evidence before it can be called closed.
 
 ## Next required action
 
-1. Sync local workspace to the exact current stage-branch HEAD before local edits.
-2. Run Pint write then `--test` on the changed 18.6.4 PHP files.
-3. Run `tests/Feature/Catalog/RecordingMediaExperienceTest.php` and existing `tests/Unit/Providers/ProviderDestinationPreferenceTest.php`.
-4. Run focused PHPStan on `PublicProviderDestinationProjection`, selector and `RecordingMediaExperience`.
-5. Run `./songchart impact --diff`, then `./songchart reconcile` and commit only expected generated authority changes if any.
-6. Run `./songchart impact --verify`; only then advance to candidate/canonical closure.
+1. Inventory existing Admin provider operations routes/controllers/views, authorization middleware/policies, audit service and `YouTubeDestinationWorkbench` call sites.
+2. Identify the smallest remediation mutation justified by current attention states; default target is single-destination YouTube re-verification through the existing write owner.
+3. Add regression for authorization, audit evidence, successful refresh, private/unavailable refresh outcomes, unsupported-provider fail-closed behavior and preservation of canonical linkage/review state.
+4. Add the smallest Admin UX/action wiring needed for that remediation; avoid generic CRUD or bulk actions.
+5. Run Pint, focused tests, PHPStan, `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` before closure.
 
 ## Documentation checkpoint discipline
 
