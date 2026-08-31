@@ -15,7 +15,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Branch: `stage-18.6-provider-destination-media-quality`.
 - Base: accepted Stage 18.5/18.5.1 merge commit `c27c7c90b04e9f2917a60c59e6805ee51c24618b`.
 - Task contract: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`.
-- Candidate closure: 18.6.4 closed on exact head `76f35c4fcf048ddccfb239c2845e8e872587a36c`; any 18.6.5 tracked change requires new closure evidence.
+- Latest sealed slice: 18.6.5 closed on exact head `2e4b1752a6df4bc8eb00a40334608e582ee75efd`; any final-closure tracked change requires new exact-tree evidence.
 - Strategy: improve destination/media eligibility, deterministic preference, freshness/provenance and operator visibility over existing provider infrastructure before considering provider breadth.
 
 ## Stage map
@@ -33,9 +33,9 @@ Status: operational checkpoint only. Repository authorities remain authoritative
         |
         +--> [DONE] 18.6.4 public selected-destination projection + explainability
         |
-        +--> [IN PROGRESS] 18.6.5 Admin remediation mutation UX where justified
+        +--> [DONE] 18.6.5 Admin remediation mutation UX where justified
         |
-        `--> [FINAL] focused QA -> candidate -> canonical -> exact-head delivery
+        `--> [IN PROGRESS] FINAL focused QA -> candidate -> canonical -> exact-head delivery
 ```
 
 ## Done
@@ -52,33 +52,33 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - 18.6.3 pre-closure impact verification, candidate verification and canonical verification passed on exact clean/pushed head `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
 - 18.6.4 exposes provider-neutral public destination states `playable`, `outbound_only`, and `no_selection` with bounded explainability sourced from `ProviderDestinationPreference` rather than a second policy owner.
 - 18.6.4 candidate verification and canonical verification passed on exact clean/pushed head `76f35c4fcf048ddccfb239c2845e8e872587a36c`.
+- 18.6.5 adds the narrow operator remediation needed for single-destination YouTube re-verification through the existing Admin mutation, authorization, workbench and audit boundaries without generic CRUD or a new route.
+- 18.6.5 focused verification, candidate verification and canonical verification passed on exact clean/pushed head `2e4b1752a6df4bc8eb00a40334608e582ee75efd`.
 - Workflow hardening from 18.5.1 remains cross-stage engineering authority.
 
 ## In progress
 
-### 18.6.5 — Admin remediation mutation UX where justified
+### Stage 18.6 final closure
 
-The smallest justified remediation mutation is now implemented and pending focused verification:
+No additional product behavior is planned in this closure slice. The remaining work is to verify the complete Stage 18.6 contract on one exact tree and deliver that tree through the governed PR path:
 
-- the existing `POST /admin/providers/{provider}/operations` mutation route is reused; no new route surface was added;
-- the route keeps the existing `can:manage-providers` and `password.confirm` protections;
-- `ProviderMutationController` accepts the bounded `destination_reverify` action and delegates immediately to `ProviderMutationService`;
-- `ProviderMutationService::reverifyDestination()` locks provider + destination, verifies ownership, supports only YouTube, preserves idempotency, calls `YouTubeDestinationWorkbench::reverify()`, and records both immutable `ProviderOperationAudit` evidence and the existing `PrivilegedAuditLogger` event;
-- Admin destination attention rows expose a per-destination `Kiểm tra lại` form only for YouTube rows currently requiring attention;
-- re-verification preserves canonical entity linkage, review state and original `verified_at`; it refreshes provider-observed evidence and `last_checked_at` only through the existing workbench owner;
-- focused regression covers provider ownership, audit before/after evidence, idempotent repeat submission and a private/non-embeddable refresh outcome;
-- no generic CRUD, bulk remediation, scheduler, schema expansion, provider breadth or public mutation route was introduced.
+- reconcile any generated authority caused by this final checkpoint before closure evidence is collected;
+- run final impacted/focused QA spanning destination preference, YouTube verification, Admin attention/remediation and public Recording media projection;
+- run PostgreSQL-authoritative quality as required by impact/candidate/canonical contracts;
+- require `./songchart impact --verify` PASS before candidate;
+- require candidate and canonical PASS on the final exact tree;
+- require clean tracked state, exact pushed HEAD and local/upstream synchronization;
+- create/refresh the Stage 18.6 PR only after exact-head closure, then require PR CI to target that same SHA before merge;
+- do not move 18.6 chronology to Development History or remove it from the roadmap until governed acceptance on `main`.
 
 ## Current blockers / risks
 
-- Controllers remain transport adapters only; no direct destination persistence/query logic may be introduced there.
-- Re-verification must go through the existing provider adapter/workbench so credential, quota/rate and provider evidence semantics are preserved.
-- Admin actions must remain behind existing authorization and audit boundaries; no unaudited remediation shortcut.
-- A remediation attempt may legitimately result in private/unavailable/outbound-only state; success means evidence was refreshed, not that the destination became public-playable.
-- Stale/unavailable evidence must not be silently deleted to make the attention panel look green.
-- Do not duplicate freshness/privacy/eligibility semantics outside `ProviderDestinationPreference` and the provider verification owner.
-- Live provider smoke testing is useful for release confidence but must not become a network/quota-dependent canonical gate.
-- New route/schema/provider fields cannot be introduced silently.
+- Any tracked change after canonical PASS invalidates final Stage 18.6 closure and requires rerunning closure on the new tree.
+- Final QA must not introduce a new policy owner, route, schema, provider expansion or workflow mechanism merely to make closure easier.
+- Live provider smoke testing is useful release-confidence evidence but remains non-canonical because network/quota/credentials are nondeterministic.
+- Provider destination/media evidence remains external to canonical Recording identity.
+- Unknown availability/freshness remains fail-closed.
+- Public projection must not leak privileged provider/operator evidence.
 
 ## Latest focused evidence
 
@@ -86,19 +86,21 @@ The smallest justified remediation mutation is now implemented and pending focus
 - Stage 18.6.2 exact sealed head: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
 - Stage 18.6.3 exact sealed head: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
 - Stage 18.6.4 exact sealed head: `76f35c4fcf048ddccfb239c2845e8e872587a36c`.
-- 18.6.4 candidate verification contract passed on that exact tree.
-- 18.6.4 canonical verification passed on that exact tree.
-- Tracked tree was clean and local/upstream were synchronized at the 18.6.4 seal.
-- 18.6.5 implementation and focused regression are committed on the stage branch; no 18.6.5 PASS is recorded yet.
+- Stage 18.6.5 exact sealed head: `2e4b1752a6df4bc8eb00a40334608e582ee75efd`.
+- 18.6.5 candidate verification contract passed on that exact tree.
+- 18.6.5 canonical verification passed on that exact tree.
+- Tracked tree was clean and local/upstream were synchronized at the 18.6.5 seal.
+- This final documentation checkpoint is a new tree and therefore requires fresh final-stage closure evidence.
 
 ## Next required action
 
-1. Sync local workspace to the current stage-branch HEAD.
-2. Run Pint write + `--test` on `ProviderMutationController`, `ProviderMutationService` and `ProviderDestinationRemediationTest`.
-3. Run the new remediation feature regression plus existing YouTube destination and ProviderDestinationAttention regressions.
-4. Run focused PHPStan on the changed production PHP.
-5. Manually smoke the real Admin provider URL once with a real configured YouTube credential, verifying the attention state before/after and the audit entry; do not use live provider access as a CI/canonical gate.
-6. Run `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify`; only after PASS advance to candidate/canonical closure.
+1. Sync local workspace to the exact current stage-branch HEAD.
+2. Run `./songchart impact --diff` to derive final changed-tree verification needs.
+3. Run `./songchart reconcile`; commit only expected generated authority changes if any.
+4. Require generated authority clean, then run `./songchart impact --verify`.
+5. Run final focused regressions when selected by impact, with explicit attention to destination preference, YouTube verification, Admin attention/remediation and public Recording media projection.
+6. Run `./songchart candidate`, then `./songchart verify` on the same final exact tree.
+7. Confirm exact HEAD, clean tracked state, ahead/behind 0, push exact HEAD, then use that SHA for PR CI/merge acceptance.
 
 ## Documentation checkpoint discipline
 
