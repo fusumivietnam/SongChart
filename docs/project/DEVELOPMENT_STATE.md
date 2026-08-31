@@ -22,17 +22,17 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 ```text
 19.0 PRODUCTION READINESS & FIRST RELEASE
         |
-        +--> [IN PROGRESS] production topology + environment inventory
+        +--> [IMPLEMENTED / VERIFY] 19.0.1 production topology + environment inventory
         |
-        +--> [NEXT] secrets/environment hardening
+        +--> [NEXT] 19.0.2 secrets/environment hardening
         |
-        +--> [NEXT] queue/scheduler production runtime
+        +--> [NEXT] 19.0.3 queue/scheduler production runtime
         |
-        +--> [NEXT] observability + alerting
+        +--> [NEXT] 19.0.4 observability + alerting
         |
-        +--> [NEXT] backup/recovery
+        +--> [NEXT] 19.0.5 backup/recovery
         |
-        +--> [NEXT] security review + production smoke
+        +--> [NEXT] 19.0.6 security review + production smoke
         |
         `--> [FINAL] release package/tag from accepted exact main tree
 ```
@@ -44,28 +44,34 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - GitHub Actions run #161 passed on that exact head.
 - PR #15 merged Stage 18.6 to `main` as accepted merge commit `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Stage 19 branch was created directly from that accepted merge commit.
+- 19.0.1 inventory is now implemented in `docs/operations/PRODUCTION_TOPOLOGY.md`.
+- Current runtime inventory confirms development already has PostgreSQL 18.4, Redis 7.4, independent queue worker, Laravel scheduler definitions, Caddy TLS and `/up` health evidence.
+- The supported first-release topology is one immutable SongChart application artifact/image reused by independent `web`, `queue` and `scheduler` processes behind Caddy, with PostgreSQL 18 and Redis as explicit stateful/runtime dependencies.
+- Development PHP built-in server, bind-mounted repository/vendor/node_modules, local mkcert certificates, local DB credentials, disabled Admin 2FA and debug/design-lab defaults are explicitly rejected as production primitives.
+- 19.0.1 intentionally does not introduce a production Dockerfile, Compose manifest or hosting-specific framework before environment/secrets ownership is hardened.
 
 ## In progress
 
 ### 19.0.1 — Production topology + environment inventory
 
-The first Stage 19 slice is inventory-first and must not guess infrastructure:
+Implementation is complete and pending deterministic repository verification:
 
-- inventory current Docker/Caddy/PHP/queue/PostgreSQL/Redis/runtime assumptions and every production-relevant environment variable already owned by repository authorities;
-- identify what can move unchanged from development/canonical verification into production and what requires explicit production-only authority;
-- define the smallest supported first-release deployment topology before adding scripts, manifests or hosting-specific behavior;
-- keep PostgreSQL 18 release authority and historical migration immutability intact;
-- preserve provider credentials, rate limits, authorization, privileged audit and canonical identity boundaries;
-- no provider/product feature expansion in this slice;
-- no secret values committed to the repository;
-- no scheduler/queue/observability implementation until topology ownership is explicit.
+- `docs/operations/PRODUCTION_TOPOLOGY.md` inventories web, queue, scheduler, PostgreSQL, Redis, TLS/edge, observability, release/CI and environment ownership;
+- Caddy remains the selected first-release TLS/reverse-proxy primitive unless later evidence proves a blocker;
+- PostgreSQL major 18 remains mandatory and external to the application image;
+- Redis remains an independent queue/cache/runtime dependency, not a substitute for PostgreSQL durability;
+- web/queue/scheduler must be independently restartable even if the first release places them on one host;
+- the production application artifact must be immutable, exact-commit traceable, contain built dependencies/assets and contain no real secrets;
+- explicit gaps are mapped to 19.0.2 through 19.0.6 rather than solved speculatively in the inventory slice.
 
 ## Current blockers / risks
 
-- Production topology must be derived from existing runtime authority and actual release needs, not from a speculative platform preference.
-- Secrets must remain external to tracked source; examples/templates may name keys but never contain real values.
-- Queue/scheduler topology cannot assume a single-process web runtime if current jobs require independent workers.
-- Backup/recovery must be PostgreSQL-aware and tested against restore behavior, not documented as an unverified checklist.
+- Production environment values remain ambiguous until 19.0.2 defines a hardened environment/secrets contract; current `.env.example` contains development-safe defaults that must not become production defaults.
+- The existing `docker/verify/Dockerfile` is a PHP CLI verification image, not a production web image.
+- The existing `compose.dev.yml` is a development topology with bind mounts and PHP built-in server; it cannot be promoted directly to production.
+- Scheduler definitions exist, but no independent scheduler lifecycle currently exists in the development Compose stack.
+- Queue/Horizon production runtime/restart policy is not yet sealed.
+- Backup/recovery must be PostgreSQL-aware and verified by restore behavior in 19.0.5.
 - Production smoke verification must be deterministic where possible; live provider/network checks remain release-confidence evidence, not canonical verification owners.
 - Any workflow mechanism change must update its Markdown authority, machine contract/routing and permanent regression in the same logical change.
 
@@ -77,14 +83,15 @@ The first Stage 19 slice is inventory-first and must not guess infrastructure:
 - GitHub Actions run #161 on exact sealed head: PASS.
 - Accepted `main` merge commit: `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Stage 19 branch starts exactly from that accepted merge commit.
+- 19.0.1 topology inventory is implemented; no 19.0.1 PASS is recorded until current-tree verification is observed.
 
 ## Next required action
 
-1. Sync local `main` to accepted merge `40eba85e36bed1d3a5604975e45ad3234aca6e25` and switch to `stage-19.0-production-readiness-first-release`.
-2. Inventory production-relevant runtime files, Docker/Caddy configuration, queue/scheduler entrypoints, environment templates, deployment/release scripts, observability and backup surfaces.
-3. Run `./songchart impact <planned-paths...>` on the narrowed inventory before implementation.
-4. Record the supported first-release topology and explicit non-goals in the Stage 19 task contract/validation checkpoint before adding production runtime behavior.
-5. Implement Stage 19 in bounded slices with the same Pint → focused tests/PHPStan → reconcile → impact verify → candidate → canonical discipline.
+1. Sync local workspace to the current Stage 19 branch head.
+2. Run `./songchart impact docs/operations/PRODUCTION_TOPOLOGY.md docs/project/DEVELOPMENT_STATE.md docs/foundation/STAGE_19_0_VALIDATION_REPORT.md`.
+3. Run `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` for the current 19.0.1 tree.
+4. If 19.0.1 verification passes, record exact slice closure before opening 19.0.2.
+5. 19.0.2 should define production environment/secrets ownership and fail-closed critical configuration before creating production Docker/Compose runtime files.
 
 ## Documentation checkpoint discipline
 
