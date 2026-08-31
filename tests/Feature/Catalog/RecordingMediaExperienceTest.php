@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Application\Catalog\Queries\RecordingMediaExperience;
 use App\Domain\Catalog\Enums\EntityType;
 use App\Domain\Providers\Destinations\ProviderDestinationPreference;
+use App\Domain\Providers\Enums\ProviderCategory;
 use App\Models\Catalog\Recording;
 use App\Models\Provider;
 use App\Models\ProviderDestination;
@@ -19,7 +20,7 @@ function stage18YoutubeProvider(): Provider
     return Provider::query()->create([
         'slug' => 'youtube',
         'name' => 'YouTube',
-        'category' => 'media',
+        'category' => ProviderCategory::Music->value,
         'status' => 'approved',
         'is_enabled' => true,
     ]);
