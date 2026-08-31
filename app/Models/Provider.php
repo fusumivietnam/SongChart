@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Domain\Providers\Enums\ProviderCategory;
 use App\Domain\Providers\Enums\ProviderStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use InvalidArgumentException;
 
 /**
+ * @property ProviderStatus $status
  * @property bool $is_enabled
  * @property array<string, mixed>|null $configuration
  */
@@ -23,12 +22,8 @@ final class Provider extends Model
 
     protected static function booted(): void
     {
-        self::saving(function (Provider $provider): void {
-            $category = (string) $provider->getAttribute('category');
-
-            if (ProviderCategory::tryFrom($category) === null) {
-                throw new InvalidArgumentException("Unsupported provider category [{$category}].");
-            }
+        static::saving(function (self $provider): void {
+            \App\Domain\Providers\Enums\ProviderCategory::from((string) $provider->getAttribute('category'));
         });
     }
 
