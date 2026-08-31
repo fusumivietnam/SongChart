@@ -22,7 +22,9 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 ```text
 19.0 PRODUCTION READINESS & FIRST RELEASE
         |
-        +--> [IMPLEMENTED / VERIFY] 19.0.1 production topology + environment inventory
+        +--> [IMPLEMENTED] 19.0.1 production topology + environment inventory
+        |
+        +--> [IMPLEMENTED / VERIFY] 19.0.1.1 data contract + provider taxonomy convergence
         |
         +--> [NEXT] 19.0.2 secrets/environment hardening
         |
@@ -39,41 +41,36 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 
 ## Done
 
-- Stage 18.6 deterministic destination eligibility/preference, freshness handling, YouTube verification quality, public destination projection/explainability and Admin remediation all closed under exact-tree candidate/canonical verification.
-- Stage 18.6 final exact head `0ba79a89994b0a2722f5f6c18a84af0045e88cc6` passed candidate and canonical verification.
-- GitHub Actions run #161 passed on that exact head.
-- PR #15 merged Stage 18.6 to `main` as accepted merge commit `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
+- Stage 18.6 final exact head `0ba79a89994b0a2722f5f6c18a84af0045e88cc6` passed candidate/canonical verification and PR #15 CI before merge to accepted `main` commit `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Stage 19 branch was created directly from that accepted merge commit.
-- 19.0.1 inventory is now implemented in `docs/operations/PRODUCTION_TOPOLOGY.md`.
-- Current runtime inventory confirms development already has PostgreSQL 18.4, Redis 7.4, independent queue worker, Laravel scheduler definitions, Caddy TLS and `/up` health evidence.
-- The supported first-release topology is one immutable SongChart application artifact/image reused by independent `web`, `queue` and `scheduler` processes behind Caddy, with PostgreSQL 18 and Redis as explicit stateful/runtime dependencies.
-- Development PHP built-in server, bind-mounted repository/vendor/node_modules, local mkcert certificates, local DB credentials, disabled Admin 2FA and debug/design-lab defaults are explicitly rejected as production primitives.
-- 19.0.1 intentionally does not introduce a production Dockerfile, Compose manifest or hosting-specific framework before environment/secrets ownership is hardened.
+- 19.0.1 topology inventory is implemented in `docs/operations/PRODUCTION_TOPOLOGY.md`.
+- The supported first-release topology is one immutable SongChart application artifact/image reused by independent `web`, `queue` and `scheduler` processes behind Caddy, with PostgreSQL 18 and Redis as explicit dependencies.
+- Development PHP built-in server, bind-mounted repository/vendor/node_modules, local mkcert certificates, local DB credentials, disabled Admin 2FA and debug/design-lab defaults are rejected as production primitives.
 
 ## In progress
 
-### 19.0.1 — Production topology + environment inventory
+### 19.0.1.1 — Data Contract + Provider Taxonomy Convergence
 
-Implementation is complete and pending deterministic repository verification:
+Implementation is complete and pending deterministic verification:
 
-- `docs/operations/PRODUCTION_TOPOLOGY.md` inventories web, queue, scheduler, PostgreSQL, Redis, TLS/edge, observability, release/CI and environment ownership;
-- Caddy remains the selected first-release TLS/reverse-proxy primitive unless later evidence proves a blocker;
-- PostgreSQL major 18 remains mandatory and external to the application image;
-- Redis remains an independent queue/cache/runtime dependency, not a substitute for PostgreSQL durability;
-- web/queue/scheduler must be independently restartable even if the first release places them on one host;
-- the production application artifact must be immutable, exact-commit traceable, contain built dependencies/assets and contain no real secrets;
-- explicit gaps are mapped to 19.0.2 through 19.0.6 rather than solved speculatively in the inventory slice.
+- `docs/project/domain/DATA_CONTRACT.md` now owns recurring cross-boundary representation rules for IDs, external IDs, timestamps, partial dates, null/collection semantics, URLs, machine reason codes, provider evidence and JSON configuration boundaries;
+- `docs/providers/PROVIDER_TAXONOMY.md` separates provider slug, broad category, operational role and concrete capability;
+- typed `ProviderCategory`, `ProviderRole` and `ProviderCapabilityCode` contracts remove free-form category/capability naming from new governed code;
+- `ProviderTaxonomy` is the single runtime definition owner for the known provider registry and classifies providers as `data`, `destination` or `service` without changing canonical identity semantics;
+- `Provider` and `ProviderCapability` fail fast when unknown category/capability values are saved;
+- `ProviderRegistrySeeder` consumes the taxonomy registry, preserves existing provider status/enabled state and seeds known capability rows on the existing schema;
+- `ProviderOperationalAssessor` normalizes operational states to `disabled`, `unapproved`, `misconfigured`, `degraded`, `ready` with stable runtime issue codes;
+- unknown runtime health is degraded/fail-closed rather than implicitly healthy;
+- no migration, new provider, canonical mutation path or generic integration framework was introduced.
 
 ## Current blockers / risks
 
-- Production environment values remain ambiguous until 19.0.2 defines a hardened environment/secrets contract; current `.env.example` contains development-safe defaults that must not become production defaults.
-- The existing `docker/verify/Dockerfile` is a PHP CLI verification image, not a production web image.
-- The existing `compose.dev.yml` is a development topology with bind mounts and PHP built-in server; it cannot be promoted directly to production.
-- Scheduler definitions exist, but no independent scheduler lifecycle currently exists in the development Compose stack.
-- Queue/Horizon production runtime/restart policy is not yet sealed.
-- Backup/recovery must be PostgreSQL-aware and verified by restore behavior in 19.0.5.
-- Production smoke verification must be deterministic where possible; live provider/network checks remain release-confidence evidence, not canonical verification owners.
-- Any workflow mechanism change must update its Markdown authority, machine contract/routing and permanent regression in the same logical change.
+- The new PHP source has not yet been locally formatted/static-analyzed/tested; no 19.0.1.1 PASS is recorded.
+- Existing historical/test fixtures legitimately using `category=music` remain compatible; a future storage rename to `catalog_data` is intentionally avoided because operational role/capability now carries the missing semantic distinction without a migration.
+- Production environment values remain ambiguous until 19.0.2 defines a hardened environment/secrets contract.
+- The existing `docker/verify/Dockerfile` and `compose.dev.yml` remain verification/development infrastructure, not production runtime.
+- Scheduler lifecycle, queue/Horizon restart policy, observability retention and PostgreSQL backup/restore remain later Stage 19 slices.
+- Any workflow mechanism change still requires owning Markdown authority, machine contract/routing and permanent regression in the same logical change.
 
 ## Latest acceptance evidence
 
@@ -83,15 +80,16 @@ Implementation is complete and pending deterministic repository verification:
 - GitHub Actions run #161 on exact sealed head: PASS.
 - Accepted `main` merge commit: `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Stage 19 branch starts exactly from that accepted merge commit.
-- 19.0.1 topology inventory is implemented; no 19.0.1 PASS is recorded until current-tree verification is observed.
+- 19.0.1/19.0.1.1 current tree requires fresh verification because the taxonomy convergence introduced tracked PHP/test/docs changes.
 
 ## Next required action
 
 1. Sync local workspace to the current Stage 19 branch head.
-2. Run `./songchart impact docs/operations/PRODUCTION_TOPOLOGY.md docs/project/DEVELOPMENT_STATE.md docs/foundation/STAGE_19_0_VALIDATION_REPORT.md`.
-3. Run `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify` for the current 19.0.1 tree.
-4. If 19.0.1 verification passes, record exact slice closure before opening 19.0.2.
-5. 19.0.2 should define production environment/secrets ownership and fail-closed critical configuration before creating production Docker/Compose runtime files.
+2. Run Pint write on the changed PHP, inspect the diff, then Pint `--test`.
+3. Run `tests/Feature/Providers/ProviderTaxonomyTest.php` plus the provider registry/Admin provider regressions selected by impact.
+4. Run focused PHPStan on the new provider taxonomy/operational classes and changed models/seeder.
+5. Run `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify`.
+6. Only after current-tree PASS close the convergence slice and proceed to 19.0.2 production environment/secrets hardening.
 
 ## Documentation checkpoint discipline
 
