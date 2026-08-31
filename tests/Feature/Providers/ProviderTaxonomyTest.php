@@ -13,7 +13,6 @@ use App\Domain\Providers\ProviderTaxonomy;
 use App\Models\Provider;
 use App\Models\ProviderCapability;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use InvalidArgumentException;
 
 uses(RefreshDatabase::class);
 
@@ -42,7 +41,7 @@ it('rejects provider category drift at the persistence boundary', function (): v
         'status' => ProviderStatus::Research,
         'is_enabled' => false,
     ]);
-})->throws(InvalidArgumentException::class, 'Unsupported provider category [analytic].');
+})->throws(\InvalidArgumentException::class, 'Unsupported provider category [analytic].');
 
 it('rejects provider capability drift at the persistence boundary', function (): void {
     $provider = Provider::query()->create([
@@ -58,7 +57,7 @@ it('rejects provider capability drift at the persistence boundary', function ():
         'capability' => 'analytics.event',
         'status' => 'supported',
     ]);
-})->throws(InvalidArgumentException::class, 'Unsupported provider capability [analytics.event].');
+})->throws(\InvalidArgumentException::class, 'Unsupported provider capability [analytics.event].');
 
 it('fails closed when operational provider evidence is incomplete', function (): void {
     $provider = new Provider([
