@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Domain\Providers\Enums\ProviderCapabilityCode;
 use App\Enums\UserRole;
 use App\Models\Provider;
 use App\Models\Providers\Ingestion\ProviderImportRun;
@@ -55,7 +56,7 @@ it('renders provider operational detail for an administrator', function (): void
         'is_enabled' => true,
     ]);
     $provider->capabilities()->create([
-        'capability' => 'artist-lookup',
+        'capability' => ProviderCapabilityCode::CatalogLookup->value,
         'status' => 'available',
         'requires_user_consent' => false,
         'market_dependent' => false,
