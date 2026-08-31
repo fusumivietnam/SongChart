@@ -68,10 +68,13 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->and($aiContract['workflow']['generated_clean_boundary'] ?? null)
         ->toBe('After reconcile, docs/project/generated must have no uncommitted changes before pre-closure verification.')
         ->and($aiContract['workflow']['writer_sync_boundary'] ?? null)
-        ->toBe('Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.');
+        ->toBe('Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.')
+        ->and($aiContract['workflow']['workflow_authority_sync'] ?? null)
+        ->toBe('A workflow/verification mechanism change is incomplete unless the owning Markdown authority, applicable machine contract/routing, and permanent regression consumer are updated in the same logical change.');
 
     expect($delivery)
         ->toContain('## Source hygiene before commit')
+        ->toContain('## Workflow authority synchronization')
         ->toContain('## Generated authority synchronization point')
         ->toContain('Pint write mode')
         ->toContain('exact changed PHP')
@@ -80,6 +83,8 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('local-only commits on that same branch must be pushed or intentionally integrated')
         ->toContain('repository compiler/consumer ownership verification')
         ->toContain('before the expensive quality lane')
+        ->toContain('A script/test optimization without matching Markdown authority is workflow drift')
+        ->toContain('promote the durable rule to its owning `.md` authority and permanent guard')
         ->toContain('workflow/documentation hardening change made after canonical PASS is still a tracked change');
 
     expect($taskTemplate)

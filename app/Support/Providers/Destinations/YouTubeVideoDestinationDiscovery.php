@@ -48,25 +48,38 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
             return [];
         }
 
-        return $this->verifiedCandidates($ids, $recording);
+        return array_values(array_filter(
+            $this->inspectedCandidates($ids, $recording),
+            static fn (VideoDestinationCandidate $candidate): bool => $candidate->privacyStatus === 'public',
+        ));
     }
 
     public function verify(string $resourceId, Recording $recording): VideoDestinationCandidate
     {
-        $this->assertConfigured();
-        $items = $this->verifiedCandidates([$resourceId], $recording);
-        if ($items === []) {
-            throw new RuntimeException('YouTube video was not found or is not an actionable public video.');
+        $candidate = $this->inspect($resourceId, $recording);
+        if ($candidate === null) {
+            throw new RuntimeException('YouTube video was not found.');
+        }
+        if ($candidate->privacyStatus !== 'public') {
+            throw new RuntimeException('YouTube video is not public and cannot be approved as a public destination.');
         }
 
-        return $items[0];
+        return $candidate;
+    }
+
+    public function inspect(string $resourceId, Recording $recording): ?VideoDestinationCandidate
+    {
+        $this->assertConfigured();
+        $items = $this->inspectedCandidates([$resourceId], $recording);
+
+        return $items[0] ?? null;
     }
 
     /**
      * @param  list<string>  $ids
      * @return list<VideoDestinationCandidate>
      */
-    private function verifiedCandidates(array $ids, Recording $recording): array
+    private function inspectedCandidates(array $ids, Recording $recording): array
     {
         $this->quota->consume('videos.list');
         $response = $this->client()->get('/youtube/v3/videos', [
@@ -80,23 +93,42 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
             if (! is_array($item) || ! is_string($item['id'] ?? null)) {
                 continue;
             }
+
             $snippet = is_array($item['snippet'] ?? null) ? $item['snippet'] : [];
             $content = is_array($item['contentDetails'] ?? null) ? $item['contentDetails'] : [];
             $status = is_array($item['status'] ?? null) ? $item['status'] : [];
-            if ((string) ($status['privacyStatus'] ?? '') !== 'public') {
-                continue;
-            }
-            $embeddable = (bool) ($status['embeddable'] ?? false);
+            $privacyStatus = trim((string) ($status['privacyStatus'] ?? ''));
+            $embeddable = ($status['embeddable'] ?? null) === true;
             $durationMs = $this->durationMilliseconds((string) ($content['duration'] ?? ''));
-            [$score, $evidence] = $this->score($recording, (string) ($snippet['title'] ?? ''), (string) ($snippet['channelTitle'] ?? ''), $durationMs);
+            [$score, $evidence] = $this->score(
+                $recording,
+                (string) ($snippet['title'] ?? ''),
+                (string) ($snippet['channelTitle'] ?? ''),
+                $durationMs,
+            );
             $decision = $score >= 85 ? 'recommended' : ($score >= 65 ? 'review' : 'weak');
+
             $candidates[] = new VideoDestinationCandidate(
-                resourceId: $item['id'], url: 'https://www.youtube.com/watch?v='.rawurlencode($item['id']),
-                title: (string) ($snippet['title'] ?? ''), channelId: (string) ($snippet['channelId'] ?? ''),
-                channelTitle: (string) ($snippet['channelTitle'] ?? ''), durationMs: $durationMs,
-                embeddable: $embeddable, privacyStatus: 'public', score: $score, decision: $decision, evidence: $evidence,
+                resourceId: $item['id'],
+                url: 'https://www.youtube.com/watch?v='.rawurlencode($item['id']),
+                title: (string) ($snippet['title'] ?? ''),
+                channelId: (string) ($snippet['channelId'] ?? ''),
+                channelTitle: (string) ($snippet['channelTitle'] ?? ''),
+                durationMs: $durationMs,
+                embeddable: $embeddable,
+                privacyStatus: $privacyStatus,
+                score: $score,
+                decision: $decision,
+                evidence: [
+                    ...$evidence,
+                    'provider' => 'youtube',
+                    'availability' => 'observed',
+                    'privacy_status' => $privacyStatus !== '' ? $privacyStatus : 'unknown',
+                    'embeddable' => $embeddable,
+                ],
             );
         }
+
         usort($candidates, static fn (VideoDestinationCandidate $a, VideoDestinationCandidate $b): int => $b->score <=> $a->score);
 
         return $candidates;
@@ -120,9 +152,12 @@ final class YouTubeVideoDestinationDiscovery implements VideoDestinationDiscover
         $officialMetadataSignal = preg_match('/\b(official|topic|vevo)\b/i', $videoTitle.' '.$channelTitle) === 1 ? 5 : 0;
 
         return [min(100, $titleScore + $artistScore + $durationScore + $officialMetadataSignal), [
-            'title_match' => $titleScore, 'artist_match' => $artistScore, 'duration_match' => $durationScore,
-            'duration_delta_ms' => $durationDelta, 'official_metadata_signal' => $officialMetadataSignal,
-            'note' => 'Official metadata signal is heuristic only; human approval remains authoritative in Stage 17.7.',
+            'title_match' => $titleScore,
+            'artist_match' => $artistScore,
+            'duration_match' => $durationScore,
+            'duration_delta_ms' => $durationDelta,
+            'official_metadata_signal' => $officialMetadataSignal,
+            'note' => 'Official metadata signal is heuristic only; human approval remains authoritative.',
         ]];
     }
 

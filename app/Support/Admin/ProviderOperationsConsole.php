@@ -14,6 +14,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class ProviderOperationsConsole
 {
+    public function __construct(private readonly ProviderDestinationAttention $destinationAttention) {}
+
     /**
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
@@ -81,20 +83,27 @@ final class ProviderOperationsConsole
             ->latest()
             ->limit(25)
             ->get();
+        $destinationAttention = $this->destinationAttention->forProvider($provider);
 
         $operationAudits = DB::table('provider_operation_audits')->select(['action', 'rationale', 'occurred_at'])->where('provider_id', $id)->latest('occurred_at')->limit(25)->get();
+
+        $attentionCount = $destinationAttention['summary']['attention'];
+        $description = $attentionCount > 0
+            ? "Có {$attentionCount} destination cần rà soát. Hãy kiểm tra freshness, privacy, review state và availability trước khi cho phép public selection."
+            : 'Tình trạng nguồn dữ liệu, hoạt động gần đây và các thao tác vận hành an toàn.';
 
         return [
             'activeAdminNav' => 'providers',
             'title' => $provider->name,
-            'description' => 'Tình trạng nguồn dữ liệu, hoạt động gần đây và các thao tác vận hành an toàn.',
+            'description' => $description,
             'provider' => $provider,
             'syncRuns' => $syncRuns,
             'importRuns' => $importRuns,
             'operationAudits' => $operationAudits,
+            'destinationAttention' => $destinationAttention,
             'metrics' => [
                 ['label' => 'Capabilities', 'value' => $provider->capabilities->count()],
-                ['label' => 'Provider entities', 'value' => $this->countWhere('provider_entities', 'provider_id', $id)],
+                ['label' => 'Destination cần chú ý', 'value' => $attentionCount],
                 ['label' => 'Import runs', 'value' => $this->countWhere('provider_import_runs', 'provider_id', $id)],
                 ['label' => 'Sync failures', 'value' => $this->countWhere('provider_sync_runs', 'provider_id', $id, ['status' => 'failed'])],
             ],
