@@ -12,80 +12,19 @@ Status: in progress. Record only verification actually observed for the active S
 
 ### 18.6.1 — Destination Eligibility + Deterministic Preference
 
-Implemented source intent:
-
-- public Recording destination selection uses provider-neutral eligibility + deterministic preference rather than latest `verified_at`;
-- provider-disabled/unapproved, destination-unapproved, non-public/unknown privacy, stale/unknown freshness, and unsafe outbound URLs fail closed;
-- otherwise eligible non-embeddable destinations remain outbound-only, never playable/embed media;
-- provider destination evidence remains external media evidence and never defines canonical Recording identity.
-
-Observed closure:
-
-- Candidate verification contract: PASS.
-- Canonical verification: PASS.
-- Exact closed HEAD: `17d9606a9094f879d9a467cf4ba47e7753bdecb0`.
-- Tracked tree: clean at seal.
-- Local/upstream relationship: synchronized at seal.
+Observed closure: Candidate PASS, canonical PASS, exact closed HEAD `17d9606a9094f879d9a467cf4ba47e7753bdecb0`, clean and synchronized.
 
 ### 18.6.2 — Freshness + stale/unavailable operational state
 
-Implemented source intent:
-
-- `ProviderDestinationPreference` remains the single owner of the 30-day freshness and public eligibility semantics;
-- the domain policy emits stable reason codes for provider approval/enabled state, review state, privacy, freshness and outbound URL safety;
-- `ProviderDestinationAttention` is a read-only Admin projection over existing `provider_destinations` evidence;
-- operator state distinguishes `Chưa kiểm tra`, `Quá hạn kiểm tra`, `Không khả dụng`, `Sẵn sàng phát` and `Chỉ mở ngoài`;
-- unknown freshness is fail-closed; stale evidence stays persisted but is not public eligible;
-- no migration, route, scheduler or remediation mutation is introduced by 18.6.2.
-
-Observed closure:
-
-- Pre-closure impact verification: PASS.
-- Candidate verification contract: PASS.
-- Canonical verification: PASS.
-- Exact closed HEAD: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`.
-- Tracked tree: clean at seal.
-- Local/upstream relationship: synchronized at seal.
+Observed closure: pre-closure impact PASS, candidate PASS, canonical PASS, exact closed HEAD `f06e99190e9dc4b14ad9047f30af0dd87b10fea1`, clean and synchronized.
 
 ### 18.6.3 — YouTube/media verification quality convergence
 
-Implemented source intent:
-
-- `VideoDestinationDiscovery` separates public approval verification from exact-resource inspection;
-- YouTube search remains actionable/public-only, while inspection preserves observed privacy and embeddability evidence for re-verification;
-- approval requires explicit public privacy evidence but permits public non-embeddable media as outbound-only evidence;
-- `YouTubeDestinationWorkbench::reverify()` refreshes observed provider metadata and `last_checked_at` without changing canonical Recording linkage, review state, or original `verified_at` approval evidence;
-- missing/inaccessible YouTube resources remain persisted as historical evidence and are marked fail-closed/unavailable rather than silently deleted;
-- provider resource/channel/title evidence remains external media evidence and never becomes canonical Recording identity;
-- no route, scheduler, schema or provider expansion was introduced.
-
-Observed closure:
-
-- Pre-closure impact verification: PASS.
-- Candidate verification contract: PASS.
-- Canonical verification: PASS.
-- Exact closed HEAD: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`.
-- Tracked tree: clean at seal.
-- Local/upstream relationship: synchronized at seal.
+Observed closure: pre-closure impact PASS, candidate PASS, canonical PASS, exact closed HEAD `1a88d3915cef69a33845d4f1b2db34b103dcf6ff`, clean and synchronized.
 
 ### 18.6.4 — Public selected-destination projection + explainability
 
-Implemented source intent:
-
-- `PublicProviderDestinationProjection` defines explicit public states `playable`, `outbound_only`, and `no_selection` plus bounded reason codes;
-- `EloquentProviderDestinationSelector::project()` reuses `ProviderDestinationPreference` for eligibility, deterministic winner and embeddability instead of creating a second policy owner;
-- `RecordingMediaExperience` exposes public-safe state, reason codes, selection explanation and provider provenance without leaking raw evidence, credentials, quota/rate state, operator review/audit metadata or persistence internals;
-- the public media component renders playable, outbound-only and no-selection states explicitly;
-- provider media remains external evidence and does not mutate canonical Recording identity;
-- no route, migration, scheduler, provider expansion or opaque ranking behavior was introduced.
-
-Observed closure:
-
-- Candidate verification contract: PASS.
-- Canonical verification: PASS.
-- Exact closed HEAD: `76f35c4fcf048ddccfb239c2845e8e872587a36c`.
-- Tracked tree: clean at seal.
-- Local/upstream relationship: synchronized at seal.
+Observed closure: candidate PASS, canonical PASS, exact closed HEAD `76f35c4fcf048ddccfb239c2845e8e872587a36c`, clean and synchronized.
 
 Any tracked 18.6.5 change is a new tree and does not reuse 18.6.4 closure evidence.
 
@@ -93,52 +32,48 @@ Any tracked 18.6.5 change is a new tree and does not reuse 18.6.4 closure eviden
 
 ### 18.6.5 — Admin remediation mutation UX where justified
 
-Planned source intent:
+Implemented source intent now under verification:
 
-- inventory current Admin provider operations routing/controller/view boundaries plus authorization and audit mechanisms before adding a mutation;
-- prefer a single-destination re-verification action where operator attention state already shows stale/unknown/unavailable evidence and the provider has an existing verification owner;
-- reuse `YouTubeDestinationWorkbench::reverify()` for YouTube destination refresh; controllers/views must not write `ProviderDestination` directly;
-- retain existing provider credential/quota/rate safeguards and record the operator action through the established audit boundary;
-- treat re-verification as evidence refresh, not as a promise that the destination becomes playable: private, missing and non-embeddable outcomes remain valid observed results;
-- preserve canonical Recording linkage, review state and original verification lineage unless an existing dedicated owner explicitly governs a different mutation;
-- fail closed for unsupported providers or unsupported remediation actions;
-- no bulk remediation, scheduler, generic CRUD, public mutation route, schema expansion or provider breadth in this slice.
+- inventory confirmed the existing `admin.providers.mutate` route is already protected by Admin auth, `can:manage-providers` and `password.confirm`, so no new mutation route is required;
+- `ProviderMutationController` accepts only the bounded `destination_reverify` addition plus a required destination ID and delegates to the existing mutation service;
+- `ProviderMutationService::reverifyDestination()` locks provider/destination, verifies provider ownership, fails closed for non-YouTube providers, preserves idempotency, invokes `YouTubeDestinationWorkbench::reverify()`, and records immutable provider-operation plus privileged audit evidence;
+- audit before/after state contains only bounded operational destination evidence and retains canonical entity linkage, review state and original verification lineage for inspection;
+- the Admin attention panel exposes `Kiểm tra lại` only for YouTube destinations requiring attention and still requires an operator rationale;
+- re-verification success means provider evidence was observed/refreshed, not that the destination became playable;
+- no schema, public mutation route, scheduler, bulk remediation, provider expansion or generic CRUD was added.
 
-Expected focused regression:
+Focused regression added for:
 
-- unauthorized users cannot invoke remediation;
-- authorized Admin remediation uses the existing provider verification/write owner;
-- audit evidence is recorded for the operator mutation;
-- successful public/embeddable refresh updates observation evidence and freshness;
-- private/non-embeddable/missing refresh outcomes remain persisted and fail closed correctly;
-- unsupported provider remediation is rejected without direct persistence fallback;
-- canonical entity linkage, review state and original verification lineage remain unchanged by re-verification.
+- stale YouTube destination re-verification through the mutation service;
+- private/non-embeddable observed outcome while preserving canonical linkage/review/`verified_at`;
+- immutable `ProviderOperationAudit` before/after evidence;
+- privileged audit invocation;
+- idempotent repeat submission avoiding a second provider request/audit row;
+- rejection when the destination is submitted through the wrong provider boundary.
 
 ## Focused verification evidence
 
 Pending on the current 18.6.5 tree. Do not record PASS until observed.
 
-Expected verification sequence after implementation:
+Required local sequence:
 
 ```text
-Pint write on changed 18.6.5 PHP
-Pint --test on changed 18.6.5 PHP
-focused Admin provider remediation feature tests
-existing YouTube destination re-verification regression
+Pint write + --test on changed 18.6.5 PHP
+./songchart dev test tests/Feature/Providers/ProviderDestinationRemediationTest.php
+./songchart dev test tests/Feature/Providers/YouTubeVideoDestinationTest.php
 existing ProviderDestinationAttention regression
-focused PHPStan on changed production PHP
+focused PHPStan on ProviderMutationController + ProviderMutationService
+manual Admin URL smoke with configured YouTube provider/credential
 ./songchart impact --diff
 ./songchart reconcile
 ./songchart impact --verify
 ```
 
-## Known correctives during Stage 18.6
+The live Admin/YouTube smoke is release-confidence evidence only. It must not replace deterministic tests or become a network/quota-dependent canonical gate.
 
-- Repository-state governance exposed the Stage 18.6 current-stage marker/checkpoint heading drift; the owner document was corrected rather than weakening the verifier.
-- Candidate metadata was advanced from Stage 18.5 to Stage 18.6 before generated project context was committed.
-- Formatter drift and PHPStan type-contract errors were corrected at source before 18.6.1 closure.
-- 18.6.2 verification corrected a redundant nullsafe enum access and an invalid overlength ULID test fixture without weakening PHPStan or schema authority.
-- 18.6.3 verification corrected a timestamp round-trip precision defect in its regression fixture by comparing persisted `verified_at` evidence; production timestamp semantics and schema were left unchanged.
+## AI-assisted verification position
+
+No AI-authored pass/fail mechanism is introduced in 18.6.5. AI may orchestrate the deterministic existing gates, inspect captured failure evidence and patch the semantic owner. A new repository-level AI/workflow verification mechanism would be a separate workflow-mechanism change and would require the owning Markdown authority, machine contract/routing and permanent regression in the same logical change.
 
 ## Candidate / canonical closure
 
