@@ -16,7 +16,7 @@ final class ProviderOperationalAssessor
     {
         $issues = [];
         $slug = (string) $provider->getAttribute('slug');
-        $status = ProviderStatus::from((string) $provider->getRawOriginal('status'));
+        $status = $provider->status;
 
         if (ProviderTaxonomy::definition($slug) === null) {
             $issues[] = ProviderRuntimeIssueCode::TaxonomyUnregistered;
