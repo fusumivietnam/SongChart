@@ -1,6 +1,6 @@
 # Stage 18.6 Validation Report — Provider Destination & Media Quality
 
-Status: in progress. Record only verification actually observed for the active Stage 18.6 tree.
+Status: final closure in progress. Record only verification actually observed for the active Stage 18.6 tree.
 
 ## Accepted baseline
 
@@ -26,54 +26,73 @@ Observed closure: pre-closure impact PASS, candidate PASS, canonical PASS, exact
 
 Observed closure: candidate PASS, canonical PASS, exact closed HEAD `76f35c4fcf048ddccfb239c2845e8e872587a36c`, clean and synchronized.
 
-Any tracked 18.6.5 change is a new tree and does not reuse 18.6.4 closure evidence.
-
-## Active slice
-
 ### 18.6.5 — Admin remediation mutation UX where justified
 
-Implemented source intent now under verification:
+Implemented source intent:
 
-- inventory confirmed the existing `admin.providers.mutate` route is already protected by Admin auth, `can:manage-providers` and `password.confirm`, so no new mutation route is required;
-- `ProviderMutationController` accepts only the bounded `destination_reverify` addition plus a required destination ID and delegates to the existing mutation service;
-- `ProviderMutationService::reverifyDestination()` locks provider/destination, verifies provider ownership, fails closed for non-YouTube providers, preserves idempotency, invokes `YouTubeDestinationWorkbench::reverify()`, and records immutable provider-operation plus privileged audit evidence;
-- audit before/after state contains only bounded operational destination evidence and retains canonical entity linkage, review state and original verification lineage for inspection;
-- the Admin attention panel exposes `Kiểm tra lại` only for YouTube destinations requiring attention and still requires an operator rationale;
-- re-verification success means provider evidence was observed/refreshed, not that the destination became playable;
+- the existing `admin.providers.mutate` route remains the only Admin provider-operation mutation surface used by this slice and retains Admin auth, `can:manage-providers` and `password.confirm` protections;
+- `ProviderMutationController` accepts the bounded `destination_reverify` action plus required destination ID and remains a transport adapter;
+- `ProviderMutationService::reverifyDestination()` locks provider/destination, verifies provider ownership, fails closed for unsupported providers, preserves idempotency, invokes `YouTubeDestinationWorkbench::reverify()`, and records immutable provider-operation plus privileged audit evidence;
+- re-verification refreshes provider-observed evidence/`last_checked_at` while preserving canonical entity linkage, review state and original `verified_at` lineage;
+- Admin destination attention exposes `Kiểm tra lại` only for YouTube destinations requiring attention;
 - no schema, public mutation route, scheduler, bulk remediation, provider expansion or generic CRUD was added.
 
-Focused regression added for:
+Observed closure:
 
-- stale YouTube destination re-verification through the mutation service;
-- private/non-embeddable observed outcome while preserving canonical linkage/review/`verified_at`;
-- immutable `ProviderOperationAudit` before/after evidence;
-- privileged audit invocation;
-- idempotent repeat submission avoiding a second provider request/audit row;
-- rejection when the destination is submitted through the wrong provider boundary.
+- Focused formatter/PHPStan/remediation regressions: PASS as reported on the final 18.6.5 tree.
+- Candidate verification contract: PASS.
+- Canonical verification: PASS.
+- Exact closed HEAD: `2e4b1752a6df4bc8eb00a40334608e582ee75efd`.
+- Tracked tree: clean at seal.
+- Local/upstream relationship: synchronized at seal.
 
-## Focused verification evidence
+Any tracked final-closure checkpoint change after `2e4b1752a6df4bc8eb00a40334608e582ee75efd` is a new tree and does not reuse 18.6.5 closure evidence as Stage 18.6 final evidence.
 
-Pending on the current 18.6.5 tree. Do not record PASS until observed.
+## Final Stage 18.6 closure
 
-Required local sequence:
+No additional product behavior is planned. The final closure tree must prove the complete task contract across the cumulative Stage 18.6 behavior delivered by 18.6.1–18.6.5.
+
+Acceptance surfaces to retain on the final tree:
+
+- provider-neutral deterministic public destination eligibility/preference;
+- fail-closed freshness/privacy/provider/review/URL semantics;
+- playable versus outbound-only public projection with bounded explainability;
+- YouTube exact-resource re-verification preserving privacy, embeddability, availability and canonical-identity boundaries;
+- Admin stale/unknown/unavailable attention state;
+- single-destination remediation through existing authorization, provider workbench, idempotency and audit boundaries;
+- no provider media identifier becoming canonical Recording identity;
+- no broad provider expansion, opaque AI ranking, speculative schema/scheduler or controller persistence.
+
+## Final verification evidence
+
+Pending on the current final-checkpoint tree. Do not record Stage 18.6 PASS until observed on one exact tree.
+
+Required sequence:
 
 ```text
-Pint write + --test on changed 18.6.5 PHP
-./songchart dev test tests/Feature/Providers/ProviderDestinationRemediationTest.php
-./songchart dev test tests/Feature/Providers/YouTubeVideoDestinationTest.php
-existing ProviderDestinationAttention regression
-focused PHPStan on ProviderMutationController + ProviderMutationService
-manual Admin URL smoke with configured YouTube provider/credential
 ./songchart impact --diff
 ./songchart reconcile
+# commit only expected generated authority changes if any
 ./songchart impact --verify
+# run focused tests selected by impact, ensuring cumulative provider destination/media surfaces remain covered
+./songchart candidate
+./songchart verify
+git rev-parse HEAD
+git status --short
+git log --oneline @{upstream}..HEAD
+git log --oneline HEAD..@{upstream}
+git push
 ```
 
-The live Admin/YouTube smoke is release-confidence evidence only. It must not replace deterministic tests or become a network/quota-dependent canonical gate.
+The final exact HEAD must be clean, pushed and synchronized. Any tracked change after canonical PASS invalidates final Stage 18.6 closure evidence.
+
+## Release-confidence smoke position
+
+A live Admin/YouTube URL smoke remains useful release-confidence evidence but is not a deterministic canonical gate because network, credentials and provider quota can vary. It supplements rather than replaces repository verification.
 
 ## AI-assisted verification position
 
-No AI-authored pass/fail mechanism is introduced in 18.6.5. AI may orchestrate the deterministic existing gates, inspect captured failure evidence and patch the semantic owner. A new repository-level AI/workflow verification mechanism would be a separate workflow-mechanism change and would require the owning Markdown authority, machine contract/routing and permanent regression in the same logical change.
+No AI-authored pass/fail mechanism is introduced in Stage 18.6. AI may orchestrate deterministic existing gates, inspect captured failure evidence and patch the semantic owner. A repository-level AI/workflow verification mechanism remains a separate workflow-mechanism change requiring owning Markdown authority, machine contract/routing and permanent regression in the same logical change.
 
 ## Candidate / canonical closure
 
@@ -81,8 +100,9 @@ No AI-authored pass/fail mechanism is introduced in 18.6.5. AI may orchestrate t
 - 18.6.2 exact closure: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1` PASS.
 - 18.6.3 exact closure: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff` PASS.
 - 18.6.4 exact closure: `76f35c4fcf048ddccfb239c2845e8e872587a36c` PASS.
-- 18.6.5 candidate: not run on the current changed tree.
-- 18.6.5 canonical: not run on the current changed tree.
-- 18.6.5 exact closed HEAD: not established.
+- 18.6.5 exact closure: `2e4b1752a6df4bc8eb00a40334608e582ee75efd` PASS.
+- Stage 18.6 final candidate: not run on the current final-checkpoint tree.
+- Stage 18.6 final canonical: not run on the current final-checkpoint tree.
+- Stage 18.6 final exact closed HEAD: not established.
 
-Any later tracked change invalidates closure evidence for the previous exact HEAD and must be reflected here before calling the new tree closed.
+After governed PR acceptance on `main`, move completed Stage 18.6 chronology into `docs/project/DEVELOPMENT_HISTORY.md` and remove completed Stage 18.6 work from the future-only roadmap as part of the next accepted-tree checkpoint, not before.
