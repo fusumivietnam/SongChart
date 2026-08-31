@@ -68,42 +68,65 @@ Observed closure:
 - Tracked tree: clean at seal.
 - Local/upstream relationship: synchronized at seal.
 
-Any tracked 18.6.4 change is a new tree and does not reuse 18.6.3 closure evidence.
+### 18.6.4 — Public selected-destination projection + explainability
+
+Implemented source intent:
+
+- `PublicProviderDestinationProjection` defines explicit public states `playable`, `outbound_only`, and `no_selection` plus bounded reason codes;
+- `EloquentProviderDestinationSelector::project()` reuses `ProviderDestinationPreference` for eligibility, deterministic winner and embeddability instead of creating a second policy owner;
+- `RecordingMediaExperience` exposes public-safe state, reason codes, selection explanation and provider provenance without leaking raw evidence, credentials, quota/rate state, operator review/audit metadata or persistence internals;
+- the public media component renders playable, outbound-only and no-selection states explicitly;
+- provider media remains external evidence and does not mutate canonical Recording identity;
+- no route, migration, scheduler, provider expansion or opaque ranking behavior was introduced.
+
+Observed closure:
+
+- Candidate verification contract: PASS.
+- Canonical verification: PASS.
+- Exact closed HEAD: `76f35c4fcf048ddccfb239c2845e8e872587a36c`.
+- Tracked tree: clean at seal.
+- Local/upstream relationship: synchronized at seal.
+
+Any tracked 18.6.5 change is a new tree and does not reuse 18.6.4 closure evidence.
 
 ## Active slice
 
-### 18.6.4 — Public selected-destination projection + explainability
+### 18.6.5 — Admin remediation mutation UX where justified
 
-Implemented source intent now under verification:
+Planned source intent:
 
-- `PublicProviderDestinationProjection` defines explicit public states `playable`, `outbound_only`, and `no_selection` plus bounded reason codes;
-- `EloquentProviderDestinationSelector::project()` derives no-selection reason codes from `ProviderDestinationPreference::publicEligibilityIssues()` and uses the same preference owner for deterministic selection and embeddability;
-- the existing `select()` method remains as a compatibility facade over the new projection so other consumers do not receive a policy fork;
-- `RecordingMediaExperience` exposes public-safe state, reason codes, selection explanation and provider provenance without leaking raw evidence, credentials, quota/rate state, operator review/audit metadata or persistence internals;
-- the public media Blade component renders playable, outbound-only and no-selection states explicitly;
-- provider media remains external evidence and does not mutate canonical Recording identity;
-- no route, migration, scheduler, provider expansion or opaque ranking behavior is introduced.
+- inventory current Admin provider operations routing/controller/view boundaries plus authorization and audit mechanisms before adding a mutation;
+- prefer a single-destination re-verification action where operator attention state already shows stale/unknown/unavailable evidence and the provider has an existing verification owner;
+- reuse `YouTubeDestinationWorkbench::reverify()` for YouTube destination refresh; controllers/views must not write `ProviderDestination` directly;
+- retain existing provider credential/quota/rate safeguards and record the operator action through the established audit boundary;
+- treat re-verification as evidence refresh, not as a promise that the destination becomes playable: private, missing and non-embeddable outcomes remain valid observed results;
+- preserve canonical Recording linkage, review state and original verification lineage unless an existing dedicated owner explicitly governs a different mutation;
+- fail closed for unsupported providers or unsupported remediation actions;
+- no bulk remediation, scheduler, generic CRUD, public mutation route, schema expansion or provider breadth in this slice.
 
-Focused regression added for:
+Expected focused regression:
 
-- playable fresh approved embeddable YouTube destination;
-- outbound-only fresh approved public non-embeddable destination;
-- stale destination producing `no_selection` plus freshness reason code;
-- private destination producing `no_selection` plus privacy reason code without exposing its URL;
-- newer private destination not shadowing the deterministic eligible public winner.
+- unauthorized users cannot invoke remediation;
+- authorized Admin remediation uses the existing provider verification/write owner;
+- audit evidence is recorded for the operator mutation;
+- successful public/embeddable refresh updates observation evidence and freshness;
+- private/non-embeddable/missing refresh outcomes remain persisted and fail closed correctly;
+- unsupported provider remediation is rejected without direct persistence fallback;
+- canonical entity linkage, review state and original verification lineage remain unchanged by re-verification.
 
 ## Focused verification evidence
 
-Pending on the current 18.6.4 tree. Do not record PASS until observed.
+Pending on the current 18.6.5 tree. Do not record PASS until observed.
 
-Required focused checks:
+Expected verification sequence after implementation:
 
 ```text
-Pint write on changed 18.6.4 PHP
-Pint --test on changed 18.6.4 PHP
-./songchart dev test tests/Feature/Catalog/RecordingMediaExperienceTest.php
-./songchart dev test tests/Unit/Providers/ProviderDestinationPreferenceTest.php
-focused PHPStan on PublicProviderDestinationProjection, EloquentProviderDestinationSelector and RecordingMediaExperience
+Pint write on changed 18.6.5 PHP
+Pint --test on changed 18.6.5 PHP
+focused Admin provider remediation feature tests
+existing YouTube destination re-verification regression
+existing ProviderDestinationAttention regression
+focused PHPStan on changed production PHP
 ./songchart impact --diff
 ./songchart reconcile
 ./songchart impact --verify
@@ -122,8 +145,9 @@ focused PHPStan on PublicProviderDestinationProjection, EloquentProviderDestinat
 - 18.6.1 exact closure: `17d9606a9094f879d9a467cf4ba47e7753bdecb0` PASS.
 - 18.6.2 exact closure: `f06e99190e9dc4b14ad9047f30af0dd87b10fea1` PASS.
 - 18.6.3 exact closure: `1a88d3915cef69a33845d4f1b2db34b103dcf6ff` PASS.
-- 18.6.4 candidate: not run on the current changed tree.
-- 18.6.4 canonical: not run on the current changed tree.
-- 18.6.4 exact closed HEAD: not established.
+- 18.6.4 exact closure: `76f35c4fcf048ddccfb239c2845e8e872587a36c` PASS.
+- 18.6.5 candidate: not run on the current changed tree.
+- 18.6.5 canonical: not run on the current changed tree.
+- 18.6.5 exact closed HEAD: not established.
 
 Any later tracked change invalidates closure evidence for the previous exact HEAD and must be reflected here before calling the new tree closed.
