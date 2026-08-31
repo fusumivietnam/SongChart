@@ -25,10 +25,15 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - No bypass of Laravel Gate, password confirmation, privileged audit, provider credential/rate controls or canonical identity boundaries.
 - No network/provider smoke check promoted to canonical deterministic verification.
 - No opaque AI-operated production mutation surface.
+- No universal JSON schema or generic integration framework that duplicates typed domain/provider owners.
 
 ## Acceptance criteria
 
 - A supported first-release deployment topology is explicit, minimal and derived from current runtime authority.
+- Cross-boundary data representation rules are explicit for identifiers, timestamps, null/collection semantics, URLs, machine reason codes and provider evidence.
+- Provider identity, category, operational role and capability are distinct concepts with one typed taxonomy owner.
+- Unknown provider category/capability values fail fast instead of silently becoming new formats.
+- Provider operational readiness is derived consistently from taxonomy, enablement, policy status, configuration/credentials and health evidence; unknown health is not treated as healthy.
 - Production environment/secrets ownership is documented and fail closed for required values without tracked real secrets.
 - Web, queue worker and scheduler lifecycle are production-operable with clear restart/failure behavior.
 - PostgreSQL 18 production persistence has a documented and verified backup/restore path.
@@ -48,10 +53,20 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - Identify supported process topology and explicit gaps.
 - Do not add deployment implementation until topology is explicit.
 
+### 19.0.1.1 — Data Contract + Provider Taxonomy Convergence
+
+- Define one cross-boundary representation authority for recurring data shapes instead of allowing controller/view/integration-specific formatting.
+- Define typed provider category, operational role and capability codes over the existing provider registry schema.
+- Classify current providers as data, destination or service integrations without changing canonical identity semantics.
+- Seed current known capabilities from one taxonomy registry and reject unknown category/capability strings at the persistence boundary.
+- Define stable provider operational state and runtime reason codes for later Admin/health/config consumers.
+- Keep existing persisted category values compatible; no schema migration is required for this convergence slice.
+
 ### 19.0.2 — Secrets/environment hardening
 
 - Define production environment contract and secret injection boundaries.
 - Add fail-closed configuration validation where justified.
+- Use provider taxonomy/capabilities to validate enabled service/provider configuration without inventing per-integration formats.
 - Never commit real secret values.
 
 ### 19.0.3 — Queue/scheduler production runtime
@@ -63,7 +78,7 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 ### 19.0.4 — Observability + alerting
 
 - Reuse existing Laravel/runtime observability primitives where possible.
-- Define actionable production health/failure signals.
+- Define actionable production health/failure signals using stable machine reason codes.
 - Avoid dashboards/alerts without an operator use case.
 
 ### 19.0.5 — Backup/recovery
@@ -92,6 +107,8 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 
 Inventory determines exact paths. Expected areas include:
 
+- `app/Domain/Providers` typed taxonomy/readiness semantics and existing provider models/seed data where required;
+- shared domain/provider documentation for cross-boundary data shape and provider classification;
 - Docker/Compose and Caddy runtime configuration;
 - environment templates/config validation;
 - Laravel queue/scheduler/runtime entrypoints;
@@ -100,7 +117,7 @@ Inventory determines exact paths. Expected areas include:
 - deployment/release/backup scripts and docs where already owned or explicitly introduced;
 - engineering/release authorities only when their semantics actually change.
 
-Product domain/application code is out of scope unless a concrete production blocker requires a bounded corrective.
+Product feature behavior remains out of scope unless a concrete production blocker requires a bounded corrective.
 
 ## Security and secrets
 
@@ -109,11 +126,14 @@ Product domain/application code is out of scope unless a concrete production blo
 - Existing provider credential ownership remains authoritative.
 - Existing authorization and privileged audit remain mandatory for privileged mutations.
 - Any production diagnostics must redact credentials, tokens, cookies and private configuration values.
+- Service providers do not gain catalog import/canonical mutation capability merely because they share the provider registry.
 
 ## Data and recovery
 
 - PostgreSQL 18 remains release-authoritative.
 - Historical migrations remain immutable.
+- Cross-boundary representation follows `docs/project/domain/DATA_CONTRACT.md`.
+- Provider classification follows `docs/providers/PROVIDER_TAXONOMY.md` and the typed `ProviderTaxonomy` owner.
 - Backup/recovery must prove restore to a usable application state rather than only prove backup file creation.
 - Destructive verification must use isolated test/recovery targets, never the development or production database.
 
@@ -164,12 +184,14 @@ Do not add a convenience script that becomes an unowned second verification auth
 
 ## AI-assisted operations boundary
 
-AI may assist development by reading deterministic verification evidence and recommending/implementing bounded changes. Production AI operations, if introduced later, begin read-only with `observe → explain → recommend`. Any mutation must pass through the same governed application action, authorization and audit surfaces as human Admin operations.
+AI may assist development by reading deterministic verification evidence and recommending/implementing bounded changes. Production AI operations, if introduced later, begin read-only with `observe → explain → recommend`. Any mutation must pass through the same governed application action, authorization and audit surfaces as human Admin operations. AI providers remain service providers unless a separately approved capability contract explicitly grants a bounded data operation; they never gain canonical mutation implicitly.
 
 ## Documentation impact
 
 - `docs/project/DEVELOPMENT_STATE.md` owns operational current state.
 - This task contract owns Stage 19 scope/acceptance.
+- `docs/project/domain/DATA_CONTRACT.md` owns recurring cross-boundary representation rules.
+- `docs/providers/PROVIDER_TAXONOMY.md` owns provider classification vocabulary.
 - `docs/project/docs/ROADMAP.md` stays active/future-only.
 - `docs/project/DEVELOPMENT_HISTORY.md` records accepted Stage 18.6 chronology and later Stage 19 acceptance.
 - Validation evidence for Stage 19 belongs in `docs/foundation/STAGE_19_0_VALIDATION_REPORT.md`.
