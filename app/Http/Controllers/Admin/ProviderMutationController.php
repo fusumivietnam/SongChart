@@ -21,9 +21,34 @@ final class ProviderMutationController extends Controller
 
     public function provider(Request $request, Provider $provider, ProviderMutationService $mutations): RedirectResponse
     {
-        $validated = $request->validate(['action' => ['required', Rule::in(['enable', 'disable', 'retire'])], 'rationale' => ['required', 'string', 'min:10', 'max:2000'], 'idempotency_key' => ['required', 'string', 'max:96']]);
+        $validated = $request->validate([
+            'action' => ['required', Rule::in(['enable', 'disable', 'retire', 'destination_reverify'])],
+            'destination_id' => ['required_if:action,destination_reverify', 'nullable', 'string', 'max:26'],
+            'rationale' => ['required', 'string', 'min:10', 'max:2000'],
+            'idempotency_key' => ['required', 'string', 'max:96'],
+        ]);
         /** @var User $actor */ $actor = $request->user();
-        $mutations->mutateProvider($provider, (string) $validated['action'], $actor, (string) $validated['rationale'], (string) $validated['idempotency_key']);
+        $action = (string) $validated['action'];
+
+        if ($action === 'destination_reverify') {
+            $mutations->reverifyDestination(
+                $provider,
+                (string) $validated['destination_id'],
+                $actor,
+                (string) $validated['rationale'],
+                (string) $validated['idempotency_key'],
+            );
+
+            return back()->with('status', 'Destination verification evidence refreshed.');
+        }
+
+        $mutations->mutateProvider(
+            $provider,
+            $action,
+            $actor,
+            (string) $validated['rationale'],
+            (string) $validated['idempotency_key'],
+        );
 
         return back()->with('status', 'Provider operation completed.');
     }
