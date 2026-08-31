@@ -9,6 +9,7 @@ use App\Domain\Providers\Enums\ProviderStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use InvalidArgumentException;
 
 /**
  * @property ProviderStatus $status
@@ -23,11 +24,11 @@ final class Provider extends Model
 
     protected static function booted(): void
     {
-        static::saving(function (self $provider): void {
+        self::saving(function (self $provider): void {
             $category = (string) $provider->getAttribute('category');
 
             if (ProviderCategory::tryFrom($category) === null) {
-                throw new \InvalidArgumentException("Unsupported provider category [{$category}].");
+                throw new InvalidArgumentException("Unsupported provider category [{$category}].");
             }
         });
     }
