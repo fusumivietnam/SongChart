@@ -14,6 +14,48 @@ GitHub is the only development handoff and upgrade source of truth.
 
 Do not create incremental source ZIPs, full Laragon-ready ZIPs, patch installers, or host-specific apply scripts for normal development handoff.
 
+## Repository-wide convergence rule
+
+Current typed/domain/machine contracts are the target state for the whole active repository, including legacy source, tests, fixtures, seeders and documentation when those surfaces are touched or exposed by verification.
+
+- Do not preserve obsolete synonyms merely because historical code used them.
+- Do not widen a current enum to accept a legacy value when the legacy value represented a different concept; migrate the consumer/fixture to the current owner instead.
+- Provider `category`, operational `role` and `capability` are distinct. Legacy values such as role-like categories or provider-specific capability spellings must converge to the typed taxonomy.
+- Repeated persisted machine states, reason codes and cross-boundary data shapes should consume their typed owner when one exists rather than repeat free-form strings.
+- Overview Markdown must not preserve an older alternative to a newer canonical contract. Correct the overview or replace duplicated prose with an authority pointer.
+- Historical migrations remain immutable even when legacy application/test vocabulary is normalized; persistence schema corrections still use governed forward migrations.
+- A compatibility alias is permitted only when an explicit public/persisted compatibility contract requires it and the removal/migration strategy is documented.
+
+When a broad gate exposes several legacy dialects of one semantic owner, inventory the whole affected vocabulary first and converge the group in one bounded corrective. Do not patch one failing literal at a time and repeatedly rerun the expensive closure lane.
+
+## AI focus rule
+
+AI/developers must resolve semantic ownership before implementation. The default question is not “what string makes the test pass?” but “which current authority owns this meaning?”
+
+For architecture, persistence, provider, UI-state, workflow or release work:
+
+1. read the current task and owning authority;
+2. read `./songchart context --json` when the repository exposes the fact there;
+3. prefer typed enums/contracts, registered factories/fixtures and generated context over reconstructed literals;
+4. treat a mismatch between legacy source and current authority as convergence work, not evidence that the authority should become ambiguous;
+5. keep the corrective bounded to the semantic owner and its registered consumers;
+6. add or extend a permanent machine guard when the drift class can recur.
+
+Do not create a second documentation truth source to make AI prompts shorter. Improve the existing authority, generated context, resolver or test fixture owner instead.
+
+## Mobile / GitHub-native operating mode
+
+GitHub is also the preferred control plane when the active operator is on a constrained device such as iPhone/iPad.
+
+- A remote/GitHub writer may implement bounded source changes after one-writer synchronization is established.
+- The mobile operator should normally perform short Git sync/verification commands rather than paste source code into Codespaces terminals.
+- Exact commit SHA, GitHub Actions run state, PR checks and uploaded failure evidence are preferred handoff/debug evidence.
+- PostgreSQL CI failures preserve `storage/logs/postgres-test-last-failure.log` as a short-retention GitHub Actions artifact named with the exact commit SHA and run attempt.
+- Failure artifacts are diagnostic/runtime evidence only; they do not become tracked repository authority and must not contain secrets.
+- GitHub Actions should automate deterministic verification/evidence transport that already has a repository owner. Do not move product/domain truth into workflow YAML.
+- Prefer native branch protection, required checks, PR review status, concurrency cancellation, artifacts and releases over custom orchestration when those GitHub primitives satisfy the requirement.
+- Do not reduce PR/main verification coverage merely to make mobile operation faster. Optimize iteration through focused local/remote gates and better evidence transport instead.
+
 ## Golden delivery workflow
 
 ```text
@@ -213,6 +255,8 @@ Required status checks and protected-branch controls remain GitHub-owned integra
 `composer release:package` remains a post-canonical release/deployment artifact command. It is not a development handoff mechanism and must not be used to synchronize devices or working copies.
 
 Release artifacts must never contain local secrets, `.env`, `.env.docker`, private certificates, database volumes, `vendor/`, `node_modules/`, logs, or mutable local runtime state unless an owning release contract explicitly requires a generated artifact.
+
+Release automation should prefer GitHub-native release/tag/check provenance once the accepted exact `main` SHA is known. GitHub Releases may transport governed release artifacts, but they do not replace SongChart candidate/canonical verification or the repository release package contract.
 
 ## Corrective candidates
 
