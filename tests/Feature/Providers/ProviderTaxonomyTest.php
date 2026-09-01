@@ -13,7 +13,6 @@ use App\Domain\Providers\ProviderTaxonomy;
 use App\Models\Provider;
 use App\Models\ProviderCapability;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use InvalidArgumentException;
 
 uses(RefreshDatabase::class);
 
