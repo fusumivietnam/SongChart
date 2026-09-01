@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "37a3c8b6d208fa259dc9cdc6c4b6eff2368437fceefe4cd17306635b2d005781",
+    "source_fingerprint": "5262fcd683f4ba17a2ad92d84813f63e017c5d2c693b2ec4a522bbbc6edac894",
     "candidate": {
         "stage": "18.6",
         "candidate": "v1",
@@ -1031,7 +1031,7 @@
         "docs/project/domain/schema-ownership.json": "61e2251e139d3ad41a56a675752cb0eb7249b00fae54a31ba5f5050973063f2b",
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "b0278efd3ac42af6e2ef1952d384f743a830ea6b478a0e7ec37f5744ea2b8792",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
-        "docs/project/engineering/ai-development-contract.json": "da4ded4e797a62add60bf0898d35a26fc0f7ee654384969af840605ba0ea3f9c",
+        "docs/project/engineering/ai-development-contract.json": "ce79b069eaada91dafe01db5fff59c6b07fcc419bd5af3a8c21a07c1c9fb1a14",
         "docs/project/engineering/verification-command-surface.json": "6710db98720fb53603e8c78eac140e761654485256743ee86f3a5d6767122280",
         "docs/project/engineering/verification-topology.json": "dc01f61790a856d6f6acaee9c9a36ca292d586c0c81cada45a14e05ca20ab42f",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
