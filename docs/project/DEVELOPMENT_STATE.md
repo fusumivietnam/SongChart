@@ -46,12 +46,14 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - 19.0.1 topology inventory is implemented in `docs/operations/PRODUCTION_TOPOLOGY.md`.
 - The supported first-release topology is one immutable SongChart application artifact/image reused by independent `web`, `queue` and `scheduler` processes behind Caddy, with PostgreSQL 18 and Redis as explicit dependencies.
 - Development PHP built-in server, bind-mounted repository/vendor/node_modules, local mkcert certificates, local DB credentials, disabled Admin 2FA and debug/design-lab defaults are rejected as production primitives.
+- 19.0.1.1 provider taxonomy convergence has been exercised by the canonical PostgreSQL CI lane after legacy fixture vocabulary was migrated to the current typed category/capability owners.
+- GitHub-native mobile evidence transport now preserves PostgreSQL failure logs as exact-head/run-scoped artifacts and CI checks out the exact PR head SHA rather than relying on the synthetic pull-request merge ref.
 
 ## In progress
 
 ### 19.0.1.1 — Data Contract + Provider Taxonomy Convergence
 
-Implementation is complete and pending deterministic verification:
+Implementation is complete and pending exact-tree closure verification:
 
 - `docs/project/domain/DATA_CONTRACT.md` now owns recurring cross-boundary representation rules for IDs, external IDs, timestamps, partial dates, null/collection semantics, URLs, machine reason codes, provider evidence and JSON configuration boundaries;
 - `docs/providers/PROVIDER_TAXONOMY.md` separates provider slug, broad category, operational role and concrete capability;
@@ -65,12 +67,22 @@ Implementation is complete and pending deterministic verification:
 
 ## Current blockers / risks
 
-- The new PHP source has not yet been locally formatted/static-analyzed/tested; no 19.0.1.1 PASS is recorded.
-- Existing historical/test fixtures legitimately using `category=music` remain compatible; a future storage rename to `catalog_data` is intentionally avoided because operational role/capability now carries the missing semantic distinction without a migration.
+- Exact-tree `./songchart impact --verify`, diagnostic audit, candidate and canonical closure are not yet recorded for the current Stage 19 tree.
+- `DEVELOPMENT_STATE.md` is a generated-context input, so this evidence refresh requires one deterministic reconcile/generated-only checkpoint before the next broad verification pass.
 - Production environment values remain ambiguous until 19.0.2 defines a hardened environment/secrets contract.
 - The existing `docker/verify/Dockerfile` and `compose.dev.yml` remain verification/development infrastructure, not production runtime.
 - Scheduler lifecycle, queue/Horizon restart policy, observability retention and PostgreSQL backup/restore remain later Stage 19 slices.
 - Any workflow mechanism change still requires owning Markdown authority, machine contract/routing and permanent regression in the same logical change.
+
+## Latest focused evidence
+
+- Generated authority was reconciled from exact branch tree `cc329eab3a43211aaf6459e2638c2252796caf57` and committed as generated-only checkpoint `477d74f228dc22087c3b7c7c8453ec74cdae7b4e`.
+- `candidate-verification.json` was aligned from Stage 18.6 to current Stage 19 in follow-up commit `98f38b8b3839ed57c4c268c4f6b30c0feb32580c`.
+- GitHub Actions run #169 checked out exact PR head `98f38b8b3839ed57c4c268c4f6b30c0feb32580c`.
+- PostgreSQL job in run #169: PASS.
+- Frontend build job in run #169: PASS.
+- Quality run #169 passed executable repository authority, regression ledger, schema/model/runtime/route/release/privileged-operation/candidate/toolchain gates and then stopped at the AI development protocol because this required `## Latest focused evidence` checkpoint section was missing.
+- No Stage 19 candidate PASS or canonical PASS is claimed from the focused/CI evidence above.
 
 ## Latest acceptance evidence
 
@@ -80,16 +92,15 @@ Implementation is complete and pending deterministic verification:
 - GitHub Actions run #161 on exact sealed head: PASS.
 - Accepted `main` merge commit: `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Stage 19 branch starts exactly from that accepted merge commit.
-- 19.0.1/19.0.1.1 current tree requires fresh verification because the taxonomy convergence introduced tracked PHP/test/docs changes.
+- Stage 19 remains open and requires fresh exact-tree closure evidence after the current authority checkpoint.
 
 ## Next required action
 
-1. Sync local workspace to the current Stage 19 branch head.
-2. Run Pint write on the changed PHP, inspect the diff, then Pint `--test`.
-3. Run `tests/Feature/Providers/ProviderTaxonomyTest.php` plus the provider registry/Admin provider regressions selected by impact.
-4. Run focused PHPStan on the new provider taxonomy/operational classes and changed models/seeder.
-5. Run `./songchart impact --diff`, `./songchart reconcile`, then `./songchart impact --verify`.
-6. Only after current-tree PASS close the convergence slice and proceed to 19.0.2 production environment/secrets hardening.
+1. Reconcile generated repository authority from the current Stage 19 exact tree and commit only expected `docs/project/generated/` outputs.
+2. Run `./songchart impact --verify` on that reconciled tree.
+3. Resolve any remaining focused/quality findings without weakening gates, then run `./songchart audit` as diagnostic evidence.
+4. Only after current-tree PASS close the convergence slice and proceed to 19.0.2 production environment/secrets hardening.
+5. Candidate/canonical closure remains deferred until the Stage 19 task contract reaches the appropriate exact-tree closure checkpoint.
 
 ## Documentation checkpoint discipline
 
