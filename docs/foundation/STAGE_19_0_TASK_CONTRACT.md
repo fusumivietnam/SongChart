@@ -26,6 +26,8 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - No network/provider smoke check promoted to canonical deterministic verification.
 - No opaque AI-operated production mutation surface.
 - No universal JSON schema or generic integration framework that duplicates typed domain/provider owners.
+- No permanent compatibility vocabulary solely to keep obsolete test/fixture/source spellings alive when a current typed contract owns the same meaning.
+- No custom CI orchestration framework when GitHub-native checks, concurrency, artifacts, protected branches or releases own the required integration behavior.
 
 ## Acceptance criteria
 
@@ -33,12 +35,15 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - Cross-boundary data representation rules are explicit for identifiers, timestamps, null/collection semantics, URLs, machine reason codes and provider evidence.
 - Provider identity, category, operational role and capability are distinct concepts with one typed taxonomy owner.
 - Unknown provider category/capability values fail fast instead of silently becoming new formats.
+- Legacy source/tests/fixtures/seeders exposed by current work converge to current typed/data contracts instead of causing the current contracts to accumulate obsolete synonyms.
+- Overview documentation does not contradict current typed/machine authorities; duplicated older conventions are corrected or reduced to pointers.
 - Provider operational readiness is derived consistently from taxonomy, enablement, policy status, configuration/credentials and health evidence; unknown health is not treated as healthy.
 - Production environment/secrets ownership is documented and fail closed for required values without tracked real secrets.
 - Web, queue worker and scheduler lifecycle are production-operable with clear restart/failure behavior.
 - PostgreSQL 18 production persistence has a documented and verified backup/restore path.
 - Redis/queue/cache/runtime dependencies have explicit production ownership and health expectations.
 - Observability covers actionable request/job/database/cache/runtime failure classes without exposing secrets.
+- GitHub CI preserves bounded non-secret failure evidence needed for rapid mobile/remote diagnosis without making runtime logs tracked source authority.
 - Production security review covers public/admin/auth/provider/secrets surfaces and preserves existing authorization/audit semantics.
 - Production smoke verification checks the deployed application end to end while keeping live external-provider checks non-canonical.
 - Candidate and canonical verification pass on the exact final Stage 19 tree.
@@ -60,7 +65,12 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - Classify current providers as data, destination or service integrations without changing canonical identity semantics.
 - Seed current known capabilities from one taxonomy registry and reject unknown category/capability strings at the persistence boundary.
 - Define stable provider operational state and runtime reason codes for later Admin/health/config consumers.
-- Keep existing persisted category values compatible; no schema migration is required for this convergence slice.
+- Keep existing persisted category values compatible where they are genuine categories; no schema migration is required for this convergence slice.
+- Converge touched/exposed legacy fixtures, seeders and source to the current taxonomy/data vocabulary. A legacy role-like category or provider-specific capability spelling is migrated to its current owner rather than added as an enum alias.
+- Converge overview documentation such as `DATA_MODEL.md` to the canonical `DATA_CONTRACT.md` when older wording is ambiguous.
+- Prefer canonical provider factory/state helpers and typed values for recurring test fixtures so future tests do not reconstruct provider vocabulary from raw strings.
+- Add/extend permanent architecture/static guards for recurring vocabulary drift when the affected owner can be checked deterministically.
+- Keep GitHub-native failure evidence transport bounded: PostgreSQL CI may upload the existing redacted failure log on failure, named by exact SHA/run attempt, with short retention.
 
 ### 19.0.2 — Secrets/environment hardening
 
@@ -109,11 +119,13 @@ Inventory determines exact paths. Expected areas include:
 
 - `app/Domain/Providers` typed taxonomy/readiness semantics and existing provider models/seed data where required;
 - shared domain/provider documentation for cross-boundary data shape and provider classification;
+- recurring provider test fixtures/factories where raw legacy vocabulary creates drift;
 - Docker/Compose and Caddy runtime configuration;
 - environment templates/config validation;
 - Laravel queue/scheduler/runtime entrypoints;
 - PostgreSQL/Redis operational configuration;
 - health/observability surfaces;
+- GitHub Actions evidence transport and integration checks when governed by the existing CI authority;
 - deployment/release/backup scripts and docs where already owned or explicitly introduced;
 - engineering/release authorities only when their semantics actually change.
 
@@ -127,6 +139,7 @@ Product feature behavior remains out of scope unless a concrete production block
 - Existing authorization and privileged audit remain mandatory for privileged mutations.
 - Any production diagnostics must redact credentials, tokens, cookies and private configuration values.
 - Service providers do not gain catalog import/canonical mutation capability merely because they share the provider registry.
+- CI failure artifacts are diagnostic evidence only, short-retained, non-secret and never a substitute for tracked authority or canonical evidence.
 
 ## Data and recovery
 
@@ -134,6 +147,7 @@ Product feature behavior remains out of scope unless a concrete production block
 - Historical migrations remain immutable.
 - Cross-boundary representation follows `docs/project/domain/DATA_CONTRACT.md`.
 - Provider classification follows `docs/providers/PROVIDER_TAXONOMY.md` and the typed `ProviderTaxonomy` owner.
+- Active legacy consumers converge toward those current authorities when touched; compatibility is explicit rather than inferred.
 - Backup/recovery must prove restore to a usable application state rather than only prove backup file creation.
 - Destructive verification must use isolated test/recovery targets, never the development or production database.
 
@@ -161,6 +175,8 @@ GENERATED-ONLY COMMIT (when needed)
 ./songchart impact --verify
 ```
 
+When a broad gate reports several failures caused by one legacy vocabulary owner, inventory the affected values/fixtures first, converge them in one bounded corrective, run focused coverage, and only then repeat the expensive lane.
+
 Stage closure:
 
 ```text
@@ -174,17 +190,19 @@ release package/tag from accepted main
 
 ## Workflow mechanism rule
 
-No new workflow command is planned by default. If Stage 19 proves a new verification/deployment mechanism is necessary, the same logical change must update:
+No new workflow orchestration framework is planned. If Stage 19 proves a new verification/deployment mechanism is necessary, the same logical change must update:
 
 - the owning Markdown engineering authority;
-- machine contract/routing;
+- machine contract/routing when applicable;
 - a permanent regression/consumer owner.
 
-Do not add a convenience script that becomes an unowned second verification authority.
+GitHub-native capabilities are preferred for integration concerns that GitHub already owns: PR checks, concurrency cancellation, branch protection, failure artifacts and accepted-main releases. Do not add a convenience script that becomes an unowned second verification authority.
 
 ## AI-assisted operations boundary
 
 AI may assist development by reading deterministic verification evidence and recommending/implementing bounded changes. Production AI operations, if introduced later, begin read-only with `observe → explain → recommend`. Any mutation must pass through the same governed application action, authorization and audit surfaces as human Admin operations. AI providers remain service providers unless a separately approved capability contract explicitly grants a bounded data operation; they never gain canonical mutation implicitly.
+
+For development AI, current authority beats historical spelling. AI must identify the semantic owner before changing code, prefer typed/generated repository facts over guessed literals, converge legacy consumers toward the current owner, and avoid broadening contracts simply to silence old fixtures. When deterministic GitHub failure evidence exists, use that exact SHA/run evidence before reconstructing a failure from prose.
 
 ## Documentation impact
 
@@ -192,6 +210,7 @@ AI may assist development by reading deterministic verification evidence and rec
 - This task contract owns Stage 19 scope/acceptance.
 - `docs/project/domain/DATA_CONTRACT.md` owns recurring cross-boundary representation rules.
 - `docs/providers/PROVIDER_TAXONOMY.md` owns provider classification vocabulary.
+- `docs/project/engineering/DELIVERY_WORKFLOW.md` owns repository convergence during delivery, mobile/GitHub-native handoff and failure-evidence transport semantics.
 - `docs/project/docs/ROADMAP.md` stays active/future-only.
 - `docs/project/DEVELOPMENT_HISTORY.md` records accepted Stage 18.6 chronology and later Stage 19 acceptance.
 - Validation evidence for Stage 19 belongs in `docs/foundation/STAGE_19_0_VALIDATION_REPORT.md`.
@@ -201,6 +220,7 @@ AI may assist development by reading deterministic verification evidence and rec
 - Current writer/owner: `stage-19.0-production-readiness-first-release`.
 - Base: accepted `main` merge `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Every handoff requires exact pushed commit state and no unresolved upstream divergence.
+- Mobile operation should use GitHub as the control/evidence plane and keep terminal interaction short; source changes are committed/pushed by the active writer rather than pasted across devices.
 - Any tracked change after canonical PASS invalidates closure evidence for that exact head.
 
 ## Rollback
