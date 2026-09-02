@@ -43,6 +43,7 @@ jobs:
       - name: PREPARE — generate deterministic authority
         run: |
           php scripts/project-context.php --write-source
+          php scripts/project-state.php --write-source
           php scripts/compile-repository-contracts.php --refresh-check
           git diff --check
 
@@ -152,7 +153,7 @@ jobs:
             echo '## Ready to promote'
             echo
             echo "- Exact SHA: $SONGCHART_PROMOTION_SHA"
-            echo '- PREPARE: generated authority reconciled'
+            echo '- PREPARE: generated project context + derived development state reconciled'
             echo '- CHECK: Quality + PostgreSQL + frontend passed'
             echo '- CLOSE: canonical verification passed without tracked-tree mutation'
             echo '- Human gate: merge this exact PR head in GitHub'
