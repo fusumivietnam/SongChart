@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "status": "active",
   "purpose": "Compact machine-readable knowledge authority for AI development, API planning, developer documentation and FAQ generation. This file is repository-owned and must not depend on chat memory.",
   "identity": {
@@ -13,6 +13,9 @@
     "docs/START_HERE.md",
     "docs/project/generated/project-context.json",
     "docs/project/engineering/consolidation-plan.json",
+    "docs/project/engineering/project-kernel-contract.json",
+    "docs/project/engineering/architecture-graph-contract.json",
+    "docs/project/engineering/use-case-contract.schema.json",
     "docs/project/release/versioning-policy.json",
     "docs/project/domain/DATA_CONTRACT.md",
     "docs/providers/PROVIDER_TAXONOMY.md",
@@ -27,7 +30,8 @@
     "verification": "GitHub Auto Closure plus accepted-main CI",
     "dependency_policy": "Laravel first-party, then mature documented package, then product-specific custom code",
     "optimization_policy": "Continuous per bounded tranche; do not wait for periodic architecture audits to discover known cleanup or automation opportunities.",
-    "versioning_policy": "Product version uses Semantic Versioning; build identity is derived from Git SHA and GitHub Actions evidence; Stage/tranche numbers are never product versions."
+    "versioning_policy": "Product version uses Semantic Versioning; build identity is derived from Git SHA and GitHub Actions evidence; Stage/tranche numbers are never product versions.",
+    "project_intelligence": "Project Kernel contracts normalize repository state, use cases and architecture graph data for CLI/CI/MCP/Admin consumers; expensive graph analysis is snapshot-based and never request-time."
   },
   "domain_boundaries": {
     "canonical_identity": "SongChart owns canonical music identity and reconciliation semantics unless a future proven package can preserve the same typed/product semantics with less custom code.",
@@ -41,7 +45,17 @@
     "mobile_first": true,
     "chat_is_not_memory_authority": true,
     "continuous_optimization_authority": "docs/project/engineering/consolidation-plan.json",
-    "versioning_authority": "docs/project/release/versioning-policy.json"
+    "versioning_authority": "docs/project/release/versioning-policy.json",
+    "project_kernel_authority": "docs/project/engineering/project-kernel-contract.json",
+    "architecture_graph_authority": "docs/project/engineering/architecture-graph-contract.json"
+  },
+  "project_intelligence": {
+    "compiler": "scripts/project-intelligence.php",
+    "snapshot_consistency": "eventual",
+    "runtime_storage": "storage/project-intelligence/{sha}/",
+    "admin_panels": ["Now", "Architecture", "Evolution", "Technology"],
+    "use_case_schema": "docs/project/engineering/use-case-contract.schema.json",
+    "rule": "Serve the latest completed snapshot and expose staleness; rebuild only through explicit/background refresh with single-flight concurrency."
   },
   "documentation_surfaces": {
     "api": {
@@ -51,7 +65,7 @@
     },
     "developer": {
       "status": "active",
-      "source": "project context, project knowledge, authority graph, command surface and package ownership"
+      "source": "project context, project knowledge, project intelligence graph, authority graph, command surface and package ownership"
     },
     "faq": {
       "status": "planned",
@@ -67,6 +81,7 @@
     "When touching legacy naming, converge active source to the canonical SongChart brand unless the text is immutable historical evidence.",
     "Prefer bounded migrations that remove replaced custom code rather than maintaining parallel implementations.",
     "Record deferred optimization in consolidation-plan.json with a target phase instead of leaving it only in chat or prose discussion.",
-    "Use docs/project/release/versioning-policy.json for product version, build identity, runtime display and graph snapshot version semantics; never derive product version from Stage/tranche identifiers."
+    "Use docs/project/release/versioning-policy.json for product version, build identity, runtime display and graph snapshot version semantics; never derive product version from Stage/tranche identifiers.",
+    "Use project-intelligence snapshots for architecture/use-case impact instead of rescanning the entire source in request paths; AI may request an explicit refresh when the snapshot is stale."
   ]
 }
