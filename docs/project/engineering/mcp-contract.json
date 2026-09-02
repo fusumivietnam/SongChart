@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "status": "design-locked",
+  "purpose": "Thin MCP adapter contract over SongChart Project Kernel resources. Repository/GitHub remain authority; MCP is a transport and query layer, not a memory database.",
+  "transport": {
+    "preferred": "stateless remote HTTP when exposed outside local development",
+    "local": "stdio or local HTTP adapter may be used for development",
+    "authentication": "required before any remote deployment",
+    "write_scope": "read-first in C1B; governed project mutations remain GitHub/Auto Closure operations"
+  },
+  "resources": {
+    "songchart://project/context": "normalized durable repository context",
+    "songchart://project/state": "derived repository state plus live work-lease overlay when available",
+    "songchart://graph/overview": "latest completed architecture graph snapshot metadata",
+    "songchart://graph/use-case/{id}": "bounded use-case subgraph",
+    "songchart://graph/route/{name}": "route-to-implementation trace",
+    "songchart://graph/class/{class}": "class dependency/inheritance neighborhood",
+    "songchart://technology/watchlist": "SWOT/ROI technology decisions from consolidation authority",
+    "songchart://release/version": "product version/build identity contract"
+  },
+  "tools": {
+    "songchart.current_state": {"side_effects": false},
+    "songchart.current_task": {"side_effects": false},
+    "songchart.impact": {"side_effects": false},
+    "songchart.trace_use_case": {"side_effects": false},
+    "songchart.trace_route": {"side_effects": false},
+    "songchart.graph_refresh": {"side_effects": true, "rule": "enqueue/execute a governed single-flight rebuild; never rebuild in an HTTP page request"},
+    "songchart.pr_status": {"side_effects": false},
+    "songchart.release_status": {"side_effects": false}
+  },
+  "framework_overlap_rule": "Do not duplicate Laravel Boost tools for framework docs, routes, schema, config, Artisan, logs or runtime inspection when Boost can own those capabilities. SongChart MCP owns product semantics, project state, graph/impact, technology decisions and promotion/release evidence.",
+  "memory_rule": "AI memory may retain user preferences only. Stage, PR, SHA, versions, architecture decisions and release evidence must be resolved from repository/GitHub authority."
+}
