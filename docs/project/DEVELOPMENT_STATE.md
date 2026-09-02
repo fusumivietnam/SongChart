@@ -15,7 +15,7 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Branch: `stage-19.0-production-readiness-first-release`.
 - Base: accepted Stage 18.6 merge commit `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Task contract: `docs/foundation/STAGE_19_0_TASK_CONTRACT.md`.
-- Strategy: turn the accepted product tree into a reproducible first production release without weakening existing canonical, provider, auth, audit, migration or verification authorities.
+- Strategy: turn the accepted product tree into a reproducible first production release while reducing AI ambiguity and mobile workflow friction without weakening canonical, provider, auth, audit, migration or verification authorities.
 
 ## Stage map
 
@@ -24,9 +24,11 @@ Status: operational checkpoint only. Repository authorities remain authoritative
         |
         +--> [IMPLEMENTED] 19.0.1 production topology + environment inventory
         |
-        +--> [VERIFIED / DOC RECLOSE] 19.0.1.1 data contract + provider taxonomy convergence
+        +--> [SEALED] 19.0.1.1 data contract + provider taxonomy convergence
         |
-        +--> [NEXT] 19.0.2 secrets/environment hardening
+        +--> [IMPLEMENTED / VERIFY] 19.0.1.2 mobile verification + AI UI design harness
+        |
+        +--> [IMPLEMENTING] 19.0.2 secrets/environment hardening
         |
         +--> [NEXT] 19.0.3 queue/scheduler production runtime
         |
@@ -44,77 +46,75 @@ Status: operational checkpoint only. Repository authorities remain authoritative
 - Stage 18.6 final exact head `0ba79a89994b0a2722f5f6c18a84af0045e88cc6` passed candidate/canonical verification and PR #15 CI before merge to accepted `main` commit `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Stage 19 branch was created directly from that accepted merge commit.
 - 19.0.1 topology inventory is implemented in `docs/operations/PRODUCTION_TOPOLOGY.md`.
-- The supported first-release topology is one immutable SongChart application artifact/image reused by independent `web`, `queue` and `scheduler` processes behind Caddy, with PostgreSQL 18 and Redis as explicit dependencies.
-- Development PHP built-in server, bind-mounted repository/vendor/node_modules, local mkcert certificates, local DB credentials, disabled Admin 2FA and debug/design-lab defaults are rejected as production primitives.
-- 19.0.1.1 data/provider convergence implementation is complete: recurring cross-boundary representations are owned by `DATA_CONTRACT.md`, provider category/role/capability are distinct typed concepts, and exposed legacy fixture/document vocabulary was migrated toward current authorities instead of retained as compatibility aliases.
-- GitHub-native mobile evidence transport preserves PostgreSQL failure logs as exact-head/run-scoped artifacts and CI checks out the exact PR head SHA rather than relying on the synthetic pull-request merge ref.
-- Legacy Stage 18.5 task-contract documentation exposed by the current quality gate was converged to the current official-source structure rather than exempted from the newer governance standard.
+- 19.0.1.1 converged cross-boundary data conventions and provider category/role/capability vocabulary into current typed/domain authorities; exposed legacy fixtures/docs were migrated rather than preserved as compatibility dialects.
+- 19.0.1.1 final documented-tree checkpoint `fea368104d6d941dd4968ff2b4faacab89d48976` passed `./songchart impact --verify`, `./songchart audit`, `./songchart candidate`, `./songchart verify`, finished with a clean tracked tree, and GitHub Actions run #174 passed on the same exact SHA.
+- GitHub-native PostgreSQL failure evidence is exact-head/run-scoped and CI checks out the exact PR head SHA.
 
 ## In progress
 
-### 19.0.1.1 — Data Contract + Provider Taxonomy Convergence
+### 19.0.1.2 — Mobile Verification + AI UI Design Harness
 
-Implementation and exact implementation-tree verification are complete. The remaining action is documentation-tree reclosure because recording that evidence changes tracked authority.
+Implemented intent pending current-tree verification:
 
-Verified implementation includes:
+- executable `./mobile` is a presentation-only adapter over canonical `./songchart impact --verify` and `./songchart close`;
+- successful mobile runs are compact and preserve full runtime output under `storage/logs`; failures print a bounded tail and preserve the full log path;
+- `--verbose` delegates directly to the canonical command and no gate is skipped, cached or reimplemented;
+- `verification-command-surface.json` owns the adapter semantics and `VerificationCommandSurfaceTest` permanently guards delegation/failure behavior;
+- `docs/ui/AI_DESIGN_HARNESS.md` keeps Impeccable/external design guidance below SongChart UI/domain authorities;
+- `.github/skills/songchart-impeccable/SKILL.md` gives GitHub Copilot project-local design guidance without vendoring Impeccable or adding a git submodule;
+- `docs/ui/ai-design-harness.json` is the machine-readable advisory contract and `DocumentationAiDesignHarnessTest` routes through existing AI/documentation governance;
+- external design findings remain supporting evidence only and cannot become canonical release evidence by themselves.
 
-- `docs/project/domain/DATA_CONTRACT.md` owns recurring cross-boundary representation rules for IDs, external IDs, timestamps, partial dates, null/collection semantics, URLs, machine reason codes, provider evidence and JSON configuration boundaries;
-- `docs/providers/PROVIDER_TAXONOMY.md` separates provider slug, broad category, operational role and concrete capability;
-- typed `ProviderCategory`, `ProviderRole` and `ProviderCapabilityCode` contracts remove free-form category/capability naming from new governed code;
-- `ProviderTaxonomy` is the single runtime definition owner for the known provider registry and classifies providers as `data`, `destination` or `service` without changing canonical identity semantics;
-- `Provider` and `ProviderCapability` fail fast when unknown category/capability values are saved;
-- `ProviderRegistrySeeder` consumes the taxonomy registry, preserves existing provider status/enabled state and seeds known capability rows;
-- `ProviderOperationalAssessor` normalizes operational states to `disabled`, `unapproved`, `misconfigured`, `degraded`, `ready` with stable runtime issue codes;
-- unknown runtime health is degraded/fail-closed rather than implicitly healthy;
-- no migration, new provider, canonical mutation path or generic integration framework was introduced.
+### 19.0.2 — Secrets / Environment Hardening
+
+Initial implementation is in progress:
+
+- `.env.production.example` defines production-relevant names and safe non-secret defaults/placeholders;
+- `docs/operations/PRODUCTION_ENVIRONMENT.md` owns production environment/secrets expectations;
+- `ProductionEnvironmentGuard` fails production boot when debug, HTTPS, PostgreSQL, Redis queue/cache, secure-session, Admin 2FA or design-lab invariants drift;
+- `AppServiceProvider` invokes the guard only in production;
+- `ProductionEnvironmentGuardTest` covers the supported baseline and each fail-closed invariant;
+- no real secret, deployment-vendor manifest, provider breadth or migration change was introduced.
 
 ## Current blockers / risks
 
-- The implementation checkpoint passed canonical verification, but this state/validation documentation refresh is a tracked authority change; final documented-tree reconcile and exact-tree reclosure are therefore required before recording a final 19.0.1.1 closed HEAD.
-- Production environment values remain ambiguous until 19.0.2 defines a hardened environment/secrets contract.
-- The existing `docker/verify/Dockerfile` and `compose.dev.yml` remain verification/development infrastructure, not production runtime.
-- Scheduler lifecycle, queue/Horizon restart policy, observability retention and PostgreSQL backup/restore remain later Stage 19 slices.
-- Any workflow mechanism change still requires owning Markdown authority, machine contract/routing and permanent regression in the same logical change.
+- Current 19.0.1.2/19.0.2 changes have not yet completed reconcile + exact-tree impact/canonical verification.
+- Production secret values and deployment injection mechanism are intentionally not selected or stored in source; deployment-platform selection remains separate.
+- Provider/service credential requirements still need to be cross-checked against enabled-state/taxonomy semantics before 19.0.2 can be sealed.
+- The existing `docker/verify/Dockerfile`, `compose.dev.yml` and demo runtime remain verification/development infrastructure, not production runtime.
+- Scheduler lifecycle, queue restart policy, observability retention and PostgreSQL backup/restore remain later Stage 19 slices.
 
 ## Latest focused evidence
 
-Exact implementation checkpoint: `e5bf2d4630c2fbbbe8a4a7c480d5cc7acfc7a6a9`.
+Final sealed 19.0.1.1 checkpoint: `fea368104d6d941dd4968ff2b4faacab89d48976`.
 
 Observed on that exact tree:
 
-- generated `project-context.json` candidate stage reconciled to `19.0`;
-- `./songchart impact --verify`: PASS pre-closure verification;
-- PostgreSQL/application suite: 433 tests PASS / 4191 assertions;
-- frontend production build: PASS;
+- `./songchart reconcile`: no generated diff after documentation refresh;
+- `./songchart impact --verify`: PASS;
 - `./songchart audit`: PASS;
 - `./songchart candidate`: PASS;
-- Docker candidate stage: PASS;
-- `./songchart verify`: canonical verification PASS;
-- migration upgrade/runtime contract, project-context runtime drift and foundation closure audit: PASS;
-- no lockfile release blocker detected;
+- `./songchart verify`: canonical PASS;
 - tracked tree after canonical verification: clean;
-- GitHub Actions run #172 on the same exact SHA: PASS.
+- GitHub Actions run #174 on the same exact SHA: PASS.
 
-The current documentation commits intentionally invalidate reuse of that SHA as final closure evidence. No final documented-tree canonical PASS is claimed yet.
+No PASS is yet claimed for the newer mobile/design-harness or 19.0.2 production-environment changes.
 
 ## Latest acceptance evidence
 
-- Stage 18.6 exact sealed head: `0ba79a89994b0a2722f5f6c18a84af0045e88cc6`.
-- Stage 18.6 candidate verification contract: PASS.
-- Stage 18.6 canonical verification: PASS.
-- GitHub Actions run #161 on exact sealed head: PASS.
-- Accepted `main` merge commit: `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
+- Accepted Stage 18.6 `main` merge commit: `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Stage 19 branch starts exactly from that accepted merge commit.
-- Stage 19 remains open; 19.0.1.1 has verified implementation checkpoint evidence but awaits final reclosure of the documented authority tree before its final exact closed HEAD is recorded.
+- 19.0.1.1 sealed checkpoint: `fea368104d6d941dd4968ff2b4faacab89d48976` with local closure PASS, clean tracked tree and GitHub Actions #174 PASS.
+- Stage 19 remains open; no Stage 19 final release/tag acceptance is claimed.
 
 ## Next required action
 
-1. Synchronize the current documentation-updated Stage 19 branch.
-2. Run `./songchart reconcile` and commit only deterministic generated outputs if they change.
-3. Run `./songchart impact --verify`, `./songchart audit`, `./songchart candidate`, then `./songchart verify` on one unchanged exact tree.
-4. Require clean tracked state after canonical PASS and GitHub Actions PASS on the same pushed SHA.
-5. Record that exact SHA as the final 19.0.1.1 closed checkpoint, then proceed to 19.0.2 secrets/environment hardening.
-6. A bounded AI/UI design-harness integration such as Impeccable may be evaluated only after this reclosure; SongChart UI/domain authorities remain higher priority and no parallel verification authority may be introduced.
+1. Let PR CI exercise the current remote writer tree and fix only observed defects without weakening gates.
+2. Reconcile generated authority after the current authority/source tranche stabilizes.
+3. Use `./mobile check` for compact pre-closure verification; use `./mobile check --verbose` only when interactive detail is needed.
+4. Use `./mobile close` for compact canonical closure after current-tree checks pass; it delegates to `./songchart close` without replacing verification logic.
+5. Seal 19.0.1.2 and 19.0.2 only on an unchanged exact tree with clean tracked state and same-SHA GitHub Actions evidence.
+6. Then proceed to 19.0.3 queue/scheduler production runtime.
 
 ## Documentation checkpoint discipline
 
