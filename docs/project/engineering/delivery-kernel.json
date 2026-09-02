@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "SongChart Delivery Kernel",
   "principles": {
     "public_facade_only": true,
@@ -32,10 +32,25 @@
     "promote": "Read-only exact-tree readiness preflight; GitHub remains merge/CI authority.",
     "doctor": "Existing AI/runtime diagnostic owner."
   },
+  "github_mobile_control_plane": {
+    "workflow": ".github/workflows/songchart-mobile.yml",
+    "role": "Tap-only GitHub Actions adapter for constrained mobile operators.",
+    "actions": ["check", "close"],
+    "check_delegate": "./mobile check --verbose",
+    "close_delegate": "./songchart verify",
+    "close_is_read_only_exact_sha": true,
+    "must_prove_head_unchanged": true,
+    "must_prove_tracked_tree_clean_after_verification": true,
+    "may_commit_generated_authority": false,
+    "may_push_source_changes": false,
+    "may_reimplement_verification_logic": false,
+    "activation": "Available for normal workflow_dispatch use only after the workflow definition exists on accepted default main."
+  },
   "migration_policy": {
     "strategy": "strangler",
     "static_invariants_prefer_declarative_registry": true,
     "behavioral_invariants_remain_tests": true,
-    "do_not_delete_existing_gate_until_equivalent_kernel_consumer_is_proven": true
+    "do_not_delete_existing_gate_until_equivalent_kernel_consumer_is_proven": true,
+    "compiled_command_surface_cutover_requires_reconcile": true
   }
 }
