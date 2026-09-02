@@ -1,0 +1,106 @@
+{
+    "schema_version": 1,
+    "status": "active",
+    "canonical_brand": {
+        "name": "SongChart",
+        "legacy_names": [
+            "SongChartWeb"
+        ],
+        "rule": "New source, configuration, UI copy and generated documentation use SongChart. Legacy names may remain only in immutable history until that history is compacted or archived."
+    },
+    "principles": [
+        "Prefer Laravel first-party capabilities before third-party packages.",
+        "Prefer mature documented packages before SongChart-specific infrastructure abstractions.",
+        "Keep custom code only where SongChart domain semantics or security boundaries are genuinely product-specific.",
+        "Every package adoption must name the custom surface it replaces or prevents.",
+        "Retire replaced code in the same or immediately following bounded tranche; do not keep permanent dual implementations.",
+        "Behavioral invariants belong in tests; declarative invariants belong in repository contracts rather than new one-off verifier scripts."
+    ],
+    "ownership_decisions": {
+        "external_api_clients": {
+            "preferred_owner": "saloonphp/laravel-plugin",
+            "decision": "evaluate-for-adoption",
+            "target": "standardize provider connectors, requests, auth, retries, fixtures and HTTP test recording while preserving SongChart provider taxonomy and canonical identity semantics"
+        },
+        "cross_boundary_data": {
+            "preferred_owner": "spatie/laravel-data",
+            "decision": "evaluate-for-adoption",
+            "target": "consolidate DTO, request validation, API resource transformation and future TypeScript contract generation"
+        },
+        "authorization": {
+            "preferred_owner": "laravel-gates",
+            "decision": "keep-native",
+            "target": "retain native Gates while roles and permissions remain static; evaluate spatie/laravel-permission only if runtime-managed roles or permissions become a product requirement"
+        },
+        "queue_runtime": {
+            "preferred_owner": "laravel/horizon",
+            "decision": "adopt-next",
+            "target": "replace custom worker supervision and queue operational dashboards while preserving SongChart job taxonomy, retries and admission semantics"
+        },
+        "application_observability": {
+            "preferred_owner": "laravel/pulse",
+            "decision": "keep-and-expand",
+            "target": "use Pulse for request, job, query, cache and runtime visibility; custom cards only for SongChart-specific provider health semantics"
+        },
+        "health_checks": {
+            "preferred_owner": "laravel-native",
+            "decision": "native-first",
+            "target": "use native health endpoints where sufficient; evaluate spatie/laravel-health only when aggregated readiness checks are required"
+        },
+        "backup": {
+            "preferred_owner": "spatie/laravel-backup",
+            "decision": "adopt-in-19.0.5",
+            "target": "delegate backup orchestration, retention and notifications; keep SongChart-owned isolated restore drill as release evidence"
+        },
+        "activity_audit": {
+            "preferred_owner": "spatie/laravel-activitylog",
+            "decision": "keep",
+            "target": "use package persistence and query tooling behind explicit privileged use-case audit calls; avoid broad model-event audit"
+        },
+        "security_platform": {
+            "preferred_owner": "laravel-fortify-gates-caddy",
+            "decision": "native-first",
+            "target": "use framework/platform authentication, authorization, CSRF, rate limiting, secure cookies, TLS and headers; custom security remains only for provider destination validation, outbound URL policy and other product-specific trust boundaries"
+        }
+    },
+    "retirement_queue": [
+        {
+            "id": "R-VERIFY-ONEOFF",
+            "target": "one-off verify-*.php growth",
+            "action": "migrate declarative checks into repository contracts and behavioral checks into Pest/Architecture tests",
+            "phase": "19.0.4-19.0.6"
+        },
+        {
+            "id": "R-MOBILE-CLOSE",
+            "target": "manual SongChart Mobile CHECK/CLOSE duplication",
+            "action": "retain as diagnostic fallback until auto-closure is proven across several tranches, then reduce or retire",
+            "phase": "after 19.0.4"
+        },
+        {
+            "id": "R-BRAND-WEB",
+            "target": "SongChartWeb active branding",
+            "action": "replace in active source/config/UI/docs with SongChart; preserve immutable historical references only when needed for chronology",
+            "phase": "19.0.4"
+        },
+        {
+            "id": "R-CUSTOM-HTTP",
+            "target": "provider-specific HTTP client boilerplate",
+            "action": "inventory and migrate eligible integrations to Saloon connectors/requests in bounded provider tranches",
+            "phase": "19.1+"
+        },
+        {
+            "id": "R-DATA-DTO",
+            "target": "duplicate request/DTO/resource transformation shapes",
+            "action": "inventory and migrate eligible cross-boundary data objects to spatie/laravel-data before public API expansion",
+            "phase": "before API v1"
+        }
+    ],
+    "automation_backlog": [
+        "GitHub main branch ruleset enforcing PR-only promotion and required auto-closure checks",
+        "machine failure classification from existing gate/owner/risk registries",
+        "bounded dependency update PRs through Dependabot or Renovate with auto-closure",
+        "generated API/developer/FAQ documentation from project knowledge and typed data contracts",
+        "accepted-main release packaging, tagging and GitHub Release creation",
+        "isolated scheduled backup restore drill with retained redacted evidence"
+    ]
+}
