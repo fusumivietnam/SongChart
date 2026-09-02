@@ -1245,6 +1245,15 @@
             ]
         },
         {
+            "target": "tests/Architecture/DocumentationProjectIntelligenceContractTest.php",
+            "rule": "ai-doc-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "ai-development-protocol",
+                "repository-compiler"
+            ]
+        },
+        {
             "target": "tests/Architecture/DocumentationReconciliationTest.php",
             "rule": "ai-doc-governance",
             "classification": "declarative",
@@ -1412,12 +1421,6 @@
                 "package-schema",
                 "authorization"
             ]
-        },
-        {
-            "target": "tests/Architecture/ProjectIntelligenceContractTest.php",
-            "rule": "",
-            "classification": "unresolved",
-            "semantic_authorities": []
         },
         {
             "target": "tests/Architecture/ProviderAsyncInfrastructureTest.php",
@@ -1681,5 +1684,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "e7bc2d1e614c9625d2c31a6862f8d657b04bace9c9adf30c661ec08f07f03fd8"
+    "graph_fingerprint": "e8e7ad973c8c4253cdb525f133aca7da26dd8ae7991dff2886364fc5f3833d0f"
 }
