@@ -6,7 +6,7 @@
 
 - Stage `19.0 — Production Readiness & First Release`
 - Status: `implementing`
-- Accepted through: `19.0.3`
+- Accepted through: `19.0.4-C1A`
 - Task contract: `docs/foundation/STAGE_19_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -16,14 +16,20 @@
 - `19.0.1.2` — `ACCEPTED` — Mobile verification + AI UI design harness
 - `19.0.2` — `ACCEPTED` — Secrets/environment hardening
 - `19.0.3` — `ACCEPTED` — Queue/scheduler production runtime
-- `19.0.4` — `IMPLEMENTING` — Observability + alerting
+- `19.0.4-C1A` — `ACCEPTED` — Consolidation authority + derived project state/work lease
+- `19.0.4-C1B` — `IMPLEMENTING` — Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration
+- `19.0.4-C2` — `PLANNED` — Horizon + Pulse observability consolidation
+- `19.0.4-C3` — `PLANNED` — Pest Browser desktop/mobile critical smoke
+- `19.0.4-C4` — `PLANNED` — Verifier reduction + main provenance + failure classification
+- `19.0.4-C5` — `PLANNED` — Provider transport inventory + Saloon decision
+- `19.0.4-C6` — `PLANNED` — Typed data/API inventory + Laravel Data decision
 - `19.0.5` — `PLANNED` — Backup/recovery
 - `19.0.6` — `PLANNED` — Security review + production smoke
 - `final` — `PLANNED` — First release package/tag
 
 ## Next bounded tranche
 
-- `19.0.4-C1B` — Active brand cleanup + AI framework context integration
+- `19.0.4-C2` — Horizon + Pulse consolidation with queue operational glue retirement
 
 ## Live work lease
 

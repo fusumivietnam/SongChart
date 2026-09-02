@@ -1414,6 +1414,12 @@
             ]
         },
         {
+            "target": "tests/Architecture/ProjectIntelligenceContractTest.php",
+            "rule": "",
+            "classification": "unresolved",
+            "semantic_authorities": []
+        },
+        {
             "target": "tests/Architecture/ProviderAsyncInfrastructureTest.php",
             "rule": "provider",
             "classification": "behavioral",
@@ -1675,5 +1681,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "ff8aaaf31abaeede679fcb47c3c1f590cc4947a066ee0dbc141683f19b0906e3"
+    "graph_fingerprint": "e7bc2d1e614c9625d2c31a6862f8d657b04bace9c9adf30c661ec08f07f03fd8"
 }
