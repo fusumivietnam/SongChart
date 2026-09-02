@@ -19,19 +19,18 @@ print('Lifecycle: ' + ' -> '.join(d['lifecycle']))
 PY
 }
 status(){
-  local b h u counts state
+  local b h u counts tree_state
   b="$(branch)"; h="$(head_sha)"; u="$(upstream)"
-  state='IMPLEMENTING'
-  if working_dirty; then state='IMPLEMENTING'; else state='CHECKED'; fi
+  tree_state="$(working_dirty && printf dirty || printf clean)"
   printf 'SongChart Delivery Kernel\n'
-  printf 'Branch: %s\nHEAD: %s\nState hint: %s\n' "$b" "$h" "$state"
+  printf 'Branch: %s\nHEAD: %s\nWorking tree: %s\n' "$b" "$h" "$tree_state"
+  printf 'Lifecycle evidence: unresolved; clean Git state alone never implies CHECKED/CLOSED.\n'
   if [[ -n "$u" ]]; then
     counts="$(git -C "$ROOT" rev-list --left-right --count "HEAD...$u" 2>/dev/null || printf '? ?')"
     printf 'Upstream: %s\nAhead/behind: %s\n' "$u" "$counts"
   else
     printf 'Upstream: none\n'
   fi
-  printf 'Working tree: %s\n' "$(working_dirty && printf dirty || printf clean)"
   print_registry_summary
 }
 plan(){
@@ -41,6 +40,13 @@ check(){
   [[ $# -eq 0 ]] || die 'Usage: ./songchart check'
   exec "$ROOT/songchart" impact --verify
 }
+close(){
+  [[ $# -eq 0 ]] || die 'Usage: ./songchart close'
+  exec "$ROOT/songchart" close
+}
+doctor(){
+  exec "$ROOT/songchart" ai doctor "$@"
+}
 promote(){
   [[ $# -eq 0 ]] || die 'Usage: ./songchart promote'
   working_dirty && die 'Promotion preflight requires a clean working tree.'
@@ -49,15 +55,17 @@ promote(){
   counts="$(git -C "$ROOT" rev-list --left-right --count "HEAD...$u")"
   ahead="${counts%%[[:space:]]*}"; behind="${counts##*[[:space:]]}"
   [[ "$ahead" == '0' && "$behind" == '0' ]] || die "Promotion preflight requires upstream sync; ahead/behind=$counts"
-  printf '[SongChart promote] exact tree ready for remote CI review.\n'
+  printf '[SongChart promote] exact tree is Git-clean and upstream-synchronized.\n'
   printf 'HEAD=%s\nUPSTREAM=%s\n' "$(head_sha)" "$u"
-  printf 'Next authority: GitHub PR CI must pass on this exact SHA before merge.\n'
+  printf 'Promotion is not granted locally. Required next authority: canonical evidence and GitHub PR CI on this exact SHA before merge.\n'
 }
 cmd="${1:-status}"; shift || true
 case "$cmd" in
   status) status "$@" ;;
   plan) plan "$@" ;;
   check) check "$@" ;;
+  close) close "$@" ;;
   promote) promote "$@" ;;
-  *) die 'Usage: delivery-kernel.sh [status|plan|check|promote]' ;;
+  doctor) doctor "$@" ;;
+  *) die 'Usage: delivery-kernel.sh [status|plan|check|close|promote|doctor]' ;;
 esac
