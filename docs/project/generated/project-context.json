@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "0246a27bfa72c01f8ec0c09e4cb503ad58cf5ece085bfe4572f177ab0a5d7572",
+    "source_fingerprint": "ba40cd760a4d847518b7e63183bd651b7d7eb74e12f0b8204a75eccbc0d39025",
     "candidate": {
         "stage": "19.0",
         "candidate": "v1",
@@ -1035,7 +1035,7 @@
         "docs/project/engineering/verification-command-surface.json": "8be0e68b1da9158fb97086ab62477cf08bb295f7a69080f941b9f1661ec958f7",
         "docs/project/engineering/verification-topology.json": "dc01f61790a856d6f6acaee9c9a36ca292d586c0c81cada45a14e05ca20ab42f",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
-        "docs/project/stack/runtime-environments.json": "b8421030a8edd0184417e9d0dc4c71b8b0e35b08b8cd2d43c22afac086f597ef",
+        "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
         "songchart": "c2604f2f4878936e043ea98b742633989d5060d4bfd8f9f2ee9fe4d7f3710a28"
     }
 }
