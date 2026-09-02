@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Str;
 
 return [
-    'name' => env('HORIZON_NAME', 'SongChartWeb'),
+    'name' => env('HORIZON_NAME', 'SongChart'),
     'domain' => env('HORIZON_DOMAIN'),
     'path' => env('HORIZON_PATH', 'horizon'),
     'use' => 'default',
