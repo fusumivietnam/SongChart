@@ -23,6 +23,14 @@ if ((bool) config('songchart.discovery.schedule_enabled', true)) {
         ->onOneServer();
 }
 
+$queueMonitorMax = max(1, (int) config('songchart.production.queue_monitor_max', 100));
+Schedule::command(
+    'queue:monitor redis:critical,redis:discovery-projections,redis:provider-health,redis:provider-imports,redis:provider-normalization,redis:notifications,redis:default --max='.$queueMonitorMax,
+)
+    ->everyMinute()
+    ->withoutOverlapping(2)
+    ->onOneServer();
+
 if (class_exists('Laravel\\Horizon\\Horizon')) {
     Schedule::command('horizon:snapshot')
         ->everyFiveMinutes()
