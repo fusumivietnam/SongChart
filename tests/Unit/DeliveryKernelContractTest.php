@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 it('keeps delivery kernel vocabulary bounded and strangler-safe', function (): void {
     $root = dirname(__DIR__, 2);
     $contract = json_decode(
