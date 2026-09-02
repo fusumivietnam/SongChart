@@ -73,15 +73,34 @@ foreach ($registry['authorities'] as $name => $authority) {
     }
 }
 
-$developmentStatePath = $root.'/docs/project/DEVELOPMENT_STATE.md';
-if (! is_file($developmentStatePath)) {
-    $errors[] = 'Unable to resolve current stage for authority closure: DEVELOPMENT_STATE.md is missing.';
+$derivedStatePath = $root.'/docs/project/generated/development-state.json';
+if (! is_file($derivedStatePath)) {
+    $errors[] = 'Unable to resolve current stage for authority closure: generated development state is missing.';
 } else {
-    $developmentState = (string) file_get_contents($developmentStatePath);
-    if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $stageMatch) !== 1) {
-        $errors[] = 'Unable to resolve current stage for authority closure from DEVELOPMENT_STATE.md.';
+    try {
+        /** @var array<string, mixed> $derivedState */
+        $derivedState = json_decode((string) file_get_contents($derivedStatePath), true, flags: JSON_THROW_ON_ERROR);
+    } catch (JsonException $exception) {
+        $errors[] = 'Unable to resolve current stage for authority closure: generated development state is invalid JSON: '.$exception->getMessage();
+        $derivedState = [];
+    }
+
+    $stage = $derivedState['current_stage']['id'] ?? null;
+    $taskRelative = $derivedState['current_stage']['task_contract'] ?? null;
+
+    if (($derivedState['generated_from_repository'] ?? false) !== true
+        || ! is_string($stage)
+        || $stage === '') {
+        $errors[] = 'Unable to resolve current stage for authority closure from generated development state.';
+    } elseif (! is_string($taskRelative) || $taskRelative === '') {
+        $errors[] = 'Generated development state does not resolve a current-stage task contract for authority closure.';
     } else {
-        $task = $root.'/docs/foundation/STAGE_'.str_replace('.', '_', $stageMatch[1]).'_TASK_CONTRACT.md';
+        $expectedTask = 'docs/foundation/STAGE_'.str_replace('.', '_', $stage).'_TASK_CONTRACT.md';
+        if ($taskRelative !== $expectedTask) {
+            $errors[] = "Generated authority-closure task contract [{$taskRelative}] does not match stage [{$stage}].";
+        }
+
+        $task = $root.'/'.$taskRelative;
         if (! is_file($task)) {
             $errors[] = 'Current-stage task contract is missing for authority closure.';
         } else {
