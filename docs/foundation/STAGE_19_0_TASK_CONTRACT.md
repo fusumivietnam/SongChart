@@ -28,6 +28,7 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - No universal JSON schema or generic integration framework that duplicates typed domain/provider owners.
 - No permanent compatibility vocabulary solely to keep obsolete test/fixture/source spellings alive when a current typed contract owns the same meaning.
 - No custom CI orchestration framework when GitHub-native checks, concurrency, artifacts, protected branches or releases own the required integration behavior.
+- No external AI/design tool promoted above SongChart UI/domain authorities or treated as release/canonical verification authority.
 
 ## Acceptance criteria
 
@@ -38,7 +39,9 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - Legacy source/tests/fixtures/seeders exposed by current work converge to current typed/data contracts instead of causing the current contracts to accumulate obsolete synonyms.
 - Overview documentation does not contradict current typed/machine authorities; duplicated older conventions are corrected or reduced to pointers.
 - Provider operational readiness is derived consistently from taxonomy, enablement, policy status, configuration/credentials and health evidence; unknown health is not treated as healthy.
-- Production environment/secrets ownership is documented and fail closed for required values without tracked real secrets.
+- Mobile verification can present compact output without skipping, caching or reimplementing any canonical SongChart gate.
+- External AI design guidance remains advisory below SongChart UI/domain authorities and maps findings back to existing SongChart owners/tests.
+- Production environment/secrets ownership is documented and fail closed for required safety invariants without tracked real secrets.
 - Web, queue worker and scheduler lifecycle are production-operable with clear restart/failure behavior.
 - PostgreSQL 18 production persistence has a documented and verified backup/restore path.
 - Redis/queue/cache/runtime dependencies have explicit production ownership and health expectations.
@@ -72,12 +75,26 @@ Turn the accepted SongChart product tree into a reproducible, observable, recove
 - Add/extend permanent architecture/static guards for recurring vocabulary drift when the affected owner can be checked deterministically.
 - Keep GitHub-native failure evidence transport bounded: PostgreSQL CI may upload the existing redacted failure log on failure, named by exact SHA/run attempt, with short retention.
 
+### 19.0.1.2 — Mobile Verification + AI UI Design Harness
+
+- Add one presentation-only mobile adapter that delegates pre-closure to `./songchart impact --verify` and canonical closure to `./songchart close`.
+- Keep successful mobile output compact while preserving full runtime logs; on failure print a bounded tail and retain the full log path.
+- Provide `--verbose` passthrough for interactive debugging without changing the delegated command.
+- The adapter must not skip, cache, reorder or reimplement verification gates.
+- Register the adapter in the existing verification-command machine contract and permanent Architecture regression rather than creating a second workflow authority.
+- Integrate Impeccable-style design guidance as a project-local advisory skill for GitHub Copilot without vendoring the upstream repository or adding a git submodule.
+- Keep `docs/ui/DESIGN_AUTHORITY.md` and the owning public/admin design contracts above any external design heuristic.
+- Do not create root `PRODUCT.md`/`DESIGN.md` files that compete with existing SongChart product/design authorities.
+- External detector/design output is supporting evidence only and must map findings back to existing SongChart accessibility/performance/component owners before acceptance.
+
 ### 19.0.2 — Secrets/environment hardening
 
 - Define production environment contract and secret injection boundaries.
 - Add fail-closed configuration validation where justified.
 - Use provider taxonomy/capabilities to validate enabled service/provider configuration without inventing per-integration formats.
 - Never commit real secret values.
+- Keep the environment template vendor-neutral; deployment/runtime secret stores own real values.
+- Refuse production boot when first-release safety invariants such as debug mode, HTTPS, PostgreSQL authority, Redis queue/cache, secure sessions, Admin 2FA or design-lab exposure drift unsafe.
 
 ### 19.0.3 — Queue/scheduler production runtime
 
@@ -120,8 +137,10 @@ Inventory determines exact paths. Expected areas include:
 - `app/Domain/Providers` typed taxonomy/readiness semantics and existing provider models/seed data where required;
 - shared domain/provider documentation for cross-boundary data shape and provider classification;
 - recurring provider test fixtures/factories where raw legacy vocabulary creates drift;
+- verification presentation/command-surface contracts for bounded mobile operation without new verification logic;
+- `docs/ui/` and project-local AI skill adapters only where external design guidance is being governed;
 - Docker/Compose and Caddy runtime configuration;
-- environment templates/config validation;
+- environment templates/config validation and production boot safety;
 - Laravel queue/scheduler/runtime entrypoints;
 - PostgreSQL/Redis operational configuration;
 - health/observability surfaces;
@@ -140,6 +159,7 @@ Product feature behavior remains out of scope unless a concrete production block
 - Any production diagnostics must redact credentials, tokens, cookies and private configuration values.
 - Service providers do not gain catalog import/canonical mutation capability merely because they share the provider registry.
 - CI failure artifacts are diagnostic evidence only, short-retained, non-secret and never a substitute for tracked authority or canonical evidence.
+- External AI/design integrations do not receive production credentials or mutation authority merely because they are present in the development harness.
 
 ## Data and recovery
 
@@ -177,16 +197,27 @@ GENERATED-ONLY COMMIT (when needed)
 
 When a broad gate reports several failures caused by one legacy vocabulary owner, inventory the affected values/fixtures first, converge them in one bounded corrective, run focused coverage, and only then repeat the expensive lane.
 
-Stage closure:
+Mobile presentation adapters may be used after synchronization:
 
 ```text
-./songchart candidate
-./songchart verify
+./mobile check        -> delegates exactly to ./songchart impact --verify
+./mobile close        -> delegates exactly to ./songchart close
+--verbose             -> direct canonical-command output when debugging
+```
+
+These adapters change output ergonomics only; they do not replace SongChart verification ownership.
+
+Stage closure canonical path remains:
+
+```text
+./songchart close
 exact HEAD + clean tree + upstream sync
 PR CI on exact SHA
 accepted main merge
 release package/tag from accepted main
 ```
+
+`./songchart candidate` and `./songchart verify` remain valid explicit diagnostic/closure entrypoints when their separated evidence is needed.
 
 ## Workflow mechanism rule
 
@@ -196,7 +227,7 @@ No new workflow orchestration framework is planned. If Stage 19 proves a new ver
 - machine contract/routing when applicable;
 - a permanent regression/consumer owner.
 
-GitHub-native capabilities are preferred for integration concerns that GitHub already owns: PR checks, concurrency cancellation, branch protection, failure artifacts and accepted-main releases. Do not add a convenience script that becomes an unowned second verification authority.
+GitHub-native capabilities are preferred for integration concerns that GitHub already owns: PR checks, concurrency cancellation, branch protection, failure artifacts and accepted-main releases. A mobile presentation adapter may wrap existing canonical entrypoints only when it contains no independent verification logic and its delegation is machine/regression guarded.
 
 ## AI-assisted operations boundary
 
@@ -204,15 +235,20 @@ AI may assist development by reading deterministic verification evidence and rec
 
 For development AI, current authority beats historical spelling. AI must identify the semantic owner before changing code, prefer typed/generated repository facts over guessed literals, converge legacy consumers toward the current owner, and avoid broadening contracts simply to silence old fixtures. When deterministic GitHub failure evidence exists, use that exact SHA/run evidence before reconstructing a failure from prose.
 
+For UI work, external design skills such as Impeccable are advisory below `docs/ui/DESIGN_AUTHORITY.md` and the owning design contract. They may shape critique/polish/hardening/adaptation, but cannot silently change SongChart semantics, fabricate product evidence or become canonical verification authority.
+
 ## Documentation impact
 
 - `docs/project/DEVELOPMENT_STATE.md` owns operational current state.
 - This task contract owns Stage 19 scope/acceptance.
 - `docs/project/domain/DATA_CONTRACT.md` owns recurring cross-boundary representation rules.
 - `docs/providers/PROVIDER_TAXONOMY.md` owns provider classification vocabulary.
+- `docs/ui/DESIGN_AUTHORITY.md` owns visual/interaction priority; `docs/ui/AI_DESIGN_HARNESS.md` owns the advisory external-design boundary.
+- `docs/operations/PRODUCTION_ENVIRONMENT.md` owns production environment/secrets expectations.
 - `docs/project/engineering/DELIVERY_WORKFLOW.md` owns repository convergence during delivery, mobile/GitHub-native handoff and failure-evidence transport semantics.
+- `docs/project/engineering/verification-command-surface.json` owns public command-surface semantics including the presentation-only mobile adapter.
 - `docs/project/docs/ROADMAP.md` stays active/future-only.
-- `docs/project/DEVELOPMENT_HISTORY.md` records accepted Stage 18.6 chronology and later Stage 19 acceptance.
+- `docs/project/DEVELOPMENT_HISTORY.md` records accepted chronology and later Stage 19 acceptance.
 - Validation evidence for Stage 19 belongs in `docs/foundation/STAGE_19_0_VALIDATION_REPORT.md`.
 
 ## Delivery and handoff
@@ -221,6 +257,7 @@ For development AI, current authority beats historical spelling. AI must identif
 - Base: accepted `main` merge `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
 - Every handoff requires exact pushed commit state and no unresolved upstream divergence.
 - Mobile operation should use GitHub as the control/evidence plane and keep terminal interaction short; source changes are committed/pushed by the active writer rather than pasted across devices.
+- `./mobile check` and `./mobile close` are preferred compact mobile presentation adapters after synchronization; `--verbose` is available for debugging.
 - Any tracked change after canonical PASS invalidates closure evidence for that exact head.
 
 ## Rollback
