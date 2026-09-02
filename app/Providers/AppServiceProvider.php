@@ -63,7 +63,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         Model::shouldBeStrict(! $this->app->isProduction());
 
-        if ($this->app->isProduction()) {
+        if ((bool) config('songchart.production.environment_guard_enabled', false)) {
             ProductionEnvironmentGuard::assertSafe([
                 'app_debug' => (bool) config('app.debug'),
                 'app_url' => (string) config('app.url'),
