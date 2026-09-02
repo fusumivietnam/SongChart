@@ -69,7 +69,13 @@ foreach (['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'] as $bootstrap) {
     if (count($lines) > 30) {
         $errors[] = "{$bootstrap} must remain a thin bootstrap (maximum 30 lines).";
     }
-    foreach (['PROJECT_AUTHORITY.md', 'AI_DEVELOPMENT_PROTOCOL.md', 'composer stage:verify', 'composer canonical:verify', 'songchart ai status'] as $needle) {
+    foreach ([
+        'PROJECT_AUTHORITY.md',
+        'docs/project/generated/development-state.json',
+        'AI_DEVELOPMENT_PROTOCOL.md',
+        './songchart ai status --json',
+        'PREPARE → CHECK → canonical CLOSE → Ready',
+    ] as $needle) {
         if (! str_contains($source, $needle)) {
             $errors[] = "{$bootstrap} is missing bootstrap pointer [{$needle}].";
         }
@@ -111,28 +117,59 @@ if (! str_contains($gitignore, '/.gemini/')) {
 }
 
 $candidate = json_decode((string) file_get_contents($root.'/candidate-verification.json'), true, 512, JSON_THROW_ON_ERROR);
-$developmentStatePath = $root.'/docs/project/DEVELOPMENT_STATE.md';
-if (! is_file($developmentStatePath)) {
-    $errors[] = 'Operational checkpoint [docs/project/DEVELOPMENT_STATE.md] is missing.';
+$stagePlanPath = $root.'/docs/project/engineering/stage-plan.json';
+$derivedStatePath = $root.'/docs/project/generated/development-state.json';
+$compatibilityPointerPath = $root.'/docs/project/DEVELOPMENT_STATE.md';
+
+if (! is_file($stagePlanPath) || ! is_file($derivedStatePath) || ! is_file($compatibilityPointerPath)) {
+    $errors[] = 'Derived project-state authority files are missing.';
 } else {
-    $developmentState = (string) file_get_contents($developmentStatePath);
-    $checkpointStage = null;
-    if (preg_match('/(?ms)^## Current stage\s+.*?Stage\s+`(?<stage>[0-9]+(?:\.[0-9]+)*)\s+—/', $developmentState, $match) === 1) {
-        $checkpointStage = $match['stage'];
-    }
+    $stagePlan = json_decode((string) file_get_contents($stagePlanPath), true, 512, JSON_THROW_ON_ERROR);
+    $derivedState = json_decode((string) file_get_contents($derivedStatePath), true, 512, JSON_THROW_ON_ERROR);
+    $compatibilityPointer = (string) file_get_contents($compatibilityPointerPath);
     $candidateStage = isset($candidate['stage']) ? (string) $candidate['stage'] : null;
+    $derivedStage = $derivedState['current_stage']['id'] ?? null;
 
-    if ($checkpointStage === null) {
-        $errors[] = 'DEVELOPMENT_STATE current-stage checkpoint could not be parsed.';
+    if (($derivedState['generated_from_repository'] ?? false) !== true) {
+        $errors[] = 'Generated development state must declare generated_from_repository=true.';
     }
-    if ($checkpointStage !== null && $candidateStage !== null && $checkpointStage !== $candidateStage) {
-        $errors[] = "DEVELOPMENT_STATE stage [{$checkpointStage}] does not match candidate stage [{$candidateStage}].";
+    if (! is_string($derivedStage) || $derivedStage === '') {
+        $errors[] = 'Generated development state current_stage.id is missing.';
+    }
+    if (is_string($derivedStage) && $candidateStage !== null && $derivedStage !== $candidateStage) {
+        $errors[] = "Generated development state stage [{$derivedStage}] does not match candidate stage [{$candidateStage}].";
+    }
+    if (($stagePlan['current_stage']['id'] ?? null) !== $derivedStage) {
+        $errors[] = 'Generated development state must project the stage-plan current stage exactly.';
+    }
+    if (! str_contains($compatibilityPointer, 'compatibility pointer')
+        || ! str_contains($compatibilityPointer, 'docs/project/generated/development-state.json')) {
+        $errors[] = 'DEVELOPMENT_STATE.md must remain a compatibility pointer to generated repository state.';
     }
 
-    foreach (['## Current blockers / risks', '## Latest focused evidence', '## Next required action', '## Documentation checkpoint discipline'] as $section) {
-        if (! str_contains($developmentState, $section)) {
-            $errors[] = "DEVELOPMENT_STATE must contain checkpoint section [{$section}].";
-        }
+    $workLease = $derivedState['work_lease_policy'] ?? null;
+    if (! is_array($workLease)
+        || ($workLease['authority'] ?? null) !== 'live Git branch + GitHub pull request'
+        || ! str_contains((string) ($workLease['rule'] ?? ''), 'Resume')) {
+        $errors[] = 'Generated development state must preserve the live Git/GitHub work-lease policy.';
+    }
+
+    $taskContract = $derivedState['current_stage']['task_contract'] ?? null;
+    if (! is_string($taskContract) || $taskContract === '' || ! is_file($root.'/'.$taskContract)) {
+        $errors[] = 'Generated development state must resolve an existing current-stage task contract.';
+    }
+}
+
+$statusSource = is_file($root.'/scripts/ai-status.sh') ? (string) file_get_contents($root.'/scripts/ai-status.sh') : '';
+$projectStateSource = is_file($root.'/scripts/project-state.php') ? (string) file_get_contents($root.'/scripts/project-state.php') : '';
+foreach (['project-state.php', '--json', 'resume that exact work lease'] as $needle) {
+    if (! str_contains($statusSource, $needle)) {
+        $errors[] = "AI session status must expose derived/live work-lease semantics [{$needle}].";
+    }
+}
+foreach (["'source' => 'git-and-github-runtime'", "'head_sha' =>", "'pr_number' =>", "'resume_rule' =>"] as $needle) {
+    if (! str_contains($projectStateSource, $needle)) {
+        $errors[] = "Project-state compiler is missing live work-lease field [{$needle}].";
     }
 }
 
