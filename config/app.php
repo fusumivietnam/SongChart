@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'name' => env('APP_NAME', 'SongChartWeb'),
+    'name' => env('APP_NAME', 'SongChart'),
     'version' => env('APP_VERSION', '1.0.0'),
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool) env('APP_DEBUG', false),
