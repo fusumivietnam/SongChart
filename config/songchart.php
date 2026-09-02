@@ -7,6 +7,11 @@ if (! in_array($adminTwoFactorMode, ['required', 'disabled'], true)) {
     $adminTwoFactorMode = 'required';
 }
 
+$productionEnvironmentGuardEnabled = (bool) env(
+    'SONGCHART_PRODUCTION_ENVIRONMENT_GUARD',
+    env('APP_ENV') === 'production',
+);
+
 return [
     'search' => [
         'demo_enabled' => (bool) env('SONGCHART_DEMO_SEARCH', false),
@@ -19,6 +24,10 @@ return [
     ],
 
     'core_version' => env('SONGCHART_CORE_VERSION', '1.0.0'),
+
+    'production' => [
+        'environment_guard_enabled' => $productionEnvironmentGuardEnabled,
+    ],
 
     'security' => [
         'admin_2fa_mode' => $adminTwoFactorMode,
