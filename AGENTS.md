@@ -7,8 +7,9 @@ Before modifying source:
 2. Read `docs/project/generated/project-context.json` for generated repository facts.
 3. Read `docs/project/engineering/project-knowledge.json` for compact product/domain knowledge.
 4. Read `docs/project/engineering/consolidation-plan.json` before adding packages, abstractions, infrastructure or verifier surfaces.
-5. Read `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`, the current task contract, and the owning domain/module authority.
-6. Run `./songchart ai status`; use `./songchart impact <paths...>` when the planned change surface is known.
+5. Read `docs/project/docs/OFFICIAL_SOURCE_POLICY.md` before package/framework decisions or claims based on upstream behavior.
+6. Read `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`, the current task contract, and the owning domain/module authority.
+7. Run `./songchart ai status`; use `./songchart impact <paths...>` when the planned change surface is known.
 
 Default ownership order: Laravel first-party → mature documented package → genuinely SongChart-specific custom code. Package adoption must retire replaced custom code instead of preserving permanent dual implementations.
 
