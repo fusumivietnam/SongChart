@@ -27,6 +27,7 @@ return [
 
     'production' => [
         'environment_guard_enabled' => $productionEnvironmentGuardEnabled,
+        'queue_monitor_max' => (int) env('SONGCHART_QUEUE_MONITOR_MAX', 100),
     ],
 
     'security' => [
