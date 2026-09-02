@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "2b868c0e1bf5609c42bdb34719df18b101f06e95a6dadf4e3ded7c9b08d60498",
+    "source_fingerprint": "1631301c2e3ae13a578e03c9a28a304ebd2dd5f6717b64e267b6ffe72785ec98",
     "current_stage": {
         "id": "19.0",
         "title": "Production Readiness & First Release",
@@ -97,7 +97,7 @@
     "source_hashes": {
         "candidate-verification.json": "b8b75b2bcd9383e06e6acb3a788cab29815672e6be83db6907c9246d3fa0b49e",
         "docs/project/engineering/consolidation-plan.json": "06c75ba1618b7cfa38f9fb239ccbc1626f9b3e9ec9a2a9cb88b95cc5b8692eaa",
-        "docs/project/engineering/project-knowledge.json": "a79de1a6629c5aac860cf395ce87dbb4e5e32ed68e74dad385a06f8b908f05e7",
+        "docs/project/engineering/project-knowledge.json": "486fa45b9df15aa2cf33141badf1173e2292e9235975b215ad40956f4beaea10",
         "docs/project/engineering/stage-plan.json": "728bc7017fbe526657d34670527118d954d02d6fbca6ead1d183808a89628a25"
     }
 }
