@@ -1,6 +1,9 @@
 name: SongChart Mobile
 
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       action:
@@ -15,19 +18,23 @@ on:
 permissions:
   contents: read
 
+env:
+  SONGCHART_TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
 concurrency:
-  group: songchart-mobile-${{ github.ref }}-${{ inputs.action }}
+  group: songchart-mobile-${{ github.event.pull_request.number || github.ref }}-${{ inputs.action || 'bootstrap-close' }}
   cancel-in-progress: true
 
 jobs:
   verify:
-    name: ${{ inputs.action == 'close' && 'CLOSE — canonical exact SHA' || 'CHECK — focused verification' }}
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.head_ref == 'stage-19.0-delivery-kernel-hardening')
+    name: ${{ github.event_name == 'pull_request' && 'BOOTSTRAP CLOSE — canonical exact SHA' || (inputs.action == 'close' && 'CLOSE — canonical exact SHA' || 'CHECK — focused verification') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout selected exact SHA
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ env.SONGCHART_TARGET_SHA }}
           fetch-depth: 0
 
       - name: Prepare Docker development configuration
@@ -35,15 +42,16 @@ jobs:
 
       - name: Record exact SHA
         run: |
+          test "$(git rev-parse HEAD)" = "$SONGCHART_TARGET_SHA"
           printf 'SONGCHART_MOBILE_SHA=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_ENV"
           printf 'Selected exact SHA: %s\n' "$(git rev-parse HEAD)"
 
       - name: CHECK — governed focused verification
-        if: inputs.action == 'check'
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'check'
         run: ./mobile check --verbose
 
       - name: CLOSE — governed canonical verification
-        if: inputs.action == 'close'
+        if: (github.event_name == 'pull_request' && github.head_ref == 'stage-19.0-delivery-kernel-hardening') || inputs.action == 'close'
         run: ./songchart verify
 
       - name: Prove verification did not mutate tracked source
@@ -55,11 +63,15 @@ jobs:
       - name: Summary
         if: always()
         run: |
+          action='${{ inputs.action }}'
+          if [ '${{ github.event_name }}' = 'pull_request' ]; then
+            action='bootstrap-close'
+          fi
           {
             echo '## SongChart Mobile'
             echo
-            echo "- Action: ${{ inputs.action }}"
+            echo "- Action: $action"
             echo "- SHA: $SONGCHART_MOBILE_SHA"
-            echo "- Branch/ref: ${{ github.ref_name }}"
+            echo "- Branch/ref: ${{ github.head_ref || github.ref_name }}"
             echo '- CLOSE is read-only canonical verification; it never prepares or commits generated authority.'
           } >> "$GITHUB_STEP_SUMMARY"
