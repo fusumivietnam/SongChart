@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Define one canonical versioning model for SongChart product releases, candidate builds, CI evidence, runtime display, graph snapshots and release artifacts.",
+  "separation_rules": {
+    "delivery_stage": "Stage/tranche identifiers such as 19.0.4-C1B are planning and delivery coordinates only. They are never product versions or build numbers.",
+    "product_version": "Product releases use Semantic Versioning MAJOR.MINOR.PATCH and Git tag vMAJOR.MINOR.PATCH.",
+    "build_identity": "Build identity is derived from immutable source/CI evidence and is never manually incremented."
+  },
+  "product_version": {
+    "format": "MAJOR.MINOR.PATCH",
+    "tag_format": "vMAJOR.MINOR.PATCH",
+    "authority": "The release pipeline records the product version at release promotion. Do not infer product version from Stage numbers.",
+    "bump_policy": {
+      "major": "Breaking public API/data-contract or deliberately incompatible product behavior.",
+      "minor": "Backward-compatible user-visible capability or substantial new public behavior.",
+      "patch": "Backward-compatible bug fix, security fix, operational correction or internal improvement that does not add a new public capability."
+    }
+  },
+  "candidate_identity": {
+    "canonical_key": "git_sha",
+    "display_format": "<product-version-or-unreleased>+sha.<short-sha>",
+    "rule": "PR and accepted-main candidates are identified primarily by exact Git SHA. PR number, branch and workflow run are metadata, not version authority."
+  },
+  "build_identity": {
+    "build_id_format": "gha.<run-id>.sha.<short-sha>",
+    "build_number_rule": "When a numeric build number is required by an artifact or platform, use the GitHub Actions release workflow run number for that workflow. Never maintain a counter in source control.",
+    "required_fields": [
+      "product_version",
+      "git_sha",
+      "short_sha",
+      "source_ref",
+      "github_run_id",
+      "github_run_number",
+      "built_at_utc"
+    ]
+  },
+  "release_identity": {
+    "display_format": "vMAJOR.MINOR.PATCH (short-sha)",
+    "artifact_metadata_format": "MAJOR.MINOR.PATCH+build.<run-number>.sha.<short-sha>",
+    "immutability_rule": "One released product version maps to exactly one accepted source SHA. Rebuilding the same SHA may create new build evidence but must not silently move the release tag to different source."
+  },
+  "runtime_and_ui": {
+    "public_default": "Display product version only unless support/debug context requires build identity.",
+    "admin_default": "Display product version, short SHA, build number/run id and deployment environment.",
+    "api_metadata": "Expose product version and short SHA in diagnostic/system metadata only; do not couple business API compatibility to build numbers."
+  },
+  "development_intelligence": {
+    "snapshot_key": "accepted_git_sha",
+    "snapshot_display": "<product-version-or-unreleased> / <short-sha>",
+    "rule": "Architecture/source-evolution snapshots are versioned by accepted Git SHA. Product version is attached when that SHA becomes a release."
+  },
+  "automation_rules": [
+    "CI and release jobs derive build identity automatically from GitHub Actions and Git metadata.",
+    "Generated docs, MCP resources, Admin Development Intelligence and release artifacts consume the same version/build contract.",
+    "No application file, environment example, documentation page or AI agent may invent an independent version counter.",
+    "The final Stage 19 release automation must enforce tag-to-SHA immutability and emit the canonical build manifest."
+  ]
+}
