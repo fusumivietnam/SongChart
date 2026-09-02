@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: generated-authority-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
@@ -14,7 +14,6 @@ concurrency:
 
 jobs:
   generate:
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'stage-19.0-delivery-kernel-hardening'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact PR head
@@ -54,30 +53,16 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-      - name: Apply generated-only bootstrap refresh
-        run: |
-          if [ -z "$(git status --porcelain -- docs/project/generated)" ]; then
-            echo 'Generated authority already current.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- docs/project/generated
-          unexpected="$(git diff --cached --name-only | grep -vE '^docs/project/generated/' || true)"
-          if [ -n "$unexpected" ]; then
-            printf '%s\n' 'Refusing generated commit outside owned path:' "$unexpected" >&2
-            exit 1
-          fi
-          git commit -m 'chore: refresh generated repository authority'
-          git push origin "HEAD:${{ github.head_ref }}"
-
       - name: Report generated diff
-        if: always()
         run: |
           {
             echo '## Generated authority bootstrap'
             echo
-            echo "Source SHA: ${{ github.event.pull_request.head.sha }}"
+            echo "Exact source SHA: ${{ github.event.pull_request.head.sha }}"
             echo
-            echo 'Bootstrap is branch-locked and may commit only docs/project/generated output produced by canonical generators.'
+            echo 'This workflow is read-only and never commits or pushes source.'
+            echo
+            echo '```text'
+            git status --short -- docs/project/generated
+            echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
