@@ -34,6 +34,28 @@
     <details class="mt-6 rounded-xl border border-slate-200 bg-white p-5" data-admin-technical-details>
         <summary class="cursor-pointer font-semibold">Chi tiết kỹ thuật</summary>
         <p class="mt-2 text-sm text-slate-500">Dành cho chẩn đoán vận hành. Người quản trị thông thường không cần dùng phần này.</p>
+
+        <section class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4" data-development-intelligence="{{ $developmentIntelligence['status'] }}">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <h3 class="font-semibold">Development Intelligence</h3>
+                    <p class="mt-1 text-xs text-slate-500">Snapshot source/architecture chỉ được build nền hoặc khi SA/Dev/Tech yêu cầu; trang này không scan source.</p>
+                </div>
+                <span class="rounded-full border bg-white px-2.5 py-1 text-xs font-semibold">{{ strtoupper($developmentIntelligence['status']) }}</span>
+            </div>
+            @if($developmentIntelligence['available'])
+                <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <div><p class="text-xs text-slate-500">Source</p><p class="mt-1 font-mono text-sm">{{ $developmentIntelligence['short_sha'] ?? 'unknown' }}</p></div>
+                    <div><p class="text-xs text-slate-500">Classes</p><p class="mt-1 text-lg font-bold">{{ number_format($developmentIntelligence['metrics']['class_nodes'] ?? 0) }}</p></div>
+                    <div><p class="text-xs text-slate-500">Routes</p><p class="mt-1 text-lg font-bold">{{ number_format($developmentIntelligence['metrics']['route_nodes'] ?? 0) }}</p></div>
+                    <div><p class="text-xs text-slate-500">Graph edges</p><p class="mt-1 text-lg font-bold">{{ number_format($developmentIntelligence['metrics']['edges'] ?? 0) }}</p></div>
+                </div>
+                <p class="mt-3 text-xs text-slate-500">Snapshot {{ $developmentIntelligence['generated_at'] }} · {{ $developmentIntelligence['branch'] ?? 'detached' }}</p>
+            @else
+                <p class="mt-3 text-sm text-slate-500">{{ $developmentIntelligence['message'] }}</p>
+            @endif
+        </section>
+
         <div class="mt-5 grid gap-6 xl:grid-cols-2"><div><h3 class="font-semibold">Đồng bộ gần đây</h3><div class="mt-3 space-y-2">@forelse($recentSyncs->take(6) as $sync)<div class="rounded border p-3 text-sm"><strong>{{ $sync->provider?->name ?? 'Nguồn không xác định' }}</strong> · {{ $sync->operation }}<div class="text-xs text-slate-500">{{ $sync->status }} · {{ $sync->processed_count }} xử lý · {{ $sync->failed_count }} lỗi</div></div>@empty<p class="text-sm text-slate-500">Chưa có lịch sử đồng bộ.</p>@endforelse</div></div><div><h3 class="font-semibold">Hoạt động tiện ích gần đây</h3><div class="mt-3 space-y-2">@forelse($recentOperations as $operation)<div class="rounded border p-3 text-sm"><strong>{{ $operation->extension?->name ?? 'System operation' }}</strong> · {{ $operation->type }}<div class="text-xs text-slate-500">{{ $operation->status }}</div></div>@empty<p class="text-sm text-slate-500">Chưa có hoạt động.</p>@endforelse</div></div></div>
     </details>
 </div>
