@@ -7,6 +7,7 @@ $errors = [];
 
 $requiredFiles = [
     '.github/workflows/tests.yml',
+    '.github/workflows/auto-closure.yml',
     '.github/workflows/songchart-mobile.yml',
     'phpunit.xml',
     'composer.json',
@@ -59,10 +60,11 @@ foreach (['composer validate --strict', 'composer quality:verify', 'composer tes
 
 $requiredWorkflowFragments = [
     "push:\n    branches:\n      - main",
-    "pull_request:\n    branches:\n      - main",
     'workflow_dispatch:',
+    'workflow_call:',
+    'target_sha:',
+    'SONGCHART_CI_SHA: ${{ inputs.target_sha || github.sha }}',
     'concurrency:',
-    'group: tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}',
     'cancel-in-progress: true',
     'actions/checkout@v6',
     'actions/setup-node@v6',
@@ -74,6 +76,9 @@ foreach ($requiredWorkflowFragments as $fragment) {
     }
 }
 
+if (is_string($workflow) && str_contains($workflow, "pull_request:\n    branches:\n      - main")) {
+    $errors[] = 'Reusable tests workflow must not duplicate PR verification owned by auto closure.';
+}
 if (is_string($workflow) && substr_count($workflow, "node-version: '24'") < 2) {
     $errors[] = 'GitHub application quality/frontend lanes must both use Node 24 LTS.';
 }
@@ -81,8 +86,41 @@ if (is_string($workflow) && str_contains($workflow, "node-version: '22'")) {
     $errors[] = 'GitHub workflow must not drift back to Node 22 after Node 24 alignment.';
 }
 
-if (is_string($workflow) && preg_match('/^\s{2}push:\s*$/m', $workflow) === 1 && ! str_contains($workflow, "push:\n    branches:\n      - main")) {
-    $errors[] = 'Full CI must not run on every feature-branch push; push verification is restricted to main.';
+$autoClosure = is_file($root.'/.github/workflows/auto-closure.yml')
+    ? file_get_contents($root.'/.github/workflows/auto-closure.yml')
+    : '';
+
+$requiredAutoClosureFragments = [
+    'name: SongChart Auto Closure',
+    'pull_request:',
+    'permissions:',
+    'contents: write',
+    'pull-requests: write',
+    'github.event.pull_request.head.repo.full_name == github.repository',
+    'persist-credentials: false',
+    'php scripts/project-context.php --write-source',
+    'php scripts/compile-repository-contracts.php --refresh-check',
+    'grep -vE \'^.. docs/project/generated(/|$)\'',
+    'git add docs/project/generated',
+    'commit -m \'chore: refresh generated repository authority\'',
+    'uses: ./.github/workflows/tests.yml',
+    'target_sha: ${{ needs.prepare.outputs.effective_sha }}',
+    'run: ./songchart verify',
+    'test -z "$(git status --porcelain --untracked-files=no)"',
+    'markPullRequestReadyForReview',
+    'Any new commit invalidates this evidence and restarts auto closure',
+];
+
+foreach ($requiredAutoClosureFragments as $fragment) {
+    if (! is_string($autoClosure) || ! str_contains($autoClosure, $fragment)) {
+        $errors[] = 'GitHub auto-closure contract is missing: '.$fragment;
+    }
+}
+
+foreach (['./mobile close', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenAutoClosureFragment) {
+    if (is_string($autoClosure) && str_contains($autoClosure, $forbiddenAutoClosureFragment)) {
+        $errors[] = 'GitHub auto closure must delegate without reimplementing closure: '.$forbiddenAutoClosureFragment;
+    }
 }
 
 $mobileWorkflow = is_file($root.'/.github/workflows/songchart-mobile.yml')
@@ -97,13 +135,13 @@ $requiredMobileWorkflowFragments = [
     '- close',
     'permissions:',
     'contents: read',
-    'SONGCHART_TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}',
+    'SONGCHART_TARGET_SHA: ${{ github.sha }}',
     'ref: ${{ env.SONGCHART_TARGET_SHA }}',
-    "github.head_ref == 'stage-19.0-delivery-kernel-hardening'",
     'run: ./mobile check --verbose',
     'run: ./songchart verify',
     'test "$(git rev-parse HEAD)" = "$SONGCHART_MOBILE_SHA"',
     'test -z "$(git status --porcelain --untracked-files=no)"',
+    'Manual fallback only; normal PR closure is owned by SongChart Auto Closure.',
 ];
 
 foreach ($requiredMobileWorkflowFragments as $fragment) {
@@ -112,9 +150,9 @@ foreach ($requiredMobileWorkflowFragments as $fragment) {
     }
 }
 
-foreach (['./mobile close', 'git commit', 'git push', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenMobileFragment) {
+foreach (['pull_request:', './mobile close', 'git commit', 'git push', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenMobileFragment) {
     if (is_string($mobileWorkflow) && str_contains($mobileWorkflow, $forbiddenMobileFragment)) {
-        $errors[] = 'GitHub mobile control plane must delegate without mutating or reimplementing closure: '.$forbiddenMobileFragment;
+        $errors[] = 'GitHub mobile fallback must remain read-only and manual: '.$forbiddenMobileFragment;
     }
 }
 

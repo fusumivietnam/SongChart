@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "name": "SongChart Delivery Kernel",
   "principles": {
     "public_facade_only": true,
@@ -32,9 +32,26 @@
     "promote": "Read-only exact-tree readiness preflight; GitHub remains merge/CI authority.",
     "doctor": "Existing AI/runtime diagnostic owner."
   },
+  "github_auto_closure": {
+    "workflow": ".github/workflows/auto-closure.yml",
+    "role": "Automatic PREPARE, CHECK and CLOSE orchestration for same-repository pull requests.",
+    "prepare_generated_authority": true,
+    "prepare_may_commit_only_generated_authority": true,
+    "prepare_must_reject_other_mutations": true,
+    "verification_workflow": ".github/workflows/tests.yml",
+    "canonical_delegate": "./songchart verify",
+    "must_use_effective_exact_sha": true,
+    "must_revalidate_pr_head_before_close": true,
+    "must_prove_tracked_tree_clean_after_close": true,
+    "may_reimplement_verification_logic": false,
+    "auto_ready_after_closure": true,
+    "auto_merge": false,
+    "human_gate": "Merge the exact ready PR head in GitHub. Any new commit invalidates closure evidence and reruns automation.",
+    "fork_write_execution_allowed": false
+  },
   "github_mobile_control_plane": {
     "workflow": ".github/workflows/songchart-mobile.yml",
-    "role": "Tap-only GitHub Actions adapter for constrained mobile operators.",
+    "role": "Tap-only manual fallback for constrained mobile operators.",
     "actions": ["check", "close"],
     "check_delegate": "./mobile check --verbose",
     "close_delegate": "./songchart verify",
@@ -44,7 +61,7 @@
     "may_commit_generated_authority": false,
     "may_push_source_changes": false,
     "may_reimplement_verification_logic": false,
-    "activation": "Available for normal workflow_dispatch use only after the workflow definition exists on accepted default main."
+    "normal_pr_closure_owner": ".github/workflows/auto-closure.yml"
   },
   "migration_policy": {
     "strategy": "strangler",

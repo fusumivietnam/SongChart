@@ -11,11 +11,13 @@ it('registers every test layer in phpunit', function (): void {
         ->toContain('tests/Feature');
 });
 
-it('keeps required CI jobs and commands', function (): void {
+it('keeps required reusable CI jobs and commands', function (): void {
     $workflow = file_get_contents(base_path('.github/workflows/tests.yml'));
 
     expect($workflow)
-        ->toContain('SONGCHART_CI_SHA: ${{ github.event.pull_request.head.sha || github.sha }}')
+        ->toContain('workflow_call:')
+        ->toContain('target_sha:')
+        ->toContain('SONGCHART_CI_SHA: ${{ inputs.target_sha || github.sha }}')
         ->toContain('ref: ${{ env.SONGCHART_CI_SHA }}')
         ->toContain('quality:')
         ->toContain('tests-postgres:')
@@ -29,6 +31,7 @@ it('keeps required CI jobs and commands', function (): void {
         ->toContain('storage/logs/postgres-test-last-failure.log')
         ->toContain('postgres-failure-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}');
 
-    expect(str_contains((string) $workflow, 'tests-sqlite:'))->toBeFalse()
+    expect(str_contains((string) $workflow, "pull_request:\n    branches:\n      - main"))->toBeFalse()
+        ->and(str_contains((string) $workflow, 'tests-sqlite:'))->toBeFalse()
         ->and(str_contains((string) $workflow, 'composer test:sqlite'))->toBeFalse();
 });

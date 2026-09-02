@@ -10,7 +10,7 @@ it('keeps delivery kernel vocabulary bounded and strangler-safe', function (): v
         flags: JSON_THROW_ON_ERROR,
     );
 
-    expect($contract['schema_version'])->toBe(2)
+    expect($contract['schema_version'])->toBe(3)
         ->and(array_keys($contract['risk_classes']))->toBe(['R1', 'R2', 'R3', 'R4', 'R5', 'R6'])
         ->and(array_keys($contract['gate_profiles']))->toBe(['G0', 'G1', 'G2', 'G3', 'G4'])
         ->and($contract['lifecycle'])->toBe([
@@ -43,7 +43,40 @@ it('keeps the delivery kernel facade delegating instead of reimplementing closur
         ->not->toContain('composer stage:verify');
 });
 
-it('keeps the GitHub mobile control plane tap-only and exact-SHA read-only', function (): void {
+it('keeps GitHub auto closure exact-SHA and human-promoted', function (): void {
+    $root = dirname(__DIR__, 2);
+    $workflow = (string) file_get_contents($root.'/.github/workflows/auto-closure.yml');
+    $contract = json_decode(
+        (string) file_get_contents($root.'/docs/project/engineering/delivery-kernel.json'),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+    $closure = $contract['github_auto_closure'];
+
+    expect($closure['prepare_generated_authority'])->toBeTrue()
+        ->and($closure['prepare_may_commit_only_generated_authority'])->toBeTrue()
+        ->and($closure['prepare_must_reject_other_mutations'])->toBeTrue()
+        ->and($closure['canonical_delegate'])->toBe('./songchart verify')
+        ->and($closure['must_use_effective_exact_sha'])->toBeTrue()
+        ->and($closure['must_revalidate_pr_head_before_close'])->toBeTrue()
+        ->and($closure['must_prove_tracked_tree_clean_after_close'])->toBeTrue()
+        ->and($closure['auto_ready_after_closure'])->toBeTrue()
+        ->and($closure['auto_merge'])->toBeFalse()
+        ->and($closure['fork_write_execution_allowed'])->toBeFalse()
+        ->and($workflow)
+        ->toContain('github.event.pull_request.head.repo.full_name == github.repository')
+        ->toContain('persist-credentials: false')
+        ->toContain('git add docs/project/generated')
+        ->toContain('uses: ./.github/workflows/tests.yml')
+        ->toContain('target_sha: ${{ needs.prepare.outputs.effective_sha }}')
+        ->toContain('run: ./songchart verify')
+        ->toContain('markPullRequestReadyForReview')
+        ->toContain('Any new commit invalidates this evidence and restarts auto closure')
+        ->not->toContain('./mobile close')
+        ->not->toContain('mergePullRequest');
+});
+
+it('keeps the GitHub mobile control plane tap-only read-only fallback', function (): void {
     $root = dirname(__DIR__, 2);
     $workflow = (string) file_get_contents($root.'/.github/workflows/songchart-mobile.yml');
     $contract = json_decode(
@@ -61,16 +94,18 @@ it('keeps the GitHub mobile control plane tap-only and exact-SHA read-only', fun
         ->and($mobile['must_prove_tracked_tree_clean_after_verification'])->toBeTrue()
         ->and($mobile['may_commit_generated_authority'])->toBeFalse()
         ->and($mobile['may_push_source_changes'])->toBeFalse()
+        ->and($mobile['normal_pr_closure_owner'])->toBe('.github/workflows/auto-closure.yml')
         ->and($workflow)
         ->toContain('workflow_dispatch:')
         ->toContain('- check')
         ->toContain('- close')
-        ->toContain('SONGCHART_TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}')
+        ->toContain('SONGCHART_TARGET_SHA: ${{ github.sha }}')
         ->toContain('ref: ${{ env.SONGCHART_TARGET_SHA }}')
-        ->toContain("github.head_ref == 'stage-19.0-delivery-kernel-hardening'")
         ->toContain('run: ./mobile check --verbose')
         ->toContain('run: ./songchart verify')
         ->toContain('test "$(git rev-parse HEAD)" = "$SONGCHART_MOBILE_SHA"')
+        ->toContain('Manual fallback only; normal PR closure is owned by SongChart Auto Closure.')
+        ->not->toContain('pull_request:')
         ->not->toContain('./mobile close')
         ->not->toContain('git commit')
         ->not->toContain('git push');

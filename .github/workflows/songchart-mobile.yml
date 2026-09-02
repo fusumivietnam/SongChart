@@ -1,9 +1,6 @@
 name: SongChart Mobile
 
 on:
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       action:
@@ -19,16 +16,15 @@ permissions:
   contents: read
 
 env:
-  SONGCHART_TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+  SONGCHART_TARGET_SHA: ${{ github.sha }}
 
 concurrency:
-  group: songchart-mobile-${{ github.event.pull_request.number || github.ref }}-${{ inputs.action || 'bootstrap-close' }}
+  group: songchart-mobile-${{ github.ref }}-${{ inputs.action }}
   cancel-in-progress: true
 
 jobs:
   verify:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.head_ref == 'stage-19.0-delivery-kernel-hardening')
-    name: ${{ github.event_name == 'pull_request' && 'BOOTSTRAP CLOSE — canonical exact SHA' || (inputs.action == 'close' && 'CLOSE — canonical exact SHA' || 'CHECK — focused verification') }}
+    name: ${{ inputs.action == 'close' && 'CLOSE — canonical exact SHA' || 'CHECK — focused verification' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout selected exact SHA
@@ -47,11 +43,11 @@ jobs:
           printf 'Selected exact SHA: %s\n' "$(git rev-parse HEAD)"
 
       - name: CHECK — governed focused verification
-        if: github.event_name == 'workflow_dispatch' && inputs.action == 'check'
+        if: inputs.action == 'check'
         run: ./mobile check --verbose
 
       - name: CLOSE — governed canonical verification
-        if: (github.event_name == 'pull_request' && github.head_ref == 'stage-19.0-delivery-kernel-hardening') || inputs.action == 'close'
+        if: inputs.action == 'close'
         run: ./songchart verify
 
       - name: Prove verification did not mutate tracked source
@@ -63,15 +59,12 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          action='${{ inputs.action }}'
-          if [ '${{ github.event_name }}' = 'pull_request' ]; then
-            action='bootstrap-close'
-          fi
           {
             echo '## SongChart Mobile'
             echo
-            echo "- Action: $action"
+            echo "- Action: ${{ inputs.action }}"
             echo "- SHA: $SONGCHART_MOBILE_SHA"
-            echo "- Branch/ref: ${{ github.head_ref || github.ref_name }}"
+            echo "- Branch/ref: ${{ github.ref_name }}"
+            echo '- Manual fallback only; normal PR closure is owned by SongChart Auto Closure.'
             echo '- CLOSE is read-only canonical verification; it never prepares or commits generated authority.'
           } >> "$GITHUB_STEP_SUMMARY"

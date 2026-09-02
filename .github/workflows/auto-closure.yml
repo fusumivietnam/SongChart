@@ -1,0 +1,160 @@
+name: SongChart Auto Closure
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: songchart-auto-closure-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      effective_sha: ${{ steps.result.outputs.effective_sha }}
+    steps:
+      - name: Checkout exact PR head without persistent credentials
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, xml, zip
+          coverage: none
+
+      - name: Install locked PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: PREPARE — generate deterministic authority
+        run: |
+          php scripts/project-context.php --write-source
+          php scripts/compile-repository-contracts.php --refresh-check
+          git diff --check
+
+      - name: Reject PREPARE mutations outside generated authority
+        run: |
+          unexpected="$(git status --porcelain --untracked-files=all | grep -vE '^.. docs/project/generated(/|$)' || true)"
+          if [ -n "$unexpected" ]; then
+            printf '%s\n' 'Unexpected PREPARE mutation:' "$unexpected" >&2
+            exit 1
+          fi
+
+      - name: Commit generated authority when required
+        id: generated_commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          if [ -z "$(git status --porcelain -- docs/project/generated)" ]; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/project/generated
+          git commit -m 'chore: refresh generated repository authority'
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" \
+            push https://github.com/${{ github.repository }}.git "HEAD:${HEAD_BRANCH}"
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Publish effective exact SHA
+        id: result
+        run: |
+          effective_sha="$(git rev-parse HEAD)"
+          printf 'effective_sha=%s\n' "$effective_sha" >> "$GITHUB_OUTPUT"
+          printf 'Effective exact SHA: %s\n' "$effective_sha"
+
+  verify:
+    needs: prepare
+    uses: ./.github/workflows/tests.yml
+    with:
+      target_sha: ${{ needs.prepare.outputs.effective_sha }}
+
+  close:
+    needs:
+      - prepare
+      - verify
+    runs-on: ubuntu-latest
+    env:
+      SONGCHART_CLOSE_SHA: ${{ needs.prepare.outputs.effective_sha }}
+    steps:
+      - name: Checkout verified exact SHA
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.SONGCHART_CLOSE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Prepare Docker development configuration
+        run: cp .env.docker.example .env.docker
+
+      - name: Prove PR head still matches verified SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current_head="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .head.sha)"
+          test "$current_head" = "$SONGCHART_CLOSE_SHA"
+          test "$(git rev-parse HEAD)" = "$SONGCHART_CLOSE_SHA"
+
+      - name: CLOSE — governed canonical verification
+        run: ./songchart verify
+
+      - name: Prove canonical verification preserved exact tree
+        run: |
+          test "$(git rev-parse HEAD)" = "$SONGCHART_CLOSE_SHA"
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+  ready-to-promote:
+    needs:
+      - prepare
+      - verify
+      - close
+    runs-on: ubuntu-latest
+    env:
+      SONGCHART_PROMOTION_SHA: ${{ needs.prepare.outputs.effective_sha }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Revalidate exact PR head
+        run: |
+          current_head="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .head.sha)"
+          test "$current_head" = "$SONGCHART_PROMOTION_SHA"
+
+      - name: Mark draft PR ready for human promotion
+        run: |
+          is_draft="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .draft)"
+          if [ "$is_draft" = 'true' ]; then
+            pr_node_id="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .node_id)"
+            gh api graphql \
+              -f query='mutation($id:ID!){markPullRequestReadyForReview(input:{pullRequestId:$id}){pullRequest{isDraft}}}' \
+              -f id="$pr_node_id" \
+              --jq '.data.markPullRequestReadyForReview.pullRequest.isDraft' | grep -qx 'false'
+          fi
+
+      - name: Promotion summary
+        run: |
+          {
+            echo '## Ready to promote'
+            echo
+            echo "- Exact SHA: $SONGCHART_PROMOTION_SHA"
+            echo '- PREPARE: generated authority reconciled'
+            echo '- CHECK: Quality + PostgreSQL + frontend passed'
+            echo '- CLOSE: canonical verification passed without tracked-tree mutation'
+            echo '- Human gate: merge this exact PR head in GitHub'
+            echo '- Any new commit invalidates this evidence and restarts auto closure'
+          } >> "$GITHUB_STEP_SUMMARY"

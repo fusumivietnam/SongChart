@@ -4,16 +4,19 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      target_sha:
+        description: 'Exact repository SHA to verify'
+        required: false
+        type: string
 
 env:
-  SONGCHART_CI_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+  SONGCHART_CI_SHA: ${{ inputs.target_sha || github.sha }}
 
 concurrency:
-  group: tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: tests-${{ github.workflow }}-${{ inputs.target_sha || github.ref }}
   cancel-in-progress: true
 
 jobs:
