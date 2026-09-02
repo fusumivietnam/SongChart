@@ -1,0 +1,73 @@
+{
+    "schema_version": 1,
+    "generated_from_repository": true,
+    "source_fingerprint": "172454713af9474c6e40ba87955c0ad903e84f3b2f3c1068d9b75e54827a73bd",
+    "current_stage": {
+        "id": "19.0",
+        "title": "Production Readiness & First Release",
+        "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
+        "status": "implementing"
+    },
+    "accepted_through": "19.0.3",
+    "stage_progress": [
+        {
+            "id": "19.0.1",
+            "status": "accepted",
+            "title": "Production topology + environment inventory"
+        },
+        {
+            "id": "19.0.1.1",
+            "status": "accepted",
+            "title": "Data contract + provider taxonomy convergence"
+        },
+        {
+            "id": "19.0.1.2",
+            "status": "accepted",
+            "title": "Mobile verification + AI UI design harness"
+        },
+        {
+            "id": "19.0.2",
+            "status": "accepted",
+            "title": "Secrets/environment hardening"
+        },
+        {
+            "id": "19.0.3",
+            "status": "accepted",
+            "title": "Queue/scheduler production runtime"
+        },
+        {
+            "id": "19.0.4",
+            "status": "implementing",
+            "title": "Observability + alerting"
+        },
+        {
+            "id": "19.0.5",
+            "status": "planned",
+            "title": "Backup/recovery"
+        },
+        {
+            "id": "19.0.6",
+            "status": "planned",
+            "title": "Security review + production smoke"
+        },
+        {
+            "id": "final",
+            "status": "planned",
+            "title": "First release package/tag"
+        }
+    ],
+    "next_tranche": {
+        "id": "19.0.4-C1B",
+        "title": "Active brand cleanup + AI framework context integration"
+    },
+    "work_lease_policy": {
+        "authority": "live Git branch + GitHub pull request",
+        "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated."
+    },
+    "source_hashes": {
+        "candidate-verification.json": "b8b75b2bcd9383e06e6acb3a788cab29815672e6be83db6907c9246d3fa0b49e",
+        "docs/project/engineering/consolidation-plan.json": "f3639a2211047c930d554622fecf707a81047a4b60b12a87469650b78b159c32",
+        "docs/project/engineering/project-knowledge.json": "fe29d2ba484f8031e7a03c0d8e636458094b731ce1fe74279508f6eae9a0c961",
+        "docs/project/engineering/stage-plan.json": "8159ea8694bd8cbcff043380098c9f9168a5acc04016d9eddb9bd003d172015e"
+    }
+}
