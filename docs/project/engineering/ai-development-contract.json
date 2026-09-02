@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "authority": "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
   "before_implementation": [
     "Read PROJECT_AUTHORITY.md.",
@@ -10,7 +10,8 @@
     "Review official/native capability ownership before custom infrastructure.",
     "Review docs/project/stack/STACK_OVERVIEW.md and docs/project/stack/CAPABILITY_OWNERSHIP.md when the change affects dependencies, infrastructure, framework capabilities, runtime, database, queues, caching, frontend stack, or package ownership.",
     "Confirm current-stage machine/document authorities agree before implementation; ambiguous first-match Markdown parsing is not acceptable for machine-critical state.",
-    "Before switching writer or allowing remote GitHub writes, ensure local-only commits are pushed and the known upstream is not behind/diverged."
+    "Before switching writer or allowing remote GitHub writes, ensure local-only commits are pushed and the known upstream is not behind/diverged.",
+    "When legacy source, tests, fixtures, seeders or documentation conflict with a current typed/domain/machine authority, identify the semantic owner before changing either side."
   ],
   "implementation_rules": [
     "Do not duplicate registered authority literals.",
@@ -43,7 +44,15 @@
     "Non-interactive workflow commands must not open pagers or prompts unless interaction is explicitly part of the command contract.",
     "Machine-critical state parsed from Markdown must be scoped to the owning section or replaced by machine-readable authority; do not use first-match parsing across documents containing historical/current state together.",
     "Any workflow or verification mechanism change must update its owning Markdown authority in the same logical change, then update applicable machine-readable contracts/routing and a permanent regression consumer. A script/test-only workflow change is incomplete.",
-    "Any tracked change after canonical PASS invalidates prior closure evidence; re-run post-diff impact, reconcile when needed, focused verification, candidate and canonical closure on the new HEAD."
+    "Any tracked change after canonical PASS invalidates prior closure evidence; re-run post-diff impact, reconcile when needed, focused verification, candidate and canonical closure on the new HEAD.",
+    "Current typed/domain/machine contracts are the convergence target for active legacy source, tests, fixtures, seeders and overview documentation when those surfaces are touched or exposed by verification.",
+    "Do not widen a current enum merely to preserve an obsolete synonym when the legacy value represented a different concept; migrate the consumer to the current semantic owner unless an explicit compatibility contract requires the alias.",
+    "Provider category, operational role and capability are distinct; do not use role-like categories or provider-specific capability spellings when the typed taxonomy already owns the meaning.",
+    "When one broad gate exposes multiple legacy literals owned by the same semantic contract, inventory and converge the affected vocabulary as one bounded corrective before rerunning the expensive lane.",
+    "Overview Markdown must not preserve an older alternative to a current typed/machine contract; correct it or reduce it to a pointer to the authoritative owner.",
+    "Prefer GitHub-native PR checks, concurrency cancellation, branch protection, failure artifacts and accepted-main releases over custom integration orchestration when those primitives satisfy the requirement.",
+    "For constrained/mobile operation, use GitHub commits, exact SHA, Actions results and bounded failure artifacts as the control/evidence plane; avoid requiring source-code paste through a mobile terminal.",
+    "CI failure artifacts are runtime diagnostic evidence only, must be bounded/non-secret, and never become tracked source authority or substitute for candidate/canonical evidence."
   ],
   "workflow": {
     "ordered_phases": [
@@ -76,6 +85,8 @@
     "generated_clean_boundary": "After reconcile, docs/project/generated must have no uncommitted changes before pre-closure verification.",
     "writer_sync_boundary": "Do not allow a second/remote writer to commit to the same branch while local-only commits remain unpushed.",
     "workflow_authority_sync": "A workflow/verification mechanism change is incomplete unless the owning Markdown authority, applicable machine contract/routing, and permanent regression consumer are updated in the same logical change.",
+    "legacy_convergence": "Current typed/domain/machine contracts are the target state for active legacy consumers; obsolete synonyms converge toward the owner rather than broadening the owner by default.",
+    "mobile_github_control_plane": "Use GitHub commits/SHA, Actions checks and bounded failure artifacts for constrained-device handoff and diagnosis; keep source editing with the synchronized active writer.",
     "mutation_envelopes": [
       "read-only",
       "generated-only",
@@ -99,6 +110,7 @@
     "query_budget_authority": "docs/project/performance/query-budget-contract.json",
     "project_context_authority": "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md",
     "impact_map_authority": "docs/project/stack/impact-test-map.json",
+    "ci_failure_evidence": "PostgreSQL CI preserves the existing bounded failure log as a short-retention GitHub Actions artifact named by exact commit SHA and run attempt.",
     "post_closure_seal": [
       "record exact HEAD SHA",
       "verify tracked tree is clean",
@@ -109,9 +121,10 @@
   "failure_protocol": [
     "Preserve exact failing evidence.",
     "Identify the owning authority before patching.",
-    "Classify failures as source behavior, stale consumer, stale generated authority, uncommitted generated authority, dead impact command, runtime-artifact ownership, formatter-only drift, parser/authority ambiguity, writer divergence, unexpected mutation, or closure invalidation where applicable.",
+    "Classify failures as source behavior, stale consumer, stale generated authority, uncommitted generated authority, dead impact command, runtime-artifact ownership, formatter-only drift, parser/authority ambiguity, writer divergence, legacy vocabulary drift, unexpected mutation, or closure invalidation where applicable.",
     "Prefer extending the existing resolver/contract over adding duplicate guards.",
     "If the authority is current and the consumer is stale, fix the consumer rather than reverting the authority to an obsolete format.",
+    "If legacy consumers use obsolete synonyms for a current typed meaning, converge the affected consumer group to the current owner instead of widening the owner by default.",
     "If generated authority is stale, regenerate it; do not hand-edit or hand-merge generated JSON.",
     "If reconcile leaves generated authority dirty, commit or restore only the generated envelope before pre-closure verification.",
     "If formatter drift is reported, use Pint write mode on the exact affected PHP path and commit the formatter-authoritative patch before broader verification.",

@@ -24,6 +24,7 @@ use App\Support\Catalog\Enrichment\GovernedEnrichmentEvidenceAdmissionPolicy;
 use App\Support\Catalog\Enrichment\GovernedEnrichmentExecutor;
 use App\Support\Catalog\Fusion\CanonicalFieldResolver;
 use App\Support\Catalog\Fusion\ConfigFieldAuthorityPolicy;
+use App\Support\Production\ProductionEnvironmentGuard;
 use App\Support\Providers\Normalization\DefaultNormalizedProviderEntityValidator;
 use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
 use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
@@ -61,6 +62,19 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::shouldBeStrict(! $this->app->isProduction());
+
+        if ((bool) config('songchart.production.environment_guard_enabled', false)) {
+            ProductionEnvironmentGuard::assertSafe([
+                'app_debug' => (bool) config('app.debug'),
+                'app_url' => (string) config('app.url'),
+                'database' => (string) config('database.default'),
+                'cache' => (string) config('cache.default'),
+                'queue' => (string) config('queue.default'),
+                'session_secure' => config('session.secure'),
+                'admin_2fa_mode' => (string) config('songchart.security.admin_2fa_mode'),
+                'design_lab_enabled' => (bool) config('design-lab.enabled'),
+            ]);
+        }
 
         if ($this->app->environment('demo')) {
             $demoUrl = rtrim((string) config('app.url'), '/');

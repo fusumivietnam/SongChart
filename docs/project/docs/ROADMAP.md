@@ -11,28 +11,41 @@ Trạng thái: tài liệu định hướng cho hạng mục đang triển khai 
 - Cross-stage engineering improvements được áp dụng dần khi chúng giảm trực tiếp navigation/debug/verification cost; không tạo thêm stage sản phẩm nếu không cần.
 - UI/Admin ưu tiên thuật ngữ tiếng Việt rõ nghĩa; code/contract giữ tên kỹ thuật khi cần đối chiếu.
 
-## Stage 18.6 — Provider Destination & Media Quality
+## Stage 19.0 — Production Readiness & First Release
 
-Mục tiêu: biến destination/media đã được duyệt thành một lớp trải nghiệm đáng tin cậy, có lựa chọn deterministic, freshness/provenance rõ ràng và khả năng vận hành khi destination hỏng/stale.
+Mục tiêu: biến accepted `main` tree thành first production release có deployment topology rõ ràng, secrets/runtime an toàn, queue/scheduler vận hành được, observability/backup có evidence, security review và production smoke trước khi tạo release package/tag.
 
 Trọng tâm:
 
-- destination/media selector theo availability, freshness, provenance và review state;
-- deterministic preference/ranking giữa approved destinations;
-- public projection chỉ dùng destination đủ điều kiện và giải thích được;
-- operational visibility cho stale/unavailable/private/non-embeddable destinations;
-- YouTube/media destination approval quality;
-- privacy status, embeddability và provider resource semantics phải fail closed;
-- không coi YouTube Video hoặc provider media resource là canonical Recording identity;
-- mở rộng provider breadth chỉ khi evidence quality và official API capability chứng minh nhu cầu.
+- production deployment topology tối thiểu và reproducible;
+- environment/secrets hardening không commit secret thật;
+- queue worker + scheduler production lifecycle;
+- PostgreSQL 18 production configuration và backup/restore verification;
+- Redis/runtime operational boundaries;
+- observability, alerting và health/smoke evidence;
+- security review cho auth, privileged operations, secrets, provider credentials và public surface;
+- release package/tag chỉ từ accepted exact `main` tree.
 
 Chiến lược closure:
 
-- inventory authority/data hiện có trước khi thêm schema/route/policy;
-- ưu tiên policy/selection convergence trên destination evidence đã tồn tại;
-- mỗi slice phải có focused regression cho eligibility/preference hoặc operator/public state mà nó thay đổi;
-- không biến 18.6 thành provider expansion framework hoặc recommendation engine;
-- unknown freshness/availability không được mặc định thành fresh/available.
+- inventory-first: không chọn hosting/platform trước khi repository runtime authority và release needs chỉ ra topology cần thiết;
+- reuse Docker/Laravel/Caddy/PostgreSQL/Redis primitives hiện hữu trước khi thêm deployment framework;
+- production-only config phải có owner và fail closed khi secret/runtime dependency thiếu;
+- backup/recovery phải có restore evidence, không chỉ có tài liệu;
+- network/provider live smoke là release-confidence evidence, không thay canonical deterministic gates;
+- không mở product/provider breadth trong Stage 19 trừ khi production blocker chứng minh cần thiết.
+
+### Planned slices
+
+1. **19.0.1 — Production topology + environment inventory** — xác định supported first-release topology, runtime processes, ports/domains/TLS assumptions, env ownership và gaps.
+2. **19.0.2 — Secrets/environment hardening** — production env contract, secret injection boundaries, fail-closed config checks.
+3. **19.0.3 — Queue/scheduler production runtime** — worker/scheduler lifecycle, restart/failure behavior, queue topology and health.
+4. **19.0.4 — Observability + alerting** — operational health, logs/metrics, alertable failure classes using existing first-party/runtime capabilities where possible.
+5. **19.0.5 — Backup/recovery** — PostgreSQL backup + verified restore path, retention/operational procedure.
+6. **19.0.6 — Security review + production smoke** — hardened public/admin/auth/provider boundaries and end-to-end production smoke checklist/evidence.
+7. **FINAL — First release package/tag** — candidate/canonical exact-head closure, accepted PR/main CI, then release artifact/tag from accepted exact main tree.
+
+AI Operations nếu được triển khai trước/sau production readiness phải bắt đầu ở read-only `observe → explain → recommend`; mọi mutation đi qua cùng governed Laravel Gate/Application Action/Audit surface như Admin, không có direct DB/secret/env bypass.
 
 ## Cross-stage engineering track — không phải product stage
 
@@ -60,21 +73,6 @@ Dọn dần, không xóa theo cảm tính. Một surface chỉ được retire k
 - dead verification aliases, compatibility scripts và retired command references: xóa khi verification command-surface/consumer graph chứng minh không còn consumer;
 - overlapping `Application` / `Actions` / `Services` / `Support`: không mass-move; với code mới chọn owner rõ ràng, và chỉ refactor lớp cũ khi một use case thực tế chạm tới nó;
 - stale generated/runtime artifacts: regenerate hoặc bỏ tracked ownership theo authority, không allowlist để né gate.
-
-## Nhóm 19.x — Production readiness / first release
-
-Sau khi Stage 18.6 đóng, roadmap chuyển sang production readiness thay vì mở thêm product-foundation stage nếu không có blocker thực tế.
-
-- deployment topology;
-- queue/scheduler production;
-- observability và alerting;
-- backup/recovery;
-- secrets/environment hardening;
-- security review;
-- production smoke verification;
-- release package/tag từ accepted `main` exact tree.
-
-AI Operations nếu được triển khai trước/sau production readiness phải bắt đầu ở read-only `observe → explain → recommend`; mọi mutation đi qua cùng governed Laravel Gate/Application Action/Audit surface như Admin, không có direct DB/secret/env bypass.
 
 ## Nhóm sau release — Giá trị cho người dùng cá nhân
 

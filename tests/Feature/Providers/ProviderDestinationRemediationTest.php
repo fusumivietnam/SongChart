@@ -13,7 +13,6 @@ use App\Models\User;
 use App\Support\Providers\Operations\ProviderMutationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use LogicException;
 
 uses(RefreshDatabase::class);
 

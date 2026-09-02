@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Application\Catalog\Queries\EntityPassportReadModel;
 use App\Domain\Catalog\Enums\EntityType;
+use App\Domain\Providers\Enums\ProviderCategory;
 use App\Models\Catalog\Artist;
 use App\Models\Catalog\ExternalIdentifier;
 use App\Models\Catalog\MetadataAssertion;
@@ -23,14 +24,14 @@ it('builds one identity bridge and a provider-aware enrichment plan without muta
     Provider::query()->create([
         'slug' => 'musicbrainz',
         'name' => 'MusicBrainz',
-        'category' => 'metadata',
+        'category' => ProviderCategory::Music->value,
         'status' => 'approved',
         'is_enabled' => true,
     ]);
     Provider::query()->create([
         'slug' => 'youtube',
         'name' => 'YouTube',
-        'category' => 'destination',
+        'category' => ProviderCategory::Music->value,
         'status' => 'approved',
         'is_enabled' => false,
     ]);

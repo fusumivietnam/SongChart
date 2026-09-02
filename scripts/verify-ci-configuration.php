@@ -7,6 +7,7 @@ $errors = [];
 
 $requiredFiles = [
     '.github/workflows/tests.yml',
+    '.github/workflows/songchart-mobile.yml',
     'phpunit.xml',
     'composer.json',
     'package.json',
@@ -82,6 +83,39 @@ if (is_string($workflow) && str_contains($workflow, "node-version: '22'")) {
 
 if (is_string($workflow) && preg_match('/^\s{2}push:\s*$/m', $workflow) === 1 && ! str_contains($workflow, "push:\n    branches:\n      - main")) {
     $errors[] = 'Full CI must not run on every feature-branch push; push verification is restricted to main.';
+}
+
+$mobileWorkflow = is_file($root.'/.github/workflows/songchart-mobile.yml')
+    ? file_get_contents($root.'/.github/workflows/songchart-mobile.yml')
+    : '';
+
+$requiredMobileWorkflowFragments = [
+    'name: SongChart Mobile',
+    'workflow_dispatch:',
+    'type: choice',
+    '- check',
+    '- close',
+    'permissions:',
+    'contents: read',
+    'SONGCHART_TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}',
+    'ref: ${{ env.SONGCHART_TARGET_SHA }}',
+    "github.head_ref == 'stage-19.0-delivery-kernel-hardening'",
+    'run: ./mobile check --verbose',
+    'run: ./songchart verify',
+    'test "$(git rev-parse HEAD)" = "$SONGCHART_MOBILE_SHA"',
+    'test -z "$(git status --porcelain --untracked-files=no)"',
+];
+
+foreach ($requiredMobileWorkflowFragments as $fragment) {
+    if (! is_string($mobileWorkflow) || ! str_contains($mobileWorkflow, $fragment)) {
+        $errors[] = 'GitHub mobile control-plane contract is missing: '.$fragment;
+    }
+}
+
+foreach (['./mobile close', 'git commit', 'git push', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenMobileFragment) {
+    if (is_string($mobileWorkflow) && str_contains($mobileWorkflow, $forbiddenMobileFragment)) {
+        $errors[] = 'GitHub mobile control plane must delegate without mutating or reimplementing closure: '.$forbiddenMobileFragment;
+    }
 }
 
 if ($errors !== []) {

@@ -4,7 +4,7 @@ Status: authoritative chronological repository history from Stage 16.1 onward.
 
 ## Purpose
 
-Keep stage and hotfix chronology separate from the current-stage pointer. `README.md` is the only authority that declares the current stage. Historical Stage 11 and Stage 12 delivery details remain in their original manifests and foundation records.
+Keep stage and hotfix chronology separate from the operational current-stage pointer in `docs/project/DEVELOPMENT_STATE.md`. Historical Stage 11 and Stage 12 delivery details remain in their original manifests and foundation records.
 
 ## Stage 16 chronology
 
@@ -69,7 +69,6 @@ Keep stage and hotfix chronology separate from the current-stage pointer. `READM
 
 > Stage-number note: Discovery infrastructure Stage 16.4.2 reuses an identifier previously used for the historical Official-source Task-contract Hotfix. The historical entry remains unchanged above.
 
-
 | 16.4.3 | Docker Local Development & Trusted HTTPS Profile | Adds a port-safe Docker browser-development lane using PostgreSQL 18.4, Redis, Caddy 2.11.3 and mkcert without replacing Laragon or canonical verification. |
 
 | 16.5 | Privileged Operations & Audit | Adds explicit Spatie-backed business audit, privileged user commands, mutation audit coverage and an operations-only audit viewer without broad automatic model logging. |
@@ -89,7 +88,6 @@ Keep stage and hotfix chronology separate from the current-stage pointer. `READM
 
 > Stage-number note: current-roadmap Stage 16.5.3 reuses an identifier from the earlier Contract Coverage & Release Baseline Closure stage. Historical records are preserved under `STAGE_16_5_3_LEGACY_CONTRACT_COVERAGE_*`.
 
-
 ## Product Integration Era
 
 | Stage | Delivery | Evidence |
@@ -106,29 +104,25 @@ Keep stage and hotfix chronology separate from the current-stage pointer. `READM
 | 17.3 | Provider Import Recovery & Operational Hardening | Classifies provider request failures as terminal or retryable, persists retry context, schedules bounded Laravel queue retry, and improves admin import recovery visibility without expanding entity breadth. |
 | 17.2.2 | Docker HTTP Environment Propagation Corrective | Replaces Docker dev `php artisan serve` with the direct PHP built-in server/router command so the long-running HTTP process inherits Docker DB/Redis environment exactly; adds contract coverage preventing ServeCommand regression. |
 | 17.1 | First Live Provider Contract | Adds MusicBrainz as the first live catalog adapter with fail-closed configuration, one-request-per-second governance, Artist lookup/search normalization, and local provider/pipeline control-center visibility. Evidence: `docs/foundation/STAGE_17_1_TASK_CONTRACT.md`, `docs/foundation/STAGE_17_1_VALIDATION_REPORT.md`. |
-
 | 17.3.2 | Admin Provider Import Workbench & Public Catalog Indexes | Moves MusicBrainz Artist search/import into the governed Admin provider surface and makes `/artists`, `/releases`, and `/collections` canonical public browse paths instead of 404 navigation targets. |
 | 17.3.3 | Provider Rate Policy & Global Request Gate | Replaces provider-specific request timing with a provider-neutral operation-aware policy/gate, shares Redis-backed MusicBrainz rate/cooldown state across HTTP and queue processes, and exposes provider rate state in Admin/local control surfaces. |
 | 17.4 | MusicBrainz Release Group + Release Vertical Slice | Adds distinct canonical Release Group storage, MusicBrainz Release Group/Release lookup/search normalization, governed Admin import workbench controls, Release→Group linking, partial-date safety and public Release routing. |
-
 | 17.5 | MusicBrainz Recording + ISRC Vertical Slice | Adds MusicBrainz Recording lookup/search/import, ISRC identities, ordered known-Artist credit links, canonical/public Recording surfaces and the identity boundary required before YouTube matching. |
 | 17.6 | Essential MusicBrainz Relationships | Adds MusicBrainz group membership, Recording→Work/ISWC identity, Artist Credit join phrases, aliases/selected URLs, Work import, `/works`, and canonical relationship rendering before YouTube admission. |
 | 17.6.1 | Admin Catalog Data Boundary Corrective | Restores controller/read-model boundaries for canonical Artist editing by moving persistence and privileged audit into a dedicated write service. |
 | 17.6.2 | PHPStan Type Contract Corrective | Restores static-analysis closure by making enum-backed Eloquent values, catalog branching, provider rate strategy flow and MusicBrainz relationship iterable types explicit without suppressions. |
 | 17.6.3 | PHPStan Exhaustive Map Corrective | Removes the impossible null-coalescing fallback from the validated exhaustive public-catalog title-column map, preserving runtime behavior while closing the final PHPStan error. |
-
 | 17.6.4 | Canonical Route & Relationship Runtime Corrective | Decouples canonical artist/release/recording aliases from demo search bindings, fixes enum-cast external-identifier comparisons during Recording relationship mutation, and stabilizes the development MusicBrainz workbench text contract. |
-
 | 17.9.4 | Candidate Stage Consistency Closure | Makes candidate verification fail closed when `candidate-verification.json` names a different stage than the README current-stage authority, preventing canonical evidence from being attached to stale stage metadata. |
 | 17.10 | Enrichment Orchestrator | In-development candidate now includes deterministic scheduling, database-enforced idempotency, queued request/rate gating, durable execution outcomes, governed MusicBrainz execution through the existing adapter/normalizer, freshness short-circuiting, and daily execution-budget admission; canonical mutation remains out of scope until later slices. |
 | 17.12 | Provider Admission Integration | Connects admissible provider field evidence to idempotent metadata assertions and the governed canonical-admission review queue without automatic canonical mutation; also hardens Linux-first candidate/dev-ready workflows and development runtime ownership. Evidence: `docs/foundation/STAGE_17_12_TASK_CONTRACT.md`, `docs/foundation/STAGE_17_12_VALIDATION_REPORT.md`. |
-
 | 18.1 | Rich Entity & Multi-Provider Evidence Model | Extends provider normalization with rich evidence for identifiers, relationships, media, destinations, availability, classifications and metrics; adds provider-specific mapping plus a read-only Admin import preview while preserving validation, identity resolution and governed canonical-admission boundaries. Evidence: `docs/foundation/STAGE_18_1_TASK_CONTRACT.md`, `docs/foundation/STAGE_18_1_VALIDATION_REPORT.md`. |
+| 18.6 | Provider Destination & Media Quality | Adds deterministic fail-closed destination eligibility/preference, freshness and stale/unavailable operator state, YouTube evidence re-verification, public `playable`/`outbound_only`/`no_selection` projection with bounded explainability, and audited single-destination Admin remediation. Exact sealed head `0ba79a89994b0a2722f5f6c18a84af0045e88cc6` passed candidate/canonical verification and GitHub Actions run #161; PR #15 merged to `main` as `40eba85e36bed1d3a5604975e45ad3234aca6e25`. Evidence: `docs/foundation/STAGE_18_6_TASK_CONTRACT.md`, `docs/foundation/STAGE_18_6_VALIDATION_REPORT.md`. |
 
 ## History rules
 
 - Add one chronological row when a stage or corrective hotfix is delivered.
-- Do not copy the README current-stage marker into this file.
+- Do not copy the operational current-stage marker into this file.
 - Do not append new stages to `STAGE_11_CHANGE_MANIFEST.md` or `STAGE_12_CHANGE_MANIFEST.md`.
 - Task contracts describe intended scope before implementation; validation reports record only verification actually performed.
 - Product roadmap intent remains in `docs/project/docs/ROADMAP.md`; this file records delivered repository history only.

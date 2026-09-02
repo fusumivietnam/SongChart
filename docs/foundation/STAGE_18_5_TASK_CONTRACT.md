@@ -62,6 +62,40 @@ Bring SongChart's public product surfaces to release-ready quality without chang
 - Do not create popularity, recommendation or ranking signals without governed source evidence.
 - Controllers remain transport adapters; data changes stay behind existing application/read-model boundaries.
 
+## Authority and official sources
+
+### Repository authorities
+
+- `PROJECT_AUTHORITY.md`
+- `docs/project/DEVELOPMENT_STATE.md`
+- `docs/project/domain/`
+- `docs/ui/`
+- `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
+- `docs/project/docs/OFFICIAL_SOURCE_POLICY.md`
+- existing SEO, performance, route and application-data-boundary authorities selected by repository impact routing
+
+### Installed versions
+
+Use repository lockfiles and stack authority as the installed-version source of truth. Stage 18.5 did not require a runtime/package baseline change merely to deliver public UI quality.
+
+### Official external sources
+
+Stage 18.5 introduced no new external provider/API capability. When an implementation detail required external confirmation, `docs/project/docs/OFFICIAL_SOURCE_POLICY.md` governed use of first-party framework/platform specifications or documentation; repository acceptance remained based on owned contracts and deterministic verification rather than copied third-party guidance.
+
+### Native capability assessment
+
+- Capability owner: existing Laravel/Blade public rendering, SongChart canonical/read-model boundaries, and existing CSS/frontend build primitives.
+- Native/first-party capability available: yes for the delivery surfaces in scope.
+- Selected primitive: reuse existing layouts, Blade components, routes/read models, semantic HTML and the established frontend build/performance verification surfaces.
+- Why it satisfies the requirement: Stage 18.5 was a public presentation/accessibility/performance convergence over an accepted product architecture, not a new frontend framework or integration system.
+
+### Custom implementation justification
+
+- Custom code required: yes, narrowly for SongChart-specific public information architecture, canonical entity presentation, release states and regression guards.
+- Missing official behavior: framework/browser primitives do not define SongChart's entity hierarchy, provenance presentation, route semantics or truthful public product states.
+- Narrow custom boundary: existing Blade/public read-model surfaces plus focused UI/performance regressions.
+- Framework primitives reused: existing Laravel, Blade, Vite/frontend build and SongChart route/data/SEO/performance authorities.
+
 ## Verification plan
 
 - `./songchart impact <planned paths...>` before each coherent slice.
@@ -71,6 +105,10 @@ Bring SongChart's public product surfaces to release-ready quality without chang
 - `./songchart audit` before closure.
 - `./songchart candidate` then `./songchart close` on the exact committed tree.
 - Any tracked change after canonical PASS invalidates closure evidence.
+
+## Tests and verification
+
+Stage 18.5 verification evidence is recorded in `docs/foundation/STAGE_18_5_VALIDATION_REPORT.md`. Coverage includes public home/search/entity semantics, responsive/mobile navigation, accessibility, public error state, frontend performance regression guards, Pint, PHPStan, PostgreSQL/database checks and impact-driven pre-closure verification. Historical acceptance/closure evidence remains owned by the validation/history authorities rather than being reconstructed in this task contract.
 
 ## Delivery
 

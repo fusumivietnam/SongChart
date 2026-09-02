@@ -113,7 +113,7 @@
         },
         "ai-development-protocol": {
             "source": "docs/project/engineering/ai-development-contract.json",
-            "fingerprint": "1cf3025e4e797c22964dfedfed414ad982213c331178e38d1146adce25bd12d0",
+            "fingerprint": "0274098c64da139be201d38373dfc93880465c707d0387f7089d869b6b3635b5",
             "consumers": [
                 "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md",
                 "AGENTS.md",
@@ -150,7 +150,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "a18649a676a36dca547c99209d08a3aabd8c5c6eb962c76a6776061b761cf974",
+            "fingerprint": "1c2e3acd411e7a8e474c30c48ff4d41aba1170235f1597375b0de5aabca9974a",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -1218,6 +1218,15 @@
             ]
         },
         {
+            "target": "tests/Architecture/DocumentationAiDesignHarnessTest.php",
+            "rule": "ai-doc-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "ai-development-protocol",
+                "repository-compiler"
+            ]
+        },
+        {
             "target": "tests/Architecture/DocumentationGovernanceTest.php",
             "rule": "ai-doc-governance",
             "classification": "declarative",
@@ -1666,5 +1675,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "d5e0fec92ad00f74d0a2745b6e8956dd184f214676d61fa8d54a301e0534a246"
+    "graph_fingerprint": "12dc051d27069d95556f55a9e58c23d9917d0fe2becc30f9342fdcca7599f7d1"
 }

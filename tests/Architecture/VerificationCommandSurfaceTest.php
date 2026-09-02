@@ -27,4 +27,14 @@ it('keeps the active verification command surface bounded', function (): void {
     foreach ($contract['historical_orchestration']['retired_files'] as $relative) {
         expect(is_file($root.'/'.$relative))->toBeFalse();
     }
+
+    $mobile = (string) file_get_contents($root.'/'.$contract['mobile_adapter']['path']);
+
+    expect(is_executable($root.'/'.$contract['mobile_adapter']['path']))->toBeTrue()
+        ->and($contract['mobile_adapter']['may_skip_or_cache_gates'])->toBeFalse()
+        ->and($contract['mobile_adapter']['may_define_verification_logic'])->toBeFalse()
+        ->and($mobile)->toContain('"$ROOT/songchart" impact --verify')
+        ->and($mobile)->toContain('"$ROOT/songchart" close')
+        ->and($mobile)->toContain('tail -n 100')
+        ->and($mobile)->toContain('--verbose');
 });
