@@ -12,10 +12,10 @@ if (! is_array($composer) || ($composer['require']['php'] ?? null) !== '^8.5') {
     $errors[] = 'Composer PHP baseline must be ^8.5.';
 }
 if (isset($composer['require']['laravel/horizon']) || isset($composer['require-dev']['laravel/horizon'])) {
-    $errors[] = 'Horizon must not be a mandatory dependency while native Windows/Laragon remains a supported dev target.';
+    $errors[] = 'Horizon must remain optional for the first-release production runtime.';
 }
 if (! isset($composer['suggest']['laravel/horizon'])) {
-    $errors[] = 'Composer must advertise the optional Linux/WSL Horizon profile.';
+    $errors[] = 'Composer must advertise the optional Horizon profile.';
 }
 
 $queue = $read('config/queue.php');
@@ -35,16 +35,78 @@ $capabilities = $read('app/Enums/Capability.php');
 if (! str_contains($appProvider, 'foreach (Capability::cases() as $capability)')
     || ! str_contains($capabilities, "case ViewHorizon = 'viewHorizon';")
 ) {
-    $errors[] = 'Horizon dashboard authorization must be registered from the shared Capability authority.';
+    $errors[] = 'Optional Horizon dashboard authorization must remain registered from the shared Capability authority.';
 }
 if (is_file($root.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR.'HorizonServiceProvider.php')) {
-    $errors[] = 'Do not ship an application Horizon provider while Horizon is optional; it would create a missing-parent static-analysis dependency on Windows.';
+    $errors[] = 'Do not ship an application Horizon provider while Horizon remains optional.';
 }
 
 $console = $read('routes/console.php');
-foreach (["Schedule::command('horizon:snapshot')", '->everyFiveMinutes()', '->onOneServer()'] as $signal) {
+foreach ([
+    "Schedule::command('horizon:snapshot')",
+    "queue:monitor redis:critical,redis:discovery-projections,redis:provider-health,redis:provider-imports,redis:provider-normalization,redis:notifications,redis:default --max=",
+    '->everyMinute()',
+    '->withoutOverlapping(2)',
+    '->onOneServer()',
+] as $signal) {
     if (! str_contains($console, $signal)) {
-        $errors[] = "Horizon metrics snapshot schedule is missing [{$signal}].";
+        $errors[] = "Queue/scheduler operational schedule is missing [{$signal}].";
+    }
+}
+
+$worker = $read('scripts/production/queue-worker.sh');
+foreach ([
+    'exec php artisan queue:work redis',
+    '--queue="$QUEUES"',
+    '--tries="$TRIES"',
+    '--timeout="$TIMEOUT"',
+    '--backoff="$BACKOFF"',
+    '--max-time="$MAX_TIME"',
+    '--max-jobs="$MAX_JOBS"',
+    '--memory="$MEMORY"',
+] as $signal) {
+    if (! str_contains($worker, $signal)) {
+        $errors[] = "Production queue worker entrypoint is missing [{$signal}].";
+    }
+}
+if (str_contains($worker, 'while ') || str_contains($worker, 'until ')) {
+    $errors[] = 'Production queue wrapper must delegate directly to Laravel and must not implement a custom worker loop.';
+}
+
+$scheduler = $read('scripts/production/scheduler.sh');
+if (! str_contains($scheduler, 'exec php artisan schedule:work')) {
+    $errors[] = 'Production scheduler entrypoint must delegate directly to Laravel schedule:work.';
+}
+
+$runtime = json_decode($read('docs/project/stack/runtime-environments.json'), true);
+$production = is_array($runtime) ? ($runtime['profiles']['production'] ?? []) : [];
+foreach ([
+    'app_env' => 'production',
+    'db_connection' => 'pgsql',
+    'queue_connection' => 'redis',
+    'cache_store' => 'redis',
+    'worker_entrypoint' => 'sh scripts/production/queue-worker.sh',
+    'scheduler_entrypoint' => 'sh scripts/production/scheduler.sh',
+] as $key => $value) {
+    if (($production[$key] ?? null) !== $value) {
+        $errors[] = "Production runtime profile must declare {$key}={$value}.";
+    }
+}
+if (($production['scheduler_instances'] ?? null) !== 1 || ($production['process_manager_restart_required'] ?? null) !== true) {
+    $errors[] = 'Production runtime must own one scheduler lifecycle and require process-manager restart semantics.';
+}
+
+$env = $read('.env.production.example');
+foreach ([
+    'REDIS_QUEUE_RETRY_AFTER=180',
+    'SONGCHART_QUEUE_TIMEOUT_SECONDS=150',
+    'SONGCHART_QUEUE_MAX_TIME_SECONDS=3600',
+    'SONGCHART_QUEUE_MAX_JOBS=1000',
+    'SONGCHART_QUEUE_MEMORY_MB=256',
+    'SONGCHART_QUEUE_MONITOR_MAX=100',
+] as $signal) {
+    if (! str_contains($env, $signal)) {
+        $errors[] = "Production environment queue lifecycle contract is missing [{$signal}].";
     }
 }
 
@@ -66,8 +128,10 @@ foreach ([
 }
 
 $docs = $read('docs/operations/queue-infrastructure.md');
-if (! str_contains($docs, 'ext-pcntl') || ! str_contains($docs, 'ext-posix') || ! str_contains($docs, 'Do not use `--ignore-platform-reqs`')) {
-    $errors[] = 'Queue operations documentation must preserve the Horizon Windows compatibility warning.';
+foreach (['queue:restart', 'schedule:work', 'queue:monitor', 'failed_jobs', 'process manager', 'Do not introduce custom worker loops'] as $signal) {
+    if (! str_contains($docs, $signal)) {
+        $errors[] = "Queue operations documentation is missing production lifecycle signal [{$signal}].";
+    }
 }
 
 if ($errors !== []) {
