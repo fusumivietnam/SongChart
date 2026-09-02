@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Support\Production\ProductionEnvironmentGuard;
+use LogicException;
 
 function safeProductionEnvironmentState(array $overrides = []): array
 {
@@ -26,7 +27,7 @@ it('accepts the supported production environment baseline', function (): void {
 
 it('fails closed when a production safety invariant drifts', function (array $override, string $expected): void {
     expect(fn () => ProductionEnvironmentGuard::assertSafe(safeProductionEnvironmentState($override)))
-        ->toThrow(\LogicException::class, $expected);
+        ->toThrow(LogicException::class, $expected);
 })->with([
     [['app_debug' => true], 'APP_DEBUG must be false'],
     [['app_url' => 'http://songchart.example'], 'APP_URL must use https'],
