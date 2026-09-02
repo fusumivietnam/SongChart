@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "release_authority": {
     "php_major_minor": "8.5",
     "postgres_major": 18,
@@ -37,6 +37,18 @@
       "compose_file": "compose.demo.yml",
       "shares_database_with": "docker-development",
       "queue_worker_default": false
+    },
+    "production": {
+      "app_env": "production",
+      "db_connection": "pgsql",
+      "redis_required": true,
+      "queue_connection": "redis",
+      "cache_store": "redis",
+      "worker_entrypoint": "sh scripts/production/queue-worker.sh",
+      "scheduler_entrypoint": "sh scripts/production/scheduler.sh",
+      "scheduler_instances": 1,
+      "process_manager_restart_required": true,
+      "authority": "first-release-production-runtime"
     }
   },
   "php_extensions": {
