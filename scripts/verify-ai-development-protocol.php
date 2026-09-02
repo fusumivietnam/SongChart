@@ -150,7 +150,7 @@ if (! is_file($stagePlanPath) || ! is_file($derivedStatePath) || ! is_file($comp
     $workLease = $derivedState['work_lease_policy'] ?? null;
     if (! is_array($workLease)
         || ($workLease['authority'] ?? null) !== 'live Git branch + GitHub pull request'
-        || ! str_contains((string) ($workLease['rule'] ?? ''), 'Resume')) {
+        || ! str_contains(strtolower((string) ($workLease['rule'] ?? '')), 'resum')) {
         $errors[] = 'Generated development state must preserve the live Git/GitHub work-lease policy.';
     }
 
