@@ -1,0 +1,48 @@
+{
+    "schema_version": 1,
+    "status": "advisory",
+    "owner": "docs/ui/DESIGN_AUTHORITY.md",
+    "integration_contract": "docs/ui/AI_DESIGN_HARNESS.md",
+    "provider": {
+        "name": "Impeccable",
+        "repository": "pbakaus/impeccable",
+        "license": "Apache-2.0",
+        "integration_mode": "project-local-adapter-skill",
+        "vendored_repository": false,
+        "git_submodule": false
+    },
+    "authority_order": [
+        "PROJECT_AUTHORITY.md",
+        "AGENTS.md",
+        "docs/ui/DESIGN_AUTHORITY.md",
+        "owning-ui-contract",
+        "approved-ui-tokens-components-preview",
+        "docs/ui/AI_DESIGN_HARNESS.md",
+        "external-design-guidance"
+    ],
+    "allowed_commands": [
+        "critique",
+        "audit",
+        "polish",
+        "harden",
+        "adapt",
+        "optimize",
+        "layout",
+        "typeset",
+        "clarify"
+    ],
+    "forbidden_authority_files": [
+        "PRODUCT.md",
+        "DESIGN.md"
+    ],
+    "policy": {
+        "external_guidance_is_release_authoritative": false,
+        "external_detector_output_is_canonical_evidence": false,
+        "may_override_songchart_design_contract": false,
+        "may_change_domain_or_provider_semantics": false,
+        "may_fabricate_metrics_or_ranking": false,
+        "must_map_findings_to_existing_songchart_owner": true,
+        "must_use_songchart_verification": true
+    },
+    "project_skill": ".github/skills/songchart-impeccable/SKILL.md"
+}
