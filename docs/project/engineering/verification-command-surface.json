@@ -1,5 +1,5 @@
 {
-    "schema_version": 3,
+    "schema_version": 4,
     "public_entrypoints": {
         "development": [
             "songchart ai status",
@@ -55,6 +55,29 @@
             "composer release:package"
         ]
     },
+    "delivery_kernel": {
+        "contract": "docs/project/engineering/delivery-kernel.json",
+        "authority": "docs/project/engineering/DELIVERY_KERNEL.md",
+        "backend": "scripts/delivery-kernel.sh",
+        "status": "pilot-internal",
+        "migration_strategy": "strangler",
+        "target_public_facade": [
+            "songchart status",
+            "songchart plan",
+            "songchart check",
+            "songchart close",
+            "songchart promote",
+            "songchart doctor"
+        ],
+        "current_delegates": {
+            "plan": "./songchart impact",
+            "check": "./songchart impact --verify",
+            "close": "./songchart close",
+            "doctor": "./songchart ai doctor"
+        },
+        "may_reimplement_candidate_or_canonical": false,
+        "may_remove_existing_gate_before_equivalence": false
+    },
     "mobile_adapter": {
         "path": "mobile",
         "role": "presentation-only adapter over canonical SongChart entrypoints",
@@ -105,11 +128,14 @@
         "new_verifier_requires_registered_authority_owner": true,
         "diagnostic_entrypoints_do_not_replace_closure": true,
         "mobile_adapter_must_delegate_to_canonical_entrypoints": true,
-        "mobile_adapter_must_not_suppress_failures": true
+        "mobile_adapter_must_not_suppress_failures": true,
+        "delivery_kernel_must_delegate_to_existing_closure_owners": true,
+        "delivery_kernel_cannot_retire_gates_without_equivalence": true
     },
     "host_entrypoints": {
         "primary_linux_wsl": "./songchart",
         "mobile_compact_adapter": "./mobile",
+        "delivery_kernel_pilot": "bash scripts/delivery-kernel.sh",
         "native_windows": "retired-use-wsl2",
         "development_compose_project": "songchart-dev",
         "demo_compose_project": "songchart-demo",
