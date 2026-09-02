@@ -8,7 +8,7 @@ it('keeps delivery kernel vocabulary bounded and strangler-safe', function (): v
         flags: JSON_THROW_ON_ERROR,
     );
 
-    expect($contract['schema_version'])->toBe(1)
+    expect($contract['schema_version'])->toBe(2)
         ->and(array_keys($contract['risk_classes']))->toBe(['R1', 'R2', 'R3', 'R4', 'R5', 'R6'])
         ->and(array_keys($contract['gate_profiles']))->toBe(['G0', 'G1', 'G2', 'G3', 'G4'])
         ->and($contract['lifecycle'])->toBe([
@@ -22,7 +22,8 @@ it('keeps delivery kernel vocabulary bounded and strangler-safe', function (): v
         ])
         ->and($contract['principles']['existing_verifiers_remain_authoritative'])->toBeTrue()
         ->and($contract['migration_policy']['strategy'])->toBe('strangler')
-        ->and($contract['migration_policy']['do_not_delete_existing_gate_until_equivalent_kernel_consumer_is_proven'])->toBeTrue();
+        ->and($contract['migration_policy']['do_not_delete_existing_gate_until_equivalent_kernel_consumer_is_proven'])->toBeTrue()
+        ->and($contract['migration_policy']['compiled_command_surface_cutover_requires_reconcile'])->toBeTrue();
 });
 
 it('keeps the delivery kernel facade delegating instead of reimplementing closure', function (): void {
@@ -43,17 +44,17 @@ it('keeps the delivery kernel facade delegating instead of reimplementing closur
 it('keeps the GitHub mobile control plane tap-only and exact-SHA read-only', function (): void {
     $root = dirname(__DIR__, 2);
     $workflow = (string) file_get_contents($root.'/.github/workflows/songchart-mobile.yml');
-    $surface = json_decode(
-        (string) file_get_contents($root.'/docs/project/engineering/verification-command-surface.json'),
+    $contract = json_decode(
+        (string) file_get_contents($root.'/docs/project/engineering/delivery-kernel.json'),
         true,
         flags: JSON_THROW_ON_ERROR,
     );
-    $mobile = $surface['github_mobile_control_plane'];
+    $mobile = $contract['github_mobile_control_plane'];
 
     expect($mobile['actions'])->toBe(['check', 'close'])
         ->and($mobile['check_delegate'])->toBe('./mobile check --verbose')
         ->and($mobile['close_delegate'])->toBe('./songchart verify')
-        ->and($mobile['selected_ref_sha_is_authoritative'])->toBeTrue()
+        ->and($mobile['close_is_read_only_exact_sha'])->toBeTrue()
         ->and($mobile['must_prove_head_unchanged'])->toBeTrue()
         ->and($mobile['must_prove_tracked_tree_clean_after_verification'])->toBeTrue()
         ->and($mobile['may_commit_generated_authority'])->toBeFalse()
