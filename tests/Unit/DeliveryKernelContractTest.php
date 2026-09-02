@@ -39,3 +39,34 @@ it('keeps the delivery kernel facade delegating instead of reimplementing closur
         ->not->toContain('composer canonical:verify')
         ->not->toContain('composer stage:verify');
 });
+
+it('keeps the GitHub mobile control plane tap-only and exact-SHA read-only', function (): void {
+    $root = dirname(__DIR__, 2);
+    $workflow = (string) file_get_contents($root.'/.github/workflows/songchart-mobile.yml');
+    $surface = json_decode(
+        (string) file_get_contents($root.'/docs/project/engineering/verification-command-surface.json'),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+    $mobile = $surface['github_mobile_control_plane'];
+
+    expect($mobile['actions'])->toBe(['check', 'close'])
+        ->and($mobile['check_delegate'])->toBe('./mobile check --verbose')
+        ->and($mobile['close_delegate'])->toBe('./songchart verify')
+        ->and($mobile['selected_ref_sha_is_authoritative'])->toBeTrue()
+        ->and($mobile['must_prove_head_unchanged'])->toBeTrue()
+        ->and($mobile['must_prove_tracked_tree_clean_after_verification'])->toBeTrue()
+        ->and($mobile['may_commit_generated_authority'])->toBeFalse()
+        ->and($mobile['may_push_source_changes'])->toBeFalse()
+        ->and($workflow)
+        ->toContain('workflow_dispatch:')
+        ->toContain('- check')
+        ->toContain('- close')
+        ->toContain('ref: ${{ github.sha }}')
+        ->toContain('run: ./mobile check --verbose')
+        ->toContain('run: ./songchart verify')
+        ->toContain('test "$(git rev-parse HEAD)" = "$SONGCHART_MOBILE_SHA"')
+        ->not->toContain('./mobile close')
+        ->not->toContain('git commit')
+        ->not->toContain('git push');
+});
