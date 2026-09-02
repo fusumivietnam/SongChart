@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_DIR="$ROOT/storage/logs"
+mkdir -p "$LOG_DIR"
+
+usage(){
+  cat <<'EOF'
+SongChart mobile verification adapter
+  ./mobile check [--verbose]   run ./songchart impact --verify
+  ./mobile close [--verbose]   run ./songchart close
+
+Default mode keeps successful output compact and preserves the full command output in storage/logs.
+On failure, the last 100 lines are printed automatically. --verbose streams the canonical command directly.
+EOF
+}
+
+run_compact(){
+  local name="$1"; shift
+  local log="$LOG_DIR/mobile-${name}-last.log"
+  printf '[SongChart mobile] %s...\n' "$name"
+  if "$@" >"$log" 2>&1; then
+    printf '[SongChart mobile] %s PASSED. Full log: %s\n' "$name" "${log#$ROOT/}"
+    return 0
+  fi
+  local status=$?
+  printf '[SongChart mobile] %s FAILED (exit %s). Tail follows; full log: %s\n' "$name" "$status" "${log#$ROOT/}" >&2
+  tail -n 100 "$log" >&2 || true
+  return "$status"
+}
+
+cmd="${1:-help}"; shift || true
+verbose=false
+if [[ "${1:-}" == '--verbose' ]]; then
+  verbose=true
+  shift
+fi
+[[ $# -eq 0 ]] || { usage >&2; exit 2; }
+
+case "$cmd" in
+  check)
+    if [[ "$verbose" == true ]]; then exec "$ROOT/songchart" impact --verify; fi
+    run_compact check "$ROOT/songchart" impact --verify
+    ;;
+  close)
+    if [[ "$verbose" == true ]]; then exec "$ROOT/songchart" close; fi
+    run_compact close "$ROOT/songchart" close
+    ;;
+  help|--help|-h) usage ;;
+  *) usage >&2; exit 2 ;;
+esac
