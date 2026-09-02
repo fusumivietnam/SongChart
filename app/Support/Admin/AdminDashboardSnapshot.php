@@ -8,11 +8,14 @@ use App\Domain\Providers\Enums\ProviderStatus;
 use App\Models\ExtensionOperation;
 use App\Models\Provider;
 use App\Models\ProviderSyncRun;
+use App\Support\Engineering\ProjectIntelligenceSnapshotReader;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class AdminDashboardSnapshot
 {
+    public function __construct(private readonly ProjectIntelligenceSnapshotReader $projectIntelligence) {}
+
     /** @return array<string, mixed> */
     public function build(): array
     {
@@ -97,6 +100,7 @@ final class AdminDashboardSnapshot
             'recentSyncs' => $recentSyncs,
             'recentOperations' => $recentOperations,
             'systemNotices' => $this->systemNotices($providers, $recentSyncs),
+            'developmentIntelligence' => $this->projectIntelligence->latest(),
         ];
     }
 
