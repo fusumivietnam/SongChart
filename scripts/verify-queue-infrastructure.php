@@ -5,7 +5,7 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $errors = [];
 
-$read = static fn (string $path): string => (string)@file_get_contents($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path));
+$read = static fn (string $path): string => (string) file_get_contents($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path));
 
 $composer = json_decode($read('composer.json'), true);
 if (! is_array($composer) || ($composer['require']['php'] ?? null) !== '^8.5') {
