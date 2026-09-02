@@ -16,6 +16,14 @@ Read:
 
 `docs/ui/admin/SONGCHART_ADMIN_DASHBOARD_DESIGN_CONTRACT.md`
 
+### AI-assisted design
+
+Read:
+
+`docs/ui/AI_DESIGN_HARNESS.md`
+
+External design skills such as Impeccable are advisory only. They must operate below this authority and the owning public/admin design contract, and they do not create release or canonical verification authority.
+
 ## Priority order
 
 ```text
@@ -24,6 +32,7 @@ Read:
 3. Approved shared components
 4. Approved screenshots
 5. Page-specific implementation
+6. Advisory AI/external design guidance
 ```
 
 No AI agent or developer may silently introduce a new design direction.
