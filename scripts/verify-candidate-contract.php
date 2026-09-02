@@ -5,6 +5,7 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $contract = json_decode((string) file_get_contents($root.'/docs/project/stack/candidate-verification-contract.json'), true, 512, JSON_THROW_ON_ERROR);
 $definition = json_decode((string) file_get_contents($root.'/candidate-verification.json'), true, 512, JSON_THROW_ON_ERROR);
+$derivedState = json_decode((string) file_get_contents($root.'/docs/project/generated/development-state.json'), true, 512, JSON_THROW_ON_ERROR);
 $manifest = $definition;
 $runtimePath = $root.'/storage/framework/candidate-verification-runtime.json';
 $head = trim((string) shell_exec('git -C '.escapeshellarg($root).' rev-parse HEAD 2>/dev/null'));
@@ -23,20 +24,21 @@ if (is_file($runtimePath)) {
     }
 }
 
-$developmentState = (string) file_get_contents($root.'/docs/project/DEVELOPMENT_STATE.md');
 $errors = [];
 $allowed = $contract['allowed_status'] ?? [];
+$currentStage = $derivedState['current_stage']['id'] ?? null;
 
-$currentStage = null;
-if (preg_match('/(?ms)^## Current stage\s+.*?^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/', $developmentState, $matches) === 1) {
-    $currentStage = $matches[1];
-} else {
-    $errors[] = 'Unable to resolve the current stage from DEVELOPMENT_STATE.md current-stage section.';
+if (($derivedState['generated_from_repository'] ?? false) !== true) {
+    $errors[] = 'Generated development state must declare generated_from_repository=true.';
+}
+
+if (! is_string($currentStage) || $currentStage === '') {
+    $errors[] = 'Unable to resolve the current stage from generated development-state.json.';
 }
 
 if (is_string($currentStage) && ($definition['stage'] ?? null) !== $currentStage) {
     $definitionStage = is_string($definition['stage'] ?? null) ? $definition['stage'] : '<missing>';
-    $errors[] = "candidate-verification.json stage [{$definitionStage}] must match DEVELOPMENT_STATE.md current stage [{$currentStage}].";
+    $errors[] = "candidate-verification.json stage [{$definitionStage}] must match generated development-state.json current stage [{$currentStage}].";
 }
 
 foreach (($contract['required_gates'] ?? []) as $gate) {

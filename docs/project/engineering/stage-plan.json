@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "current_stage": {
+    "id": "19.0",
+    "title": "Production Readiness & First Release",
+    "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
+    "status": "implementing"
+  },
+  "accepted_through": "19.0.3",
+  "stage_progress": [
+    {"id": "19.0.1", "status": "accepted", "title": "Production topology + environment inventory"},
+    {"id": "19.0.1.1", "status": "accepted", "title": "Data contract + provider taxonomy convergence"},
+    {"id": "19.0.1.2", "status": "accepted", "title": "Mobile verification + AI UI design harness"},
+    {"id": "19.0.2", "status": "accepted", "title": "Secrets/environment hardening"},
+    {"id": "19.0.3", "status": "accepted", "title": "Queue/scheduler production runtime"},
+    {"id": "19.0.4", "status": "implementing", "title": "Observability + alerting"},
+    {"id": "19.0.5", "status": "planned", "title": "Backup/recovery"},
+    {"id": "19.0.6", "status": "planned", "title": "Security review + production smoke"},
+    {"id": "final", "status": "planned", "title": "First release package/tag"}
+  ],
+  "next_tranche": {
+    "id": "19.0.4-C1B",
+    "title": "Active brand cleanup + AI framework context integration"
+  },
+  "work_lease": {
+    "authority": "live Git branch + GitHub pull request",
+    "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated."
+  },
+  "projection": {
+    "json": "docs/project/generated/development-state.json",
+    "markdown": "docs/project/generated/DEVELOPMENT_STATE.md",
+    "legacy_pointer": "docs/project/DEVELOPMENT_STATE.md"
+  }
+}

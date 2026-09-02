@@ -35,41 +35,63 @@ if (str_contains($uxTest, "assertDontSee('Tác vụ dữ liệu')")) {
     $errors[] = 'Role-aware navigation tests must not use page-wide negative text assertions.';
 }
 
-$developmentState = $read('docs/project/DEVELOPMENT_STATE.md');
-if (preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $stageMatch) !== 1) {
-    $errors[] = 'Unable to resolve current stage for changed-test guardrails.';
+$derivedStatePath = 'docs/project/generated/development-state.json';
+if (! is_file($root.'/'.$derivedStatePath)) {
+    $errors[] = 'Unable to resolve current stage for changed-test guardrails: generated development state is missing.';
 } else {
-    $stage = str_replace('.', '_', $stageMatch[1]);
-    $taskPath = "docs/foundation/STAGE_{$stage}_TASK_CONTRACT.md";
-    if (! is_file($root.'/'.$taskPath)) {
-        $errors[] = "Missing current-stage task contract {$taskPath}.";
+    try {
+        /** @var array<string, mixed> $derivedState */
+        $derivedState = json_decode($read($derivedStatePath), true, flags: JSON_THROW_ON_ERROR);
+    } catch (JsonException $exception) {
+        $errors[] = 'Unable to resolve current stage for changed-test guardrails: generated development state is invalid JSON: '.$exception->getMessage();
+        $derivedState = [];
+    }
+
+    $stageId = $derivedState['current_stage']['id'] ?? null;
+    $taskPath = $derivedState['current_stage']['task_contract'] ?? null;
+
+    if (($derivedState['generated_from_repository'] ?? false) !== true
+        || ! is_string($stageId)
+        || $stageId === '') {
+        $errors[] = 'Unable to resolve current stage for changed-test guardrails from generated development state.';
+    } elseif (! is_string($taskPath) || $taskPath === '') {
+        $errors[] = 'Generated development state must resolve the current-stage task contract for changed-test guardrails.';
     } else {
-        $task = $read($taskPath);
-        $expected = '';
-        if (preg_match('/## Expected files\R(.*?)(?:\R## |\z)/s', $task, $expectedMatch) === 1) {
-            $expected = $expectedMatch[1];
+        $expectedTaskPath = 'docs/foundation/STAGE_'.str_replace('.', '_', $stageId).'_TASK_CONTRACT.md';
+        if ($taskPath !== $expectedTaskPath) {
+            $errors[] = "Generated changed-test task contract [{$taskPath}] does not match stage [{$stageId}].";
         }
-        preg_match_all('/`(tests\/[^`]+\.php)`/', $expected, $testMatches);
-        foreach (array_unique($testMatches[1]) as $relative) {
-            if (! is_file($root.'/'.$relative)) {
-                continue;
+
+        if (! is_file($root.'/'.$taskPath)) {
+            $errors[] = "Missing current-stage task contract {$taskPath}.";
+        } else {
+            $task = $read($taskPath);
+            $expected = '';
+            if (preg_match('/## Expected files\R(.*?)(?:\R## |\z)/s', $task, $expectedMatch) === 1) {
+                $expected = $expectedMatch[1];
             }
-            $source = $read($relative);
-            if (str_contains($source, '->not')) {
-                $errors[] = $relative.' must not use Pest dynamic ->not expectations; express negative invariants with statically visible boolean predicates.';
-            }
-            if (preg_match('/is_subclass_of\(\s*[^,]+::class\s*,\s*[^)]+::class\s*\)/', $source) === 1) {
-                $errors[] = $relative.' must not use is_subclass_of() with two known class constants; use ReflectionClass or another non-tautological architecture assertion.';
-            }
-            if (! preg_match('/\$this->(?:get|post|put|patch|delete|actingAs|artisan|assertDatabase[A-Za-z]*)\s*\(/', $source)) {
-                continue;
-            }
-            $hasTestCaseImport = str_contains($source, 'use Tests\\TestCase;');
-            $hasTestCaseAnnotation = preg_match('/@var\s+TestCase\s+\$this\b/', $source) === 1;
-            $hasFullyQualifiedAnnotation = str_contains($source, '/** @var \\Tests\\TestCase $this */') || str_contains($source, '/** @var Tests\\TestCase $this */');
-            if (! $hasTestCaseImport || ! $hasTestCaseAnnotation || $hasFullyQualifiedAnnotation) {
-                $hash = hash('sha256', $source);
-                $errors[] = $relative.' must import Tests\\TestCase and annotate Laravel Pest helper closures with unqualified /** @var TestCase $this */. Source SHA-256: '.$hash;
+            preg_match_all('/`(tests\/[^`]+\.php)`/', $expected, $testMatches);
+            foreach (array_unique($testMatches[1]) as $relative) {
+                if (! is_file($root.'/'.$relative)) {
+                    continue;
+                }
+                $source = $read($relative);
+                if (str_contains($source, '->not')) {
+                    $errors[] = $relative.' must not use Pest dynamic ->not expectations; express negative invariants with statically visible boolean predicates.';
+                }
+                if (preg_match('/is_subclass_of\(\s*[^,]+::class\s*,\s*[^)]+::class\s*\)/', $source) === 1) {
+                    $errors[] = $relative.' must not use is_subclass_of() with two known class constants; use ReflectionClass or another non-tautological architecture assertion.';
+                }
+                if (! preg_match('/\$this->(?:get|post|put|patch|delete|actingAs|artisan|assertDatabase[A-Za-z]*)\s*\(/', $source)) {
+                    continue;
+                }
+                $hasTestCaseImport = str_contains($source, 'use Tests\\TestCase;');
+                $hasTestCaseAnnotation = preg_match('/@var\s+TestCase\s+\$this\b/', $source) === 1;
+                $hasFullyQualifiedAnnotation = str_contains($source, '/** @var \\Tests\\TestCase $this */') || str_contains($source, '/** @var Tests\\TestCase $this */');
+                if (! $hasTestCaseImport || ! $hasTestCaseAnnotation || $hasFullyQualifiedAnnotation) {
+                    $hash = hash('sha256', $source);
+                    $errors[] = $relative.' must import Tests\\TestCase and annotate Laravel Pest helper closures with unqualified /** @var TestCase $this */. Source SHA-256: '.$hash;
+                }
             }
         }
     }

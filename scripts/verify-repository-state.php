@@ -16,11 +16,22 @@ $read = static function (string $relative) use ($root, &$errors): string {
 
     return $contents;
 };
+$hash = static function (string $relative) use ($root): ?string {
+    $path = $root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative);
+    if (! is_file($path)) {
+        return null;
+    }
+    $content = str_replace(["\r\n", "\r"], "\n", (string) file_get_contents($path));
+
+    return hash('sha256', $content);
+};
 
 $readme = $read('README.md');
 $startHere = $read('docs/START_HERE.md');
 $index = $read('docs/DOCUMENTATION_INDEX.md');
-$developmentState = $read('docs/project/DEVELOPMENT_STATE.md');
+$developmentPointer = $read('docs/project/DEVELOPMENT_STATE.md');
+$generatedStateJson = $read('docs/project/generated/development-state.json');
+$generatedStateMarkdown = $read('docs/project/generated/DEVELOPMENT_STATE.md');
 $roadmap = $read('docs/project/docs/ROADMAP.md');
 $releaseStatus = $read('docs/project/RELEASE_BASELINE_STATUS.md');
 $stage12Manifest = $read('STAGE_12_CHANGE_MANIFEST.md');
@@ -33,14 +44,51 @@ foreach (['Current stage:', 'Candidate delivery:', '## Current development stage
 }
 
 $currentStage = null;
-if (preg_match('/(?ms)^## Current stage\s+.*?^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—\s+[^`]+`/', $developmentState, $match) === 1) {
-    $currentStage = $match[1];
-} else {
-    $errors[] = 'DEVELOPMENT_STATE.md must declare the current numeric stage and title in the Current stage section.';
+try {
+    $state = json_decode($generatedStateJson, true, flags: JSON_THROW_ON_ERROR);
+    $currentStage = is_array($state['current_stage'] ?? null) ? ($state['current_stage']['id'] ?? null) : null;
+    if (! is_string($currentStage) || preg_match('/^[0-9]+(?:\.[0-9]+)+$/', $currentStage) !== 1) {
+        $errors[] = 'Generated development-state.json must declare current_stage.id.';
+        $currentStage = null;
+    }
+    if (($state['generated_from_repository'] ?? false) !== true) {
+        $errors[] = 'Generated development-state.json must be repository-derived.';
+    }
+    if (! is_string($state['source_fingerprint'] ?? null) || $state['source_fingerprint'] === '') {
+        $errors[] = 'Generated development-state.json must contain a source fingerprint.';
+    }
+    $sourceHashes = is_array($state['source_hashes'] ?? null) ? $state['source_hashes'] : [];
+    $requiredStateSources = [
+        'docs/project/engineering/stage-plan.json',
+        'docs/project/engineering/project-knowledge.json',
+        'docs/project/engineering/consolidation-plan.json',
+        'candidate-verification.json',
+    ];
+    foreach ($requiredStateSources as $relative) {
+        if (($sourceHashes[$relative] ?? null) !== $hash($relative)) {
+            $errors[] = "Generated development state is stale for [{$relative}]. Auto Closure PREPARE must regenerate it.";
+        }
+    }
+    foreach (array_keys($sourceHashes) as $relative) {
+        if (! in_array($relative, $requiredStateSources, true)) {
+            $errors[] = "Generated development state contains obsolete source [{$relative}].";
+        }
+    }
+} catch (Throwable $exception) {
+    $errors[] = 'Unable to decode generated development-state.json: '.$exception->getMessage();
+}
+
+foreach (['compatibility pointer', 'docs/project/generated/development-state.json', './songchart ai status --json'] as $signal) {
+    if (! str_contains($developmentPointer, $signal)) {
+        $errors[] = "DEVELOPMENT_STATE.md compatibility pointer is missing [{$signal}].";
+    }
+}
+if (! str_contains($generatedStateMarkdown, 'Generated from repository machine authorities')) {
+    $errors[] = 'Generated DEVELOPMENT_STATE.md must identify itself as generated.';
 }
 
 if (! str_contains($startHere, 'docs/project/DEVELOPMENT_STATE.md')) {
-    $errors[] = 'docs/START_HERE.md must route current work to DEVELOPMENT_STATE.md.';
+    $errors[] = 'docs/START_HERE.md must route current work through the DEVELOPMENT_STATE compatibility pointer.';
 }
 if (str_contains($startHere, 'Current stage:')) {
     $errors[] = 'docs/START_HERE.md must not duplicate current-stage state.';
@@ -85,7 +133,7 @@ foreach ($requiredIndexFragments as $fragment) {
 
 foreach (['composer.lock', 'package-lock.json', 'composer canonical:verify', 'composer release:package'] as $needle) {
     if (! str_contains($releaseStatus, $needle)) {
-        $errors[] = "RELEASE_BASELINE_STATUS.md is missing release invariant: {$needle}";
+        $errors[] = "RELEASE_BASELINE_STATUS.md is missing release invariant: {$needle}.";
     }
 }
 

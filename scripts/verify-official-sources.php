@@ -81,22 +81,43 @@ if ($duplicateAgent === false) {
     }
 }
 
-$developmentState = @file_get_contents($root.'/docs/project/DEVELOPMENT_STATE.md');
-if ($developmentState === false
-    || preg_match('/^- Stage\s+`([0-9]+(?:\.[0-9]+)+)\s+—/m', $developmentState, $matches) !== 1) {
-    $errors[] = 'Unable to resolve the current stage from DEVELOPMENT_STATE.md.';
+$derivedStatePath = $root.'/docs/project/generated/development-state.json';
+if (! is_file($derivedStatePath)) {
+    $errors[] = 'Unable to resolve the current stage: generated development state is missing.';
 } else {
-    $stage = str_replace('.', '_', $matches[1]);
-    $taskContractPath = $root."/docs/foundation/STAGE_{$stage}_TASK_CONTRACT.md";
+    try {
+        /** @var array<string, mixed> $derivedState */
+        $derivedState = json_decode((string) file_get_contents($derivedStatePath), true, flags: JSON_THROW_ON_ERROR);
+    } catch (JsonException $exception) {
+        $errors[] = 'Generated development state is invalid JSON: '.$exception->getMessage();
+        $derivedState = [];
+    }
 
-    if (! is_file($taskContractPath)) {
-        $errors[] = 'Missing current-stage task contract: '.basename($taskContractPath);
+    $stageId = $derivedState['current_stage']['id'] ?? null;
+    $taskContractRelative = $derivedState['current_stage']['task_contract'] ?? null;
+
+    if (($derivedState['generated_from_repository'] ?? false) !== true
+        || ! is_string($stageId)
+        || $stageId === '') {
+        $errors[] = 'Unable to resolve the current stage from generated development state.';
+    } elseif (! is_string($taskContractRelative) || $taskContractRelative === '') {
+        $errors[] = 'Generated development state must resolve the current-stage task contract.';
     } else {
-        $taskContract = (string) file_get_contents($taskContractPath);
+        $expectedTaskContract = 'docs/foundation/STAGE_'.str_replace('.', '_', $stageId).'_TASK_CONTRACT.md';
+        if ($taskContractRelative !== $expectedTaskContract) {
+            $errors[] = "Generated current-stage task contract [{$taskContractRelative}] does not match stage [{$stageId}].";
+        }
 
-        foreach ($requiredTemplateSections as $section) {
-            if (! str_contains($taskContract, $section)) {
-                $errors[] = basename($taskContractPath)." is missing official-source evidence section: {$section}";
+        $taskContractPath = $root.'/'.$taskContractRelative;
+        if (! is_file($taskContractPath)) {
+            $errors[] = 'Missing current-stage task contract: '.basename($taskContractPath);
+        } else {
+            $taskContract = (string) file_get_contents($taskContractPath);
+
+            foreach ($requiredTemplateSections as $section) {
+                if (! str_contains($taskContract, $section)) {
+                    $errors[] = basename($taskContractPath)." is missing official-source evidence section: {$section}";
+                }
             }
         }
     }

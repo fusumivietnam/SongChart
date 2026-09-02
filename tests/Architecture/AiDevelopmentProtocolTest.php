@@ -12,9 +12,10 @@ it('keeps model-specific AI files thin and delegated to one protocol authority',
         expect(count($lines))->toBeLessThanOrEqual(30)
             ->and($source)->toContain(
                 'PROJECT_AUTHORITY.md',
+                'docs/project/generated/development-state.json',
+                './songchart ai status --json',
                 'AI_DEVELOPMENT_PROTOCOL.md',
-                'composer stage:verify',
-                'composer canonical:verify',
+                'PREPARE → CHECK → canonical CLOSE → Ready',
             );
     }
 });

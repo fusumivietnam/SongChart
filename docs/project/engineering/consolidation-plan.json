@@ -1,0 +1,183 @@
+{
+  "schema_version": 2,
+  "status": "active",
+  "canonical_brand": {
+    "name": "SongChart",
+    "legacy_names": ["SongChartWeb"],
+    "rule": "New source, configuration, UI copy and generated documentation use SongChart. Legacy names may remain only in immutable history until that history is compacted or archived."
+  },
+  "principles": [
+    "Prefer Laravel first-party capabilities before third-party packages.",
+    "Prefer mature documented packages before SongChart-specific infrastructure abstractions.",
+    "Keep custom code only where SongChart domain semantics or security boundaries are genuinely product-specific.",
+    "Every package adoption must name the custom surface it replaces or prevents.",
+    "Retire replaced code in the same or immediately following bounded tranche; do not keep permanent dual implementations.",
+    "Behavioral invariants belong in tests; declarative invariants belong in repository contracts rather than new one-off verifier scripts.",
+    "Optimization is a continuous delivery concern, not an occasional audit."
+  ],
+  "continuous_optimization_cycle": {
+    "required_for_every_bounded_tranche": true,
+    "review_points": [
+      "native_or_package_reuse_opportunity",
+      "custom_code_or_file_retirement",
+      "automation_opportunity",
+      "verification_surface_reduction",
+      "documentation_or_project_knowledge_impact",
+      "active_brand_or_legacy_cleanup",
+      "release_artifact_weight_impact",
+      "mobile_or_remote_operability"
+    ],
+    "decision_rule": "Implement low-risk optimization in the current tranche when it is owned by the same semantic surface; otherwise register a bounded retirement/automation item here with a target phase. Do not defer by forgetting it in chat.",
+    "closure_rule": "A tranche is incomplete if it introduces a package or replacement abstraction without recording what old surface is removed, retained temporarily, or explicitly deferred.",
+    "source_budget_rule": "Prefer net source reduction when replacing custom infrastructure. Added framework/package glue should be smaller and more documented than the retired custom surface.",
+    "documentation_rule": "Stable knowledge is captured in machine-readable repository authorities so API/developer/FAQ projections can be generated instead of independently maintained."
+  },
+  "free_tier_delivery": {
+    "constraint": "Private repository branch protection/ruleset enforcement is unavailable on the current GitHub Free plan.",
+    "strategy": "Use PR Auto Closure as the normal promotion path and add post-push provenance detection that blocks release acceptance when main receives an ungoverned change.",
+    "do_not_build": "Do not create a complex custom branch-protection clone. Detection, evidence and release blocking are sufficient until the hosting plan changes."
+  },
+  "ownership_decisions": {
+    "ai_framework_context": {
+      "preferred_owner": "laravel/boost",
+      "decision": "evaluate-next",
+      "target": "provide framework/package documentation search and Laravel runtime/schema/route context to AI while repository project-context and project-knowledge remain SongChart-specific memory authority"
+    },
+    "browser_testing": {
+      "preferred_owner": "pestphp/pest-plugin-browser",
+      "decision": "adopt-next",
+      "target": "run documented Playwright-backed browser and mobile critical smoke tests in CI with screenshot/trace evidence for remote diagnosis"
+    },
+    "external_api_clients": {
+      "preferred_owner": "saloonphp/laravel-plugin",
+      "decision": "evaluate-for-adoption",
+      "target": "standardize provider connectors, requests, auth, retries, fixtures and HTTP test recording while preserving SongChart provider taxonomy and canonical identity semantics"
+    },
+    "cross_boundary_data": {
+      "preferred_owner": "spatie/laravel-data",
+      "decision": "evaluate-for-adoption",
+      "target": "consolidate DTO, request validation, API resource transformation and future TypeScript contract generation"
+    },
+    "authorization": {
+      "preferred_owner": "laravel-gates",
+      "decision": "keep-native",
+      "target": "retain native Gates while roles and permissions remain static; evaluate spatie/laravel-permission only if runtime-managed roles or permissions become a product requirement"
+    },
+    "queue_runtime": {
+      "preferred_owner": "laravel/horizon",
+      "decision": "adopt-next",
+      "target": "replace custom worker supervision and queue operational dashboards while preserving SongChart job taxonomy, retries and admission semantics"
+    },
+    "application_observability": {
+      "preferred_owner": "laravel/pulse",
+      "decision": "keep-and-expand",
+      "target": "use Pulse for request, job, query, cache and runtime visibility; custom cards only for SongChart-specific provider health semantics"
+    },
+    "health_checks": {
+      "preferred_owner": "laravel-native",
+      "decision": "native-first",
+      "target": "use native health endpoints where sufficient; evaluate spatie/laravel-health only when aggregated readiness checks are required"
+    },
+    "backup": {
+      "preferred_owner": "spatie/laravel-backup",
+      "decision": "adopt-in-19.0.5",
+      "target": "delegate backup orchestration, retention and notifications; keep SongChart-owned isolated restore drill as release evidence"
+    },
+    "activity_audit": {
+      "preferred_owner": "spatie/laravel-activitylog",
+      "decision": "keep",
+      "target": "use package persistence and query tooling behind explicit privileged use-case audit calls; avoid broad model-event audit"
+    },
+    "security_platform": {
+      "preferred_owner": "laravel-fortify-gates-caddy",
+      "decision": "native-first",
+      "target": "use framework/platform authentication, authorization, CSRF, rate limiting, secure cookies, TLS and headers; custom security remains only for provider destination validation, outbound URL policy and other product-specific trust boundaries"
+    }
+  },
+  "retirement_queue": [
+    {
+      "id": "R-VERIFY-ONEOFF",
+      "target": "one-off verify-*.php growth",
+      "action": "migrate declarative checks into repository contracts and behavioral checks into Pest/Architecture tests",
+      "phase": "19.0.4-19.0.6"
+    },
+    {
+      "id": "R-MOBILE-CLOSE",
+      "target": "manual SongChart Mobile CHECK/CLOSE duplication",
+      "action": "retain as diagnostic fallback until auto-closure is proven across several tranches, then reduce or retire",
+      "phase": "after 19.0.4"
+    },
+    {
+      "id": "R-BRAND-WEB",
+      "target": "SongChartWeb active branding",
+      "action": "replace in active source/config/UI/docs with SongChart; preserve immutable historical references only when needed for chronology",
+      "phase": "19.0.4"
+    },
+    {
+      "id": "R-CUSTOM-QUEUE-OPS",
+      "target": "native worker operational glue superseded by Horizon",
+      "action": "after Horizon acceptance remove duplicate supervision/dashboard assumptions while retaining only deployment entrypoints that Horizon actually requires",
+      "phase": "19.0.4-C2"
+    },
+    {
+      "id": "R-CUSTOM-HTTP",
+      "target": "provider-specific HTTP client boilerplate",
+      "action": "inventory and migrate eligible integrations to Saloon connectors/requests in bounded provider tranches",
+      "phase": "19.1+"
+    },
+    {
+      "id": "R-DATA-DTO",
+      "target": "duplicate request/DTO/resource transformation shapes",
+      "action": "inventory and migrate eligible cross-boundary data objects to spatie/laravel-data before public API expansion",
+      "phase": "before API v1"
+    }
+  ],
+  "automation_backlog": [
+    {
+      "id": "A-MAIN-PROVENANCE",
+      "target_phase": "19.0.4-C4",
+      "action": "detect ungoverned main pushes and block release acceptance without attempting to emulate paid branch protection"
+    },
+    {
+      "id": "A-BROWSER-SMOKE",
+      "target_phase": "19.0.4-C3",
+      "action": "Pest Browser critical desktop/mobile smoke with screenshot/trace artifact on failure"
+    },
+    {
+      "id": "A-FAILURE-CLASSIFY",
+      "target_phase": "19.0.4-C4",
+      "action": "emit machine owner/risk/gate/evidence summary from existing registries when CI fails"
+    },
+    {
+      "id": "A-DEPENDENCIES",
+      "target_phase": "after package consolidation",
+      "action": "bounded Dependabot/Renovate PRs verified by Auto Closure"
+    },
+    {
+      "id": "A-DOCS-PROJECTION",
+      "target_phase": "before API v1",
+      "action": "generate API/developer/FAQ documentation from project knowledge, route authority and typed data contracts"
+    },
+    {
+      "id": "A-RELEASE",
+      "target_phase": "Stage 19 Final",
+      "action": "accepted-main package, tag and GitHub Release automation from exact accepted SHA"
+    },
+    {
+      "id": "A-RESTORE-DRILL",
+      "target_phase": "19.0.5",
+      "action": "scheduled isolated backup restore drill with bounded redacted evidence"
+    }
+  ],
+  "planned_sequence": [
+    "19.0.4-C1B active brand cleanup + AI context integration",
+    "19.0.4-C2 Horizon + Pulse consolidation with replaced queue operational code retirement",
+    "19.0.4-C3 Pest Browser mobile/desktop critical smoke and diagnostic artifacts",
+    "19.0.4-C4 verifier reduction tranche 1 + main provenance detector + failure classifier",
+    "19.0.4-C5 provider transport inventory and Saloon migration decision",
+    "19.0.4-C6 typed data/API inventory and Laravel Data migration decision",
+    "19.0.5 backup package adoption + isolated restore automation",
+    "19.0.6 security convergence + staging/live smoke",
+    "Final minimal release artifact + tag/release automation"
+  ]
+}
