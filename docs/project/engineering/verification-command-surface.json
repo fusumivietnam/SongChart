@@ -1,5 +1,5 @@
 {
-    "schema_version": 4,
+    "schema_version": 5,
     "public_entrypoints": {
         "development": [
             "songchart ai status",
@@ -89,6 +89,23 @@
         "may_skip_or_cache_gates": false,
         "may_define_verification_logic": false
     },
+    "github_mobile_control_plane": {
+        "workflow": ".github/workflows/songchart-mobile.yml",
+        "role": "tap-only GitHub Actions control plane for constrained mobile operators",
+        "actions": [
+            "check",
+            "close"
+        ],
+        "check_delegate": "./mobile check --verbose",
+        "close_delegate": "./songchart verify",
+        "close_reason": "remote CLOSE must preserve the selected exact SHA and therefore uses read-only canonical verification rather than local prepare-and-commit closure",
+        "selected_ref_sha_is_authoritative": true,
+        "must_prove_head_unchanged": true,
+        "must_prove_tracked_tree_clean_after_verification": true,
+        "may_commit_generated_authority": false,
+        "may_push_source_changes": false,
+        "may_reimplement_verification_logic": false
+    },
     "internal_building_blocks": [
         "quality:normalize",
         "quality:verify",
@@ -130,11 +147,15 @@
         "mobile_adapter_must_delegate_to_canonical_entrypoints": true,
         "mobile_adapter_must_not_suppress_failures": true,
         "delivery_kernel_must_delegate_to_existing_closure_owners": true,
-        "delivery_kernel_cannot_retire_gates_without_equivalence": true
+        "delivery_kernel_cannot_retire_gates_without_equivalence": true,
+        "github_mobile_control_plane_must_be_tap_only": true,
+        "github_mobile_close_must_be_read_only_exact_sha": true,
+        "github_mobile_workflow_must_not_mutate_tracked_source": true
     },
     "host_entrypoints": {
         "primary_linux_wsl": "./songchart",
         "mobile_compact_adapter": "./mobile",
+        "github_mobile_control_plane": "GitHub Actions / SongChart Mobile",
         "delivery_kernel_pilot": "bash scripts/delivery-kernel.sh",
         "native_windows": "retired-use-wsl2",
         "development_compose_project": "songchart-dev",
