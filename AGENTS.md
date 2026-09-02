@@ -7,7 +7,7 @@ Before modifying source:
 2. Read `docs/project/generated/project-context.json` for generated repository facts.
 3. Read `docs/project/engineering/project-knowledge.json` for compact product/domain knowledge.
 4. Read `docs/project/engineering/consolidation-plan.json` before adding packages, abstractions, infrastructure or verifier surfaces.
-5. Read `docs/project/docs/OFFICIAL_SOURCE_POLICY.md` before package/framework decisions or claims based on upstream behavior.
+5. Read `docs/project/docs/OFFICIAL_SOURCE_POLICY.md` and `docs/foundation/CODE_GENERATION_RULES.md` before package/framework/code-generation decisions.
 6. Read `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`, the current task contract, and the owning domain/module authority.
 7. Run `./songchart ai status`; use `./songchart impact <paths...>` when the planned change surface is known.
 
