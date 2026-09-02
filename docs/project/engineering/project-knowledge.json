@@ -1,0 +1,61 @@
+{
+    "schema_version": 1,
+    "status": "active",
+    "purpose": "Compact machine-readable knowledge authority for AI development, API planning, developer documentation and FAQ generation. This file is repository-owned and must not depend on chat memory.",
+    "identity": {
+        "product": "SongChart",
+        "repository": "fusumivietnam/SongChart",
+        "legacy_brand_aliases": [
+            "SongChartWeb"
+        ],
+        "product_summary": "Music discovery, canonical metadata, provenance, provider evidence and legal listening or viewing destinations."
+    },
+    "authoritative_entrypoints": [
+        "PROJECT_AUTHORITY.md",
+        "docs/project/START_HERE.md",
+        "docs/project/generated/project-context.json",
+        "docs/project/engineering/consolidation-plan.json",
+        "docs/project/domain/DATA_CONTRACT.md",
+        "docs/providers/PROVIDER_TAXONOMY.md",
+        "docs/ui/DESIGN_AUTHORITY.md"
+    ],
+    "engineering_defaults": {
+        "framework": "Laravel 13",
+        "php": "8.5",
+        "database": "PostgreSQL 18",
+        "cache_queue": "Redis",
+        "frontend": "Livewire 4",
+        "verification": "GitHub Auto Closure plus accepted-main CI",
+        "dependency_policy": "Laravel first-party, then mature documented package, then product-specific custom code"
+    },
+    "domain_boundaries": {
+        "canonical_identity": "SongChart owns canonical music identity and reconciliation semantics.",
+        "provider_taxonomy": "SongChart owns provider category, role, capability and readiness vocabulary; HTTP transport mechanics should be delegated to a standard integration package where practical.",
+        "authorization": "Laravel Gates remain the authorization enforcement surface unless runtime-managed permissions become a product requirement.",
+        "audit": "Privileged mutations explicitly emit audit evidence at the use-case boundary; persistence may use spatie/laravel-activitylog.",
+        "security": "Framework and platform controls own generic web security; SongChart custom security is limited to product-specific trust boundaries such as outbound provider destinations and canonical mutation rules."
+    },
+    "documentation_surfaces": {
+        "api": {
+            "status": "planned",
+            "source": "typed cross-boundary data contracts plus route authority",
+            "preferred_generation": "derive schemas/examples from typed data objects rather than duplicate prose"
+        },
+        "developer": {
+            "status": "active",
+            "source": "project context, authority graph, command surface and package ownership"
+        },
+        "faq": {
+            "status": "planned",
+            "source": "product boundaries, provider semantics, operational reason codes and stable public behavior"
+        }
+    },
+    "ai_working_rules": [
+        "Read generated project-context.json before relying on conversational context.",
+        "Use current repository authorities over historical stage documents.",
+        "Before adding custom infrastructure, check consolidation-plan.json for an existing native or package owner.",
+        "Do not add a new verifier script when an existing repository contract or Pest/Architecture test can own the invariant.",
+        "When touching legacy naming, converge active source to the canonical SongChart brand unless the text is immutable historical evidence.",
+        "Prefer bounded migrations that remove replaced custom code rather than maintaining parallel implementations."
+    ]
+}
