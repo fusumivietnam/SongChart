@@ -171,6 +171,51 @@ Product feature behavior remains out of scope unless a concrete production block
 - Backup/recovery must prove restore to a usable application state rather than only prove backup file creation.
 - Destructive verification must use isolated test/recovery targets, never the development or production database.
 
+## Authority and official sources
+
+### Repository authorities
+
+- `PROJECT_AUTHORITY.md` owns repository-level precedence and release constraints.
+- `AGENTS.md` and `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` own AI/bootstrap workflow behavior.
+- `docs/project/docs/OFFICIAL_SOURCE_POLICY.md` owns official-first research and package/framework evidence requirements.
+- `docs/project/generated/development-state.json` is the generated current-stage projection; `docs/project/engineering/stage-plan.json` is its semantic roadmap input.
+- `docs/project/engineering/DELIVERY_WORKFLOW.md` and the Delivery Kernel/Auto Closure contracts own exact-head promotion and closure behavior.
+- `docs/project/domain/DATA_CONTRACT.md`, `docs/providers/PROVIDER_TAXONOMY.md`, `docs/ui/DESIGN_AUTHORITY.md`, and operations authorities retain ownership of their respective boundaries.
+
+### Installed versions
+
+| Capability | Version or constraint | Version authority |
+|---|---|---|
+| PHP | `^8.5` | `composer.json` / canonical verification runtime |
+| Laravel | `^13.0` (resolved by lockfile) | `composer.json` + `composer.lock` |
+| PostgreSQL | 18 | production/runtime stack authority |
+| Node.js | 24 | repository CI/runtime authority |
+| Redis | release/runtime profile | Docker/runtime stack authority |
+
+### Official external sources
+
+| Owner | Official source | Capability supported | Reviewed on |
+|---|---|---|---|
+| Laravel | Laravel official documentation and installed framework source | framework-native queue, scheduler, observability, auth and application lifecycle behavior | 2026-09-02 |
+| PHP / Composer | PHP and Composer official documentation plus installed package metadata | PHP runtime/platform and dependency constraints | 2026-09-02 |
+| PostgreSQL | PostgreSQL official documentation | PostgreSQL 18 production, backup and recovery semantics | 2026-09-02 |
+| GitHub | GitHub Actions and pull-request official documentation | CI, concurrency, exact-head evidence and promotion integration behavior | 2026-09-02 |
+
+### Native capability assessment
+
+- Capability owner: the applicable Laravel/PHP/PostgreSQL/GitHub primitive first, followed by SongChart-specific contracts only where product semantics require them.
+- Native/first-party capability available: yes for the majority of Stage 19 infrastructure concerns; custom code remains bounded to SongChart-specific policy, adapters and verification ownership.
+- Selected official API or primitive: Laravel queue/scheduler/Pulse/auth primitives, PostgreSQL operational primitives, and GitHub Actions/PR workflows as governed by repository contracts.
+- Why it satisfies the requirement: Stage 19 composes existing first-party/runtime primitives under explicit SongChart policy instead of introducing a parallel application or workflow framework.
+
+### Custom implementation justification
+
+- Custom code required: yes, but only for SongChart-specific policy/authority projection, provider/canonical semantics, verification adapters and bounded operational scripts.
+- Missing official behavior: external frameworks cannot define SongChart's semantic stage ownership, canonical/provider invariants, exact repository authority graph, work-lease policy or release-specific evidence rules.
+- Narrow custom boundary: machine-readable SongChart contracts, deterministic project-state projection, policy verifiers, provider/domain adapters and release scripts that delegate to existing framework/runtime owners.
+- Framework primitives reused: Laravel framework components, Composer, PostgreSQL, Redis, Docker and GitHub Actions remain the execution/integration owners.
+- Non-goals: no custom replacement for framework queue/scheduler/auth/observability, no duplicate CI framework, and no authored volatile PR/SHA progress state.
+
 ## Verification plan
 
 For each bounded slice:
@@ -219,6 +264,16 @@ release package/tag from accepted main
 
 `./songchart candidate` and `./songchart verify` remain valid explicit diagnostic/closure entrypoints when their separated evidence is needed.
 
+## Tests and verification
+
+- Behavioral tests remain in the existing Unit/Feature/Integration ownership and run against PostgreSQL where release-authoritative persistence is required.
+- Architecture/security tests guard repository boundaries, generated-state freshness, AI/workflow ownership, provider/canonical semantics and security invariants.
+- Pint and static analysis remain mandatory parts of quality/candidate verification; formatter drift is corrected, not bypassed.
+- PostgreSQL/runtime checks remain release-authoritative; optional compatibility checks are non-authoritative unless explicitly promoted by a governing contract.
+- Auto Closure PREPARE may mutate only governed generated authority, CHECK runs reusable quality/PostgreSQL/frontend lanes, canonical CLOSE verifies the effective exact SHA and clean tracked tree, and Ready never auto-merges.
+- Live external-provider/network checks remain release-confidence evidence only and are not deterministic canonical gates.
+- Any check not performed for a bounded slice must remain explicitly deferred by the owning stage/consolidation authority rather than silently treated as passed.
+
 ## Workflow mechanism rule
 
 No new workflow orchestration framework is planned. If Stage 19 proves a new verification/deployment mechanism is necessary, the same logical change must update:
@@ -239,7 +294,9 @@ For UI work, external design skills such as Impeccable are advisory below `docs/
 
 ## Documentation impact
 
-- `docs/project/DEVELOPMENT_STATE.md` owns operational current state.
+- `docs/project/engineering/stage-plan.json` owns the authored semantic Stage 19 roadmap/progress inputs.
+- `docs/project/generated/development-state.json` owns the generated durable current-stage projection; `docs/project/DEVELOPMENT_STATE.md` is compatibility-pointer only and does not own mutable progress.
+- Live branch/PR/head state is resolved from Git/GitHub work-lease facts and is never stored as authored progress.
 - This task contract owns Stage 19 scope/acceptance.
 - `docs/project/domain/DATA_CONTRACT.md` owns recurring cross-boundary representation rules.
 - `docs/providers/PROVIDER_TAXONOMY.md` owns provider classification vocabulary.
@@ -253,11 +310,11 @@ For UI work, external design skills such as Impeccable are advisory below `docs/
 
 ## Delivery and handoff
 
-- Current writer/owner: `stage-19.0-production-readiness-first-release`.
-- Base: accepted `main` merge `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
+- Current overlapping writer/work lease is resolved from the live Git branch + GitHub pull request; authored task contracts do not pin volatile branch/PR/head facts.
+- An existing active PR for the same semantic owner must be resumed instead of creating duplicate work.
 - Every handoff requires exact pushed commit state and no unresolved upstream divergence.
 - Mobile operation should use GitHub as the control/evidence plane and keep terminal interaction short; source changes are committed/pushed by the active writer rather than pasted across devices.
-- `./mobile check` and `./mobile close` are preferred compact mobile presentation adapters after synchronization; `--verbose` is available for debugging.
+- Normal PR closure is GitHub Auto Closure: PREPARE → CHECK → canonical CLOSE → Ready; manual mobile adapters remain fallback/diagnostic surfaces only.
 - Any tracked change after canonical PASS invalidates closure evidence for that exact head.
 
 ## Rollback
