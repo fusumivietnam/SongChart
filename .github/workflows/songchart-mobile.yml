@@ -1,0 +1,65 @@
+name: SongChart Mobile
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose the governed verification action'
+        required: true
+        default: check
+        type: choice
+        options:
+          - check
+          - close
+
+permissions:
+  contents: read
+
+concurrency:
+  group: songchart-mobile-${{ github.ref }}-${{ inputs.action }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: ${{ inputs.action == 'close' && 'CLOSE — canonical exact SHA' || 'CHECK — focused verification' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout selected exact SHA
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Prepare Docker development configuration
+        run: cp .env.docker.example .env.docker
+
+      - name: Record exact SHA
+        run: |
+          printf 'SONGCHART_MOBILE_SHA=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          printf 'Selected exact SHA: %s\n' "$(git rev-parse HEAD)"
+
+      - name: CHECK — governed focused verification
+        if: inputs.action == 'check'
+        run: ./mobile check --verbose
+
+      - name: CLOSE — governed canonical verification
+        if: inputs.action == 'close'
+        run: ./songchart verify
+
+      - name: Prove verification did not mutate tracked source
+        run: |
+          test "$(git rev-parse HEAD)" = "$SONGCHART_MOBILE_SHA"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          printf 'Exact SHA preserved: %s\n' "$SONGCHART_MOBILE_SHA"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '## SongChart Mobile'
+            echo
+            echo "- Action: ${{ inputs.action }}"
+            echo "- SHA: $SONGCHART_MOBILE_SHA"
+            echo "- Branch/ref: ${{ github.ref_name }}"
+            echo '- CLOSE is read-only canonical verification; it never prepares or commits generated authority.'
+          } >> "$GITHUB_STEP_SUMMARY"
