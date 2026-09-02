@@ -68,6 +68,19 @@ songchart doctor   explain environment/workflow failures
 
 The first kernel implementation lives in `scripts/delivery-kernel.sh` and delegates to existing SongChart owners. Migration into the root facade is incremental and must preserve existing public command compatibility until command-surface regression proves the replacement.
 
+## Tap-only GitHub mobile control plane
+
+Constrained mobile operators must not be required to copy or type Git commands, branch names, SHAs or verification commands as part of normal delivery. `.github/workflows/songchart-mobile.yml` is the tap-only GitHub Actions adapter and offers exactly two actions:
+
+```text
+CHECK  -> ./mobile check --verbose
+CLOSE  -> ./songchart verify
+```
+
+`CHECK` keeps the compact mobile adapter over impact-selected verification. Remote `CLOSE` intentionally uses the read-only canonical entrypoint instead of `./mobile close`/`./songchart close`: local close may prepare and commit generated authority, while GitHub Actions must verify the selected exact SHA without manufacturing another commit. The workflow therefore records the selected SHA before execution and fails if HEAD moves or tracked source is mutated.
+
+The GitHub mobile workflow is a control-plane adapter only. It may not push source, commit generated authority, skip gates, cache a prior PASS as current evidence or reimplement verification semantics in workflow YAML. The workflow becomes available for normal mobile operation only after its definition is present on the accepted default branch.
+
 ## Anti-growth rules
 
 1. **No new bespoke verifier by default.** A new `verify-*.php` must demonstrate that the invariant cannot be represented by an existing/generic declarative contract or by an existing behavioral test owner.
