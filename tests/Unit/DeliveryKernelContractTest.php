@@ -32,7 +32,10 @@ it('keeps the delivery kernel facade delegating instead of reimplementing closur
     expect($script)
         ->toContain('exec "$ROOT/songchart" impact "$@"')
         ->toContain('exec "$ROOT/songchart" impact --verify')
-        ->toContain('GitHub PR CI must pass on this exact SHA before merge.')
+        ->toContain('exec "$ROOT/songchart" close')
+        ->toContain('exec "$ROOT/songchart" ai doctor "$@"')
+        ->toContain('Promotion is not granted locally.')
+        ->toContain('clean Git state alone never implies CHECKED/CLOSED')
         ->not->toContain('composer canonical:verify')
         ->not->toContain('composer stage:verify');
 });
