@@ -1,5 +1,5 @@
 {
-    "schema_version": 2,
+    "schema_version": 3,
     "public_entrypoints": {
         "development": [
             "songchart ai status",
@@ -47,9 +47,24 @@
             "songchart verify",
             "composer canonical:verify"
         ],
+        "mobile_adapter": [
+            "mobile check",
+            "mobile close"
+        ],
         "packaging": [
             "composer release:package"
         ]
+    },
+    "mobile_adapter": {
+        "path": "mobile",
+        "role": "presentation-only adapter over canonical SongChart entrypoints",
+        "check_delegate": "./songchart impact --verify",
+        "close_delegate": "./songchart close",
+        "success_output": "compact summary with full runtime log preserved under storage/logs",
+        "failure_output": "bounded tail plus full runtime log path",
+        "verbose_option": "--verbose",
+        "may_skip_or_cache_gates": false,
+        "may_define_verification_logic": false
     },
     "internal_building_blocks": [
         "quality:normalize",
@@ -88,10 +103,13 @@
         "removed_aliases_must_not_be_defined": true,
         "historical_docs_may_reference_removed_commands": true,
         "new_verifier_requires_registered_authority_owner": true,
-        "diagnostic_entrypoints_do_not_replace_closure": true
+        "diagnostic_entrypoints_do_not_replace_closure": true,
+        "mobile_adapter_must_delegate_to_canonical_entrypoints": true,
+        "mobile_adapter_must_not_suppress_failures": true
     },
     "host_entrypoints": {
         "primary_linux_wsl": "./songchart",
+        "mobile_compact_adapter": "./mobile",
         "native_windows": "retired-use-wsl2",
         "development_compose_project": "songchart-dev",
         "demo_compose_project": "songchart-demo",
