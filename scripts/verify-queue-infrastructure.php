@@ -5,7 +5,7 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $errors = [];
 
-$read = static fn (string $path): string => (string) @file_get_contents($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path));
+$read = static fn (string $path): string => (string)@file_get_contents($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path));
 
 $composer = json_decode($read('composer.json'), true);
 if (! is_array($composer) || ($composer['require']['php'] ?? null) !== '^8.5') {
@@ -44,7 +44,7 @@ if (is_file($root.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRE
 $console = $read('routes/console.php');
 foreach ([
     "Schedule::command('horizon:snapshot')",
-    "queue:monitor redis:critical,redis:discovery-projections,redis:provider-health,redis:provider-imports,redis:provider-normalization,redis:notifications,redis:default --max=",
+    'queue:monitor redis:critical,redis:discovery-projections,redis:provider-health,redis:provider-imports,redis:provider-normalization,redis:notifications,redis:default --max=',
     '->everyMinute()',
     '->withoutOverlapping(2)',
     '->onOneServer()',
@@ -139,4 +139,4 @@ if ($errors !== []) {
     exit(1);
 }
 
-fwrite(STDOUT, "Queue infrastructure verification passed.\n");
+fwrite(STDOUT, 'Queue infrastructure verification passed.'.PHP_EOL);
