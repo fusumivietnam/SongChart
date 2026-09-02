@@ -57,8 +57,10 @@
           "rollback_or_data_migration_risk": "very_low"
         }
       },
-      "decision": "adopt_now",
-      "target_tranche": "19.0.4-C1B",
+      "decision": "adopt_next",
+      "target_tranche": "19.0.4-C1C",
+      "decision_reason": "Compatibility and ROI are proven, but dependency adoption must be performed by Composer in an executable development environment so composer.json and composer.lock move atomically. Never synthesize lockfile changes through repository API writes.",
+      "adoption_gate": "Run composer require --dev laravel/boost:^2.7 in the canonical development environment, inspect generated agent configuration, retire any overlapping custom framework-introspection surface, then pass Auto Closure on the resulting exact lockfile SHA.",
       "adoption_boundaries": [
         "Install as require-dev only.",
         "Do not delegate SongChart project state, architecture graph, semantic ownership, SWOT/ROI or promotion/release evidence to Boost.",
@@ -84,9 +86,9 @@
         "benefits": {"custom_surface_retired_or_prevented": "medium_high", "maintainability": "high", "ai_or_developer_operability": "high"},
         "costs": {"migration_cost": "medium", "compatibility_risk": "low", "ongoing_maintenance": "low"}
       },
-      "decision": "bounded_evaluation",
-      "target_tranche": "19.0.4-C1B",
-      "decision_rule": "Either declare php-parser explicitly and migrate structural parsing to AST, or keep the compiler bootstrap shallow and dependency-free. Never silently rely on the transitive package."
+      "decision": "keep_bootstrap_dependency_free",
+      "target_tranche": "future graph deepening only",
+      "decision_reason": "C1B structural graph is intentionally shallow and dependency-free. Do not rely on the transitive parser. Adopt php-parser explicitly only when method/call graph depth justifies the direct dependency and migration cost."
     }
   ]
 }
