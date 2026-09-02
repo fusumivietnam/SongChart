@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Canonical contract for derived architecture/use-case/source-evolution graphs consumed by AI, developers and Admin Development Intelligence.",
+  "node_types": ["use_case", "route", "controller", "action", "service", "job", "event", "listener", "model", "table", "interface", "class", "provider", "package", "test"],
+  "edge_types": ["route_to", "calls", "depends_on", "dispatches", "listens_to", "extends", "implements", "uses_trait", "reads", "writes", "outbound_to", "covered_by", "belongs_to_use_case"],
+  "views": {
+    "business": "Use-case/journey graph with implementation details hidden.",
+    "developer": "Route -> controller/action -> async/domain/persistence/provider graph.",
+    "deep": "Class/interface/inheritance/dependency graph for AI and debugging."
+  },
+  "snapshot_policy": {
+    "consistency": "eventual",
+    "canonical_key": "accepted Git SHA when available; otherwise exact candidate SHA for non-release analysis",
+    "request_rule": "Never scan source or rebuild graph in an HTTP request.",
+    "states": ["fresh", "stale", "building", "failed"],
+    "invalidation": "A source/contract/package change marks affected semantic owners stale without forcing immediate rebuild.",
+    "refresh_triggers": ["explicit SA/Dev/Tech refresh", "accepted-main idle refresh", "scheduled idle refresh when stale"],
+    "single_flight": "Only one rebuild per graph scope/SHA may execute concurrently.",
+    "history": "Keep accepted-SHA snapshots and precomputed adjacent diffs for architecture time travel."
+  },
+  "storage": {
+    "tracked_contracts": "docs/project/engineering",
+    "runtime_snapshots": "storage/project-intelligence/{sha}/",
+    "current_pointer": "cache/redis may point to latest completed snapshot; it is not authority"
+  },
+  "incremental_scope_hints": {
+    "routes/**": ["route", "controller", "use_case"],
+    "app/Http/**": ["route", "controller", "action", "authorization"],
+    "app/Jobs/**": ["job", "queue"],
+    "app/Events/**": ["event", "listener"],
+    "app/Listeners/**": ["event", "listener"],
+    "app/Models/**": ["model", "table"],
+    "database/migrations/**": ["table"],
+    "composer.json": ["package"],
+    "composer.lock": ["package"],
+    "tests/**": ["test", "coverage"]
+  },
+  "admin_policy": {
+    "audience": ["SA", "developer", "technical operator"],
+    "default_behavior": "Serve latest completed snapshot immediately; show staleness and offer refresh when needed.",
+    "polling": "Do not poll when idle. If a rebuild is active, use sparse status refresh or a lightweight event.",
+    "panels": ["Now", "Architecture", "Evolution", "Technology"]
+  }
+}
