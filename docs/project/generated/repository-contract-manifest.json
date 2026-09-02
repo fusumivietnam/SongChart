@@ -150,7 +150,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "a18649a676a36dca547c99209d08a3aabd8c5c6eb962c76a6776061b761cf974",
+            "fingerprint": "1c2e3acd411e7a8e474c30c48ff4d41aba1170235f1597375b0de5aabca9974a",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -1218,6 +1218,15 @@
             ]
         },
         {
+            "target": "tests/Architecture/DocumentationAiDesignHarnessTest.php",
+            "rule": "ai-doc-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "ai-development-protocol",
+                "repository-compiler"
+            ]
+        },
+        {
             "target": "tests/Architecture/DocumentationGovernanceTest.php",
             "rule": "ai-doc-governance",
             "classification": "declarative",
@@ -1666,5 +1675,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "0ca3199ee7ae8c257f7fb41cab15a6ed352c260ae351b89b92f976bf9b3e1567"
+    "graph_fingerprint": "12dc051d27069d95556f55a9e58c23d9917d0fe2becc30f9342fdcca7599f7d1"
 }
