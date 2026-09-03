@@ -31,7 +31,7 @@ final class ProjectIntelligenceCommand extends Command
         $process->setTimeout(120);
         $process->run(function (string $type, string $buffer): void {
             if ($type === Process::ERR) {
-                $this->getOutput()->write($buffer);
+                $this->getErrorOutput()->write($buffer);
 
                 return;
             }
