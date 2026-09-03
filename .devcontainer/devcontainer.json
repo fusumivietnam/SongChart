@@ -1,0 +1,9 @@
+{
+  "name": "SongChart PHP 8.5",
+  "build": {
+    "dockerfile": "../docker/verify/Dockerfile",
+    "context": ".."
+  },
+  "overrideCommand": true,
+  "remoteUser": "root"
+}
