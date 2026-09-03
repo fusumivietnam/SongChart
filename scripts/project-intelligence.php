@@ -56,7 +56,7 @@ function parseClassShape(string $path): array
     if (preg_match('/\b(?:final\s+|abstract\s+|readonly\s+)*(?:class|interface|trait|enum)\s+([A-Za-z_][A-Za-z0-9_]*)/', $source, $match) === 1) {
         $class = $match[1];
     }
-    if (preg_match('/\bextends\s+([A-Za-z_\\][A-Za-z0-9_\\]*)/', $source, $match) === 1) {
+    if (preg_match('/\bextends\s+([A-Za-z_\x5c][A-Za-z0-9_\x5c]*)/', $source, $match) === 1) {
         $extends = trim($match[1]);
     }
     if (preg_match('/\bimplements\s+([^\{]+)/', $source, $match) === 1) {
@@ -148,7 +148,7 @@ function sourceGraph(string $root): array
                     'label' => $method.' '.$uri,
                     'path' => $relative,
                 ];
-                if (preg_match('/([A-Za-z_\\][A-Za-z0-9_\\]*)::class/', $handler, $controller) === 1) {
+                if (preg_match('/([A-Za-z_\x5c][A-Za-z0-9_\x5c]*)::class/', $handler, $controller) === 1) {
                     $edges[] = ['from' => $routeId, 'to' => 'class:'.$controller[1], 'type' => 'route_to'];
                 }
             }
