@@ -33,6 +33,27 @@ foreach ($required as $relative) {
     }
 }
 
+if (is_file($root.'/scripts/project-intelligence.php')) {
+    $output = [];
+    $exitCode = 0;
+    $command = escapeshellarg(PHP_BINARY).' '.escapeshellarg($root.'/scripts/project-intelligence.php').' --json 2>&1';
+    exec($command, $output, $exitCode);
+    $payload = implode(PHP_EOL, $output);
+
+    if ($exitCode !== 0) {
+        $errors[] = 'Project Intelligence compiler smoke failed: '.trim($payload);
+    } else {
+        try {
+            $snapshot = json_decode($payload, true, flags: JSON_THROW_ON_ERROR);
+            if (($snapshot['generated_from_repository'] ?? null) !== true) {
+                $errors[] = 'Project Intelligence compiler smoke must return repository-generated JSON.';
+            }
+        } catch (Throwable $exception) {
+            $errors[] = 'Project Intelligence compiler emitted non-JSON output: '.$exception->getMessage();
+        }
+    }
+}
+
 $songchart = is_file($root.'/songchart') ? (string) file_get_contents($root.'/songchart') : '';
 foreach (['context)', 'scripts/project-context.php', 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test|db]'] as $signal) {
     if (! str_contains($songchart, $signal)) {
