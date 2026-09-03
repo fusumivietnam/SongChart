@@ -1,14 +1,14 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "172454713af9474c6e40ba87955c0ad903e84f3b2f3c1068d9b75e54827a73bd",
+    "source_fingerprint": "bc294bb7c4dd895e82f75b22a756447026427d892970a99679abed136a604784",
     "current_stage": {
         "id": "19.0",
         "title": "Production Readiness & First Release",
         "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
         "status": "implementing"
     },
-    "accepted_through": "19.0.3",
+    "accepted_through": "19.0.4-C1A",
     "stage_progress": [
         {
             "id": "19.0.1",
@@ -36,9 +36,44 @@
             "title": "Queue/scheduler production runtime"
         },
         {
-            "id": "19.0.4",
+            "id": "19.0.4-C1A",
+            "status": "accepted",
+            "title": "Consolidation authority + derived project state/work lease"
+        },
+        {
+            "id": "19.0.4-C1B",
             "status": "implementing",
-            "title": "Observability + alerting"
+            "title": "Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration"
+        },
+        {
+            "id": "19.0.4-C1C",
+            "status": "planned",
+            "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"
+        },
+        {
+            "id": "19.0.4-C2",
+            "status": "planned",
+            "title": "Horizon + Pulse observability consolidation"
+        },
+        {
+            "id": "19.0.4-C3",
+            "status": "planned",
+            "title": "Pest Browser desktop/mobile critical smoke"
+        },
+        {
+            "id": "19.0.4-C4",
+            "status": "planned",
+            "title": "Verifier reduction + main provenance + failure classification"
+        },
+        {
+            "id": "19.0.4-C5",
+            "status": "planned",
+            "title": "Provider transport inventory + Saloon decision"
+        },
+        {
+            "id": "19.0.4-C6",
+            "status": "planned",
+            "title": "Typed data/API inventory + Laravel Data decision"
         },
         {
             "id": "19.0.5",
@@ -57,8 +92,8 @@
         }
     ],
     "next_tranche": {
-        "id": "19.0.4-C1B",
-        "title": "Active brand cleanup + AI framework context integration"
+        "id": "19.0.4-C1C",
+        "title": "Install Laravel Boost through Composer in canonical dev, inspect generated AI surface, and retire framework-introspection duplication"
     },
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
@@ -66,8 +101,8 @@
     },
     "source_hashes": {
         "candidate-verification.json": "b8b75b2bcd9383e06e6acb3a788cab29815672e6be83db6907c9246d3fa0b49e",
-        "docs/project/engineering/consolidation-plan.json": "f3639a2211047c930d554622fecf707a81047a4b60b12a87469650b78b159c32",
-        "docs/project/engineering/project-knowledge.json": "fe29d2ba484f8031e7a03c0d8e636458094b731ce1fe74279508f6eae9a0c961",
-        "docs/project/engineering/stage-plan.json": "8159ea8694bd8cbcff043380098c9f9168a5acc04016d9eddb9bd003d172015e"
+        "docs/project/engineering/consolidation-plan.json": "06c75ba1618b7cfa38f9fb239ccbc1626f9b3e9ec9a2a9cb88b95cc5b8692eaa",
+        "docs/project/engineering/project-knowledge.json": "486fa45b9df15aa2cf33141badf1173e2292e9235975b215ad40956f4beaea10",
+        "docs/project/engineering/stage-plan.json": "658e09c47b7294bbf63c3ec1696ba46f7dd7e155c0f4e7529deb414dfd2a86d8"
     }
 }

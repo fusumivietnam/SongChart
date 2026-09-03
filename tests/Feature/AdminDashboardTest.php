@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
 
@@ -45,7 +47,43 @@ it('renders the attention-first dashboard for an admin', function (): void {
         ->assertSee('data-admin-dashboard="attention-first"', false)
         ->assertSee('data-dashboard-section="attention-center"', false)
         ->assertSee('data-dashboard-section="metrics"', false)
-        ->assertSee('data-admin-technical-details', false);
+        ->assertSee('data-admin-technical-details', false)
+        ->assertSee('data-development-intelligence="stale"', false)
+        ->assertSee('Chưa có snapshot Development Intelligence');
+});
+
+it('reads a completed development intelligence snapshot without rebuilding source', function (): void {
+    /** @var TestCase $this */
+    $admin = User::factory()->withConfirmedTwoFactorAuthentication()->create(['role' => 'super_admin']);
+    $directory = storage_path('project-intelligence/test-snapshot-sha');
+
+    File::ensureDirectoryExists($directory);
+    file_put_contents($directory.'/architecture-graph.json', json_encode([
+        'snapshot' => [
+            'head_sha' => '1234567890abcdef1234567890abcdef12345678',
+            'branch' => 'main',
+            'status' => 'fresh',
+        ],
+        'metrics' => [
+            'class_nodes' => 321,
+            'route_nodes' => 45,
+            'edges' => 678,
+        ],
+    ], JSON_THROW_ON_ERROR));
+    Cache::forget('project-intelligence:latest');
+
+    try {
+        $this->actingAs($admin)->get('/admin')
+            ->assertOk()
+            ->assertSee('data-development-intelligence="fresh"', false)
+            ->assertSee('12345678')
+            ->assertSee('321')
+            ->assertSee('45')
+            ->assertSee('678');
+    } finally {
+        Cache::forget('project-intelligence:latest');
+        File::deleteDirectory($directory);
+    }
 });
 
 it('keeps the admin controller on the shared controller foundation', function (): void {

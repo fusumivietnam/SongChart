@@ -1,6 +1,6 @@
-# SongChartWeb
+# SongChart
 
-SongChartWeb is an open music knowledge and discovery platform built around trustworthy canonical metadata, multi-provider evidence, relationships, provenance, and destinations for listening or watching music.
+SongChart is an open music knowledge and discovery platform built around trustworthy canonical metadata, multi-provider evidence, relationships, provenance, and destinations for listening or watching music.
 
 Rather than treating one external provider as the source of truth, SongChart builds a provider-neutral canonical catalog and keeps imported provider data behind normalization, validation, identity resolution, provenance, and governed admission boundaries.
 
@@ -13,6 +13,7 @@ SongChart is a Laravel 13 modular monolith with a Docker-first development workf
 ./songchart dev ready
 ./songchart ai doctor
 ./songchart context --json
+./songchart artisan project:intelligence --json
 ```
 
 In GitHub Codespaces:
@@ -24,10 +25,10 @@ In GitHub Codespaces:
 Then read, in this order:
 
 1. `PROJECT_AUTHORITY.md` — durable engineering authority;
-2. `docs/project/DEVELOPMENT_STATE.md` — what is done, active now, next, blocked, and the next required action;
+2. `docs/project/generated/development-state.json` and `docs/project/generated/project-context.json` — derived current repository state;
 3. the active stage task contract under `docs/foundation/`;
 4. `docs/START_HERE.md` / `docs/DOCUMENTATION_INDEX.md` to locate the owning domain or engineering authority;
-5. `docs/project/engineering/ENGINEERING_GRAPH.md` when you need to understand how authorities, impact, verification, regressions and delivery connect.
+5. `docs/project/engineering/project-kernel-contract.json` and `docs/project/engineering/architecture-graph-contract.json` when architecture/use-case intelligence matters.
 
 Do not start by reading historical stage documents. They are evidence, not current navigation authority.
 
@@ -105,6 +106,7 @@ Core architectural rules:
 - PostgreSQL is the release-authoritative database;
 - historical migrations are immutable after sealing;
 - generated repository authority is derived from source and must be regenerated, not hand-edited;
+- Project Intelligence graph is snapshot-based and eventual-consistency; HTTP requests must never scan/rebuild source;
 - AI/developer learning is navigation/debug evidence only; durable rules belong to existing authorities and permanent guards.
 
 Provider/canonical flow:
@@ -152,6 +154,7 @@ Before a coherent change:
 ```bash
 ./songchart ai doctor
 ./songchart context --json
+./songchart artisan project:intelligence --json
 ./songchart impact <planned-path> [planned-path...]
 ```
 
@@ -193,19 +196,21 @@ Any tracked change after canonical PASS invalidates the previous closure evidenc
 
 ## Current work and collaboration
 
-The single operational checkpoint is:
+Current repository progress is derived, not manually authored:
 
-- `docs/project/DEVELOPMENT_STATE.md` — done / now / next / blockers / latest evidence / next action.
+- `docs/project/generated/development-state.json` — stage/tranche semantic state;
+- `docs/project/generated/project-context.json` — runtime/repository context and Project Intelligence command surface;
+- live branch, PR, exact head and CI lifecycle — resolved from GitHub at session start.
 
 When another developer or AI takes over:
 
-1. sync the current stage branch;
-2. read `DEVELOPMENT_STATE.md`;
-3. run `./songchart ai doctor`;
+1. sync the current repository/PR;
+2. read both generated JSON authorities;
+3. run `./songchart ai status --json` and `./songchart ai doctor`;
 4. inspect `./songchart impact --diff` before assuming scope;
-5. avoid editing the same source surface as another active writer until handoff by exact commit SHA.
+5. resume the existing semantic-owner PR instead of creating duplicate work.
 
-AI-specific development guidance lives in `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` and `.agents/skills/`. AI learning exists only to improve repository navigation and debugging; it must not create parallel product/runtime rules.
+AI-specific development guidance lives in `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` and `AGENTS.md`. AI learning exists only to improve repository navigation and debugging; it must not create parallel product/runtime rules.
 
 ## Repository authorities
 
@@ -217,7 +222,7 @@ Key owners:
 - `docs/project/domain/` — domain, schema, use-case and application-data boundaries;
 - `docs/project/stack/` — runtime, package, database and migration contracts;
 - `docs/project/security/` — authorization/security contracts;
-- `docs/project/engineering/` — verification, impact, AI/development and delivery contracts;
+- `docs/project/engineering/` — verification, Project Kernel, Project Intelligence, AI/development and delivery contracts;
 - `docs/providers/` — provider behavior/compliance;
 - `docs/ui/` — UI contracts;
 - `docs/operations/` — operator/runtime procedures.

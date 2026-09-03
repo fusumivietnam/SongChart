@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "status": "active",
   "canonical_brand": {
     "name": "SongChart",
@@ -13,7 +13,8 @@
     "Every package adoption must name the custom surface it replaces or prevents.",
     "Retire replaced code in the same or immediately following bounded tranche; do not keep permanent dual implementations.",
     "Behavioral invariants belong in tests; declarative invariants belong in repository contracts rather than new one-off verifier scripts.",
-    "Optimization is a continuous delivery concern, not an occasional audit."
+    "Optimization is a continuous delivery concern, not an occasional audit.",
+    "Technology freshness is continuously evaluated, but newness alone is never an adoption reason; compatibility, SWOT, ROI, retirement payoff and operating cost decide whether a technology is adopted now, evaluated in a bounded tranche, watched, or rejected."
   ],
   "continuous_optimization_cycle": {
     "required_for_every_bounded_tranche": true,
@@ -25,12 +26,59 @@
       "documentation_or_project_knowledge_impact",
       "active_brand_or_legacy_cleanup",
       "release_artifact_weight_impact",
-      "mobile_or_remote_operability"
+      "mobile_or_remote_operability",
+      "technology_freshness_swot_roi"
     ],
     "decision_rule": "Implement low-risk optimization in the current tranche when it is owned by the same semantic surface; otherwise register a bounded retirement/automation item here with a target phase. Do not defer by forgetting it in chat.",
     "closure_rule": "A tranche is incomplete if it introduces a package or replacement abstraction without recording what old surface is removed, retained temporarily, or explicitly deferred.",
     "source_budget_rule": "Prefer net source reduction when replacing custom infrastructure. Added framework/package glue should be smaller and more documented than the retired custom surface.",
     "documentation_rule": "Stable knowledge is captured in machine-readable repository authorities so API/developer/FAQ projections can be generated instead of independently maintained."
+  },
+  "technology_watch": {
+    "required_for_every_bounded_tranche": true,
+    "purpose": "Keep SongChart current without creating upgrade churn or novelty-driven architecture. Every relevant framework, package, runtime, AI/MCP, test, security, deployment or operations candidate is evaluated against the current accepted baseline and the semantic owner being changed.",
+    "evidence_priority": [
+      "official release notes, compatibility documentation and security advisories",
+      "official package/framework documentation and maintained source repository",
+      "existing SongChart runtime and verification evidence",
+      "mature community evidence only when official evidence is insufficient"
+    ],
+    "swot_required_fields": [
+      "strengths",
+      "weaknesses",
+      "opportunities",
+      "threats"
+    ],
+    "roi_dimensions": {
+      "benefit": [
+        "custom_surface_removed_or_prevented",
+        "delivery_speed_improvement",
+        "defect_or_security_risk_reduction",
+        "maintainability_and_documentation_gain",
+        "operational_visibility_or_reliability_gain",
+        "developer_and_ai_operability_gain",
+        "release_artifact_or_runtime_efficiency_gain"
+      ],
+      "cost": [
+        "migration_effort",
+        "new_glue_or_configuration_surface",
+        "compatibility_and_upgrade_risk",
+        "vendor_or_ecosystem_lock_in",
+        "recurring_maintenance_cost",
+        "CI_or_runtime_resource_cost",
+        "rollback_and_data_migration_risk"
+      ]
+    },
+    "adoption_decisions": {
+      "adopt_now": "Use when compatibility is proven, ROI is clearly positive, the semantic owner is in the current tranche, and the replacement retires or prevents more custom/operational surface than it adds.",
+      "bounded_evaluation": "Use when expected ROI is positive but compatibility, migration effort or semantic ownership requires a focused proof before adoption.",
+      "watch": "Use when upstream direction is promising but maturity, compatibility, product need or retirement payoff is not yet sufficient.",
+      "reject": "Use when added complexity, ownership overlap, lock-in or migration/maintenance cost is greater than the measurable benefit for SongChart."
+    },
+    "anti_novelty_rule": "Do not upgrade or add a technology only because a newer release, package or architecture exists. Prefer the newest proven option that materially improves SongChart under the ROI and ownership rules.",
+    "replacement_rule": "Every adopt-now decision records what native/custom/package surface is replaced, what remains SongChart-specific, what files or operational responsibilities can retire, and the target tranche for any temporary remainder.",
+    "freshness_rule": "Re-evaluate relevant candidates when their semantic surface is touched, before package admission or major runtime changes, and when upstream compatibility/security evidence materially changes. Do not rely on a periodic chat-memory audit.",
+    "recording_rule": "Stable SWOT/ROI decisions and deferred technology opportunities belong in repository machine authority or the owning bounded tranche; chat memory is not an authority."
   },
   "free_tier_delivery": {
     "constraint": "Private repository branch protection/ruleset enforcement is unavailable on the current GitHub Free plan.",

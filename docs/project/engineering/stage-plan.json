@@ -1,26 +1,38 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "current_stage": {
     "id": "19.0",
     "title": "Production Readiness & First Release",
     "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
     "status": "implementing"
   },
-  "accepted_through": "19.0.3",
+  "accepted_through": "19.0.4-C1A",
+  "active_tranche": {
+    "id": "19.0.4-C1B",
+    "title": "Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration",
+    "semantic_owner": "project-intelligence"
+  },
   "stage_progress": [
     {"id": "19.0.1", "status": "accepted", "title": "Production topology + environment inventory"},
     {"id": "19.0.1.1", "status": "accepted", "title": "Data contract + provider taxonomy convergence"},
     {"id": "19.0.1.2", "status": "accepted", "title": "Mobile verification + AI UI design harness"},
     {"id": "19.0.2", "status": "accepted", "title": "Secrets/environment hardening"},
     {"id": "19.0.3", "status": "accepted", "title": "Queue/scheduler production runtime"},
-    {"id": "19.0.4", "status": "implementing", "title": "Observability + alerting"},
+    {"id": "19.0.4-C1A", "status": "accepted", "title": "Consolidation authority + derived project state/work lease"},
+    {"id": "19.0.4-C1B", "status": "implementing", "title": "Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration"},
+    {"id": "19.0.4-C1C", "status": "planned", "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"},
+    {"id": "19.0.4-C2", "status": "planned", "title": "Horizon + Pulse observability consolidation"},
+    {"id": "19.0.4-C3", "status": "planned", "title": "Pest Browser desktop/mobile critical smoke"},
+    {"id": "19.0.4-C4", "status": "planned", "title": "Verifier reduction + main provenance + failure classification"},
+    {"id": "19.0.4-C5", "status": "planned", "title": "Provider transport inventory + Saloon decision"},
+    {"id": "19.0.4-C6", "status": "planned", "title": "Typed data/API inventory + Laravel Data decision"},
     {"id": "19.0.5", "status": "planned", "title": "Backup/recovery"},
     {"id": "19.0.6", "status": "planned", "title": "Security review + production smoke"},
     {"id": "final", "status": "planned", "title": "First release package/tag"}
   ],
   "next_tranche": {
-    "id": "19.0.4-C1B",
-    "title": "Active brand cleanup + AI framework context integration"
+    "id": "19.0.4-C1C",
+    "title": "Install Laravel Boost through Composer in canonical dev, inspect generated AI surface, and retire framework-introspection duplication"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",

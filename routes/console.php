@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('songchart:about', function (): void {
-    $this->info('SongChartWeb Laravel 13 starter is ready.');
-})->purpose('Display SongChart starter status');
+    $this->info('SongChart Laravel 13 runtime is ready.');
+})->purpose('Display SongChart runtime status');
 
 if ((bool) config('songchart.providers.health.schedule_enabled', true)) {
     Schedule::command('providers:health-check')

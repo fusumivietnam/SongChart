@@ -2,16 +2,17 @@
 
 ## Authority
 
-This directory is the canonical authority for SongChartWeb framework, package and capability ownership decisions. Read it before adding dependencies, infrastructure abstractions or framework-adjacent code.
+This directory is the canonical authority for SongChart framework, package and capability ownership decisions. Read it before adding dependencies, infrastructure abstractions or framework-adjacent code.
 
 ## Runtime baseline
 
 - PHP: `^8.5` from `composer.json`.
 - Laravel: `^13.0` from `composer.json`; resolved version is owned by `composer.lock`.
-- Node.js: Node 24 LTS is the Stage 18.1 development, CI and canonical build baseline.
+- Node.js: Node 24 LTS is the development, CI and canonical build baseline.
 - npm: use the version bundled with the approved Node.js 24 runtime.
-- Local development: Docker Desktop + WSL2 through the repository `songchart` CLI; Laragon is compatibility-only.
+- Local development: Docker Engine/Compose v2 on Linux or WSL2 through the repository `songchart` CLI.
 - Remote development: GitHub Codespaces is an optional Docker development adapter through the same `songchart` CLI. It uses `compose.dev.yml` plus `compose.codespaces.yml`, does not require local `mkcert`/Caddy TLS, exposes only app port `8000` to the private Codespaces forwarding proxy, and never auto-starts SongChart services merely because a Codespace opens.
+- Native Windows/Laragon development paths are retired and are not engineering authority.
 - CI: GitHub Actions.
 - Database test/release authority: PostgreSQL; SQLite is optional compatibility-only.
 
@@ -24,7 +25,7 @@ This directory is the canonical authority for SongChartWeb framework, package an
 - Form Requests for HTTP validation.
 - Actions for application use cases.
 - Laravel Queue, Jobs and Scheduler for asynchronous work.
-- Laravel HTTP client for provider transport.
+- Laravel HTTP client for provider transport until a bounded integration-package decision replaces it.
 
 ## Frontend
 
@@ -34,16 +35,19 @@ This directory is the canonical authority for SongChartWeb framework, package an
 - Vite for asset compilation.
 - Tailwind CSS for the design system.
 
-## Quality toolchain
+## Quality and development intelligence
 
 - Pest/PHPUnit for tests.
 - Laravel Pint for formatting.
 - Larastan/PHPStan for static analysis.
 - Composer scripts as the canonical verification interface.
+- Project Context is deterministic generated repository authority.
+- Project Intelligence is an eventual-consistency structural snapshot exposed through `./songchart artisan project:intelligence --json`; source scanning/rebuild is forbidden in HTTP requests.
+- Technology/package decisions must use `docs/project/engineering/technology-evaluation-contract.json` and the current watchlist before adding custom framework-adjacent code.
 
 ## Default decision
 
-Laravel-native-first. Do not add a package, service, client, queue, authentication mechanism or persistence abstraction when the framework or an approved capability owner already satisfies the requirement.
+Laravel first-party first, then a mature documented package, then genuinely SongChart-specific custom code. Package adoption must retire or prevent more custom surface than it adds; permanent dual implementations are not accepted.
 
 ## Canonical verification baseline
 
@@ -53,4 +57,4 @@ Laravel-native-first. Do not add a package, service, client, queue, authenticati
 - Redis
 - Node 24 LTS
 - Composer/npm dependencies restored from repository lockfiles
-- Docker Desktop + WSL2 is the primary local development and verification runtime; GitHub Codespaces is a remote adapter over the same Docker/CLI contract; Laragon is compatibility-only
+- Linux/WSL2 Docker is the canonical local runtime; GitHub Codespaces is the remote adapter over the same Docker/CLI contract

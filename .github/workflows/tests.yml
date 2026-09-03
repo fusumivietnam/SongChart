@@ -97,6 +97,30 @@ jobs:
           coverage: none
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: composer test:postgres
+      - name: Summarize PostgreSQL failure
+        if: failure()
+        shell: bash
+        run: |
+          log='storage/logs/postgres-test-last-failure.log'
+          if [ ! -f "$log" ]; then
+            echo 'PostgreSQL test failed before a failure log was produced.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          clean_tail="$(tail -n 160 "$log" | sed -E $'s/\x1B\[[0-9;]*[mK]//g')"
+          {
+            echo '### PostgreSQL failure tail'
+            echo
+            echo '```text'
+            printf '%s\n' "$clean_tail"
+            echo '```'
+            echo
+            echo "Full failure evidence remains available as the run artifact for SHA $SONGCHART_CI_SHA."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo '::group::PostgreSQL failure tail'
+          printf '%s\n' "$clean_tail"
+          echo '::endgroup::'
       - name: Preserve PostgreSQL failure evidence
         if: failure()
         uses: actions/upload-artifact@v4

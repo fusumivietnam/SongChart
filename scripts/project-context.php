@@ -227,6 +227,10 @@ try {
     $runtimeAuthority = readJson($root.'/docs/project/stack/runtime-environments.json');
     $ownership = readJson($root.'/docs/project/domain/schema-ownership.json');
     $candidate = readJson($root.'/candidate-verification.json');
+    $kernelContract = readJson($root.'/docs/project/engineering/project-kernel-contract.json');
+    $graphContract = readJson($root.'/docs/project/engineering/architecture-graph-contract.json');
+    $technologyWatchlist = readJson($root.'/docs/project/engineering/technology-watchlist.json');
+    $versioningPolicy = readJson($root.'/docs/project/release/versioning-policy.json');
     $migrations = migrationSchema($root);
     $owners = is_array($ownership['tables'] ?? null) ? $ownership['tables'] : [];
     $frameworkTables = is_array($ownership['framework_tables'] ?? null) ? $ownership['framework_tables'] : [];
@@ -244,13 +248,25 @@ try {
         'compose.dev.yml',
         'compose.verify.yml',
         'songchart',
+        'app/Console/Commands/ProjectIntelligenceCommand.php',
+        'scripts/project-intelligence.php',
         'docs/project/stack/runtime-environments.json',
         'docs/project/domain/schema-ownership.json',
         'docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md',
         'docs/project/engineering/ai-development-contract.json',
         'docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md',
+        'docs/project/engineering/project-knowledge.json',
+        'docs/project/engineering/consolidation-plan.json',
+        'docs/project/engineering/project-kernel-contract.json',
+        'docs/project/engineering/architecture-graph-contract.json',
+        'docs/project/engineering/use-case-contract.schema.json',
+        'docs/project/engineering/mcp-contract.json',
+        'docs/project/engineering/development-intelligence-contract.json',
+        'docs/project/engineering/technology-evaluation-contract.json',
+        'docs/project/engineering/technology-watchlist.json',
         'docs/project/engineering/verification-command-surface.json',
         'docs/project/engineering/verification-topology.json',
+        'docs/project/release/versioning-policy.json',
         'docs/project/stack/release-pipeline-contract.json',
     ];
     foreach (glob($root.'/database/migrations/*.php') ?: [] as $migration) {
@@ -270,7 +286,7 @@ try {
     }
 
     $manifest = [
-        'schema_version' => 1,
+        'schema_version' => 2,
         'generated_from_repository' => true,
         'source_fingerprint' => hash('sha256', json_encode($hashes, JSON_THROW_ON_ERROR)),
         'candidate' => [
@@ -287,6 +303,7 @@ try {
         'installed_versions' => installedPackages($root.'/composer.lock', [
             'laravel/framework',
             'laravel/pulse',
+            'laravel/boost',
             'livewire/livewire',
             'spatie/laravel-activitylog',
             'larastan/larastan',
@@ -304,6 +321,24 @@ try {
             'dev' => devCommands($root.'/songchart'),
             'canonical_verify' => './songchart verify',
             'context' => './songchart context --json',
+            'project_intelligence' => './songchart artisan project:intelligence --json',
+            'project_intelligence_refresh' => './songchart artisan project:intelligence --write',
+        ],
+        'project_intelligence' => [
+            'compiler' => 'scripts/project-intelligence.php',
+            'artisan_command' => 'project:intelligence',
+            'kernel_contract' => 'docs/project/engineering/project-kernel-contract.json',
+            'graph_contract' => 'docs/project/engineering/architecture-graph-contract.json',
+            'use_case_schema' => 'docs/project/engineering/use-case-contract.schema.json',
+            'mcp_contract' => 'docs/project/engineering/mcp-contract.json',
+            'development_intelligence_contract' => 'docs/project/engineering/development-intelligence-contract.json',
+            'technology_watchlist' => 'docs/project/engineering/technology-watchlist.json',
+            'versioning_policy' => 'docs/project/release/versioning-policy.json',
+            'snapshot_consistency' => $graphContract['snapshot_policy']['consistency'] ?? 'eventual',
+            'request_time_rebuild_forbidden' => true,
+            'kernel_status' => $kernelContract['status'] ?? null,
+            'technology_evaluated_at' => $technologyWatchlist['evaluated_at'] ?? null,
+            'product_version_format' => $versioningPolicy['product_version']['format'] ?? null,
         ],
         'seeders' => seederRegistry($root),
         'database' => [
@@ -334,12 +369,13 @@ try {
     }
 
     $runtime = $manifest['database']['runtime'] ?? ['available' => false, 'reason' => 'runtime inspection disabled'];
-    fwrite(STDOUT, "SongChart Project Context v1\n");
+    fwrite(STDOUT, "SongChart Project Context v2\n");
     fwrite(STDOUT, 'Candidate: Stage '.($manifest['candidate']['stage'] ?? 'unknown').' / '.($manifest['candidate']['candidate'] ?? 'unknown')."\n");
     fwrite(STDOUT, 'Runtime authority: PHP '.($manifest['runtime_authority']['php'] ?? '?').', PostgreSQL '.($manifest['runtime_authority']['postgres_major'] ?? '?')."\n");
     fwrite(STDOUT, 'Dev Compose: compose.dev.yml ['.implode(', ', $manifest['docker']['development_services'])."]\n");
     fwrite(STDOUT, 'Canonical Compose project: songchart-verify'."\n");
     fwrite(STDOUT, 'Dev commands: '.implode(', ', $manifest['command_surface']['dev'])."\n");
+    fwrite(STDOUT, 'Project Intelligence: '.$manifest['command_surface']['project_intelligence']."\n");
     fwrite(STDOUT, 'Migration-owned tables: '.count($tableManifest)."\n");
     fwrite(STDOUT, 'Schema ownership: '.($manifest['database']['ownership_complete'] ? 'complete' : 'DRIFT')."\n");
     fwrite(STDOUT, 'PostgreSQL runtime: '.(($runtime['available'] ?? false) ? (($runtime['database'] ?? '?').' @ '.($runtime['server_version'] ?? '?')) : 'unavailable ('.($runtime['reason'] ?? 'unknown').')')."\n");

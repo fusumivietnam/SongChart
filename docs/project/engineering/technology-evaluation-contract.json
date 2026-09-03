@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Standard machine-readable decision model for evaluating new frameworks, packages, tooling and platform capabilities before roadmap adoption.",
+  "required_dimensions": {
+    "swot": ["strengths", "weaknesses", "opportunities", "threats"],
+    "roi_benefits": ["custom_surface_retired_or_prevented", "delivery_speed", "defect_or_security_risk_reduction", "maintainability", "observability_or_reliability", "ai_or_developer_operability", "runtime_or_release_efficiency"],
+    "roi_costs": ["migration_cost", "new_glue_or_configuration", "compatibility_risk", "vendor_or_package_lock_in", "ongoing_maintenance", "ci_or_runtime_cost", "rollback_or_data_migration_risk"],
+    "freshness": ["latest_stable_version", "release_date", "framework_php_compatibility", "maintenance_activity", "security_status", "official_documentation_quality"]
+  },
+  "decisions": ["adopt_now", "bounded_evaluation", "watch", "reject"],
+  "adoption_rule": "Novelty is not a benefit by itself. Adopt only when compatibility is proven, lifecycle risk is acceptable and expected net ROI is positive for a real SongChart semantic owner.",
+  "replacement_rule": "Every adopted package or framework capability must name custom code it retires or prevents; permanent dual implementations are prohibited unless explicitly time-bounded with retirement evidence.",
+  "reevaluation_triggers": [
+    "semantic surface is touched by a bounded tranche",
+    "before package/runtime/platform adoption",
+    "major upstream compatibility or security change",
+    "existing custom surface becomes a repeated maintenance hotspot",
+    "new official Laravel capability can replace third-party or custom infrastructure"
+  ],
+  "authority_rule": "Long-lived decisions are recorded in repository machine authorities. Chat discussion may propose decisions but is not the durable record."
+}

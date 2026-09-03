@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Read-mostly SA/Dev/Tech intelligence surface over Project Kernel snapshots, not a transactional runtime dependency.",
+  "panels": {
+    "Now": ["accepted_main", "active_tranche", "work_lease", "verification_state", "next_action"],
+    "Architecture": ["business_graph", "developer_graph", "deep_graph", "route_trace", "class_neighborhood"],
+    "Evolution": ["source_growth", "custom_surface_retirement", "package_adoption", "graph_delta", "test_surface", "architecture_hotspots"],
+    "Technology": ["swot", "roi", "freshness", "compatibility", "recommended_decision", "target_tranche"]
+  },
+  "serving_policy": {
+    "default": "Serve the latest completed snapshot immediately.",
+    "stale_behavior": "Show snapshot SHA/time and stale scopes; offer explicit refresh without blocking page rendering.",
+    "refresh": "Use background/single-flight rebuild and sparse status updates only while building.",
+    "idle": "No polling and no source scan when nobody is viewing or requesting refresh.",
+    "history": "Accepted-SHA snapshots are immutable analytical evidence and support time-travel/diff views."
+  },
+  "production_safety": {
+    "request_time_source_scan": false,
+    "request_time_ast_build": false,
+    "duplicate_rebuild_jobs": false,
+    "business_queue_priority": "development intelligence must never outrank product-critical queues",
+    "failure_behavior": "Keep serving the last successful snapshot with visible failed/stale status."
+  }
+}

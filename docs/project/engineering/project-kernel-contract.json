@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Define the shared SongChart project-intelligence kernel consumed by CLI, CI, MCP, generated documentation and Admin Development Intelligence without duplicating authority parsing.",
+  "principles": [
+    "Repository and GitHub evidence remain authoritative; the kernel derives views and never becomes an independent memory database.",
+    "Adapters must be thin: CLI, CI, MCP and Admin consume the same normalized kernel outputs.",
+    "Volatile PR, SHA and CI state are resolved live and are never committed as authored project truth.",
+    "Expensive source analysis is snapshot-based and never runs in an HTTP request path.",
+    "Framework/package metadata should be obtained from Laravel, Composer and established parsers before custom analysis is added."
+  ],
+  "canonical_outputs": {
+    "project_state": "docs/project/generated/development-state.json",
+    "project_context": "docs/project/generated/project-context.json",
+    "architecture_graph": "storage/project-intelligence/architecture-graph.json",
+    "source_metrics": "storage/project-intelligence/source-metrics.json",
+    "version_policy": "docs/project/release/versioning-policy.json"
+  },
+  "adapters": {
+    "cli": "./songchart",
+    "ci": "GitHub Auto Closure and accepted-main tests",
+    "mcp": "bounded SongChart MCP adapter over kernel resources/tools",
+    "admin": "read-only Development Intelligence projections plus explicit refresh actions"
+  },
+  "mcp_resources": [
+    "songchart://project/context",
+    "songchart://project/state",
+    "songchart://graph/overview",
+    "songchart://graph/use-case/{id}",
+    "songchart://graph/route/{name}",
+    "songchart://graph/class/{class}",
+    "songchart://technology/watchlist",
+    "songchart://release/version"
+  ],
+  "mcp_tools": [
+    "songchart.current_state",
+    "songchart.current_task",
+    "songchart.impact",
+    "songchart.trace_use_case",
+    "songchart.trace_route",
+    "songchart.graph_refresh",
+    "songchart.pr_status",
+    "songchart.release_status"
+  ],
+  "non_goals": [
+    "Do not duplicate Laravel Boost framework/runtime/documentation tools.",
+    "Do not store conversational memory or semantic-vector memory as project authority.",
+    "Do not implement a second CI/promotion engine inside MCP.",
+    "Do not expose unrestricted source mutation through the first MCP tranche."
+  ]
+}

@@ -23,7 +23,7 @@ return [
         'projection_ttl_minutes' => (int) env('SONGCHART_DISCOVERY_PROJECTION_TTL_MINUTES', 15),
     ],
 
-    'core_version' => env('SONGCHART_CORE_VERSION', '1.0.0'),
+    'core_version' => env('SONGCHART_CORE_VERSION', env('APP_VERSION', 'unreleased')),
 
     'production' => [
         'environment_guard_enabled' => $productionEnvironmentGuardEnabled,
@@ -49,7 +49,7 @@ return [
         'musicbrainz' => [
             'enabled' => (bool) env('MUSICBRAINZ_ENABLED', false),
             'base_url' => env('MUSICBRAINZ_BASE_URL', 'https://musicbrainz.org/ws/2'),
-            'user_agent' => env('MUSICBRAINZ_USER_AGENT', 'SongChartWeb/0.1 (contact@example.com)'),
+            'user_agent' => env('MUSICBRAINZ_USER_AGENT', 'SongChart/unreleased (contact@example.com)'),
             'connect_timeout_seconds' => (int) env('MUSICBRAINZ_CONNECT_TIMEOUT_SECONDS', 5),
             'timeout_seconds' => (int) env('MUSICBRAINZ_TIMEOUT_SECONDS', 15),
             'rate' => [

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "evaluated_at": "2026-09-02",
+  "evaluation_contract": "docs/project/engineering/technology-evaluation-contract.json",
+  "items": [
+    {
+      "id": "laravel-boost",
+      "technology": "laravel/boost",
+      "latest_verified_stable": "2.7.0",
+      "latest_verified_release_date": "2026-08-26",
+      "compatibility": {
+        "php": "^8.2; SongChart PHP 8.5 compatible",
+        "laravel": "Illuminate 11.45.3 / 12.41.1 / 13.x supported; SongChart Laravel 13 compatible",
+        "evidence": [
+          "Laravel 13 documentation lists Boost for Laravel 10-13 and PHP 8.1+.",
+          "Packagist v2.7.0 requires illuminate console/contracts/routing/support ^11.45.3|^12.41.1|^13.0."
+        ]
+      },
+      "swot": {
+        "strengths": [
+          "First-party Laravel ownership and version-aware framework guidance.",
+          "MCP tools already cover framework docs, routes, database/schema, configuration, Artisan/runtime and logs.",
+          "Supports Codex, Claude Code, Gemini and other agent clients, reducing AI-client-specific project glue."
+        ],
+        "weaknesses": [
+          "Development-only dependency and generated agent configuration require lifecycle discipline.",
+          "Some Boost tools overlap with capabilities SongChart could otherwise expose through its own MCP adapter."
+        ],
+        "opportunities": [
+          "Retire or prevent custom framework-introspection MCP tools.",
+          "Project SongChart-specific guidance through Boost custom guidelines while preserving repository machine authority.",
+          "Improve framework/package documentation freshness for every AI/device."
+        ],
+        "threats": [
+          "Duplicated MCP capabilities if SongChart implements framework-level tools already owned by Boost.",
+          "Generated guideline files could become competing authority if committed and manually edited without ownership rules."
+        ]
+      },
+      "roi": {
+        "benefits": {
+          "custom_surface_retired_or_prevented": "high",
+          "delivery_speed": "high",
+          "defect_or_security_risk_reduction": "medium_high",
+          "maintainability": "high",
+          "observability_or_reliability": "medium",
+          "ai_or_developer_operability": "high",
+          "runtime_or_release_efficiency": "neutral because dependency is development-only"
+        },
+        "costs": {
+          "migration_cost": "low_medium",
+          "new_glue_or_configuration": "low",
+          "compatibility_risk": "low after Laravel 13 compatibility verification",
+          "vendor_or_package_lock_in": "low because repository authority and SongChart Project Kernel remain independent",
+          "ongoing_maintenance": "low_medium",
+          "ci_or_runtime_cost": "low; no production runtime dependency intended",
+          "rollback_or_data_migration_risk": "very_low"
+        }
+      },
+      "decision": "adopt_next",
+      "target_tranche": "19.0.4-C1C",
+      "decision_reason": "Compatibility and ROI are proven, but dependency adoption must be performed by Composer in an executable development environment so composer.json and composer.lock move atomically. Never synthesize lockfile changes through repository API writes.",
+      "adoption_gate": "Run composer require --dev laravel/boost:^2.7 in the canonical development environment, inspect generated agent configuration, retire any overlapping custom framework-introspection surface, then pass Auto Closure on the resulting exact lockfile SHA.",
+      "adoption_boundaries": [
+        "Install as require-dev only.",
+        "Do not delegate SongChart project state, architecture graph, semantic ownership, SWOT/ROI or promotion/release evidence to Boost.",
+        "Do not duplicate Boost framework/docs/routes/schema/config/runtime MCP tools in SongChart MCP.",
+        "Generated guidelines must remain projections or thin pointers to SongChart repository authorities, not a competing manual source of truth."
+      ]
+    },
+    {
+      "id": "nikic-php-parser-project-intelligence",
+      "technology": "nikic/php-parser",
+      "latest_locked_version": "5.8.0",
+      "compatibility": {
+        "current_state": "Present transitively in the development dependency graph.",
+        "risk": "Project Intelligence must not depend indefinitely on an undeclared transitive dependency."
+      },
+      "swot": {
+        "strengths": ["Mature PHP AST instead of maintaining regex-based PHP parsing.", "Provides a safer basis for class/method/inheritance/dependency graph extraction."],
+        "weaknesses": ["Explicit dependency would add a direct dev-package ownership commitment."],
+        "opportunities": ["Replace structural regex parsing in project-intelligence.php before deep call-graph expansion."],
+        "threats": ["Using it transitively without declaration can break when upstream test dependencies change."]
+      },
+      "roi": {
+        "benefits": {"custom_surface_retired_or_prevented": "medium_high", "maintainability": "high", "ai_or_developer_operability": "high"},
+        "costs": {"migration_cost": "medium", "compatibility_risk": "low", "ongoing_maintenance": "low"}
+      },
+      "decision": "keep_bootstrap_dependency_free",
+      "target_tranche": "future graph deepening only",
+      "decision_reason": "C1B structural graph is intentionally shallow and dependency-free. Do not rely on the transitive parser. Adopt php-parser explicitly only when method/call graph depth justifies the direct dependency and migration cost."
+    }
+  ]
+}

@@ -20,12 +20,37 @@ function canonicalSourceHash(string $path): ?string
 $required = [
     'songchart',
     'scripts/project-context.php',
+    'scripts/project-intelligence.php',
+    'app/Console/Commands/ProjectIntelligenceCommand.php',
     'docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md',
+    'docs/project/engineering/project-kernel-contract.json',
+    'docs/project/engineering/architecture-graph-contract.json',
     'docs/project/generated/project-context.json',
 ];
 foreach ($required as $relative) {
     if (! is_file($root.'/'.$relative)) {
         $errors[] = "Missing project-context authority file: {$relative}.";
+    }
+}
+
+if (is_file($root.'/scripts/project-intelligence.php')) {
+    $output = [];
+    $exitCode = 0;
+    $command = escapeshellarg(PHP_BINARY).' '.escapeshellarg($root.'/scripts/project-intelligence.php').' --json 2>&1';
+    exec($command, $output, $exitCode);
+    $payload = implode(PHP_EOL, $output);
+
+    if ($exitCode !== 0) {
+        $errors[] = 'Project Intelligence compiler smoke failed: '.trim($payload);
+    } else {
+        try {
+            $snapshot = json_decode($payload, true, flags: JSON_THROW_ON_ERROR);
+            if (($snapshot['generated_from_repository'] ?? null) !== true) {
+                $errors[] = 'Project Intelligence compiler smoke must return repository-generated JSON.';
+            }
+        } catch (Throwable $exception) {
+            $errors[] = 'Project Intelligence compiler emitted non-JSON output: '.$exception->getMessage();
+        }
     }
 }
 
@@ -86,13 +111,25 @@ if (is_file($generatedPath)) {
             'compose.dev.yml',
             'compose.verify.yml',
             'songchart',
+            'app/Console/Commands/ProjectIntelligenceCommand.php',
+            'scripts/project-intelligence.php',
             'docs/project/stack/runtime-environments.json',
             'docs/project/domain/schema-ownership.json',
             'docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md',
             'docs/project/engineering/ai-development-contract.json',
             'docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md',
+            'docs/project/engineering/project-knowledge.json',
+            'docs/project/engineering/consolidation-plan.json',
+            'docs/project/engineering/project-kernel-contract.json',
+            'docs/project/engineering/architecture-graph-contract.json',
+            'docs/project/engineering/use-case-contract.schema.json',
+            'docs/project/engineering/mcp-contract.json',
+            'docs/project/engineering/development-intelligence-contract.json',
+            'docs/project/engineering/technology-evaluation-contract.json',
+            'docs/project/engineering/technology-watchlist.json',
             'docs/project/engineering/verification-command-surface.json',
             'docs/project/engineering/verification-topology.json',
+            'docs/project/release/versioning-policy.json',
             'docs/project/stack/release-pipeline-contract.json',
         ];
         foreach (glob($root.'/database/migrations/*.php') ?: [] as $migration) {
@@ -112,6 +149,25 @@ if (is_file($generatedPath)) {
             if (! in_array($relative, $currentInputs, true)) {
                 $errors[] = "Generated project context contains obsolete source input [{$relative}].";
             }
+        }
+
+        $intelligence = is_array($generated['project_intelligence'] ?? null) ? $generated['project_intelligence'] : [];
+        foreach ([
+            'compiler' => 'scripts/project-intelligence.php',
+            'kernel_contract' => 'docs/project/engineering/project-kernel-contract.json',
+            'graph_contract' => 'docs/project/engineering/architecture-graph-contract.json',
+            'technology_watchlist' => 'docs/project/engineering/technology-watchlist.json',
+            'versioning_policy' => 'docs/project/release/versioning-policy.json',
+        ] as $key => $expected) {
+            if (($intelligence[$key] ?? null) !== $expected) {
+                $errors[] = "Generated project context project-intelligence field [{$key}] is stale or missing.";
+            }
+        }
+        if (($generated['command_surface']['project_intelligence'] ?? null) !== './songchart artisan project:intelligence --json') {
+            $errors[] = 'Generated project context must expose the Project Intelligence Artisan command surface.';
+        }
+        if (($intelligence['request_time_rebuild_forbidden'] ?? null) !== true) {
+            $errors[] = 'Generated project context must forbid request-time Project Intelligence rebuilds.';
         }
     } catch (Throwable $exception) {
         $errors[] = 'Unable to validate generated project context: '.$exception->getMessage();
