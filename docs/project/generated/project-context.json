@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "b0087a0d48acb0832c69e9d283eb1edd38a4771d6248ff5d0e8ef2965eb8b0d6",
+    "source_fingerprint": "7c2943e22dd90afa200ac2ea33fcbfafc71fa7483e9f49a01c0852a8b681b96f",
     "candidate": {
         "stage": "19.0",
         "candidate": "v1",
@@ -1014,7 +1014,7 @@
         "ownership_complete": true
     },
     "source_hashes": {
-        "app/Console/Commands/ProjectIntelligenceCommand.php": "0d0820262d71a975e8ae2f241c4e4f5ded7332487ef2d854876bb6e3d4da3728",
+        "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
         "compose.dev.yml": "ab4f723841feb976aa749489597c3f462a3255a35df68b1a60d1410137eef89f",
         "compose.verify.yml": "d7d2a4a73a19fa24414a9087df76af68d688c3814e151740edd4cbdbf1cad112",
         "composer.json": "a5a3f9668e90d16a4bf8da429a82a123799be9ebf5f4dda349537385aa6b9b17",
