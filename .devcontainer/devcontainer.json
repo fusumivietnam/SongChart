@@ -5,5 +5,6 @@
     "context": ".."
   },
   "overrideCommand": true,
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "postStartCommand": "git config --global --add safe.directory /workspaces/SongChart"
 }
