@@ -46,7 +46,7 @@ $workflow = is_file($root.'/.github/workflows/tests.yml')
     ? file_get_contents($root.'/.github/workflows/tests.yml')
     : '';
 
-foreach (['quality:', 'tests-postgres:', 'frontend-build:'] as $job) {
+foreach (['quality:', 'tests-postgres:', 'frontend-build:', 'classify:'] as $job) {
     if (! is_string($workflow) || ! str_contains($workflow, $job)) {
         $errors[] = "GitHub Actions job is missing: {$job}";
     }
@@ -64,10 +64,17 @@ $requiredWorkflowFragments = [
     'workflow_call:',
     'target_sha:',
     'SONGCHART_CI_SHA: ${{ inputs.target_sha || github.sha }}',
+    "permissions:\n  contents: read",
     'concurrency:',
     'cancel-in-progress: true',
     'actions/checkout@v6',
     'actions/setup-node@v6',
+    'ci-failure-classification.json',
+    'quality-governance',
+    'database-runtime',
+    'frontend-build',
+    'accepted-main-provenance.json',
+    'accepted-main-provenance-${{ env.SONGCHART_CI_SHA }}',
 ];
 
 foreach ($requiredWorkflowFragments as $fragment) {
@@ -93,8 +100,10 @@ $autoClosure = is_file($root.'/.github/workflows/auto-closure.yml')
 $requiredAutoClosureFragments = [
     'name: SongChart Auto Closure',
     'pull_request:',
-    'permissions:',
+    "permissions:\n  contents: read",
+    "prepare:\n    if:",
     'contents: write',
+    'pull-requests: read',
     'pull-requests: write',
     'github.event.pull_request.head.repo.full_name == github.repository',
     'persist-credentials: false',
@@ -115,6 +124,10 @@ foreach ($requiredAutoClosureFragments as $fragment) {
     if (! is_string($autoClosure) || ! str_contains($autoClosure, $fragment)) {
         $errors[] = 'GitHub auto-closure contract is missing: '.$fragment;
     }
+}
+
+if (is_string($autoClosure) && preg_match('/^permissions:\s*\n\s*contents:\s*write/m', $autoClosure) === 1) {
+    $errors[] = 'Auto Closure must not grant contents:write at workflow scope; write permission belongs only to PREPARE.';
 }
 
 foreach (['./mobile close', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenAutoClosureFragment) {

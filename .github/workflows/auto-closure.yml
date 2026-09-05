@@ -10,8 +10,7 @@ on:
       - synchronize
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: songchart-auto-closure-${{ github.event.pull_request.number }}
@@ -21,6 +20,9 @@ jobs:
   prepare:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     outputs:
       effective_sha: ${{ steps.result.outputs.effective_sha }}
     steps:
@@ -83,6 +85,8 @@ jobs:
 
   verify:
     needs: prepare
+    permissions:
+      contents: read
     uses: ./.github/workflows/tests.yml
     with:
       target_sha: ${{ needs.prepare.outputs.effective_sha }}
@@ -92,6 +96,9 @@ jobs:
       - prepare
       - verify
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     env:
       SONGCHART_CLOSE_SHA: ${{ needs.prepare.outputs.effective_sha }}
     steps:
@@ -127,6 +134,9 @@ jobs:
       - verify
       - close
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     env:
       SONGCHART_PROMOTION_SHA: ${{ needs.prepare.outputs.effective_sha }}
       GH_TOKEN: ${{ github.token }}

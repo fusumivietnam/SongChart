@@ -12,6 +12,9 @@ on:
         required: false
         type: string
 
+permissions:
+  contents: read
+
 env:
   SONGCHART_CI_SHA: ${{ inputs.target_sha || github.sha }}
 
@@ -142,3 +145,88 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: npm run build
+
+  classify:
+    name: classify exact-head verification
+    if: always()
+    needs:
+      - quality
+      - tests-postgres
+      - frontend-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write machine failure classification
+        id: classify
+        shell: bash
+        env:
+          QUALITY: ${{ needs.quality.result }}
+          POSTGRES: ${{ needs.tests-postgres.result }}
+          FRONTEND: ${{ needs.frontend-build.result }}
+        run: |
+          failures=()
+          [ "$QUALITY" = success ] || failures+=(quality-governance)
+          [ "$POSTGRES" = success ] || failures+=(database-runtime)
+          [ "$FRONTEND" = success ] || failures+=(frontend-build)
+
+          if [ ${#failures[@]} -eq 0 ]; then
+            classification=passed
+          else
+            classification="$(IFS=,; echo "${failures[*]}")"
+          fi
+
+          cat > ci-failure-classification.json <<JSON
+          {
+            "schema_version": 1,
+            "exact_sha": "$SONGCHART_CI_SHA",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "quality": "$QUALITY",
+            "postgres": "$POSTGRES",
+            "frontend": "$FRONTEND",
+            "classification": "$classification"
+          }
+          JSON
+
+          {
+            echo '## Exact-head verification classification'
+            echo
+            echo "- SHA: $SONGCHART_CI_SHA"
+            echo "- Quality: $QUALITY"
+            echo "- PostgreSQL: $POSTGRES"
+            echo "- Frontend: $FRONTEND"
+            echo "- Classification: $classification"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "classification=$classification" >> "$GITHUB_OUTPUT"
+
+      - name: Preserve bounded machine classification
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-classification-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
+          path: ci-failure-classification.json
+          retention-days: 7
+
+      - name: Write accepted-main provenance
+        if: steps.classify.outputs.classification == 'passed' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          cat > accepted-main-provenance.json <<JSON
+          {
+            "schema_version": 1,
+            "accepted_main_sha": "$SONGCHART_CI_SHA",
+            "workflow_run_id": "${{ github.run_id }}",
+            "workflow_run_attempt": "${{ github.run_attempt }}",
+            "repository": "${{ github.repository }}"
+          }
+          JSON
+
+      - name: Preserve accepted-main provenance
+        if: steps.classify.outputs.classification == 'passed' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: accepted-main-provenance-${{ env.SONGCHART_CI_SHA }}
+          path: accepted-main-provenance.json
+          retention-days: 30
+
+      - name: Fail when an owning verification lane failed
+        if: steps.classify.outputs.classification != 'passed'
+        run: exit 1
