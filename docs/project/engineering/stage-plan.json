@@ -6,11 +6,11 @@
     "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
     "status": "implementing"
   },
-  "accepted_through": "19.0.4-C2",
+  "accepted_through": "19.0.4-C3",
   "active_tranche": {
-    "id": "19.0.4-C3",
-    "title": "Pest Browser desktop/mobile critical smoke",
-    "semantic_owner": "browser-testing"
+    "id": "19.0.4-C4",
+    "title": "Verifier reduction + main provenance + failure classification",
+    "semantic_owner": "verification-governance"
   },
   "stage_progress": [
     {"id": "19.0.1", "status": "accepted", "title": "Production topology + environment inventory"},
@@ -22,8 +22,8 @@
     {"id": "19.0.4-C1B", "status": "accepted", "title": "Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration"},
     {"id": "19.0.4-C1C", "status": "accepted", "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"},
     {"id": "19.0.4-C2", "status": "accepted", "title": "Horizon + Pulse observability consolidation"},
-    {"id": "19.0.4-C3", "status": "implementing", "title": "Pest Browser desktop/mobile critical smoke"},
-    {"id": "19.0.4-C4", "status": "planned", "title": "Verifier reduction + main provenance + failure classification"},
+    {"id": "19.0.4-C3", "status": "accepted", "title": "Pest Browser desktop/mobile critical smoke"},
+    {"id": "19.0.4-C4", "status": "implementing", "title": "Verifier reduction + main provenance + failure classification"},
     {"id": "19.0.4-C5", "status": "planned", "title": "Provider transport inventory + Saloon decision"},
     {"id": "19.0.4-C6", "status": "planned", "title": "Typed data/API inventory + Laravel Data decision"},
     {"id": "19.0.4-C7", "status": "planned", "title": "Production artifact + installer + operational control"},
@@ -33,8 +33,8 @@
     {"id": "final", "status": "planned", "title": "First release package/tag"}
   ],
   "next_tranche": {
-    "id": "19.0.4-C4",
-    "title": "Reduce verifier duplication and classify exact-head CI failures"
+    "id": "19.0.4-C5",
+    "title": "Provider transport inventory + Saloon decision"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
