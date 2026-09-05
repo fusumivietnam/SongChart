@@ -81,6 +81,15 @@
       "platforms": ["linux"],
       "review_required": true
     },
+    "laravel/boost": {
+      "constraint": "^2.7",
+      "status": "required-dev",
+      "capability_owner": "ai-framework-context",
+      "purpose": "Laravel/package AI context and framework MCP tooling; must not replace SongChart project knowledge authority",
+      "platforms": ["linux"],
+      "review_required": true,
+      "official_owner": "laravel"
+    },
     "laravel/pail": {
       "constraint": "^1.2",
       "status": "required-dev",
@@ -170,11 +179,6 @@
     }
   },
   "planned_packages": {
-    "laravel/boost": {
-      "decision": "evaluate-next",
-      "capability_owner": "ai-framework-context",
-      "purpose": "Laravel/package documentation and runtime context for AI; must not replace SongChart project knowledge authority"
-    },
     "laravel/horizon": {
       "decision": "adopt-next-linux-production",
       "capability_owner": "queue-runtime",

@@ -167,6 +167,8 @@ stage_verify(){
   )
 }
 refresh_candidate_authority(){
+  printf '[SongChart candidate] Refreshing generated development state.\n'
+  dev run --rm app php scripts/project-state.php --write-source
   printf '[SongChart candidate] Refreshing generated source context.\n'
   dev run --rm app php scripts/project-context.php --write-source
   printf '[SongChart candidate] Refreshing compiled repository authority.\n'

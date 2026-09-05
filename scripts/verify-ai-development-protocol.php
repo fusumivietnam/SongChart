@@ -204,18 +204,32 @@ if (! is_dir($skillsRoot)) {
 
         $frontmatter = (string) ($matches['frontmatter'] ?? '');
         $fields = [];
+        $nestedParent = null;
+
         foreach (preg_split('/\R/', $frontmatter) ?: [] as $line) {
             if (trim($line) === '' || str_starts_with(ltrim($line), '#')) {
                 continue;
             }
-            if (preg_match('/^(?<key>[A-Za-z0-9_-]+):\s*(?<value>.*)$/', $line, $fieldMatch) !== 1) {
-                $errors[] = "AI skill [{$expectedName}] frontmatter contains unsupported YAML structure [{$line}].";
 
-                continue 2;
+            if (preg_match('/^(?<key>[A-Za-z0-9_-]+):\s*(?<value>.*)$/', $line, $fieldMatch) === 1) {
+                $key = (string) $fieldMatch['key'];
+                $value = trim((string) $fieldMatch['value'], " \t\n\r\0\x0B\"'");
+
+                $fields[$key] = $value;
+                $nestedParent = $value === '' ? $key : null;
+
+                continue;
             }
-            $fields[$fieldMatch['key']] = trim((string) $fieldMatch['value'], " \t\n\r\0\x0B\"'");
-        }
 
+            if (preg_match('/^  (?<key>[A-Za-z0-9_-]+):\s*(?<value>.*)$/', $line, $nestedMatch) === 1
+                && $nestedParent === 'metadata') {
+                continue;
+            }
+
+            $errors[] = "AI skill [{$expectedName}] frontmatter contains unsupported YAML structure [{$line}].";
+
+            continue 2;
+        }
         $allowed = ['name', 'description', 'license', 'allowed-tools', 'metadata'];
         foreach (array_keys($fields) as $key) {
             if (! in_array($key, $allowed, true)) {

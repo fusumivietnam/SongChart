@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "active",
-  "evaluated_at": "2026-09-02",
+  "evaluated_at": "2026-09-03",
   "evaluation_contract": "docs/project/engineering/technology-evaluation-contract.json",
   "items": [
     {
@@ -12,9 +12,12 @@
       "compatibility": {
         "php": "^8.2; SongChart PHP 8.5 compatible",
         "laravel": "Illuminate 11.45.3 / 12.41.1 / 13.x supported; SongChart Laravel 13 compatible",
+        "mcp": "Boost 2.7.0 requires laravel/mcp ^0.7.1|^0.8.0|^0.9.0; upstream MCP 1.0 support remains pending and SongChart must not independently advance across that boundary while Boost owns framework MCP tooling.",
         "evidence": [
           "Laravel 13 documentation lists Boost for Laravel 10-13 and PHP 8.1+.",
-          "Packagist v2.7.0 requires illuminate console/contracts/routing/support ^11.45.3|^12.41.1|^13.0."
+          "Packagist v2.7.0 requires illuminate console/contracts/routing/support ^11.45.3|^12.41.1|^13.0.",
+          "Packagist still reports v2.7.0 as the latest stable on 2026-09-03.",
+          "Laravel Boost upstream issue #940 tracks laravel/mcp ^1.0 support; v2.7.0 remains on the 0.7-0.9 MCP dependency range."
         ]
       },
       "swot": {
@@ -25,7 +28,8 @@
         ],
         "weaknesses": [
           "Development-only dependency and generated agent configuration require lifecycle discipline.",
-          "Some Boost tools overlap with capabilities SongChart could otherwise expose through its own MCP adapter."
+          "Some Boost tools overlap with capabilities SongChart could otherwise expose through its own MCP adapter.",
+          "Current stable Boost remains coupled to laravel/mcp 0.7-0.9 while upstream MCP 1.0 support is pending."
         ],
         "opportunities": [
           "Retire or prevent custom framework-introspection MCP tools.",
@@ -34,7 +38,8 @@
         ],
         "threats": [
           "Duplicated MCP capabilities if SongChart implements framework-level tools already owned by Boost.",
-          "Generated guideline files could become competing authority if committed and manually edited without ownership rules."
+          "Generated guideline files could become competing authority if committed and manually edited without ownership rules.",
+          "An independent SongChart move to laravel/mcp 1.x before compatible Boost support could create avoidable dependency and tool-surface divergence."
         ]
       },
       "roi": {
@@ -50,7 +55,7 @@
         "costs": {
           "migration_cost": "low_medium",
           "new_glue_or_configuration": "low",
-          "compatibility_risk": "low after Laravel 13 compatibility verification",
+          "compatibility_risk": "low for Laravel/PHP; medium if MCP major versions are advanced independently",
           "vendor_or_package_lock_in": "low because repository authority and SongChart Project Kernel remain independent",
           "ongoing_maintenance": "low_medium",
           "ci_or_runtime_cost": "low; no production runtime dependency intended",
@@ -59,12 +64,13 @@
       },
       "decision": "adopt_next",
       "target_tranche": "19.0.4-C1C",
-      "decision_reason": "Compatibility and ROI are proven, but dependency adoption must be performed by Composer in an executable development environment so composer.json and composer.lock move atomically. Never synthesize lockfile changes through repository API writes.",
+      "decision_reason": "Laravel/PHP compatibility and ROI are proven. Dependency adoption must be performed by Composer in an executable development environment so composer.json and composer.lock move atomically. Never synthesize lockfile changes through repository API writes. Keep the framework MCP dependency on Boost's supported range until upstream Boost supports the next laravel/mcp major.",
       "adoption_gate": "Run composer require --dev laravel/boost:^2.7 in the canonical development environment, inspect generated agent configuration, retire any overlapping custom framework-introspection surface, then pass Auto Closure on the resulting exact lockfile SHA.",
       "adoption_boundaries": [
         "Install as require-dev only.",
         "Do not delegate SongChart project state, architecture graph, semantic ownership, SWOT/ROI or promotion/release evidence to Boost.",
         "Do not duplicate Boost framework/docs/routes/schema/config/runtime MCP tools in SongChart MCP.",
+        "Do not advance laravel/mcp beyond the range supported by the accepted Boost version merely for protocol freshness.",
         "Generated guidelines must remain projections or thin pointers to SongChart repository authorities, not a competing manual source of truth."
       ]
     },
