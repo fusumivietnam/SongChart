@@ -72,6 +72,16 @@ ensure_local_admin(){
   printf '[SongChart dev] Ensuring configured local administrator %s.\n' "$email"
   dev_exec_or_run php artisan admin:ensure-local "$email" "--name=$name" "--role=$role"
 }
+ensure_dev_dependencies(){
+  if ! dev run --rm app test -f /workspace/vendor/autoload.php; then
+    printf '[SongChart dev] PHP dependencies missing from Docker volume; installing locked Composer dependencies.\n'
+    dev run --rm app composer install --no-interaction --prefer-dist --no-progress
+  fi
+  if ! dev run --rm app test -d /workspace/node_modules; then
+    printf '[SongChart dev] Node dependencies missing from Docker volume; installing locked npm dependencies.\n'
+    dev run --rm app npm ci --no-audit --no-fund
+  fi
+}
 repair_dev_runtime_ownership(){
   printf '[SongChart dev] Repairing generated runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
   dev run --rm --user root app sh -lc \
@@ -290,6 +300,7 @@ case "$cmd" in
    ready)
     ensure_dev_config
     printf '[SongChart dev] Starting development services.\n'
+    ensure_dev_dependencies
     dev_up
     repair_dev_runtime_ownership
     printf '[SongChart dev] Clearing stale compiled views.\n'

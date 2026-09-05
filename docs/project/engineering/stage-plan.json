@@ -6,11 +6,11 @@
     "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
     "status": "implementing"
   },
-  "accepted_through": "19.0.4-C1B",
+  "accepted_through": "19.0.4-C1C",
   "active_tranche": {
-    "id": "19.0.4-C1C",
-    "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement",
-    "semantic_owner": "ai-framework-context"
+    "id": "19.0.4-C2",
+    "title": "Horizon + Pulse observability consolidation",
+    "semantic_owner": "queue-runtime"
   },
   "stage_progress": [
     {"id": "19.0.1", "status": "accepted", "title": "Production topology + environment inventory"},
@@ -20,8 +20,8 @@
     {"id": "19.0.3", "status": "accepted", "title": "Queue/scheduler production runtime"},
     {"id": "19.0.4-C1A", "status": "accepted", "title": "Consolidation authority + derived project state/work lease"},
     {"id": "19.0.4-C1B", "status": "accepted", "title": "Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration"},
-    {"id": "19.0.4-C1C", "status": "implementing", "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"},
-    {"id": "19.0.4-C2", "status": "planned", "title": "Horizon + Pulse observability consolidation"},
+    {"id": "19.0.4-C1C", "status": "accepted", "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"},
+    {"id": "19.0.4-C2", "status": "implementing", "title": "Horizon + Pulse observability consolidation"},
     {"id": "19.0.4-C3", "status": "planned", "title": "Pest Browser desktop/mobile critical smoke"},
     {"id": "19.0.4-C4", "status": "planned", "title": "Verifier reduction + main provenance + failure classification"},
     {"id": "19.0.4-C5", "status": "planned", "title": "Provider transport inventory + Saloon decision"},
@@ -31,8 +31,8 @@
     {"id": "final", "status": "planned", "title": "First release package/tag"}
   ],
   "next_tranche": {
-    "id": "19.0.4-C2",
-    "title": "Adopt Horizon for queue operations, consolidate Pulse observability, and retire superseded queue operational glue"
+    "id": "19.0.4-C3",
+    "title": "Adopt Pest Browser for desktop/mobile critical smoke coverage"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",

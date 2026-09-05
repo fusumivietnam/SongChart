@@ -1,14 +1,14 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "740cba08276ef6221162a6abaa56e3239bb3c004c6426408a154a41d3375dce9",
+    "source_fingerprint": "1c4b00d130b3913ff58f521592f9b588f504dcf1cc181bd0e41fcd08c718679b",
     "current_stage": {
         "id": "19.0",
         "title": "Production Readiness & First Release",
         "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
         "status": "implementing"
     },
-    "accepted_through": "19.0.4-C1B",
+    "accepted_through": "19.0.4-C1C",
     "stage_progress": [
         {
             "id": "19.0.1",
@@ -47,12 +47,12 @@
         },
         {
             "id": "19.0.4-C1C",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"
         },
         {
             "id": "19.0.4-C2",
-            "status": "planned",
+            "status": "implementing",
             "title": "Horizon + Pulse observability consolidation"
         },
         {
@@ -92,8 +92,8 @@
         }
     ],
     "next_tranche": {
-        "id": "19.0.4-C2",
-        "title": "Adopt Horizon for queue operations, consolidate Pulse observability, and retire superseded queue operational glue"
+        "id": "19.0.4-C3",
+        "title": "Adopt Pest Browser for desktop/mobile critical smoke coverage"
     },
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
@@ -103,6 +103,6 @@
         "candidate-verification.json": "b8b75b2bcd9383e06e6acb3a788cab29815672e6be83db6907c9246d3fa0b49e",
         "docs/project/engineering/consolidation-plan.json": "06c75ba1618b7cfa38f9fb239ccbc1626f9b3e9ec9a2a9cb88b95cc5b8692eaa",
         "docs/project/engineering/project-knowledge.json": "486fa45b9df15aa2cf33141badf1173e2292e9235975b215ad40956f4beaea10",
-        "docs/project/engineering/stage-plan.json": "6fc91c1f564290cded27db2f50d218d7d834030807aeac0cc0fcec38c2bd56bc"
+        "docs/project/engineering/stage-plan.json": "cce6da3515a70d6127160d91357d9d58676d2c615b54c2df73207baadf2e26df"
     }
 }

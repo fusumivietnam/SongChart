@@ -150,7 +150,7 @@ services:
       COMPOSER_CACHE_DIR: /tmp/composer-cache
       HOME: /tmp
       NPM_CONFIG_CACHE: /tmp/npm-cache
-    command: ["php", "artisan", "queue:work", "redis", "--queue=critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default", "--sleep=1", "--tries=3", "--timeout=150"]
+    command: ["php", "artisan", "horizon"]
     depends_on:
       app:
         condition: service_healthy

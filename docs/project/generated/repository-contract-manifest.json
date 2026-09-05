@@ -221,7 +221,7 @@
         },
         "package-registry": {
             "source": "docs/project/stack/package-registry.json",
-            "fingerprint": "d961ffdfe14ff26b591f5abbf166a337fc90cd2967b0a484a754eafb9ca02e0f",
+            "fingerprint": "0a01ec84ac88b8d001ea8ce293c09ca8233fc44fd86411630308de1a7e2a07b7",
             "consumers": []
         },
         "impact-test-map": {
@@ -1684,5 +1684,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "6831fd345a68023ef96bc932b95b361934eef20ef96b618de01b9434066555bd"
+    "graph_fingerprint": "ede2d9a48585dc90b5cfc457ac8ed4561da3abb2fac993c4479da4c4b01ec895"
 }

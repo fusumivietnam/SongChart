@@ -49,13 +49,16 @@ foreach ([
     'SONGCHART_TRUST_DOCKER_PROXY: "true"',
     'MUSICBRAINZ_ENABLED: "${MUSICBRAINZ_ENABLED:-false}"',
     'command: ["sh", "-lc", "cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]',
-    '--queue=critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default',
+    'command: ["php", "artisan", "horizon"]',
 ] as $signal) {
     if (! str_contains($compose, $signal)) {
         $errors[] = "compose.dev.yml missing [{$signal}].";
     }
 }
 
+if (str_contains($compose, 'queue:work')) {
+    $errors[] = 'Docker local queue runtime must use Horizon and must not retain native queue:work supervision.';
+}
 if (str_contains($compose, 'command: ["php", "artisan", "serve"')) {
     $errors[] = 'Docker app runtime must not use Laravel ServeCommand; launch the PHP built-in server directly so Docker environment variables reach the HTTP process unchanged.';
 }
