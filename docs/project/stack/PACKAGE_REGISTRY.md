@@ -17,6 +17,7 @@ Versions below are constraints from manifests. Exact resolved versions are owned
 | `mockery/mockery` | `^1.6` | Test doubles | approved-dev | testing |
 | `nunomaduro/collision` | `^8.8` | Console test output | approved-dev | developer experience |
 | `laravel/pail` | `^1.2` | Local log inspection | approved-dev | developer tooling |
+| `laravel/boost` | `^2.7` | Laravel/package AI context and framework MCP tooling | required-dev | AI framework context |
 | `vite` | `^7.0.0` | Frontend build | required-dev | asset build |
 | `laravel-vite-plugin` | `^2.0.0` | Laravel/Vite integration | required-dev | asset build |
 | `tailwindcss` | `^4.2.0` | CSS design system | required-dev | styling |
