@@ -76,9 +76,16 @@
       "reason": "No broad duplicate request/DTO/resource/TypeScript surface is proven yet."
     },
     "spatie/laravel-backup": {
-      "decision": "adopt-in-19.0.5",
+      "decision": "defer-after-first-release",
       "capability_owner": "backup-orchestration",
-      "purpose": "Backup orchestration, retention and notification; restore drill remains SongChart release evidence"
+      "purpose": "Potential future backup orchestration, destinations and notifications",
+      "decision_authority": "scripts/production/manage.sh",
+      "reason": "Stage 19 already owns a bounded PostgreSQL custom-format backup, retention policy and isolated restore drill for bundled and external PostgreSQL. Adopting the package before first release would duplicate operational surface without improving restore evidence or producing net source reduction.",
+      "revisit_when": [
+        "multi-destination or object-storage backup becomes an operator requirement",
+        "backup notifications become a recurring operational requirement",
+        "package adoption can retire more SongChart backup code than its integration adds"
+      ]
     }
   },
   "deployment_profiles": {
