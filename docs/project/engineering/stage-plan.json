@@ -6,11 +6,11 @@
     "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
     "status": "implementing"
   },
-  "accepted_through": "19.0.4-C3",
+  "accepted_through": "19.0.5",
   "active_tranche": {
-    "id": "19.0.4-C4",
-    "title": "Verifier reduction + main provenance + failure classification",
-    "semantic_owner": "verification-governance"
+    "id": "19.0.6",
+    "title": "Security review + production smoke",
+    "semantic_owner": "security-release-readiness"
   },
   "stage_progress": [
     {"id": "19.0.1", "status": "accepted", "title": "Production topology + environment inventory"},
@@ -23,18 +23,18 @@
     {"id": "19.0.4-C1C", "status": "accepted", "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"},
     {"id": "19.0.4-C2", "status": "accepted", "title": "Horizon + Pulse observability consolidation"},
     {"id": "19.0.4-C3", "status": "accepted", "title": "Pest Browser desktop/mobile critical smoke"},
-    {"id": "19.0.4-C4", "status": "implementing", "title": "Verifier reduction + main provenance + failure classification"},
-    {"id": "19.0.4-C5", "status": "planned", "title": "Provider transport inventory + Saloon decision"},
-    {"id": "19.0.4-C6", "status": "planned", "title": "Typed data/API inventory + Laravel Data decision"},
-    {"id": "19.0.4-C7", "status": "planned", "title": "Production artifact + installer + operational control"},
-    {"id": "19.0.5", "status": "planned", "title": "Backup/recovery"},
-    {"id": "19.0.6", "status": "planned", "title": "Security review + production smoke"},
+    {"id": "19.0.4-C4", "status": "accepted", "title": "Verifier reduction + main provenance + failure classification"},
+    {"id": "19.0.4-C5", "status": "accepted", "title": "Provider transport inventory + Saloon decision"},
+    {"id": "19.0.4-C6", "status": "accepted", "title": "Typed data/API inventory + Laravel Data decision"},
+    {"id": "19.0.4-C7", "status": "accepted", "title": "Production artifact + installer + operational control"},
+    {"id": "19.0.5", "status": "accepted", "title": "Backup/recovery"},
+    {"id": "19.0.6", "status": "implementing", "title": "Security review + production smoke"},
     {"id": "19.0.7", "status": "planned", "title": "Production operations UX + automatic TLS + low-cost service baseline"},
     {"id": "final", "status": "planned", "title": "First release package/tag"}
   ],
   "next_tranche": {
-    "id": "19.0.4-C5",
-    "title": "Provider transport inventory + Saloon decision"
+    "id": "19.0.7",
+    "title": "Production operations UX + automatic TLS + low-cost service baseline"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
