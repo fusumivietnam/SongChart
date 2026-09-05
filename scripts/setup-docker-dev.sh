@@ -59,6 +59,8 @@ printf '[SongChart Linux Setup] Preparing Composer/npm cache ownership for UID:G
 
 "${COMPOSE[@]}" run --rm app composer install --no-interaction --prefer-dist --no-progress
 "${COMPOSE[@]}" run --rm app npm ci --no-audit --no-fund
+printf '[SongChart Linux Setup] Ensuring the verified Playwright Chromium runtime is present in the persistent node_modules volume.\n'
+"${COMPOSE[@]}" run --rm -e PLAYWRIGHT_BROWSERS_PATH=/workspace/node_modules/.cache/ms-playwright app npx playwright install chromium
 "${COMPOSE[@]}" run --rm app npm run build
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
 "${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force
