@@ -27,11 +27,15 @@ RUN apt-get update \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         intl \
+        mbstring \
+        opcache \
         pcntl \
         pdo_pgsql \
+        posix \
         zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
+    && php -r '$required = ["bcmath", "curl", "dom", "intl", "mbstring", "opcache", "pcntl", "pdo_pgsql", "posix", "redis", "xml", "zip"]; foreach ($required as $extension) { if (! extension_loaded($extension)) { fwrite(STDERR, "Missing PHP extension: {$extension}\\n"); exit(1); } }' \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/pear
 
@@ -60,7 +64,7 @@ ENV APP_ENV=production \
 COPY . .
 COPY --from=vendor /var/www/html/vendor ./vendor
 COPY --from=frontend /app/public/build ./public/build
-RUN composer dump-autoload --no-dev --classmap-authoritative --no-interaction \
+RUN composer dump-autoload --no-dev --classmap-authoritative --no-interaction --no-scripts \
     && php artisan package:discover --ansi \
     && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache

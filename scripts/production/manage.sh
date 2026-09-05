@@ -71,6 +71,7 @@ compose_init(){
   instance="$(env_value SONGCHART_INSTANCE)"; [[ -n "$instance" ]] || instance='songchart-production'
   db_mode="$(env_value SONGCHART_DATABASE_MODE)"; [[ -n "$db_mode" ]] || db_mode='bundled'
   redis_mode="$(env_value SONGCHART_REDIS_MODE)"; [[ -n "$redis_mode" ]] || redis_mode='bundled'
+  export SONGCHART_RUNTIME_ENV_FILE="$ENV_FILE"
   COMPOSE_ARGS=(-p "$instance" --env-file "$ENV_FILE" -f "$COMPOSE_FILE")
   [[ "$db_mode" == bundled ]] && COMPOSE_ARGS+=(--profile bundled-db)
   [[ "$redis_mode" == bundled ]] && COMPOSE_ARGS+=(--profile bundled-redis)
@@ -116,7 +117,7 @@ configure(){
 
   domain="$(read_prompt 'Public domain' "$(env_value SONGCHART_DOMAIN)")"
   [[ -n "$domain" ]] || fail 'Domain is required.'
-  acme="$(read_prompt 'ACME email' "$(env_value SONGCHART_ACME_EMAIL)")"
+  acme="$(read_prompt 'ACME contact email (optional)' "$(env_value SONGCHART_ACME_EMAIL)")"
   http_port="$(read_prompt 'Public HTTP port' "$(env_value SONGCHART_HTTP_PORT)")"
   https_port="$(read_prompt 'Public HTTPS port' "$(env_value SONGCHART_HTTPS_PORT)")"
   env_set SONGCHART_DOMAIN "$domain"
@@ -138,18 +139,19 @@ configure(){
   env_set SONGCHART_DATABASE_MODE "$db_mode"
   env_set SONGCHART_REDIS_MODE "$redis_mode"
 
-  local db_host db_port db_name db_user db_password
+  local db_host db_port db_name db_user db_password db_sslmode
   if [[ "$db_mode" == bundled ]]; then
-    db_host=postgres; db_port=5432
+    db_host=postgres; db_port=5432; db_sslmode=prefer
   else
     db_host="$(read_prompt 'PostgreSQL host' "$(env_value DB_HOST)")"
     db_port="$(read_prompt 'PostgreSQL port' "$(env_value DB_PORT)")"
+    db_sslmode="$(read_prompt 'PostgreSQL SSL mode' "$(env_value DB_SSLMODE)")"
   fi
   db_name="$(read_prompt 'PostgreSQL database' "$(env_value DB_DATABASE)")"
   db_user="$(read_prompt 'PostgreSQL username' "$(env_value DB_USERNAME)")"
   db_password="$(read_secret 'PostgreSQL password' "$(env_value DB_PASSWORD)")"
   [[ -n "$db_password" ]] || db_password="$(random_secret)"
-  env_set DB_HOST "$db_host"; env_set DB_PORT "${db_port:-5432}"; env_set DB_DATABASE "$db_name"; env_set DB_USERNAME "$db_user"; env_set DB_PASSWORD "$db_password"
+  env_set DB_HOST "$db_host"; env_set DB_PORT "${db_port:-5432}"; env_set DB_DATABASE "$db_name"; env_set DB_USERNAME "$db_user"; env_set DB_PASSWORD "$db_password"; env_set DB_SSLMODE "${db_sslmode:-prefer}"
 
   local redis_host redis_port redis_password
   if [[ "$redis_mode" == bundled ]]; then
@@ -193,8 +195,8 @@ start_dependencies(){
   fi
 }
 run_connectivity_checks(){
-  info 'Checking PostgreSQL authentication/migration visibility.'
-  compose run --rm app php artisan migrate:status --no-ansi >/dev/null
+  info 'Checking PostgreSQL authentication/connectivity.'
+  compose run --rm app php -r '$dsn="pgsql:host=".getenv("DB_HOST").";port=".getenv("DB_PORT").";dbname=".getenv("DB_DATABASE").";sslmode=".(getenv("DB_SSLMODE") ?: "prefer"); $pdo=new PDO($dsn,(string)getenv("DB_USERNAME"),(string)getenv("DB_PASSWORD"),[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]); $pdo->query("select 1"); echo "PostgreSQL OK\n";'
   info 'Checking Redis authentication/connectivity.'
   compose run --rm app php -r '$r=new Redis(); $r->connect((string)getenv("REDIS_HOST"),(int)getenv("REDIS_PORT"),5); $p=getenv("REDIS_PASSWORD"); if($p!==false && $p!==""){$r->auth($p);} if($r->ping()===false){fwrite(STDERR,"Redis ping failed\n"); exit(1);} echo "Redis OK\n";'
 }
@@ -202,7 +204,7 @@ doctor(){
   require_docker; validate_config; compose_init
   info 'Validating production Compose model.'
   compose config --quiet
-  if compose image app >/dev/null 2>&1; then
+  if [[ -n "$(compose images -q app 2>/dev/null || true)" ]]; then
     start_dependencies
     run_connectivity_checks
   else
