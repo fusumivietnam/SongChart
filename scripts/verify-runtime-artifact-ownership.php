@@ -98,6 +98,11 @@ if (is_file($dockerfilePath)) {
             $violations[] = "production Dockerfile must contain [{$needle}]";
         }
     }
+    foreach (['mbstring', 'opcache', 'pcntl', 'pdo_pgsql', 'posix', 'redis'] as $extension) {
+        if (! str_contains($dockerfile, $extension)) {
+            $violations[] = "production Dockerfile must provide runtime extension [{$extension}]";
+        }
+    }
     if (str_contains($dockerfile, 'artisan serve')) {
         $violations[] = 'production Dockerfile must not use the PHP built-in development server';
     }
@@ -106,7 +111,7 @@ if (is_file($dockerfilePath)) {
 $managerPath = $root.'/scripts/production/manage.sh';
 if (is_file($managerPath)) {
     $manager = (string) file_get_contents($managerPath);
-    foreach (['configure)', 'install)', 'doctor)', 'build)', 'up)', 'down)', 'status)', 'chmod 600', 'migrate --force'] as $needle) {
+    foreach (['configure)', 'install)', 'doctor)', 'build)', 'up)', 'down)', 'status)', 'smoke)', 'backup)', 'restore-drill)', 'chmod 600', 'migrate --force', 'pg_dump', 'pg_restore', 'songchart-production-latest.dump'] as $needle) {
         if (! str_contains($manager, $needle)) {
             $violations[] = "production manager must contain [{$needle}]";
         }
@@ -114,12 +119,15 @@ if (is_file($managerPath)) {
     if (str_contains($manager, 'down -v') || str_contains($manager, 'down --volumes')) {
         $violations[] = 'normal production down must never delete durable volumes';
     }
+    if (! str_contains($manager, 'songchart-restore-pg-') || ! str_contains($manager, 'songchart_restore')) {
+        $violations[] = 'production restore verification must use an isolated PostgreSQL target';
+    }
 }
 
 $environmentPath = $root.'/.env.production.example';
 if (is_file($environmentPath)) {
     $environment = (string) file_get_contents($environmentPath);
-    foreach (['SONGCHART_DATABASE_MODE=', 'SONGCHART_REDIS_MODE=', 'SONGCHART_DOMAIN=', 'SONGCHART_HTTP_PORT=', 'SONGCHART_HTTPS_PORT=', 'DB_SSLMODE='] as $needle) {
+    foreach (['SONGCHART_DATABASE_MODE=', 'SONGCHART_REDIS_MODE=', 'SONGCHART_DOMAIN=', 'SONGCHART_HTTP_PORT=', 'SONGCHART_HTTPS_PORT=', 'SONGCHART_BACKUP_RETENTION_COUNT=', 'DB_SSLMODE='] as $needle) {
         if (! str_contains($environment, $needle)) {
             $violations[] = "production environment template must contain [{$needle}]";
         }

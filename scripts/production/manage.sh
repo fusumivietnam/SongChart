@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 COMPOSE_FILE="$ROOT/compose.production.yml"
 TEMPLATE_FILE="$ROOT/.env.production.example"
 ENV_FILE="${SONGCHART_PROD_ENV_FILE:-$ROOT/.env.production}"
+BACKUP_DIR="${SONGCHART_PROD_BACKUP_DIR:-$ROOT/.songchart-backups/production}"
 NO_INTERACTION=false
 PROFILE=""
 
@@ -107,7 +108,7 @@ configure(){
     return
   fi
 
-  local profile domain acme http_port https_port db_mode redis_mode
+  local profile domain acme http_port https_port db_mode redis_mode public_url
   profile="$PROFILE"
   if [[ -z "$profile" ]]; then
     printf 'Deployment profile:\n  1) single-host  (bundled PostgreSQL + Redis)\n  2) production   (external PostgreSQL + Redis, recommended)\n  3) custom\n'
@@ -120,12 +121,15 @@ configure(){
   acme="$(read_prompt 'ACME contact email (optional)' "$(env_value SONGCHART_ACME_EMAIL)")"
   http_port="$(read_prompt 'Public HTTP port' "$(env_value SONGCHART_HTTP_PORT)")"
   https_port="$(read_prompt 'Public HTTPS port' "$(env_value SONGCHART_HTTPS_PORT)")"
+  https_port="${https_port:-443}"
+  public_url="https://$domain"
+  [[ "$https_port" == 443 ]] || public_url="$public_url:$https_port"
   env_set SONGCHART_DOMAIN "$domain"
-  env_set APP_URL "https://$domain"
+  env_set APP_URL "$public_url"
   env_set SESSION_DOMAIN "$domain"
   env_set SONGCHART_ACME_EMAIL "$acme"
   env_set SONGCHART_HTTP_PORT "${http_port:-80}"
-  env_set SONGCHART_HTTPS_PORT "${https_port:-443}"
+  env_set SONGCHART_HTTPS_PORT "$https_port"
 
   case "$profile" in
     single-host) db_mode=bundled; redis_mode=bundled ;;
@@ -232,6 +236,89 @@ status(){
     compose exec -T queue php artisan horizon:status --no-ansi || true
   fi
 }
+backup(){
+  require_docker; validate_config; compose_init
+  mkdir -p "$BACKUP_DIR"
+  local stamp target mode host port db user password sslmode retention
+  stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+  target="$BACKUP_DIR/songchart-production-$stamp.dump"
+  mode="$(env_value SONGCHART_DATABASE_MODE)"
+  db="$(env_value DB_DATABASE)"; user="$(env_value DB_USERNAME)"; password="$(env_value DB_PASSWORD)"
+  host="$(env_value DB_HOST)"; port="$(env_value DB_PORT)"; sslmode="$(env_value DB_SSLMODE)"
+  info "Creating PostgreSQL custom-format backup: $target"
+  if [[ "$mode" == bundled ]]; then
+    start_dependencies
+    compose exec -T postgres pg_dump -U "$user" -d "$db" -Fc > "$target"
+  else
+    docker run --rm \
+      -e PGPASSWORD="$password" -e PGSSLMODE="${sslmode:-prefer}" \
+      postgres:18.4-bookworm \
+      pg_dump -h "$host" -p "$port" -U "$user" -d "$db" -Fc > "$target"
+  fi
+  test -s "$target" || fail 'Backup file is empty.'
+  cp "$target" "$BACKUP_DIR/songchart-production-latest.dump"
+  retention="$(env_value SONGCHART_BACKUP_RETENTION_COUNT)"; retention="${retention:-14}"
+  find "$BACKUP_DIR" -maxdepth 1 -type f -name 'songchart-production-*.dump' -printf '%T@ %p\n' | sort -nr | awk -v keep="$retention" 'NR>keep {sub(/^[^ ]+ /, ""); print}' | xargs -r rm -f
+  info 'Backup complete.'
+}
+restore_drill(){
+  require_docker; validate_config; compose_init
+  local dump="${1:-$BACKUP_DIR/songchart-production-latest.dump}"
+  [[ -f "$dump" && -s "$dump" ]] || fail "Backup not found or empty: $dump"
+  if [[ -z "$(compose images -q app 2>/dev/null || true)" ]]; then build; compose_init; fi
+
+  local suffix network pg_container app_image app_name app_tag
+  suffix="$(date -u +%Y%m%d%H%M%S)-$$"
+  network="songchart-restore-drill-$suffix"
+  pg_container="songchart-restore-pg-$suffix"
+  app_name="$(env_value SONGCHART_APP_IMAGE)"; app_name="${app_name:-songchart/app}"
+  app_tag="$(env_value SONGCHART_IMAGE_TAG)"; app_tag="${app_tag:-local}"
+  app_image="$app_name:$app_tag"
+  cleanup_drill(){ docker rm -f "$pg_container" >/dev/null 2>&1 || true; docker network rm "$network" >/dev/null 2>&1 || true; }
+  trap cleanup_drill RETURN
+
+  docker network create "$network" >/dev/null
+  docker run -d --name "$pg_container" --network "$network" \
+    -e POSTGRES_DB=songchart_restore -e POSTGRES_USER=songchart_restore -e POSTGRES_PASSWORD=songchart_restore_only \
+    -v "$dump:/backup.dump:ro" postgres:18.4-bookworm >/dev/null
+
+  local ready=false
+  for _ in $(seq 1 30); do
+    if docker exec "$pg_container" pg_isready -U songchart_restore -d songchart_restore >/dev/null 2>&1; then ready=true; break; fi
+    sleep 1
+  done
+  [[ "$ready" == true ]] || fail 'Isolated restore PostgreSQL did not become ready.'
+
+  info 'Restoring backup into isolated PostgreSQL 18 drill target.'
+  docker exec "$pg_container" pg_restore --no-owner --no-privileges -U songchart_restore -d songchart_restore /backup.dump
+  docker exec "$pg_container" psql -U songchart_restore -d songchart_restore -v ON_ERROR_STOP=1 -Atqc 'select count(*) from migrations' >/dev/null
+
+  info 'Proving the immutable application image can read the restored schema.'
+  docker run --rm --network "$network" --env-file "$ENV_FILE" \
+    -e DB_HOST="$pg_container" -e DB_PORT=5432 -e DB_DATABASE=songchart_restore \
+    -e DB_USERNAME=songchart_restore -e DB_PASSWORD=songchart_restore_only -e DB_SSLMODE=disable \
+    "$app_image" php artisan migrate:status --no-ansi >/dev/null
+
+  cleanup_drill
+  trap - RETURN
+  info 'Restore drill PASSED.'
+}
+smoke(){
+  ensure_config
+  command -v curl >/dev/null 2>&1 || fail 'curl is required for production smoke.'
+  local base headers body
+  base="$(env_value APP_URL)"; [[ -n "$base" ]] || fail 'APP_URL is required.'
+  headers="$(mktemp)"; body="$(mktemp)"
+  cleanup_smoke(){ rm -f "$headers" "$body"; }
+  trap cleanup_smoke RETURN
+  info "Running deployed HTTP smoke against $base/up"
+  curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 -D "$headers" -o "$body" "$base/up"
+  grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' "$headers" || fail 'Expected X-Content-Type-Options header is missing.'
+  if grep -Eiq '^server:' "$headers"; then fail 'Public Server response header must be removed.'; fi
+  cleanup_smoke
+  trap - RETURN
+  info 'Production smoke PASSED.'
+}
 install(){
   require_docker
   if [[ ! -f "$ENV_FILE" || "$NO_INTERACTION" == false ]]; then configure; else validate_config; fi
@@ -244,7 +331,8 @@ install(){
   info 'Caching production framework configuration.'
   compose run --rm app php artisan optimize --no-ansi
   up
-  info "READY — https://$(env_value SONGCHART_DOMAIN)"
+  info "READY — $(env_value APP_URL)"
+  info 'Run ./songchart prod smoke after public DNS/TLS is reachable.'
 }
 usage(){ cat <<'EOF'
 SongChart production control
@@ -255,19 +343,27 @@ SongChart production control
   ./songchart prod up        [--env-file=PATH]
   ./songchart prod down      [--env-file=PATH]
   ./songchart prod status    [--env-file=PATH]
+  ./songchart prod smoke     [--env-file=PATH]
+  ./songchart prod db backup [--env-file=PATH]
+  ./songchart prod db restore-drill [dump-path] [--env-file=PATH]
 
 Production profile recommends external PostgreSQL 18 and external Redis.
 Single-host keeps durable PostgreSQL/Redis volumes local without exposing their ports.
+Restore verification is isolated by default; this CLI does not overwrite the live production database.
 EOF
 }
 
 action="${1:-help}"; shift || true
+subaction=""
+positional=()
+if [[ "$action" == db ]]; then subaction="${1:-}"; shift || true; fi
 for arg in "$@"; do
   case "$arg" in
     --no-interaction) NO_INTERACTION=true ;;
     --profile=*) PROFILE="${arg#*=}" ;;
     --env-file=*) ENV_FILE="${arg#*=}" ;;
-    *) fail "Unknown option: $arg" ;;
+    --*) fail "Unknown option: $arg" ;;
+    *) positional+=("$arg") ;;
   esac
 done
 
@@ -279,6 +375,13 @@ case "$action" in
   up) up ;;
   down) down ;;
   status) status ;;
+  smoke) smoke ;;
+  db)
+    case "$subaction" in
+      backup) backup ;;
+      restore-drill) restore_drill "${positional[0]:-}" ;;
+      *) usage; fail 'Usage: ./songchart prod db [backup|restore-drill [dump-path]]' ;;
+    esac ;;
   help|--help|-h) usage ;;
   *) usage; fail "Unknown production action: $action" ;;
 esac
