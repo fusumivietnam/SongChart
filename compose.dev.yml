@@ -63,6 +63,7 @@ services:
       SESSION_SECURE_COOKIE: "true"
       SESSION_DOMAIN: docker.songchart.test
       SONGCHART_TRUST_DOCKER_PROXY: "true"
+      PLAYWRIGHT_BROWSERS_PATH: /workspace/node_modules/.cache/ms-playwright
       MUSICBRAINZ_ENABLED: "${MUSICBRAINZ_ENABLED:-false}"
       MUSICBRAINZ_BASE_URL: "${MUSICBRAINZ_BASE_URL:-https://musicbrainz.org/ws/2}"
       MUSICBRAINZ_USER_AGENT: "${MUSICBRAINZ_USER_AGENT:-SongChartWeb/0.1 (contact@example.com)}"
