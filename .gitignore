@@ -29,3 +29,5 @@ Thumbs.db
 !.certs/.gitignore
 
 /storage/upgrade-backups/
+/tests/Browser/Screenshots/
+/tests/Browser/Traces/

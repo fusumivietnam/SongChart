@@ -56,16 +56,11 @@
     "mockery/mockery": {"constraint": "^1.6", "status": "required-dev", "capability_owner": "testing", "purpose": "Test doubles", "platforms": ["linux"], "review_required": true},
     "nunomaduro/collision": {"constraint": "^8.8", "status": "required-dev", "capability_owner": "developer-experience", "purpose": "Console test output", "platforms": ["linux"], "review_required": true},
     "pestphp/pest": {"constraint": "^4.0", "status": "required-dev", "capability_owner": "testing", "purpose": "Test runner", "platforms": ["linux"], "review_required": true},
+    "pestphp/pest-plugin-browser": {"constraint": "^4.3", "status": "required-dev", "capability_owner": "browser-testing", "purpose": "Playwright-backed desktop/mobile critical browser smoke with CI diagnostic evidence", "platforms": ["linux"], "review_required": true, "official_owner": "pestphp", "runtime_requirements": ["ext-sockets", "playwright", "chromium"]},
     "pestphp/pest-plugin-laravel": {"constraint": "^4.1", "status": "required-dev", "capability_owner": "testing", "purpose": "Laravel Pest integration", "platforms": ["linux"], "review_required": true},
     "spatie/laravel-activitylog": {"constraint": "^5.0", "status": "required", "capability_owner": "privileged-audit", "purpose": "Business audit trail for privileged operations", "platforms": ["linux"], "review_required": true, "official_owner": "spatie", "database_support": ["pgsql"], "usage_policy": "Explicit privileged/business events only; automatic broad model-event logging is forbidden."}
   },
   "planned_packages": {
-    "pestphp/pest-plugin-browser": {
-      "decision": "adopt-next",
-      "constraint_target": "^4.3",
-      "capability_owner": "browser-testing",
-      "purpose": "Playwright-backed desktop/mobile browser smoke tests with remote diagnostic evidence"
-    },
     "saloonphp/laravel-plugin": {
       "decision": "defer-after-inventory",
       "capability_owner": "provider-http-transport",

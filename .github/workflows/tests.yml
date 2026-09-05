@@ -33,7 +33,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
-          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, xml, zip
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
           coverage: none
       - uses: actions/setup-node@v6
         with:
@@ -96,7 +96,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
-          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, xml, zip
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
           coverage: none
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: composer test:postgres
@@ -133,6 +133,79 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+  browser-smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4-bookworm
+        env:
+          POSTGRES_DB: songchart_browser
+          POSTGRES_USER: songchart_browser
+          POSTGRES_PASSWORD: songchart_browser_only
+        options: >-
+          --health-cmd "pg_isready -U songchart_browser -d songchart_browser"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7.4-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+        ports:
+          - 6379:6379
+    env:
+      APP_ENV: testing
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      APP_URL: http://127.0.0.1:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: songchart_browser
+      DB_USERNAME: songchart_browser
+      DB_PASSWORD: songchart_browser_only
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.SONGCHART_CI_SHA }}
+      - run: touch .env
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
+          coverage: none
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: npm ci --no-audit --no-fund
+      - name: Install Chromium runtime
+        run: npx playwright install --with-deps chromium
+      - name: Prepare browser database
+        run: php artisan migrate --force --no-interaction
+      - name: Run desktop/mobile browser smoke
+        run: vendor/bin/pest tests/Browser --compact
+      - name: Preserve browser diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failure-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
+          path: |
+            tests/Browser/Screenshots
+            storage/logs
+          if-no-files-found: warn
+          retention-days: 7
+
   frontend-build:
     runs-on: ubuntu-latest
     steps:
@@ -152,6 +225,7 @@ jobs:
     needs:
       - quality
       - tests-postgres
+      - browser-smoke
       - frontend-build
     runs-on: ubuntu-latest
     steps:
@@ -161,11 +235,13 @@ jobs:
         env:
           QUALITY: ${{ needs.quality.result }}
           POSTGRES: ${{ needs.tests-postgres.result }}
+          BROWSER: ${{ needs.browser-smoke.result }}
           FRONTEND: ${{ needs.frontend-build.result }}
         run: |
           failures=()
           [ "$QUALITY" = success ] || failures+=(quality-governance)
           [ "$POSTGRES" = success ] || failures+=(database-runtime)
+          [ "$BROWSER" = success ] || failures+=(browser-smoke)
           [ "$FRONTEND" = success ] || failures+=(frontend-build)
 
           if [ ${#failures[@]} -eq 0 ]; then
@@ -182,6 +258,7 @@ jobs:
             "run_attempt": "${{ github.run_attempt }}",
             "quality": "$QUALITY",
             "postgres": "$POSTGRES",
+            "browser": "$BROWSER",
             "frontend": "$FRONTEND",
             "classification": "$classification"
           }
@@ -193,6 +270,7 @@ jobs:
             echo "- SHA: $SONGCHART_CI_SHA"
             echo "- Quality: $QUALITY"
             echo "- PostgreSQL: $POSTGRES"
+            echo "- Browser: $BROWSER"
             echo "- Frontend: $FRONTEND"
             echo "- Classification: $classification"
           } >> "$GITHUB_STEP_SUMMARY"
