@@ -61,7 +61,7 @@ printf '[SongChart Linux Setup] Preparing Composer/npm cache ownership for UID:G
 "${COMPOSE[@]}" run --rm app npm ci --no-audit --no-fund
 "${COMPOSE[@]}" run --rm app npm run build
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
-"${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\\Seeders\\ProviderRegistrySeeder' --force
+"${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force
 
 LOCAL_ADMIN_EMAIL="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_EMAIL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
 if [[ -n "$LOCAL_ADMIN_EMAIL" ]]; then
