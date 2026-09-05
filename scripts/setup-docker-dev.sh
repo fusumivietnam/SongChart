@@ -18,19 +18,19 @@ command -v docker >/dev/null || { echo 'Docker CLI required' >&2; exit 1; }
 docker version >/dev/null || { echo 'Docker Engine not reachable' >&2; exit 1; }
 docker compose version >/dev/null || { echo 'Docker Compose v2 required' >&2; exit 1; }
 [[ -f .env.docker ]] || cp .env.docker.example .env.docker
-python3 - .env.docker <<'PY2'
-from pathlib import Path
-import base64,os,re,sys
-p=Path(sys.argv[1]); t=p.read_text(); original=t
-if re.search(r'(?m)^APP_KEY=\s*$',t):
- t=re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:'+base64.b64encode(os.urandom(32)).decode(), t)
-if re.search(r'(?m)^APP_NAME=SongChartWeb\s*$', t):
- t=re.sub(r'(?m)^APP_NAME=SongChartWeb\s*$', 'APP_NAME=SongChart', t)
-if re.search(r'(?m)^SONGCHART_LOCAL_ADMIN_EMAIL=\s*$', t):
- t=re.sub(r'(?m)^SONGCHART_LOCAL_ADMIN_EMAIL=\s*$', 'SONGCHART_LOCAL_ADMIN_EMAIL=admin@songchart.local', t)
-if t != original:
- p.write_text(t)
-PY2
+
+# Keep host requirements to Docker + basic shell/coreutils only. Do not require Python/PHP/Node on the host.
+if grep -Eq '^APP_KEY=[[:space:]]*$' .env.docker; then
+  APP_KEY_VALUE="base64:$(head -c 32 /dev/urandom | base64 | tr -d '\n')"
+  sed -i -E "s|^APP_KEY=[[:space:]]*$|APP_KEY=$APP_KEY_VALUE|" .env.docker
+fi
+if grep -Eq '^APP_NAME=SongChartWeb[[:space:]]*$' .env.docker; then
+  sed -i -E 's|^APP_NAME=SongChartWeb[[:space:]]*$|APP_NAME=SongChart|' .env.docker
+fi
+if grep -Eq '^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$' .env.docker; then
+  sed -i -E 's|^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$|SONGCHART_LOCAL_ADMIN_EMAIL=admin@songchart.local|' .env.docker
+fi
+
 mkdir -p bootstrap/cache storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
 if [[ "$IS_CODESPACES" == false ]]; then
   mkdir -p .certs
@@ -61,7 +61,7 @@ printf '[SongChart Linux Setup] Preparing Composer/npm cache ownership for UID:G
 "${COMPOSE[@]}" run --rm app npm ci --no-audit --no-fund
 "${COMPOSE[@]}" run --rm app npm run build
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
-"${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force
+"${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\\Seeders\\ProviderRegistrySeeder' --force
 
 LOCAL_ADMIN_EMAIL="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_EMAIL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
 if [[ -n "$LOCAL_ADMIN_EMAIL" ]]; then
