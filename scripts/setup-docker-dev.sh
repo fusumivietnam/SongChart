@@ -21,9 +21,13 @@ docker compose version >/dev/null || { echo 'Docker Compose v2 required' >&2; ex
 python3 - .env.docker <<'PY2'
 from pathlib import Path
 import base64,os,re,sys
-p=Path(sys.argv[1]); t=p.read_text()
+p=Path(sys.argv[1]); t=p.read_text(); original=t
 if re.search(r'(?m)^APP_KEY=\s*$',t):
- t=re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:'+base64.b64encode(os.urandom(32)).decode(), t); p.write_text(t)
+ t=re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:'+base64.b64encode(os.urandom(32)).decode(), t)
+if re.search(r'(?m)^APP_NAME=SongChartWeb\s*$', t):
+ t=re.sub(r'(?m)^APP_NAME=SongChartWeb\s*$', 'APP_NAME=SongChart', t)
+if t != original:
+ p.write_text(t)
 PY2
 mkdir -p bootstrap/cache storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
 if [[ "$IS_CODESPACES" == false ]]; then
