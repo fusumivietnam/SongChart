@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "stage": "19.0.6",
+  "capability_owner": "security-release-readiness",
+  "status": "implemented-awaiting-runtime-evidence",
+  "runtime_invariants": {
+    "app_env": "production",
+    "app_debug": false,
+    "canonical_url_scheme": "https",
+    "session_secure_cookie": true,
+    "session_http_only": true,
+    "session_same_site": "lax",
+    "admin_2fa_mode": "required",
+    "design_lab_enabled": false,
+    "database": "postgresql-18",
+    "queue": "redis-horizon",
+    "edge": "caddy"
+  },
+  "edge_invariants": {
+    "automatic_https": true,
+    "http_to_https": "owned-by-caddy-automatic-https",
+    "headers": {
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "SAMEORIGIN",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Server": "removed"
+    },
+    "database_public_port": false,
+    "redis_public_port": false
+  },
+  "secret_boundary": {
+    "runtime_file": ".env.production",
+    "tracked": false,
+    "required_mode": "0600",
+    "real_secrets_in_repository": false,
+    "diagnostics_must_redact": ["passwords", "tokens", "cookies", "private configuration"]
+  },
+  "release_evidence": [
+    "./songchart prod doctor",
+    "./songchart prod smoke",
+    "./songchart prod db backup",
+    "./songchart prod db restore-drill",
+    "browser desktop/mobile critical smoke",
+    "canonical exact-head verification"
+  ],
+  "acceptance_rule": "Stage 19.0.6 is accepted only after a production-like runtime passes doctor + smoke and canonical verification reports no security/governance regression."
+}
