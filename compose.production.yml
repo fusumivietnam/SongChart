@@ -1,0 +1,119 @@
+name: songchart-production
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: docker/production/Dockerfile
+    target: app
+    args:
+      VCS_REF: ${SONGCHART_RELEASE_SHA:-unknown}
+      BUILD_DATE: ${SONGCHART_BUILD_DATE:-unknown}
+  image: ${SONGCHART_APP_IMAGE:-songchart/app}:${SONGCHART_IMAGE_TAG:-local}
+  env_file:
+    - .env.production
+  restart: unless-stopped
+  networks:
+    - songchart
+
+services:
+  edge:
+    build:
+      context: .
+      dockerfile: docker/production/Dockerfile
+      target: edge
+      args:
+        VCS_REF: ${SONGCHART_RELEASE_SHA:-unknown}
+        BUILD_DATE: ${SONGCHART_BUILD_DATE:-unknown}
+    image: ${SONGCHART_EDGE_IMAGE:-songchart/edge}:${SONGCHART_IMAGE_TAG:-local}
+    environment:
+      SONGCHART_DOMAIN: ${SONGCHART_DOMAIN}
+      SONGCHART_ACME_EMAIL: ${SONGCHART_ACME_EMAIL:-}
+    ports:
+      - "${SONGCHART_HTTP_PORT:-80}:80"
+      - "${SONGCHART_HTTPS_PORT:-443}:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    depends_on:
+      - app
+    networks:
+      - songchart
+
+  app:
+    <<: *app
+    command: ["php-fpm", "-F"]
+    healthcheck:
+      test: ["CMD", "php", "artisan", "about", "--only=environment"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  queue:
+    <<: *app
+    command: ["php", "artisan", "horizon"]
+    stop_grace_period: 90s
+
+  scheduler:
+    <<: *app
+    command: ["php", "artisan", "schedule:work"]
+    stop_grace_period: 30s
+
+  postgres:
+    image: postgres:18.4-bookworm
+    profiles: ["bundled-db"]
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - songchart
+
+  redis:
+    image: redis:7.4-alpine
+    profiles: ["bundled-redis"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    command:
+      - sh
+      - -ec
+      - |
+        if [ -n "$$REDIS_PASSWORD" ]; then
+          exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"
+        fi
+        exec redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'if [ -n "$$REDIS_PASSWORD" ]; then redis-cli -a "$$REDIS_PASSWORD" ping; else redis-cli ping; fi'
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - songchart
+
+networks:
+  songchart:
+    name: ${SONGCHART_INSTANCE:-songchart-production}-network
+
+volumes:
+  postgres_data:
+    name: ${SONGCHART_INSTANCE:-songchart-production}-postgres-data
+  redis_data:
+    name: ${SONGCHART_INSTANCE:-songchart-production}-redis-data
+  caddy_data:
+    name: ${SONGCHART_INSTANCE:-songchart-production}-caddy-data
+  caddy_config:
+    name: ${SONGCHART_INSTANCE:-songchart-production}-caddy-config

@@ -220,7 +220,7 @@ prepare_candidate_authority(){
   printf '[SongChart candidate] Generated repository authority committed.\n'
 }
 help(){ cat <<'EOF'
-SongChart Linux-first development CLI
+SongChart Linux-first development and operations CLI
   ./songchart ai status
   ./songchart ai doctor
   ./songchart impact [--diff|--verify] [--json] <planned-paths...>
@@ -232,6 +232,7 @@ SongChart Linux-first development CLI
   ./songchart dev db backup|restore [dump-path]
   ./songchart demo setup|up|down|status|logs|url
   ./songchart demo url
+  ./songchart prod configure|install|doctor|build|up|down|status
   ./songchart artisan|composer|npm <args...>
   ./songchart context [args...]
   ./songchart candidate [--prepare]
@@ -253,6 +254,13 @@ Development/live test:
   ./songchart demo up       start demo app and ensure the single shared development queue worker authority
   ./songchart demo url      print the governed demo URL for local/Codespaces
 
+Production operations:
+  ./songchart prod configure   create/update gitignored production configuration
+  ./songchart prod install     build the immutable artifact, migrate and start the selected topology
+  ./songchart prod doctor      validate environment, Compose and runtime connectivity
+  ./songchart prod status      show production process and Horizon status
+  Production supports bundled or external PostgreSQL/Redis; external services are recommended for production isolation.
+
 AI session:
   ./songchart ai status     print current stage, Git, context and verification status
   ./songchart ai doctor     produce the secret-redacted diagnostic bundle through scripts/ai-doctor.sh
@@ -270,7 +278,7 @@ Data resilience:
   ./songchart dev db backup
   ./songchart dev db restore [dump-path]
 
-Stable projects: songchart-dev / songchart-demo / songchart-verify
+Stable projects: songchart-dev / songchart-demo / songchart-verify / configurable production instance
 EOF
 }
 cmd="${1:-help}"; shift || true
@@ -338,6 +346,7 @@ case "$cmd" in
    url) ensure_demo_config; demo_url ;;
    *) die 'Usage: ./songchart demo [setup|up|down|status|logs|url]' ;;
   esac ;;
+ prod) exec bash "$ROOT/scripts/production/manage.sh" "$@" ;;
  artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
  composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
  npm) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart npm <args...>'; dev_exec_or_run npm "$@" ;;

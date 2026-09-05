@@ -39,8 +39,100 @@ foreach ($tracked as $path) {
     }
 }
 
+$requiredProductionFiles = [
+    'compose.production.yml',
+    'docker/production/Dockerfile',
+    'docker/production/Caddyfile',
+    'scripts/production/manage.sh',
+    'docs/project/stack/production-installation-contract.json',
+    '.env.production.example',
+];
+foreach ($requiredProductionFiles as $relative) {
+    if (! is_file($root.'/'.$relative)) {
+        $violations[] = "production artifact authority [{$relative}] is missing";
+    }
+}
+
+$contractPath = $root.'/docs/project/stack/production-installation-contract.json';
+if (is_file($contractPath)) {
+    try {
+        $contract = json_decode((string) file_get_contents($contractPath), true, flags: JSON_THROW_ON_ERROR);
+        if (! is_array($contract) || ($contract['schema_version'] ?? null) !== 1) {
+            $violations[] = 'production installation contract must use schema_version 1';
+        }
+        if (($contract['entrypoint'] ?? null) !== './songchart prod') {
+            $violations[] = 'production installation contract must delegate through ./songchart prod';
+        }
+        if (($contract['stable_internal_authority']['database_major'] ?? null) !== 18) {
+            $violations[] = 'production installation contract must keep PostgreSQL major 18 authoritative';
+        }
+    } catch (Throwable $exception) {
+        $violations[] = 'production installation contract is invalid JSON: '.$exception->getMessage();
+    }
+}
+
+$composePath = $root.'/compose.production.yml';
+if (is_file($composePath)) {
+    $compose = (string) file_get_contents($composePath);
+    foreach (['edge:', 'app:', 'queue:', 'scheduler:', 'postgres:', 'redis:', 'profiles: ["bundled-db"]', 'profiles: ["bundled-redis"]'] as $needle) {
+        if (! str_contains($compose, $needle)) {
+            $violations[] = "production Compose must contain [{$needle}]";
+        }
+    }
+    if (preg_match('/ports:\s*\n\s*-\s*["\']?[^\n]*:(?:5432|6379)["\']?/m', $compose) === 1) {
+        $violations[] = 'production PostgreSQL/Redis must not publish host ports by default';
+    }
+    if (! str_contains($compose, 'command: ["php", "artisan", "horizon"]')) {
+        $violations[] = 'production queue service must delegate to Laravel Horizon';
+    }
+    if (! str_contains($compose, 'command: ["php", "artisan", "schedule:work"]')) {
+        $violations[] = 'production scheduler service must delegate to Laravel schedule:work';
+    }
+}
+
+$dockerfilePath = $root.'/docker/production/Dockerfile';
+if (is_file($dockerfilePath)) {
+    $dockerfile = (string) file_get_contents($dockerfilePath);
+    foreach (['php:8.5-fpm-bookworm', 'node:24-bookworm-slim', '--no-dev', 'FROM php-base AS app', 'FROM caddy:2.11.3-alpine AS edge', 'org.opencontainers.image.revision'] as $needle) {
+        if (! str_contains($dockerfile, $needle)) {
+            $violations[] = "production Dockerfile must contain [{$needle}]";
+        }
+    }
+    if (str_contains($dockerfile, 'artisan serve')) {
+        $violations[] = 'production Dockerfile must not use the PHP built-in development server';
+    }
+}
+
+$managerPath = $root.'/scripts/production/manage.sh';
+if (is_file($managerPath)) {
+    $manager = (string) file_get_contents($managerPath);
+    foreach (['configure)', 'install)', 'doctor)', 'build)', 'up)', 'down)', 'status)', 'chmod 600', 'migrate --force'] as $needle) {
+        if (! str_contains($manager, $needle)) {
+            $violations[] = "production manager must contain [{$needle}]";
+        }
+    }
+    if (str_contains($manager, 'down -v') || str_contains($manager, 'down --volumes')) {
+        $violations[] = 'normal production down must never delete durable volumes';
+    }
+}
+
+$environmentPath = $root.'/.env.production.example';
+if (is_file($environmentPath)) {
+    $environment = (string) file_get_contents($environmentPath);
+    foreach (['SONGCHART_DATABASE_MODE=', 'SONGCHART_REDIS_MODE=', 'SONGCHART_DOMAIN=', 'SONGCHART_HTTP_PORT=', 'SONGCHART_HTTPS_PORT=', 'DB_SSLMODE='] as $needle) {
+        if (! str_contains($environment, $needle)) {
+            $violations[] = "production environment template must contain [{$needle}]";
+        }
+    }
+}
+
+$songchartPath = $root.'/songchart';
+if (is_file($songchartPath) && ! str_contains((string) file_get_contents($songchartPath), 'scripts/production/manage.sh')) {
+    $violations[] = 'SongChart CLI must delegate production operations to scripts/production/manage.sh';
+}
+
 if ($violations !== []) {
-    fwrite(STDERR, "Runtime artifact ownership verification failed:\n- ".implode("\n- ", $violations)."\n");
+    fwrite(STDERR, "Runtime artifact ownership verification failed:\n- ".implode("\n- ", array_unique($violations))."\n");
     exit(1);
 }
 

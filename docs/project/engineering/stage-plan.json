@@ -6,11 +6,11 @@
     "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
     "status": "implementing"
   },
-  "accepted_through": "19.0.4-C1C",
+  "accepted_through": "19.0.4-C2",
   "active_tranche": {
-    "id": "19.0.4-C2",
-    "title": "Horizon + Pulse observability consolidation",
-    "semantic_owner": "queue-runtime"
+    "id": "19.0.4-C3",
+    "title": "Pest Browser desktop/mobile critical smoke",
+    "semantic_owner": "browser-testing"
   },
   "stage_progress": [
     {"id": "19.0.1", "status": "accepted", "title": "Production topology + environment inventory"},
@@ -21,22 +21,23 @@
     {"id": "19.0.4-C1A", "status": "accepted", "title": "Consolidation authority + derived project state/work lease"},
     {"id": "19.0.4-C1B", "status": "accepted", "title": "Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration"},
     {"id": "19.0.4-C1C", "status": "accepted", "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"},
-    {"id": "19.0.4-C2", "status": "implementing", "title": "Horizon + Pulse observability consolidation"},
-    {"id": "19.0.4-C3", "status": "planned", "title": "Pest Browser desktop/mobile critical smoke"},
+    {"id": "19.0.4-C2", "status": "accepted", "title": "Horizon + Pulse observability consolidation"},
+    {"id": "19.0.4-C3", "status": "implementing", "title": "Pest Browser desktop/mobile critical smoke"},
     {"id": "19.0.4-C4", "status": "planned", "title": "Verifier reduction + main provenance + failure classification"},
     {"id": "19.0.4-C5", "status": "planned", "title": "Provider transport inventory + Saloon decision"},
     {"id": "19.0.4-C6", "status": "planned", "title": "Typed data/API inventory + Laravel Data decision"},
+    {"id": "19.0.4-C7", "status": "planned", "title": "Production artifact + installer + operational control"},
     {"id": "19.0.5", "status": "planned", "title": "Backup/recovery"},
     {"id": "19.0.6", "status": "planned", "title": "Security review + production smoke"},
     {"id": "final", "status": "planned", "title": "First release package/tag"}
   ],
   "next_tranche": {
-    "id": "19.0.4-C3",
-    "title": "Adopt Pest Browser for desktop/mobile critical smoke coverage"
+    "id": "19.0.4-C4",
+    "title": "Reduce verifier duplication and classify exact-head CI failures"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
-    "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated."
+    "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage 19 remaining work may share one umbrella branch while semantic tranche ownership remains explicit in this plan."
   },
   "projection": {
     "json": "docs/project/generated/development-state.json",

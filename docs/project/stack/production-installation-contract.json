@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "capability_owner": "production-installation",
+  "entrypoint": "./songchart prod",
+  "principles": [
+    "application containers are disposable",
+    "PostgreSQL is durable release-authoritative data",
+    "Redis is replaceable queue/cache/runtime state",
+    "real secrets are runtime-only and never tracked",
+    "one immutable application image serves web, Horizon and scheduler roles",
+    "external PostgreSQL is recommended for production growth and failure isolation"
+  ],
+  "commands": {
+    "install": "interactive or non-interactive first installation",
+    "configure": "create or update runtime-only production environment configuration",
+    "doctor": "validate Docker, environment, Compose and service connectivity",
+    "build": "build immutable application and edge images",
+    "up": "start configured production profile",
+    "down": "stop application processes without deleting durable volumes",
+    "status": "show process and application runtime status"
+  },
+  "profiles": {
+    "single-host": {
+      "database": "bundled-postgresql-18",
+      "redis": "bundled-redis",
+      "purpose": "small production, staging or simple VPS deployment"
+    },
+    "production": {
+      "database": "external-postgresql-18-recommended",
+      "redis": "external-redis-recommended",
+      "purpose": "durable data isolation and independent service scaling"
+    },
+    "custom": {
+      "database": "bundled-or-external-postgresql-18",
+      "redis": "bundled-or-external-redis",
+      "purpose": "operator-selected topology without changing SongChart internal service identities"
+    }
+  },
+  "operator_configurable": [
+    "SONGCHART_INSTANCE",
+    "SONGCHART_DOMAIN",
+    "SONGCHART_HTTP_PORT",
+    "SONGCHART_HTTPS_PORT",
+    "SONGCHART_DATABASE_MODE",
+    "DB_HOST",
+    "DB_PORT",
+    "DB_DATABASE",
+    "DB_USERNAME",
+    "DB_PASSWORD",
+    "DB_SSLMODE",
+    "SONGCHART_REDIS_MODE",
+    "REDIS_HOST",
+    "REDIS_PORT",
+    "REDIS_USERNAME",
+    "REDIS_PASSWORD"
+  ],
+  "stable_internal_authority": {
+    "service_names": ["edge", "app", "queue", "scheduler", "postgres", "redis"],
+    "application_internal_port": 9000,
+    "postgres_internal_port": 5432,
+    "redis_internal_port": 6379,
+    "queue_supervisor": "Laravel Horizon",
+    "scheduler": "php artisan schedule:work",
+    "database_major": 18
+  },
+  "security": {
+    "tracked_secret_files": false,
+    "production_env_file": ".env.production",
+    "production_env_mode": "0600",
+    "database_and_redis_host_ports_exposed_by_default": false,
+    "public_edge_only": true,
+    "destructive_volume_removal_is_not_part_of_down": true
+  }
+}
