@@ -4,6 +4,13 @@
     "dockerfile": "../docker/verify/Dockerfile",
     "context": ".."
   },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    }
+  },
   "overrideCommand": true,
   "remoteUser": "root",
   "postStartCommand": "git config --global --add safe.directory /workspaces/SongChart"

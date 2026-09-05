@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "7c2943e22dd90afa200ac2ea33fcbfafc71fa7483e9f49a01c0852a8b681b96f",
+    "source_fingerprint": "5aab0ff4eade46e3175341e60ac6aa9b4f654119649aff43b449a683db12736e",
     "candidate": {
         "stage": "19.0",
         "candidate": "v1",
@@ -15,6 +15,7 @@
     },
     "installed_versions": {
         "larastan/larastan": "v3.10.0",
+        "laravel/boost": "v2.7.0",
         "laravel/framework": "v13.25.0",
         "laravel/pulse": "v1.8.0",
         "livewire/livewire": "v4.3.5",
@@ -70,7 +71,7 @@
         "snapshot_consistency": "eventual",
         "request_time_rebuild_forbidden": true,
         "kernel_status": "active",
-        "technology_evaluated_at": "2026-09-02",
+        "technology_evaluated_at": "2026-09-03",
         "product_version_format": "MAJOR.MINOR.PATCH"
     },
     "seeders": {
@@ -1017,8 +1018,8 @@
         "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
         "compose.dev.yml": "ab4f723841feb976aa749489597c3f462a3255a35df68b1a60d1410137eef89f",
         "compose.verify.yml": "d7d2a4a73a19fa24414a9087df76af68d688c3814e151740edd4cbdbf1cad112",
-        "composer.json": "a5a3f9668e90d16a4bf8da429a82a123799be9ebf5f4dda349537385aa6b9b17",
-        "composer.lock": "21f1b62cb8159ec964ee3f0d381965ae07bab1150cf20ab04dab254d4c3c44e9",
+        "composer.json": "fea3b7f6b404963f80d61e18ee5dfcd58d0112c885bbdf5bf64cef136797e5ce",
+        "composer.lock": "a7c27e1222bb8542680ae90092dc6c21b13cf2c1eedf2b9817670e3af465f7b1",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
         "database/migrations/0001_01_01_000001_create_cache_table.php": "2c938a40dd1bdd0f99455359a1369df0b46352276e1549bddb8cdcd483bcdfe7",
         "database/migrations/0001_01_01_000002_create_jobs_table.php": "5cdfae12c862dc18e1f865182aa8467afb9abe8f1a6a3045a085df6a89c41d01",
@@ -1058,7 +1059,7 @@
         "docs/project/engineering/project-kernel-contract.json": "cf71ec704a569d4852bf014bb13a330a04b71d67342a128f7fc026d9ac529107",
         "docs/project/engineering/project-knowledge.json": "486fa45b9df15aa2cf33141badf1173e2292e9235975b215ad40956f4beaea10",
         "docs/project/engineering/technology-evaluation-contract.json": "37546f94e594655adae3a50e703394b13cabc790f56e1443bc4be29ba2c0c01a",
-        "docs/project/engineering/technology-watchlist.json": "4b0d52e8a389c4fe0944e3ae0381b8030bc24f89c835b73b5611b9c0207a3d66",
+        "docs/project/engineering/technology-watchlist.json": "a488a10b0f37b3be92b7be6a775454dd2a21006a57e81fab637200eb5b084c1b",
         "docs/project/engineering/use-case-contract.schema.json": "eddc2071d4f58c6e86fae9a87a687a591f597a82b032bd6c1df8bd6eec9ec2f0",
         "docs/project/engineering/verification-command-surface.json": "8be0e68b1da9158fb97086ab62477cf08bb295f7a69080f941b9f1661ec958f7",
         "docs/project/engineering/verification-topology.json": "dc01f61790a856d6f6acaee9c9a36ca292d586c0c81cada45a14e05ca20ab42f",
@@ -1066,6 +1067,6 @@
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
         "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
-        "songchart": "c2604f2f4878936e043ea98b742633989d5060d4bfd8f9f2ee9fe4d7f3710a28"
+        "songchart": "0e15450072c8a481ac22b824d9b43d1bd562d0936144c9a59d79d527abedee1c"
     }
 }

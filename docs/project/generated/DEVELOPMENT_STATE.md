@@ -6,7 +6,7 @@
 
 - Stage `19.0 — Production Readiness & First Release`
 - Status: `implementing`
-- Accepted through: `19.0.4-C1A`
+- Accepted through: `19.0.4-C1B`
 - Task contract: `docs/foundation/STAGE_19_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -17,8 +17,8 @@
 - `19.0.2` — `ACCEPTED` — Secrets/environment hardening
 - `19.0.3` — `ACCEPTED` — Queue/scheduler production runtime
 - `19.0.4-C1A` — `ACCEPTED` — Consolidation authority + derived project state/work lease
-- `19.0.4-C1B` — `IMPLEMENTING` — Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration
-- `19.0.4-C1C` — `PLANNED` — Laravel Boost dev-tool adoption + framework MCP overlap retirement
+- `19.0.4-C1B` — `ACCEPTED` — Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration
+- `19.0.4-C1C` — `IMPLEMENTING` — Laravel Boost dev-tool adoption + framework MCP overlap retirement
 - `19.0.4-C2` — `PLANNED` — Horizon + Pulse observability consolidation
 - `19.0.4-C3` — `PLANNED` — Pest Browser desktop/mobile critical smoke
 - `19.0.4-C4` — `PLANNED` — Verifier reduction + main provenance + failure classification
@@ -30,7 +30,7 @@
 
 ## Next bounded tranche
 
-- `19.0.4-C1C` — Install Laravel Boost through Composer in canonical dev, inspect generated AI surface, and retire framework-introspection duplication
+- `19.0.4-C2` — Adopt Horizon for queue operations, consolidate Pulse observability, and retire superseded queue operational glue
 
 ## Live work lease
 
