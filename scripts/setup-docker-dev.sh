@@ -26,6 +26,8 @@ if re.search(r'(?m)^APP_KEY=\s*$',t):
  t=re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:'+base64.b64encode(os.urandom(32)).decode(), t)
 if re.search(r'(?m)^APP_NAME=SongChartWeb\s*$', t):
  t=re.sub(r'(?m)^APP_NAME=SongChartWeb\s*$', 'APP_NAME=SongChart', t)
+if re.search(r'(?m)^SONGCHART_LOCAL_ADMIN_EMAIL=\s*$', t):
+ t=re.sub(r'(?m)^SONGCHART_LOCAL_ADMIN_EMAIL=\s*$', 'SONGCHART_LOCAL_ADMIN_EMAIL=admin@songchart.local', t)
 if t != original:
  p.write_text(t)
 PY2
@@ -48,7 +50,7 @@ export SONGCHART_HOST_GID="$HOST_GID"
 
 printf '[SongChart Linux Setup] Preparing writable Docker development paths for UID:GID %s:%s\n' "$HOST_UID" "$HOST_GID"
 "${COMPOSE[@]}" run --rm --user root app sh -lc \
-  "mkdir -p /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $HOST_UID:$HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage"
+  "mkdir -p /workspace/vendor /workspace/node_modules /workspace/node_modules/.cache/ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $HOST_UID:$HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage"
 
 "${COMPOSE[@]}" up -d postgres redis
 printf '[SongChart Linux Setup] Preparing Composer/npm cache ownership for UID:GID %s:%s\n' "$HOST_UID" "$HOST_GID"
