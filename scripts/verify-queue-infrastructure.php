@@ -11,11 +11,11 @@ $composer = json_decode($read('composer.json'), true);
 if (! is_array($composer) || ($composer['require']['php'] ?? null) !== '^8.5') {
     $errors[] = 'Composer PHP baseline must be ^8.5.';
 }
-if (isset($composer['require']['laravel/horizon']) || isset($composer['require-dev']['laravel/horizon'])) {
-    $errors[] = 'Horizon must remain optional for the first-release production runtime.';
+if (($composer['require']['laravel/horizon'] ?? null) !== '^5.48') {
+    $errors[] = 'Laravel Horizon must be required at ^5.48 as the canonical Redis queue supervisor.';
 }
-if (! isset($composer['suggest']['laravel/horizon'])) {
-    $errors[] = 'Composer must advertise the optional Horizon profile.';
+if (isset($composer['suggest']['laravel/horizon'])) {
+    $errors[] = 'Laravel Horizon must not remain in Composer suggest after C2 adoption.';
 }
 
 $queue = $read('config/queue.php');
@@ -38,7 +38,7 @@ if (! str_contains($appProvider, 'foreach (Capability::cases() as $capability)')
     $errors[] = 'Optional Horizon dashboard authorization must remain registered from the shared Capability authority.';
 }
 if (is_file($root.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR.'HorizonServiceProvider.php')) {
-    $errors[] = 'Do not ship an application Horizon provider while Horizon remains optional.';
+    $errors[] = 'Do not introduce a duplicate application Horizon provider; package discovery owns registration.';
 }
 
 $console = $read('routes/console.php');
@@ -55,22 +55,13 @@ foreach ([
 }
 
 $worker = $read('scripts/production/queue-worker.sh');
-foreach ([
-    'exec php artisan queue:work redis',
-    '--queue="$QUEUES"',
-    '--tries="$TRIES"',
-    '--timeout="$TIMEOUT"',
-    '--backoff="$BACKOFF"',
-    '--max-time="$MAX_TIME"',
-    '--max-jobs="$MAX_JOBS"',
-    '--memory="$MEMORY"',
-] as $signal) {
-    if (! str_contains($worker, $signal)) {
-        $errors[] = "Production queue worker entrypoint is missing [{$signal}].";
-    }
+if (! str_contains($worker, 'exec php artisan horizon')) {
+    $errors[] = 'Production queue supervisor entrypoint must delegate directly to Laravel Horizon.';
 }
-if (str_contains($worker, 'while ') || str_contains($worker, 'until ')) {
-    $errors[] = 'Production queue wrapper must delegate directly to Laravel and must not implement a custom worker loop.';
+if (str_contains($worker, 'queue:work')
+    || str_contains($worker, 'while ')
+    || str_contains($worker, 'until ')) {
+    $errors[] = 'Production queue runtime must not retain native worker or custom supervision loops after Horizon adoption.';
 }
 
 $scheduler = $read('scripts/production/scheduler.sh');
@@ -128,7 +119,7 @@ foreach ([
 }
 
 $docs = $read('docs/operations/queue-infrastructure.md');
-foreach (['queue:restart', 'schedule:work', 'queue:monitor', 'failed_jobs', 'process manager', 'Do not introduce custom worker loops'] as $signal) {
+foreach (['horizon:terminate', 'schedule:work', 'queue:monitor', 'failed_jobs', 'process manager', 'Do not introduce custom worker loops'] as $signal) {
     if (! str_contains($docs, $signal)) {
         $errors[] = "Queue operations documentation is missing production lifecycle signal [{$signal}].";
     }

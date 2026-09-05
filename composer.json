@@ -14,6 +14,7 @@
                     "composer/semver":  "^3.4",
                     "laravel/fortify":  "^1.30",
                     "laravel/framework":  "^13.0",
+                    "laravel/horizon":  "^5.48",
                     "laravel/pulse":  "^1.7.4",
                     "laravel/tinker":  "^3.0",
                     "livewire/livewire":  "^4.0",
@@ -289,8 +290,5 @@
                                      }
                },
     "minimum-stability":  "stable",
-    "prefer-stable":  true,
-    "suggest":  {
-                    "laravel/horizon":  "Recommended queue dashboard and supervisor for Linux/WSL production environments; Horizon requires ext-pcntl and ext-posix."
-                }
+    "prefer-stable":  true
 }

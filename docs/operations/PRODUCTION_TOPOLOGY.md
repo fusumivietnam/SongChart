@@ -28,17 +28,15 @@ Production conclusion: the development PHP built-in server and bind-mounted sour
 
 ### Queue
 
-Current development queue runtime is already a separate long-running process using the same application code/image surface:
+Development and production use a separate long-running queue process based on the same application artifact. Laravel Horizon is the canonical Redis queue supervisor:
 
 ```text
-php artisan queue:work redis
-  --queue=critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default
-  --sleep=1
-  --tries=3
-  --timeout=150
+php artisan horizon
 ```
 
-Production conclusion: preserve an independent queue lifecycle and existing queue taxonomy. Stage 19.0.3 owns the final production worker command/restart model and Horizon decision.
+Queue taxonomy, supervisor allocation, balancing, process limits and worker lifecycle are owned by `config/horizon.php`. Compose and production shell wrappers only start Horizon; they must not duplicate queue topology or introduce a second native `queue:work` supervision model.
+
+Production conclusion: preserve an independent queue lifecycle and the existing queue taxonomy, with Horizon as the single queue-supervision authority.
 
 ### Scheduler
 

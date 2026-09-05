@@ -90,6 +90,15 @@
       "review_required": true,
       "official_owner": "laravel"
     },
+    "laravel/horizon": {
+      "constraint": "^5.48",
+      "status": "required",
+      "capability_owner": "queue-runtime",
+      "purpose": "Primary Redis queue supervision and operational visibility",
+      "platforms": ["linux"],
+      "review_required": true,
+      "official_owner": "laravel"
+    },
     "laravel/pail": {
       "constraint": "^1.2",
       "status": "required-dev",
@@ -179,11 +188,6 @@
     }
   },
   "planned_packages": {
-    "laravel/horizon": {
-      "decision": "adopt-next-linux-production",
-      "capability_owner": "queue-runtime",
-      "purpose": "Redis queue supervision and operational visibility"
-    },
     "pestphp/pest-plugin-browser": {
       "decision": "adopt-next",
       "capability_owner": "browser-testing",

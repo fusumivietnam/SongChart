@@ -16,28 +16,29 @@ SongChart uses Laravel queues with Redis as the asynchronous runtime baseline. Q
 
 `REDIS_QUEUE_RETRY_AFTER` defaults to 180 seconds and must remain greater than the production worker timeout. The accepted production timeout default is 150 seconds; current jobs remain individually bounded and may use shorter timeouts/backoff.
 
-## Production worker lifecycle
+## Production queue lifecycle
 
-Production uses Laravel native `queue:work`; Horizon remains optional and is not required for the first release. The production process manager starts the same immutable application artifact with:
+Production uses Laravel Horizon as the canonical Redis queue supervisor. The production process manager starts the same immutable application artifact with:
 
 ```bash
 sh scripts/production/queue-worker.sh
 ```
 
-The wrapper delegates directly to Laravel and contains no custom worker loop. Defaults are controlled by the production environment contract:
+The wrapper delegates directly to:
 
-- queues: `critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default`;
-- sleep: 1 second;
-- tries: 3;
-- timeout: 150 seconds;
-- worker backoff: 5 seconds when a job does not provide its own backoff;
-- max time: 3600 seconds;
-- max jobs: 1000;
-- memory: 256 MB.
+```bash
+php artisan horizon
+```
 
-`--max-time` and `--max-jobs` intentionally recycle long-running workers. The host/container process manager must restart a clean worker when the Laravel worker exits. A non-zero unexpected exit is a process failure and must not be treated as healthy.
+Queue allocation, balancing, process limits, retries, timeouts and memory ceilings are owned by `config/horizon.php`. Shell wrappers and deployment configuration must not duplicate Horizon queue topology or implement a second worker-supervision model.
 
-Before a code deployment replaces the running artifact, issue Laravel's `queue:restart` against the shared Redis/cache control plane and then let the process manager start workers from the new accepted artifact. SIGTERM must be allowed to reach the PHP worker so Laravel can finish the current job and exit gracefully where possible.
+Before replacing a running application artifact, issue:
+
+```bash
+php artisan horizon:terminate
+```
+
+The process manager then starts Horizon from the newly accepted artifact. Horizon owns worker lifecycle and graceful queue-process termination; unexpected master-supervisor exit is a process failure and must not be presented as healthy.
 
 ## Production scheduler lifecycle
 
@@ -57,9 +58,18 @@ Failed jobs remain persisted through Laravel's `failed_jobs` authority and are i
 
 Scheduler boot/readiness can be checked deterministically with `php artisan schedule:list`. Redis/PostgreSQL dependency readiness remains part of the production runtime/environment authority rather than being reimplemented by worker wrappers.
 
-## Optional Horizon profile
+## Horizon and Pulse ownership
 
-`config/horizon.php` remains a compatibility/profile surface for Linux deployments that intentionally install Horizon later. Horizon is not installed as a mandatory Composer dependency and is not the first-release worker supervisor. If installed, SongChart keeps the existing `viewHorizon` authorization boundary and schedules Horizon snapshots conditionally.
+Horizon owns Redis queue supervision, queue throughput/wait visibility, failed-job operational context and worker lifecycle.
+
+Pulse owns broader application observability such as slow queries, application/runtime metrics and operational trends.
+
+The boundaries are intentionally complementary:
+
+- Horizon is the queue-runtime operational surface.
+- Pulse is the application observability surface.
+- SongChart Admin must not duplicate either operational dashboard.
+- SongChart `Capability` / Gate authority owns access control for both surfaces.
 
 ## Boundaries
 

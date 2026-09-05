@@ -7,7 +7,9 @@ Versions below are constraints from manifests. Exact resolved versions are owned
 | `laravel/framework` | `^13.0` | Core framework | required | application framework |
 | `laravel/fortify` | `^1.30` | Authentication and 2FA | required | authentication |
 | `livewire/livewire` | `^4.0` | Server-driven interaction | approved | interactive UI |
-| `laravel/pulse` | `^1.7.4` | Operational observability | required | observability |\n| `laravel/tinker` | `^3.0` | Local application console | approved | developer tooling |
+| `laravel/pulse` | `^1.7.4` | Operational observability | required | observability |
+| `laravel/horizon` | `^5.48` | Primary Redis queue supervision and operational visibility | required | queue runtime |
+| `laravel/tinker` | `^3.0` | Local application console | approved | developer tooling |
 | `composer/semver` | `^3.4` | Version constraint evaluation | approved | extension/version tooling |
 | `larastan/larastan` | `^3.8` | Static analysis | required-dev | static analysis |
 | `laravel/pint` | `^1.24` | PHP formatting | required-dev | formatting |
