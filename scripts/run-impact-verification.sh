@@ -3,10 +3,25 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SONGCHART="$ROOT/songchart"
+DEV_PROJECT="${SONGCHART_DEV_PROJECT:-songchart-dev}"
+DEV_COMPOSE="$ROOT/compose.dev.yml"
+CODESPACES_COMPOSE="$ROOT/compose.codespaces.yml"
 
 impact_json="$($SONGCHART impact --diff --json)"
-mapfile -t checks < <(printf '%s\n' "$impact_json" | python3 -c 'import json, sys; data=json.load(sys.stdin); print("\n".join(data.get("required_focused_checks", [])))')
-mapfile -t changed_paths < <(printf '%s\n' "$impact_json" | python3 -c 'import json, sys; data=json.load(sys.stdin); print("\n".join(data.get("changed_paths", [])))')
+
+json_array_lines(){
+    local key="$1"
+    local compose=(docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE")
+    if [[ "${CODESPACES:-false}" == "true" ]]; then
+        [[ -n "${CODESPACE_NAME:-}" ]] || { printf 'CODESPACE_NAME is required in GitHub Codespaces.\n' >&2; exit 1; }
+        export SONGCHART_CODESPACES_APP_URL="https://${CODESPACE_NAME}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"
+        compose+=( -f "$CODESPACES_COMPOSE" )
+    fi
+    "${compose[@]}" run --rm -T app php -r '$key=$argv[1]; $data=json_decode(stream_get_contents(STDIN), true, 512, JSON_THROW_ON_ERROR); foreach (($data[$key] ?? []) as $value) { echo $value, PHP_EOL; }' "$key"
+}
+
+mapfile -t checks < <(printf '%s\n' "$impact_json" | json_array_lines required_focused_checks)
+mapfile -t changed_paths < <(printf '%s\n' "$impact_json" | json_array_lines changed_paths)
 
 printf '[SongChart impact verify] Running fast preflight guards.\n'
 git -C "$ROOT" diff --check
