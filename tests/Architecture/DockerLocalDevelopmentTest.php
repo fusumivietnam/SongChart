@@ -19,7 +19,8 @@ it('defines a port-safe Docker local development HTTPS profile', function (): vo
         ->toContain('REDIS_CACHE_DB: "1"')
         ->toContain('command: ["sh", "-lc", "cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]')
         ->not->toContain('command: ["php", "artisan", "serve"')
-        ->toContain('--queue=critical,discovery-projections,provider-health,provider-imports,provider-normalization,notifications,default')
+        ->toContain('command: ["php", "artisan", "horizon"]')
+        ->not->toContain('queue:work')
         ->and($caddy)
         ->toContain('docker.songchart.test')
         ->toContain('reverse_proxy app:8000');
