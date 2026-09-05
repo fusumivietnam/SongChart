@@ -9,11 +9,35 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
+        fonts-liberation \
+        fonts-noto-color-emoji \
         git \
+        libasound2 \
+        libatk-bridge2.0-0 \
+        libatk1.0-0 \
+        libatspi2.0-0 \
+        libcairo2 \
+        libcups2 \
+        libdbus-1-3 \
+        libdrm2 \
+        libfontconfig1 \
+        libgbm1 \
+        libglib2.0-0 \
         libicu-dev \
+        libnspr4 \
+        libnss3 \
         libonig-dev \
+        libpango-1.0-0 \
         libpq-dev \
+        libx11-6 \
+        libxcb1 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxext6 \
+        libxfixes3 \
+        libxkbcommon0 \
         libxml2-dev \
+        libxrandr2 \
         libzip-dev \
         unzip \
         zip \
@@ -27,6 +51,8 @@ RUN apt-get update \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && php -r '$required = ["bcmath", "curl", "dom", "intl", "mbstring", "pcntl", "pdo_pgsql", "redis", "sockets", "xml", "zip"]; foreach ($required as $extension) { if (! extension_loaded($extension)) { fwrite(STDERR, "Missing PHP extension: {$extension}\\n"); exit(1); } } echo "PHP extension smoke check passed.\\n";' \
+    && ldconfig -p | grep -q 'libglib-2.0.so.0' \
+    && ldconfig -p | grep -q 'libnss3.so' \
     && git config --system --add safe.directory /workspace \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/pear

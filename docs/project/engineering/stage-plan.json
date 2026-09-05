@@ -29,6 +29,7 @@
     {"id": "19.0.4-C7", "status": "planned", "title": "Production artifact + installer + operational control"},
     {"id": "19.0.5", "status": "planned", "title": "Backup/recovery"},
     {"id": "19.0.6", "status": "planned", "title": "Security review + production smoke"},
+    {"id": "19.0.7", "status": "planned", "title": "Production operations UX + automatic TLS + low-cost service baseline"},
     {"id": "final", "status": "planned", "title": "First release package/tag"}
   ],
   "next_tranche": {

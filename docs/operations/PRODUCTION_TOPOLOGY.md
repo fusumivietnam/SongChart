@@ -99,6 +99,41 @@ Caddy owns public HTTP/HTTPS ports, automatic TLS and static public assets. Post
 
 Production domain and public host ports are configurable. Container ports and service identities remain fixed.
 
+For a normal public domain, the first-release default is direct Caddy automatic HTTPS rather than a separate certificate panel. DNS must resolve to the host and public ports 80/443 must be reachable. `SONGCHART_ACME_EMAIL` should be configured so certificate-account problems are actionable. A CDN/DNS proxy may sit in front of Caddy, but it is optional and must not become a hard runtime dependency.
+
+## Control-plane policy
+
+The first release does not require a web hosting control panel. The supported control plane is deliberately small:
+
+```text
+Git / accepted release artifact
+        |
+        v
+./songchart prod ...
+        |
+        v
+Docker Compose
+        |
+        +--> Caddy
+        +--> app / Horizon / scheduler
+        +--> PostgreSQL / Redis or external services
+```
+
+A control panel such as a Docker/PaaS management UI may be evaluated later only when user evidence shows that it retires meaningful operational friction without creating a second deployment authority. If one is adopted, it must call or faithfully implement the same image, environment, health, backup and rollback contracts rather than becoming an independent source of configuration truth.
+
+## Optional low-cost / free service baseline
+
+Optional services are integration profiles, not correctness dependencies. They should be selected behind stable boundaries so SongChart can move providers without rewriting the application.
+
+- DNS / proxy / basic edge protection: a Cloudflare-compatible profile may be documented, while direct DNS-to-Caddy remains supported.
+- TLS certificates: Caddy automatic HTTPS is the default; no paid certificate service is required for the standard public-domain path.
+- Container registry: GitHub Container Registry is a natural first candidate for release images because it aligns with repository/Actions provenance; retention and budget limits must be explicit before private-image usage grows.
+- Uptime / incident notification: expose health and notification hooks first, then plug in a provider; do not couple application health semantics to one SaaS.
+- Error monitoring: prefer an adapter boundary and data-minimizing defaults; adoption requires a privacy/retention decision.
+- Object storage/CDN: add only when real media/blob usage justifies it; PostgreSQL remains structured-data authority, not an object store.
+
+Free tiers are treated as cost optimizations, not availability guarantees. Every adopted external service needs an owner, limits/quota documentation, failure mode and exit path.
+
 ## Environment and secrets
 
 `.env.production.example` documents non-secret defaults and required keys. `./songchart prod configure` creates the runtime-only `.env.production`; `./songchart prod install --env-file=... --no-interaction` supports secret-manager/deployment automation without requiring an interactive wizard.
@@ -131,6 +166,8 @@ The supported operator surface is:
 
 The CLI delegates to Docker Compose and Laravel; it does not replace either runtime owner. Normal `down` never deletes durable volumes.
 
+Stage 19.0.7 extends this surface with operator-experience evidence: domain/DNS/port preflight, automatic-TLS verification, upgrade/rollback guidance, registry decision and optional service profiles. It must not introduce a second deployment authority.
+
 ## Queue / scheduler / observability
 
 Laravel Horizon owns Redis queue supervision, worker lifecycle, queue throughput/wait visibility and failed-job operational context. Laravel Pulse owns broader application/runtime observability. SongChart Admin may summarize their state but must not duplicate their dashboards.
@@ -145,6 +182,10 @@ External PostgreSQL is recommended as data size and operational criticality grow
 
 Stage 19.0.5 owns backup retention and verified restore evidence. A backup is not accepted until an isolated restore proves a usable application state.
 
+## Customer-evidence roadmap loop
+
+Deployment and operational friction are product evidence. Structured case studies are recorded in `docs/project/engineering/customer-evidence-roadmap.json`. At each stage boundary, repeated or high-severity evidence may promote, split, defer or retire roadmap work. Evidence can reprioritize implementation, but it cannot silently bypass domain, security, durability or release invariants.
+
 ## Remaining Stage 19 closure
 
 Production artifact and installer authority now exist. Remaining release work is bounded to:
@@ -154,6 +195,7 @@ Production artifact and installer authority now exist. Remaining release work is
 3. provider transport/typed-data package admission decisions where they produce net reduction;
 4. PostgreSQL backup + isolated restore drill;
 5. security review and deployed production smoke;
-6. first release package/tag from an accepted exact `main` tree.
+6. production operations UX, automatic TLS and low-cost service baseline;
+7. first release package/tag from an accepted exact `main` tree.
 
-No additional deployment framework is required unless the accepted first-release topology proves a concrete blocker.
+No additional deployment framework is required unless accepted user evidence proves a concrete blocker.
