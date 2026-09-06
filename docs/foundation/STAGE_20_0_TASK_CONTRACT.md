@@ -11,7 +11,7 @@ Establish durable, AI-safe development continuity and a clean owner-based knowle
 1. `PROJECT_AUTHORITY.md` and current machine/domain contracts.
 2. `docs/project/engineering/stage-plan.json` for authored progress.
 3. generated project context/state plus live Git/GitHub for volatile facts.
-4. `project-knowledge.json`, `mcp-governance-contract.json`, `external-systems-registry.json` and `documentation-consolidation-contract.json` for AI/external/documentation governance.
+4. `project-knowledge.json`, `mcp-governance-contract.json`, `external-systems-registry.json`, `documentation-consolidation-contract.json` and `recheck-policy.json` for AI/external/documentation governance.
 5. Laravel migrations for application schema evolution.
 
 ## 20.0A — Development continuity + AI/MCP/documentation governance
@@ -20,10 +20,24 @@ Establish durable, AI-safe development continuity and a clean owner-based knowle
 - discover/evaluate an official provider MCP first when an active use case needs provider-native AI tooling, then compare overlap with native connector/CLI/API before adoption;
 - keep developer MCP connections out of production application dependencies;
 - record GitHub, Neon, Cloudflare, Figma and Grafana official MCP availability/evaluation in the external-system registry;
+- govern MCP upgrades as reviewed capability/auth/permission changes instead of automatic `latest` churn;
+- pin local/package MCP versions when the distribution supports deterministic pinning, while remote-managed MCPs track review/capability assumptions rather than fake version pins;
+- deny newly exposed MCP mutation tools/scopes until explicitly admitted by SongChart governance;
 - convert legacy stage-centric documentation toward current semantic owners instead of creating another archive hierarchy;
 - use Development History for accepted chronology, ADR/current contracts for durable rules, regression ledger for guarded failures and Git/PR history for exact retired evidence;
 - migrate active links/tests/verifiers before deleting each historical stage file;
 - keep GitHub as source/delivery authority and Docker/runtime state disposable.
+
+## Recheck / re-verification discipline
+
+`docs/project/engineering/recheck-policy.json` owns the recheck triggers. Stage 20 must not rely on developer or AI memory to remember them.
+
+- on a resumed/new AI session, resolve live branch/head/upstream and current generated project state before substantial writes;
+- after an authored authority changes, run `./songchart reconcile`, inspect the generated diff, then rerun impacted focused checks;
+- before advancing a tranche, rerun repository-contract and stage verification on the current tree; an earlier green SHA is not reusable evidence for a changed SHA;
+- before candidate/canonical closure, regenerate and verify the exact target head and do not mutate that SHA while closure is running;
+- when an adopted/relevant MCP changes version, auth, permissions, tool/resource surface, deprecations or behavior, recheck official provider evidence and update the registry before expanding use;
+- do not add another parallel `recheck` verifier command when existing `ai status/doctor`, `reconcile`, repository-contracts, stage and canonical surfaces already own these checks.
 
 ## 20.0B — Durable development database authority
 
