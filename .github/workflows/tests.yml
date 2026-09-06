@@ -35,13 +35,15 @@ jobs:
           php-version: '8.5'
           extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
           coverage: none
-      - uses: actions/setup-node@v6
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
         with:
-          node-version: '24'
-          cache: npm
+          path: ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
       - run: composer validate --strict
       - run: composer install --no-interaction --prefer-dist --no-progress
-      - run: npm ci --no-audit --no-fund
       - run: composer quality:verify
 
   tests-postgres:
@@ -98,6 +100,13 @@ jobs:
           php-version: '8.5'
           extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
           coverage: none
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: composer test:postgres
       - name: Summarize PostgreSQL failure
@@ -187,6 +196,20 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --no-audit --no-fund
       - name: Install Chromium runtime
