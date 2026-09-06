@@ -31,11 +31,15 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('demo up -d redis app')
         ->toContain('dev up -d postgres redis app queue')
         ->toContain('single shared development queue worker authority')
-        ->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
+        ->toContain('.songchart-composer-fingerprint')
+        ->toContain('.songchart-npm-fingerprint')
+        ->toContain('Reusing locked npm dependencies for fingerprint')
         ->toContain('/tmp/composer-cache /tmp/npm-cache')
         ->toContain('chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID')
-        ->toContain('APP_URL='."' + demo_url")
+        ->toContain('APP_URL=$SONGCHART_DEMO_APP_URL')
         ->toContain('SONGCHART_DEMO_APP_URL="https://${CODESPACE_NAME}-8001.')
+        ->not->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
+        ->not->toContain('python3 - "$ROOT/.env.demo"')
         ->not->toContain('demo up -d redis app queue');
 
     expect($demoEnv)
