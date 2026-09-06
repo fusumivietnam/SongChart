@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "110a6c108886e6020be8f41afc5f25c3284789dd8fd63b8d640352d8aff4c7af",
+    "source_fingerprint": "20c4048164bf95874733b25aad86314887d644b015918a908f33957e4d495d88",
     "candidate": {
         "stage": "20.0",
         "candidate": "v1",
@@ -1057,7 +1057,7 @@
         "docs/project/engineering/development-intelligence-contract.json": "bcfd44e3094bee60e660903ff3a1ceb334146e0125a769be9cb22f3c077ab560",
         "docs/project/engineering/mcp-contract.json": "d80f6a8c316e6744b89d2ba4e7f4f23d43d8fb2e2f8d5bd2d09b62cbd4065ea8",
         "docs/project/engineering/project-kernel-contract.json": "cf71ec704a569d4852bf014bb13a330a04b71d67342a128f7fc026d9ac529107",
-        "docs/project/engineering/project-knowledge.json": "1c8e9acfb959db39c1b1243216bd33d837a5f9b3321af4c46f493d2f44902c01",
+        "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
         "docs/project/engineering/technology-evaluation-contract.json": "37546f94e594655adae3a50e703394b13cabc790f56e1443bc4be29ba2c0c01a",
         "docs/project/engineering/technology-watchlist.json": "a488a10b0f37b3be92b7be6a775454dd2a21006a57e81fab637200eb5b084c1b",
         "docs/project/engineering/use-case-contract.schema.json": "eddc2071d4f58c6e86fae9a87a687a591f597a82b032bd6c1df8bd6eec9ec2f0",
