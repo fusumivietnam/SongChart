@@ -19,7 +19,8 @@ final class CreateAdminCommand extends Command
         {email? : Administrator email address}
         {--name= : Administrator display name}
         {--role=super_admin : Privileged role to assign}
-        {--if-missing : Succeed without changing credentials when the account already exists}';
+        {--if-missing : Create interactively only when the account is missing; preserve existing credentials}
+        {--require-existing : Succeed only when the administrator already exists; never prompt for credentials}';
 
     protected $description = 'Create a verified privileged SongChart administrator without a default password.';
 
@@ -36,13 +37,19 @@ final class CreateAdminCommand extends Command
         }
 
         if (User::query()->where('email', $email)->exists()) {
-            if ((bool) $this->option('if-missing')) {
+            if ((bool) $this->option('if-missing') || (bool) $this->option('require-existing')) {
                 $this->info(sprintf('Administrator %s already exists; credentials were preserved.', $email));
 
                 return self::SUCCESS;
             }
 
             $this->error('A user with this email already exists.');
+
+            return self::FAILURE;
+        }
+
+        if ((bool) $this->option('require-existing')) {
+            $this->error(sprintf('Administrator %s does not exist. Run interactive production install once to create it.', $email));
 
             return self::FAILURE;
         }
