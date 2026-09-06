@@ -11,6 +11,7 @@ PROFILE=""
 
 fail(){ printf 'SongChart production: %s\n' "$*" >&2; exit 1; }
 info(){ printf '[SongChart prod] %s\n' "$*"; }
+warn(){ printf '[SongChart prod] WARNING: %s\n' "$*" >&2; }
 require_docker(){
   command -v docker >/dev/null 2>&1 || fail 'Docker CLI is required.'
   docker version >/dev/null 2>&1 || fail 'Docker Engine is not reachable.'
@@ -81,18 +82,56 @@ compose(){ docker compose "${COMPOSE_ARGS[@]}" "$@"; }
 validate_config(){
   ensure_config
   local required=(APP_ENV APP_KEY APP_URL SONGCHART_DOMAIN SONGCHART_DATABASE_MODE DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD SONGCHART_REDIS_MODE REDIS_HOST REDIS_PORT)
-  local key value mode
+  local key value db_mode redis_mode sslmode redis_scheme release_channel
   [[ "$(env_value APP_ENV)" == production ]] || fail 'APP_ENV must be production.'
   [[ "$(env_value APP_DEBUG)" == false ]] || fail 'APP_DEBUG must be false.'
   for key in "${required[@]}"; do
     value="$(env_value "$key")"
     [[ -n "$value" ]] || fail "$key is required."
   done
-  mode="$(env_value SONGCHART_DATABASE_MODE)"; [[ "$mode" == bundled || "$mode" == external ]] || fail 'SONGCHART_DATABASE_MODE must be bundled or external.'
-  mode="$(env_value SONGCHART_REDIS_MODE)"; [[ "$mode" == bundled || "$mode" == external ]] || fail 'SONGCHART_REDIS_MODE must be bundled or external.'
+  db_mode="$(env_value SONGCHART_DATABASE_MODE)"; [[ "$db_mode" == bundled || "$db_mode" == external ]] || fail 'SONGCHART_DATABASE_MODE must be bundled or external.'
+  redis_mode="$(env_value SONGCHART_REDIS_MODE)"; [[ "$redis_mode" == bundled || "$redis_mode" == external ]] || fail 'SONGCHART_REDIS_MODE must be bundled or external.'
   [[ "$(env_value DB_CONNECTION)" == pgsql ]] || fail 'Production DB_CONNECTION must be pgsql.'
   [[ "$(env_value QUEUE_CONNECTION)" == redis ]] || fail 'Production QUEUE_CONNECTION must be redis.'
   [[ "$(env_value CACHE_STORE)" == redis ]] || fail 'Production CACHE_STORE must be redis.'
+
+  sslmode="$(env_value DB_SSLMODE)"; sslmode="${sslmode:-prefer}"
+  if [[ "$db_mode" == external ]]; then
+    case "$sslmode" in require|verify-ca|verify-full) ;; *) fail 'External PostgreSQL requires DB_SSLMODE=require, verify-ca, or verify-full.';; esac
+  fi
+
+  redis_scheme="$(env_value REDIS_SCHEME)"; redis_scheme="${redis_scheme:-tcp}"
+  if [[ "$redis_mode" == external && "$redis_scheme" != tls ]]; then
+    fail 'External Redis requires REDIS_SCHEME=tls.'
+  fi
+
+  release_channel="$(env_value SONGCHART_RELEASE_CHANNEL)"; release_channel="${release_channel:-local}"
+  [[ "$release_channel" == local || "$release_channel" == accepted-main ]] || fail 'SONGCHART_RELEASE_CHANNEL must be local or accepted-main.'
+}
+validate_release_provenance(){
+  local sha channel accepted main_ref
+  sha="$(git -C "$ROOT" rev-parse HEAD 2>/dev/null || true)"
+  [[ -n "$sha" ]] || fail 'Production builds require a Git checkout with an exact source SHA.'
+  git -C "$ROOT" diff --quiet -- || fail 'Production builds require a clean unstaged working tree.'
+  git -C "$ROOT" diff --cached --quiet -- || fail 'Production builds require a clean staged working tree.'
+
+  channel="$(env_value SONGCHART_RELEASE_CHANNEL)"; channel="${channel:-local}"
+  if [[ "$channel" == accepted-main ]]; then
+    accepted="$(env_value SONGCHART_ACCEPTED_MAIN_SHA)"
+    [[ -n "$accepted" && "$accepted" != unknown ]] || fail 'Accepted-main builds require SONGCHART_ACCEPTED_MAIN_SHA.'
+    [[ "$accepted" == "$sha" ]] || fail "Accepted-main SHA $accepted does not match checked-out SHA $sha."
+
+    main_ref=''
+    if git -C "$ROOT" show-ref --verify --quiet refs/remotes/origin/main; then
+      main_ref="$(git -C "$ROOT" rev-parse refs/remotes/origin/main)"
+    elif git -C "$ROOT" show-ref --verify --quiet refs/heads/main; then
+      main_ref="$(git -C "$ROOT" rev-parse refs/heads/main)"
+    fi
+    [[ -z "$main_ref" || "$main_ref" == "$sha" ]] || fail 'Accepted-main build does not match the available main authority.'
+    info "Accepted-main provenance gate PASSED for $sha."
+  else
+    info "Local production-like build provenance: $sha. Official release publishing must use SONGCHART_RELEASE_CHANNEL=accepted-main."
+  fi
 }
 configure(){
   [[ -f "$TEMPLATE_FILE" ]] || fail 'Missing .env.production.example.'
@@ -108,7 +147,7 @@ configure(){
     return
   fi
 
-  local profile domain acme http_port https_port db_mode redis_mode public_url
+  local profile domain acme http_port https_port db_mode redis_mode public_url first_admin
   profile="$PROFILE"
   if [[ -z "$profile" ]]; then
     printf 'Deployment profile:\n  1) single-host  (bundled PostgreSQL + Redis)\n  2) production   (external PostgreSQL + Redis, recommended)\n  3) custom\n'
@@ -131,6 +170,10 @@ configure(){
   env_set SONGCHART_HTTP_PORT "${http_port:-80}"
   env_set SONGCHART_HTTPS_PORT "$https_port"
 
+  first_admin="$(read_prompt 'First production administrator email' "$(env_value SONGCHART_FIRST_ADMIN_EMAIL)")"
+  [[ -n "$first_admin" ]] || fail 'A first production administrator email is required.'
+  env_set SONGCHART_FIRST_ADMIN_EMAIL "$first_admin"
+
   case "$profile" in
     single-host) db_mode=bundled; redis_mode=bundled ;;
     production) db_mode=external; redis_mode=external ;;
@@ -150,6 +193,7 @@ configure(){
     db_host="$(read_prompt 'PostgreSQL host' "$(env_value DB_HOST)")"
     db_port="$(read_prompt 'PostgreSQL port' "$(env_value DB_PORT)")"
     db_sslmode="$(read_prompt 'PostgreSQL SSL mode' "$(env_value DB_SSLMODE)")"
+    db_sslmode="${db_sslmode:-require}"
   fi
   db_name="$(read_prompt 'PostgreSQL database' "$(env_value DB_DATABASE)")"
   db_user="$(read_prompt 'PostgreSQL username' "$(env_value DB_USERNAME)")"
@@ -157,16 +201,18 @@ configure(){
   [[ -n "$db_password" ]] || db_password="$(random_secret)"
   env_set DB_HOST "$db_host"; env_set DB_PORT "${db_port:-5432}"; env_set DB_DATABASE "$db_name"; env_set DB_USERNAME "$db_user"; env_set DB_PASSWORD "$db_password"; env_set DB_SSLMODE "${db_sslmode:-prefer}"
 
-  local redis_host redis_port redis_password
+  local redis_host redis_port redis_password redis_scheme
   if [[ "$redis_mode" == bundled ]]; then
-    redis_host=redis; redis_port=6379
+    redis_host=redis; redis_port=6379; redis_scheme=tcp
   else
     redis_host="$(read_prompt 'Redis host' "$(env_value REDIS_HOST)")"
     redis_port="$(read_prompt 'Redis port' "$(env_value REDIS_PORT)")"
+    redis_scheme="$(read_prompt 'Redis transport scheme' "$(env_value REDIS_SCHEME)")"
+    redis_scheme="${redis_scheme:-tls}"
   fi
   redis_password="$(read_secret 'Redis password (blank allowed for external service if policy permits)' "$(env_value REDIS_PASSWORD)")"
   [[ "$redis_mode" == external || -n "$redis_password" ]] || redis_password="$(random_secret)"
-  env_set REDIS_HOST "$redis_host"; env_set REDIS_PORT "${redis_port:-6379}"; env_set REDIS_PASSWORD "$redis_password"
+  env_set REDIS_SCHEME "$redis_scheme"; env_set REDIS_QUEUE_SCHEME "$redis_scheme"; env_set REDIS_HOST "$redis_host"; env_set REDIS_PORT "${redis_port:-6379}"; env_set REDIS_PASSWORD "$redis_password"
 
   if [[ -z "$(env_value APP_KEY)" ]]; then
     env_set APP_KEY "base64:$(random_secret)"
@@ -184,7 +230,7 @@ set_build_metadata(){
   env_set SONGCHART_BUILD_DATE "$built"
 }
 build(){
-  require_docker; validate_config; set_build_metadata; compose_init
+  require_docker; validate_config; validate_release_provenance; set_build_metadata; compose_init
   info "Building immutable application artifact for $(env_value SONGCHART_RELEASE_SHA)."
   compose build app edge
 }
@@ -199,13 +245,34 @@ start_dependencies(){
   fi
 }
 run_connectivity_checks(){
-  info 'Checking PostgreSQL authentication/connectivity.'
-  compose run --rm app php -r '$dsn="pgsql:host=".getenv("DB_HOST").";port=".getenv("DB_PORT").";dbname=".getenv("DB_DATABASE").";sslmode=".(getenv("DB_SSLMODE") ?: "prefer"); $pdo=new PDO($dsn,(string)getenv("DB_USERNAME"),(string)getenv("DB_PASSWORD"),[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]); $pdo->query("select 1"); echo "PostgreSQL OK\n";'
-  info 'Checking Redis authentication/connectivity.'
-  compose run --rm app php -r '$r=new Redis(); $r->connect((string)getenv("REDIS_HOST"),(int)getenv("REDIS_PORT"),5); $p=getenv("REDIS_PASSWORD"); if($p!==false && $p!==""){$r->auth($p);} if($r->ping()===false){fwrite(STDERR,"Redis ping failed\n"); exit(1);} echo "Redis OK\n";'
+  info 'Checking Laravel-owned production runtime connectivity.'
+  compose run --rm app php artisan songchart:production-runtime-check --no-ansi
+}
+run_host_preflight(){
+  local min_mem min_disk mem_mb disk_mb domain
+  min_mem="$(env_value SONGCHART_MIN_MEMORY_MB)"; min_mem="${min_mem:-2048}"
+  min_disk="$(env_value SONGCHART_MIN_DISK_MB)"; min_disk="${min_disk:-4096}"
+
+  if [[ -r /proc/meminfo ]]; then
+    mem_mb="$(awk '/MemTotal:/ {print int($2/1024)}' /proc/meminfo)"
+    [[ "$mem_mb" =~ ^[0-9]+$ ]] || mem_mb=0
+    (( mem_mb >= min_mem )) || fail "Host memory ${mem_mb}MB is below SONGCHART_MIN_MEMORY_MB=${min_mem}."
+    info "Host memory preflight: ${mem_mb}MB."
+  fi
+
+  disk_mb="$(df -Pk "$ROOT" | awk 'NR==2 {print int($4/1024)}')"
+  [[ "$disk_mb" =~ ^[0-9]+$ ]] || disk_mb=0
+  (( disk_mb >= min_disk )) || fail "Free disk ${disk_mb}MB is below SONGCHART_MIN_DISK_MB=${min_disk}."
+  info "Host disk preflight: ${disk_mb}MB free."
+
+  domain="$(env_value SONGCHART_DOMAIN)"
+  if command -v getent >/dev/null 2>&1; then
+    getent ahosts "$domain" >/dev/null 2>&1 || warn "DNS does not currently resolve $domain. Automatic HTTPS will not succeed until public DNS is correct."
+  fi
 }
 doctor(){
   require_docker; validate_config; compose_init
+  run_host_preflight
   info 'Validating production Compose model.'
   compose config --quiet
   if [[ -n "$(compose images -q app 2>/dev/null || true)" ]]; then
@@ -238,10 +305,11 @@ status(){
 }
 backup(){
   require_docker; validate_config; compose_init
-  mkdir -p "$BACKUP_DIR"
-  local stamp target mode host port db user password sslmode retention
+  mkdir -p "$BACKUP_DIR"; chmod 700 "$BACKUP_DIR"
+  local stamp target latest mode host port db user password sslmode retention mirror
   stamp="$(date -u +%Y%m%dT%H%M%SZ)"
   target="$BACKUP_DIR/songchart-production-$stamp.dump"
+  latest="$BACKUP_DIR/songchart-production-latest.dump"
   mode="$(env_value SONGCHART_DATABASE_MODE)"
   db="$(env_value DB_DATABASE)"; user="$(env_value DB_USERNAME)"; password="$(env_value DB_PASSWORD)"
   host="$(env_value DB_HOST)"; port="$(env_value DB_PORT)"; sslmode="$(env_value DB_SSLMODE)"
@@ -251,14 +319,24 @@ backup(){
     compose exec -T postgres pg_dump -U "$user" -d "$db" -Fc > "$target"
   else
     docker run --rm \
-      -e PGPASSWORD="$password" -e PGSSLMODE="${sslmode:-prefer}" \
+      -e PGPASSWORD="$password" -e PGSSLMODE="${sslmode:-require}" \
       postgres:18.4-bookworm \
       pg_dump -h "$host" -p "$port" -U "$user" -d "$db" -Fc > "$target"
   fi
   test -s "$target" || fail 'Backup file is empty.'
-  cp "$target" "$BACKUP_DIR/songchart-production-latest.dump"
+  chmod 600 "$target"
+  cp "$target" "$latest"; chmod 600 "$latest"
   retention="$(env_value SONGCHART_BACKUP_RETENTION_COUNT)"; retention="${retention:-14}"
   find "$BACKUP_DIR" -maxdepth 1 -type f -name 'songchart-production-*.dump' -printf '%T@ %p\n' | sort -nr | awk -v keep="$retention" 'NR>keep {sub(/^[^ ]+ /, ""); print}' | xargs -r rm -f
+
+  mirror="$(env_value SONGCHART_BACKUP_MIRROR_DIR)"
+  if [[ -n "$mirror" ]]; then
+    mkdir -p "$mirror"; chmod 700 "$mirror" 2>/dev/null || true
+    cp "$target" "$mirror/$(basename "$target")"
+    cp "$latest" "$mirror/songchart-production-latest.dump"
+    chmod 600 "$mirror/$(basename "$target")" "$mirror/songchart-production-latest.dump" 2>/dev/null || true
+    info "Backup mirrored to $mirror. Mount this path on off-host/object-storage sync when durability requires it."
+  fi
   info 'Backup complete.'
 }
 restore_drill(){
@@ -314,20 +392,37 @@ smoke(){
   info "Running deployed HTTP smoke against $base/up"
   curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 -D "$headers" -o "$body" "$base/up"
   grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' "$headers" || fail 'Expected X-Content-Type-Options header is missing.'
+  grep -Eiq '^x-frame-options:[[:space:]]*SAMEORIGIN' "$headers" || fail 'Expected X-Frame-Options header is missing.'
+  grep -Eiq '^referrer-policy:[[:space:]]*strict-origin-when-cross-origin' "$headers" || fail 'Expected Referrer-Policy header is missing.'
+  grep -Eiq '^strict-transport-security:[[:space:]]*max-age=' "$headers" || fail 'Expected Strict-Transport-Security header is missing.'
   if grep -Eiq '^server:' "$headers"; then fail 'Public Server response header must be removed.'; fi
   cleanup_smoke
   trap - RETURN
   info 'Production smoke PASSED.'
 }
+bootstrap_first_admin(){
+  local email
+  email="$(env_value SONGCHART_FIRST_ADMIN_EMAIL)"
+  [[ -n "$email" ]] || fail 'SONGCHART_FIRST_ADMIN_EMAIL is required before production install.'
+  info "Ensuring first production administrator $email."
+  if [[ "$NO_INTERACTION" == true ]]; then
+    compose run --rm app php artisan admin:create "$email" --require-existing --no-ansi
+  else
+    compose run --rm app php artisan admin:create "$email" --name='SongChart Admin' --role=super_admin --if-missing --no-ansi
+  fi
+}
 install(){
   require_docker
   if [[ ! -f "$ENV_FILE" || "$NO_INTERACTION" == false ]]; then configure; else validate_config; fi
+  [[ -n "$(env_value SONGCHART_FIRST_ADMIN_EMAIL)" ]] || fail 'SONGCHART_FIRST_ADMIN_EMAIL is required before production install.'
+  run_host_preflight
   build
   compose_init
   start_dependencies
   run_connectivity_checks
   info 'Applying production migrations.'
   compose run --rm app php artisan migrate --force --no-ansi
+  bootstrap_first_admin
   info 'Caching production framework configuration.'
   compose run --rm app php artisan optimize --no-ansi
   up
@@ -347,8 +442,10 @@ SongChart production control
   ./songchart prod db backup [--env-file=PATH]
   ./songchart prod db restore-drill [dump-path] [--env-file=PATH]
 
-Production profile recommends external PostgreSQL 18 and external Redis.
+Production profile requires encrypted external PostgreSQL/Redis transport.
+Official release publishing must set SONGCHART_RELEASE_CHANNEL=accepted-main and exact SONGCHART_ACCEPTED_MAIN_SHA.
 Single-host keeps durable PostgreSQL/Redis volumes local without exposing their ports.
+Backup mirrors may target an off-host mounted path via SONGCHART_BACKUP_MIRROR_DIR.
 Restore verification is isolated by default; this CLI does not overwrite the live production database.
 EOF
 }
