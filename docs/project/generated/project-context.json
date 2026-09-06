@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "a6f940d7f25cbddec0a0b0ff1b49fc656b20ab530902882ee3e45ab5d2af9904",
+    "source_fingerprint": "76225e583ff31b18583aef6244ba9fd696e030a7af06b52d7d0353b7bb391818",
     "candidate": {
         "stage": "19.0",
         "candidate": "v1",
@@ -1016,10 +1016,10 @@
     },
     "source_hashes": {
         "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
-        "compose.dev.yml": "b4e404bf3042dc2e553a8b08765af4932927a257fe44b84414b7dd1a9cdf656d",
+        "compose.dev.yml": "63217f930e886a9dceb79d3e954a647a75589cf3518b6adad4f124d7b9f6c3a9",
         "compose.verify.yml": "d7d2a4a73a19fa24414a9087df76af68d688c3814e151740edd4cbdbf1cad112",
-        "composer.json": "037dc7d050a928e71f9ab337e7df1038e546b86cfd08c44e1e39959f723a8ae0",
-        "composer.lock": "2a47bae17ff13e410e3556ad3f1e52c3bcd2914dd4c6818b4e1fb5e2ae6d2715",
+        "composer.json": "51083c318f1f043e83ba2b6f88be6b6f76e13b540341ce4d5d124d710458a058",
+        "composer.lock": "b63317f16db0f9c19dbc241ad4bf964f552048ebde15a73d9e28c1c366e938af",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
         "database/migrations/0001_01_01_000001_create_cache_table.php": "2c938a40dd1bdd0f99455359a1369df0b46352276e1549bddb8cdcd483bcdfe7",
         "database/migrations/0001_01_01_000002_create_jobs_table.php": "5cdfae12c862dc18e1f865182aa8467afb9abe8f1a6a3045a085df6a89c41d01",
@@ -1053,7 +1053,7 @@
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
         "docs/project/engineering/ai-development-contract.json": "ce79b069eaada91dafe01db5fff59c6b07fcc419bd5af3a8c21a07c1c9fb1a14",
         "docs/project/engineering/architecture-graph-contract.json": "72d81b7cf074ae8bc85e18832785568de4f4e1dd9d88d5b6d7f11067b4bdec22",
-        "docs/project/engineering/consolidation-plan.json": "06c75ba1618b7cfa38f9fb239ccbc1626f9b3e9ec9a2a9cb88b95cc5b8692eaa",
+        "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/development-intelligence-contract.json": "bcfd44e3094bee60e660903ff3a1ceb334146e0125a769be9cb22f3c077ab560",
         "docs/project/engineering/mcp-contract.json": "d80f6a8c316e6744b89d2ba4e7f4f23d43d8fb2e2f8d5bd2d09b62cbd4065ea8",
         "docs/project/engineering/project-kernel-contract.json": "cf71ec704a569d4852bf014bb13a330a04b71d67342a128f7fc026d9ac529107",
@@ -1067,6 +1067,6 @@
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
         "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
-        "songchart": "a3627d7b8a545f823fffc38ebdc4cf38096707caca88cbf67e279292129be317"
+        "songchart": "8852f294d088dd7baf0cffd3d6f78f5232a7b3fc5858df399ec9faf837ced122"
     }
 }

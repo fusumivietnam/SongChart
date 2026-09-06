@@ -1,14 +1,14 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "1c4b00d130b3913ff58f521592f9b588f504dcf1cc181bd0e41fcd08c718679b",
+    "source_fingerprint": "afeea3217f6c3676aabfa5a43abd40442bdae2110896546b603198247745a1b8",
     "current_stage": {
         "id": "19.0",
         "title": "Production Readiness & First Release",
         "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
         "status": "implementing"
     },
-    "accepted_through": "19.0.4-C1C",
+    "accepted_through": "19.0.5",
     "stage_progress": [
         {
             "id": "19.0.1",
@@ -52,38 +52,48 @@
         },
         {
             "id": "19.0.4-C2",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Horizon + Pulse observability consolidation"
         },
         {
             "id": "19.0.4-C3",
-            "status": "planned",
+            "status": "accepted",
             "title": "Pest Browser desktop/mobile critical smoke"
         },
         {
             "id": "19.0.4-C4",
-            "status": "planned",
+            "status": "accepted",
             "title": "Verifier reduction + main provenance + failure classification"
         },
         {
             "id": "19.0.4-C5",
-            "status": "planned",
+            "status": "accepted",
             "title": "Provider transport inventory + Saloon decision"
         },
         {
             "id": "19.0.4-C6",
-            "status": "planned",
+            "status": "accepted",
             "title": "Typed data/API inventory + Laravel Data decision"
         },
         {
+            "id": "19.0.4-C7",
+            "status": "accepted",
+            "title": "Production artifact + installer + operational control"
+        },
+        {
             "id": "19.0.5",
-            "status": "planned",
+            "status": "accepted",
             "title": "Backup/recovery"
         },
         {
             "id": "19.0.6",
-            "status": "planned",
+            "status": "implementing",
             "title": "Security review + production smoke"
+        },
+        {
+            "id": "19.0.7",
+            "status": "planned",
+            "title": "Production operations UX + automatic TLS + low-cost service baseline"
         },
         {
             "id": "final",
@@ -92,17 +102,17 @@
         }
     ],
     "next_tranche": {
-        "id": "19.0.4-C3",
-        "title": "Adopt Pest Browser for desktop/mobile critical smoke coverage"
+        "id": "19.0.7",
+        "title": "Production operations UX + automatic TLS + low-cost service baseline"
     },
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
-        "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated."
+        "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage 19 remaining work may share one umbrella branch while semantic tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
         "candidate-verification.json": "b8b75b2bcd9383e06e6acb3a788cab29815672e6be83db6907c9246d3fa0b49e",
-        "docs/project/engineering/consolidation-plan.json": "06c75ba1618b7cfa38f9fb239ccbc1626f9b3e9ec9a2a9cb88b95cc5b8692eaa",
+        "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "486fa45b9df15aa2cf33141badf1173e2292e9235975b215ad40956f4beaea10",
-        "docs/project/engineering/stage-plan.json": "cce6da3515a70d6127160d91357d9d58676d2c615b54c2df73207baadf2e26df"
+        "docs/project/engineering/stage-plan.json": "ca4690c74d95f5672ab6a075a8849a50dec5b5b86923c562c070b74346ab004a"
     }
 }
