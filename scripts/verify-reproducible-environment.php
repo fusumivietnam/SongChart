@@ -51,6 +51,7 @@ if (! is_int($nodeRuntimeMajor) || $nodeRuntimeMajor < 1) {
 $compose = (string) file_get_contents($root.'/compose.verify.yml');
 foreach ([
     'image: postgres:18.4-bookworm',
+    'image: songchart/verify-runtime:local',
     'dockerfile: docker/verify/Dockerfile',
     'condition: service_healthy',
     'TEST_PGSQL_DATABASE: songchart_verify_test',
@@ -65,8 +66,8 @@ foreach ([
 
 $dockerfile = (string) file_get_contents($root.'/docker/verify/Dockerfile');
 $dockerSignals = [
-    'FROM php:8.5-cli-bookworm',
-    'FROM composer:2 AS composer',
+    'FROM php:8.5-cli-bookworm@sha256:',
+    'FROM composer:2@sha256:',
     'docker-php-ext-install',
     'bcmath',
     'intl',
@@ -77,7 +78,7 @@ $dockerSignals = [
     'PHP extension smoke check passed.',
 ];
 if ($nodeRuntimeMajor !== null) {
-    $dockerSignals[] = "FROM node:{$nodeRuntimeMajor}-bookworm-slim AS node";
+    $dockerSignals[] = "FROM node:{$nodeRuntimeMajor}-bookworm-slim@sha256:";
 }
 foreach ($dockerSignals as $signal) {
     if (! str_contains($dockerfile, $signal)) {

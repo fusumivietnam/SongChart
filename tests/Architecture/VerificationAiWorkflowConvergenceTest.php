@@ -85,7 +85,8 @@ it('exposes the dependency-aware workflow golden path', function (): void {
         ->toContain('before the expensive quality lane')
         ->toContain('A script/test optimization without matching Markdown authority is workflow drift')
         ->toContain('promote the durable rule to its owning `.md` authority and permanent guard')
-        ->toContain('workflow/documentation hardening change made after canonical PASS is still a tracked change');
+        ->toContain('Canonical evidence is valid for the exact commit/tree that was verified.')
+        ->toContain('do not amend/rebase/add generated commits after canonical PASS without rerunning closure');
 
     expect($taskTemplate)
         ->toContain('## Source hygiene and verifier ownership before commit')

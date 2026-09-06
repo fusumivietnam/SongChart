@@ -1,5 +1,15 @@
 name: songchart-dev
 
+x-dev-runtime: &dev-runtime
+  image: songchart/dev-runtime:local
+  build:
+    context: .
+    dockerfile: docker/verify/Dockerfile
+  working_dir: /workspace
+  user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
+  env_file:
+    - .env.docker
+
 services:
   postgres:
     image: postgres:18.4-bookworm
@@ -32,13 +42,7 @@ services:
           - songchart-shared-queue
 
   app:
-    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
-    build:
-      context: .
-      dockerfile: docker/verify/Dockerfile
-    working_dir: /workspace
-    env_file:
-      - .env.docker
+    <<: *dev-runtime
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
@@ -63,6 +67,7 @@ services:
       SESSION_SECURE_COOKIE: "true"
       SESSION_DOMAIN: docker.songchart.test
       SONGCHART_TRUST_DOCKER_PROXY: "true"
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       MUSICBRAINZ_ENABLED: "${MUSICBRAINZ_ENABLED:-false}"
       MUSICBRAINZ_BASE_URL: "${MUSICBRAINZ_BASE_URL:-https://musicbrainz.org/ws/2}"
       MUSICBRAINZ_USER_AGENT: "${MUSICBRAINZ_USER_AGENT:-SongChartWeb/0.1 (contact@example.com)}"
@@ -99,17 +104,12 @@ services:
       - .:/workspace
       - songchart_dev_vendor:/workspace/vendor
       - songchart_dev_node_modules:/workspace/node_modules
+      - songchart_dev_playwright:/ms-playwright
       - songchart_dev_composer_cache:/tmp/composer-cache
       - songchart_dev_npm_cache:/tmp/npm-cache
 
   queue:
-    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
-    build:
-      context: .
-      dockerfile: docker/verify/Dockerfile
-    working_dir: /workspace
-    env_file:
-      - .env.docker
+    <<: *dev-runtime
     environment:
       APP_ENV: local
       DB_CONNECTION: pgsql
@@ -178,5 +178,6 @@ volumes:
   songchart_dev_redis:
   songchart_dev_vendor:
   songchart_dev_node_modules:
+  songchart_dev_playwright:
   songchart_dev_composer_cache:
   songchart_dev_npm_cache:

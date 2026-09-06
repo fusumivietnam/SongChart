@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "purpose": "Continuously convert observed customer/user evidence into roadmap decisions without letting anecdotes bypass product, architecture, security or release gates.",
+  "principles": [
+    "Every meaningful user case study should record the user goal, friction, environment, frequency, severity, workaround and measurable outcome.",
+    "Roadmap priority is evidence-weighted: repeated or high-severity friction outranks speculative feature breadth.",
+    "Operational pain is product evidence too: installation, upgrades, backup/restore, certificates, incidents, observability and cost belong in roadmap discovery.",
+    "Prefer reversible integrations and first-party standards before provider-specific lock-in.",
+    "Free tiers are accelerators, not hard availability dependencies; every external service must have an exit path or self-hosted fallback where practical.",
+    "Accepted user evidence may reprioritize planned work, but must not silently change domain, security, data-durability or release invariants."
+  ],
+  "evidence_template": {
+    "case_id": "stable slug or issue reference",
+    "persona_or_context": "who/where, without storing unnecessary personal data",
+    "job_to_be_done": "what the user is trying to accomplish",
+    "observed_friction": "what failed, confused, slowed or cost the user",
+    "frequency": "single/repeated/systemic",
+    "severity": "low/medium/high/critical",
+    "current_workaround": "what the user does today",
+    "desired_outcome": "observable success condition",
+    "candidate_change": "smallest product/ops change worth testing",
+    "metric": "how to know the change helped",
+    "roadmap_effect": "promote/defer/split/reject/no-change"
+  },
+  "current_operational_case_studies": [
+    {
+      "case_id": "codespaces-browser-runtime",
+      "job_to_be_done": "Run real desktop/mobile browser smoke from the governed development environment without Docker expertise.",
+      "observed_friction": "Browser dependencies and browser binaries required manual container-level diagnosis and mutation.",
+      "candidate_change": "Bake Chromium OS runtime dependencies into the canonical verify/dev image and keep browser binaries in the persistent node_modules volume.",
+      "metric": "A clean rebuild followed by the browser smoke requires no manual apt install or PLAYWRIGHT_BROWSERS_PATH override."
+    },
+    {
+      "case_id": "production-first-install",
+      "job_to_be_done": "Deploy SongChart to a small production host with HTTPS, durable data, backups and a bounded operator surface.",
+      "observed_friction": "A non-Docker specialist needs clear defaults and should not be forced to choose a control panel or certificate workflow before first deploy.",
+      "candidate_change": "Keep Docker Compose + SongChart CLI + Caddy as the first-release control plane; add guided doctor/install/status, automatic TLS verification and documented optional integrations.",
+      "metric": "Fresh-host installation reaches healthy HTTPS production and verified backup/restore using documented commands without manual web-server configuration."
+    }
+  ],
+  "roadmap_tracks": [
+    {
+      "id": "19.0.7",
+      "title": "Production operations UX + automatic TLS + low-cost service baseline",
+      "deliverables": [
+        "Caddy automatic HTTPS readiness and certificate-renewal smoke",
+        "DNS/domain/ports preflight in prod doctor",
+        "operator-friendly install/status/upgrade/rollback guidance",
+        "decision record for direct Docker deployment versus optional control panels",
+        "optional Cloudflare-compatible DNS/proxy profile without making Cloudflare mandatory",
+        "container registry publishing decision and retention/budget guardrails",
+        "uptime/error/backup notification integration points with no single-provider dependency"
+      ]
+    },
+    {
+      "id": "post-release-evidence-loop",
+      "title": "Customer evidence loop",
+      "deliverables": [
+        "Capture support incidents and deployment friction as structured case studies",
+        "Review evidence at each stage boundary",
+        "Promote repeated friction into roadmap items with a measurable acceptance condition",
+        "Retire roadmap items when evidence shows low value, excessive lock-in or maintenance cost"
+      ]
+    }
+  ]
+}

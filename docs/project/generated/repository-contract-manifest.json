@@ -131,7 +131,7 @@
         },
         "docker-development": {
             "source": "docs/project/stack/docker-development-contract.json",
-            "fingerprint": "3955893c7d8687afa409eb703a47c9555fcda072fa156dc1d0576b3f94cc6705",
+            "fingerprint": "24ca021e2d033a3098addfd380754ce11944ad1190a6914f23c42e5709c925fe",
             "consumers": [
                 "songchart",
                 "docs/project/stack/runtime-environments.json",
@@ -221,7 +221,7 @@
         },
         "package-registry": {
             "source": "docs/project/stack/package-registry.json",
-            "fingerprint": "0a01ec84ac88b8d001ea8ce293c09ca8233fc44fd86411630308de1a7e2a07b7",
+            "fingerprint": "123a3a134584a708a9cf54035b7d514511493ba4254c0cb6617aa47ea09e76c9",
             "consumers": []
         },
         "impact-test-map": {
@@ -236,7 +236,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "67e17cf1e867d701c5cc50c5c10691114697edbb85e6fbec23781d915f382b8e",
+            "fingerprint": "44686d22fb6585eabeec114cbc625261b276481e490989abc99a58f2e868b0ed",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -1423,6 +1423,19 @@
             ]
         },
         {
+            "target": "tests/Architecture/ProductionReleaseHardeningTest.php",
+            "rule": "production-release-hardening",
+            "classification": "behavioral",
+            "semantic_authorities": [
+                "release-pipeline",
+                "runtime-environment",
+                "operational-contracts",
+                "authorization",
+                "verification-command-surface",
+                "stack-manifest"
+            ]
+        },
+        {
             "target": "tests/Architecture/ProviderAsyncInfrastructureTest.php",
             "rule": "provider",
             "classification": "behavioral",
@@ -1684,5 +1697,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "ede2d9a48585dc90b5cfc457ac8ed4561da3abb2fac993c4479da4c4b01ec895"
+    "graph_fingerprint": "d5bea1af9ce8b3ae78010bd0c4422d4961d58a6df18c713ebad48b1db8d9c60d"
 }

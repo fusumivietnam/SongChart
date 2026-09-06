@@ -69,11 +69,11 @@ if (($policies['node_runtime_major'] ?? null) !== 24) {
 
 $dockerfile = is_file($root.'/docker/verify/Dockerfile') ? (string) file_get_contents($root.'/docker/verify/Dockerfile') : '';
 $workflow = is_file($root.'/.github/workflows/tests.yml') ? (string) file_get_contents($root.'/.github/workflows/tests.yml') : '';
-if (! str_contains($dockerfile, 'FROM node:24-bookworm-slim AS node')) {
-    $failures[] = 'Docker verification/development runtime must use Node 24 LTS.';
+if (! str_contains($dockerfile, 'FROM node:24-bookworm-slim@sha256:')) {
+    $failures[] = 'Docker verification/development runtime must use digest-pinned Node 24 LTS.';
 }
 if (substr_count($workflow, "node-version: '24'") < 2) {
-    $failures[] = 'GitHub quality and frontend-build jobs must use Node 24.';
+    $failures[] = 'GitHub browser and frontend-build jobs must use Node 24.';
 }
 if (str_contains($workflow, "node-version: '22'") || str_contains($dockerfile, 'FROM node:22')) {
     $failures[] = 'Node 22 runtime drift is not allowed after Node 24 alignment.';

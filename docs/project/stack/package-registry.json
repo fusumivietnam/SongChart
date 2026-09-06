@@ -41,217 +41,62 @@
     "legacy_verification_aliases_must_remain_removed": true
   },
   "packages": {
-    "composer/semver": {
-      "constraint": "^3.4",
-      "status": "required",
-      "capability_owner": "version-tooling",
-      "purpose": "Version constraint evaluation",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "fakerphp/faker": {
-      "constraint": "^1.24",
-      "status": "required-dev",
-      "capability_owner": "test-data",
-      "purpose": "Factories and fixtures",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "larastan/larastan": {
-      "constraint": "^3.8",
-      "status": "required-dev",
-      "capability_owner": "static-analysis",
-      "purpose": "Larastan/PHPStan integration",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "laravel/fortify": {
-      "constraint": "^1.30",
-      "status": "required",
-      "capability_owner": "authentication",
-      "purpose": "Authentication and 2FA",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "laravel/framework": {
-      "constraint": "^13.0",
-      "status": "required",
-      "capability_owner": "framework",
-      "purpose": "Application framework",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "laravel/boost": {
-      "constraint": "^2.7",
-      "status": "required-dev",
-      "capability_owner": "ai-framework-context",
-      "purpose": "Laravel/package AI context and framework MCP tooling; must not replace SongChart project knowledge authority",
-      "platforms": ["linux"],
-      "review_required": true,
-      "official_owner": "laravel"
-    },
-    "laravel/horizon": {
-      "constraint": "^5.48",
-      "status": "required",
-      "capability_owner": "queue-runtime",
-      "purpose": "Primary Redis queue supervision and operational visibility",
-      "platforms": ["linux"],
-      "review_required": true,
-      "official_owner": "laravel"
-    },
-    "laravel/pail": {
-      "constraint": "^1.2",
-      "status": "required-dev",
-      "capability_owner": "developer-tooling",
-      "purpose": "Local log inspection",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "laravel/pint": {
-      "constraint": "^1.24",
-      "status": "required-dev",
-      "capability_owner": "formatting",
-      "purpose": "PHP formatting",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "laravel/pulse": {
-      "constraint": "^1.7.4",
-      "status": "required",
-      "capability_owner": "observability",
-      "purpose": "Operational observability",
-      "platforms": ["linux"],
-      "review_required": true,
-      "official_owner": "laravel",
-      "database_support": ["pgsql"],
-      "published_assets": ["config/pulse.php", "database/migrations/*pulse*"],
-      "adaptation_policy": "vendor-derived files must pass SongChart Pint/Larastan/Pest; fail-closed adaptations allowed"
-    },
-    "laravel/tinker": {
-      "constraint": "^3.0",
-      "status": "required",
-      "capability_owner": "developer-tooling",
-      "purpose": "Local application console",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "livewire/livewire": {
-      "constraint": "^4.0",
-      "status": "required",
-      "capability_owner": "interactive-ui",
-      "purpose": "Server-driven interaction",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "mockery/mockery": {
-      "constraint": "^1.6",
-      "status": "required-dev",
-      "capability_owner": "testing",
-      "purpose": "Test doubles",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "nunomaduro/collision": {
-      "constraint": "^8.8",
-      "status": "required-dev",
-      "capability_owner": "developer-experience",
-      "purpose": "Console test output",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "pestphp/pest": {
-      "constraint": "^4.0",
-      "status": "required-dev",
-      "capability_owner": "testing",
-      "purpose": "Test runner",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "pestphp/pest-plugin-laravel": {
-      "constraint": "^4.1",
-      "status": "required-dev",
-      "capability_owner": "testing",
-      "purpose": "Laravel Pest integration",
-      "platforms": ["linux"],
-      "review_required": true
-    },
-    "spatie/laravel-activitylog": {
-      "constraint": "^5.0",
-      "status": "required",
-      "capability_owner": "privileged-audit",
-      "purpose": "Business audit trail for privileged operations",
-      "platforms": ["linux"],
-      "review_required": true,
-      "official_owner": "spatie",
-      "database_support": ["pgsql"],
-      "usage_policy": "Explicit privileged/business events only; automatic broad model-event logging is forbidden."
-    }
+    "composer/semver": {"constraint": "^3.4", "status": "required", "capability_owner": "version-tooling", "purpose": "Version constraint evaluation", "platforms": ["linux"], "review_required": true},
+    "fakerphp/faker": {"constraint": "^1.24", "status": "required-dev", "capability_owner": "test-data", "purpose": "Factories and fixtures", "platforms": ["linux"], "review_required": true},
+    "larastan/larastan": {"constraint": "^3.8", "status": "required-dev", "capability_owner": "static-analysis", "purpose": "Larastan/PHPStan integration", "platforms": ["linux"], "review_required": true},
+    "laravel/fortify": {"constraint": "^1.30", "status": "required", "capability_owner": "authentication", "purpose": "Authentication and 2FA", "platforms": ["linux"], "review_required": true},
+    "laravel/framework": {"constraint": "^13.0", "status": "required", "capability_owner": "framework", "purpose": "Application framework", "platforms": ["linux"], "review_required": true},
+    "laravel/boost": {"constraint": "^2.7", "status": "required-dev", "capability_owner": "ai-framework-context", "purpose": "Laravel/package AI context and framework MCP tooling; must not replace SongChart project knowledge authority", "platforms": ["linux"], "review_required": true, "official_owner": "laravel"},
+    "laravel/horizon": {"constraint": "^5.48", "status": "required", "capability_owner": "queue-runtime", "purpose": "Primary Redis queue supervision and operational visibility", "platforms": ["linux"], "review_required": true, "official_owner": "laravel"},
+    "laravel/pail": {"constraint": "^1.2", "status": "required-dev", "capability_owner": "developer-tooling", "purpose": "Local log inspection", "platforms": ["linux"], "review_required": true},
+    "laravel/pint": {"constraint": "^1.24", "status": "required-dev", "capability_owner": "formatting", "purpose": "PHP formatting", "platforms": ["linux"], "review_required": true},
+    "laravel/pulse": {"constraint": "^1.7.4", "status": "required", "capability_owner": "observability", "purpose": "Operational observability", "platforms": ["linux"], "review_required": true, "official_owner": "laravel", "database_support": ["pgsql"], "published_assets": ["config/pulse.php", "database/migrations/*pulse*"], "adaptation_policy": "vendor-derived files must pass SongChart Pint/Larastan/Pest; fail-closed adaptations allowed"},
+    "laravel/tinker": {"constraint": "^3.0", "status": "required", "capability_owner": "developer-tooling", "purpose": "Local application console", "platforms": ["linux"], "review_required": true},
+    "livewire/livewire": {"constraint": "^4.0", "status": "required", "capability_owner": "interactive-ui", "purpose": "Server-driven interaction", "platforms": ["linux"], "review_required": true},
+    "mockery/mockery": {"constraint": "^1.6", "status": "required-dev", "capability_owner": "testing", "purpose": "Test doubles", "platforms": ["linux"], "review_required": true},
+    "nunomaduro/collision": {"constraint": "^8.8", "status": "required-dev", "capability_owner": "developer-experience", "purpose": "Console test output", "platforms": ["linux"], "review_required": true},
+    "pestphp/pest": {"constraint": "^4.0", "status": "required-dev", "capability_owner": "testing", "purpose": "Test runner", "platforms": ["linux"], "review_required": true},
+    "pestphp/pest-plugin-browser": {"constraint": "^4.3", "status": "required-dev", "capability_owner": "browser-testing", "purpose": "Playwright-backed desktop/mobile critical browser smoke with CI diagnostic evidence", "platforms": ["linux"], "review_required": true, "official_owner": "pestphp", "runtime_requirements": {"php_extension": "ext-sockets", "playwright": "1.62.1", "browser": "chromium", "browser_path": "/workspace/node_modules/.cache/ms-playwright", "os_dependencies": "baked-into-docker/verify/Dockerfile"}},
+    "pestphp/pest-plugin-laravel": {"constraint": "^4.1", "status": "required-dev", "capability_owner": "testing", "purpose": "Laravel Pest integration", "platforms": ["linux"], "review_required": true},
+    "spatie/laravel-activitylog": {"constraint": "^5.0", "status": "required", "capability_owner": "privileged-audit", "purpose": "Business audit trail for privileged operations", "platforms": ["linux"], "review_required": true, "official_owner": "spatie", "database_support": ["pgsql"], "usage_policy": "Explicit privileged/business events only; automatic broad model-event logging is forbidden."}
   },
   "planned_packages": {
-    "pestphp/pest-plugin-browser": {
-      "decision": "adopt-next",
-      "capability_owner": "browser-testing",
-      "purpose": "Playwright-backed desktop/mobile browser smoke tests with remote diagnostic evidence"
-    },
     "saloonphp/laravel-plugin": {
-      "decision": "evaluate-after-provider-transport-inventory",
+      "decision": "defer-after-inventory",
       "capability_owner": "provider-http-transport",
-      "purpose": "Provider connector/request/auth/retry/test plumbing"
+      "purpose": "Provider connector/request/auth/retry/test plumbing",
+      "decision_authority": "docs/project/stack/provider-transport-inventory.json",
+      "reason": "Current provider transport surface is small and already uses Laravel Http; package adoption would not yet retire enough custom surface."
     },
     "spatie/laravel-data": {
-      "decision": "evaluate-before-api-v1",
+      "decision": "defer-until-api-v1",
       "capability_owner": "cross-boundary-data",
-      "purpose": "Typed data, validation and resource/API contract consolidation"
+      "purpose": "Typed data, validation and resource/API contract consolidation",
+      "decision_authority": "docs/project/domain/typed-data-inventory.json",
+      "reason": "No broad duplicate request/DTO/resource/TypeScript surface is proven yet."
     },
     "spatie/laravel-backup": {
-      "decision": "adopt-in-19.0.5",
+      "decision": "defer-after-first-release",
       "capability_owner": "backup-orchestration",
-      "purpose": "Backup orchestration, retention and notification; restore drill remains SongChart release evidence"
+      "purpose": "Potential future backup orchestration, destinations and notifications",
+      "decision_authority": "scripts/production/manage.sh",
+      "reason": "Stage 19 already owns a bounded PostgreSQL custom-format backup, retention policy and isolated restore drill for bundled and external PostgreSQL. Adopting the package before first release would duplicate operational surface without improving restore evidence or producing net source reduction.",
+      "revisit_when": [
+        "multi-destination or object-storage backup becomes an operator requirement",
+        "backup notifications become a recurring operational requirement",
+        "package adoption can retire more SongChart backup code than its integration adds"
+      ]
     }
   },
   "deployment_profiles": {
-    "linux-production": {
-      "horizon": "planned-primary-queue-supervisor",
-      "queue": "laravel-redis",
-      "pulse": "supported"
-    },
-    "linux-wsl2-development": {
-      "horizon": "optional-for-runtime-parity",
-      "queue": "laravel-redis-worker",
-      "pulse": "supported"
-    },
-    "codespaces": {
-      "horizon": "optional-for-runtime-parity",
-      "queue": "laravel-redis-worker",
-      "pulse": "supported"
-    }
+    "linux-production": {"horizon": "primary-queue-supervisor", "queue": "laravel-redis-horizon", "pulse": "supported", "database": "external-postgresql-18-recommended", "redis": "external-recommended"},
+    "linux-wsl2-development": {"horizon": "primary-queue-supervisor", "queue": "laravel-redis-horizon", "pulse": "supported"},
+    "codespaces": {"horizon": "primary-queue-supervisor", "queue": "laravel-redis-horizon", "pulse": "supported"}
   },
   "external_tools": {
-    "docker-engine-compose-v2": {
-      "status": "primary-development-runtime",
-      "purpose": "Linux/WSL2 development and canonical verification",
-      "platforms": ["linux", "wsl2"],
-      "review_required": true
-    },
-    "github-codespaces": {
-      "status": "remote-development-adapter",
-      "purpose": "mobile/remote-accessible development adapter over the same repository/runtime contract",
-      "platforms": ["cloud-linux"],
-      "review_required": true
-    },
-    "caddy": {
-      "version": "2.11.3",
-      "status": "docker-development-only",
-      "purpose": "local HTTPS reverse proxy",
-      "platforms": ["docker-linux"],
-      "review_required": true
-    },
-    "mkcert": {
-      "status": "host-development-only",
-      "purpose": "locally trusted development certificate generation",
-      "platforms": ["linux", "wsl2-host-integration"],
-      "review_required": true,
-      "private_key_must_not_be_committed": true
-    }
+    "docker-engine-compose-v2": {"status": "primary-development-and-production-runtime", "purpose": "Linux/WSL2 development, production packaging and canonical verification", "platforms": ["linux", "wsl2"], "review_required": true},
+    "github-codespaces": {"status": "remote-development-adapter", "purpose": "mobile/remote-accessible development adapter over the same repository/runtime contract", "platforms": ["cloud-linux"], "review_required": true},
+    "caddy": {"version": "2.11.3", "status": "development-and-production-edge", "purpose": "HTTPS reverse proxy, TLS and static edge", "platforms": ["docker-linux"], "review_required": true},
+    "mkcert": {"status": "host-development-only", "purpose": "locally trusted development certificate generation", "platforms": ["linux", "wsl2-host-integration"], "review_required": true, "private_key_must_not_be_committed": true}
   }
 }

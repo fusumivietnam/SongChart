@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 it('keeps candidate read-only and exposes optimized closure and demo workflows', function (): void {
     $cli = file_get_contents(base_path('songchart'));
+    $setup = file_get_contents(base_path('scripts/setup-docker-dev.sh'));
     $dev = file_get_contents(base_path('compose.dev.yml'));
     $demo = file_get_contents(base_path('compose.demo.yml'));
     $demoEnv = file_get_contents(base_path('.env.demo.example'));
+    $dockerContract = json_decode((string) file_get_contents(base_path('docs/project/stack/docker-development-contract.json')), true, 512, JSON_THROW_ON_ERROR);
     $databaseConfig = file_get_contents(base_path('config/database.php'));
     $queueConfig = file_get_contents(base_path('config/queue.php'));
     $appProvider = file_get_contents(base_path('app/Providers/AppServiceProvider.php'));
@@ -31,12 +33,38 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('demo up -d redis app')
         ->toContain('dev up -d postgres redis app queue')
         ->toContain('single shared development queue worker authority')
-        ->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
+        ->toContain('.songchart-composer-fingerprint')
+        ->toContain('.songchart-npm-fingerprint')
+        ->toContain('Reusing locked npm dependencies for fingerprint')
         ->toContain('/tmp/composer-cache /tmp/npm-cache')
         ->toContain('chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID')
-        ->toContain('APP_URL='."' + demo_url")
+        ->toContain('APP_URL=$SONGCHART_DEMO_APP_URL')
         ->toContain('SONGCHART_DEMO_APP_URL="https://${CODESPACE_NAME}-8001.')
+        ->toContain('Development configuration is missing; bootstrapping before ready.')
+        ->toContain('exec bash "$ROOT/scripts/setup-docker-dev.sh"')
+        ->not->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
+        ->not->toContain('python3 - "$ROOT/.env.demo"')
         ->not->toContain('demo up -d redis app queue');
+
+    expect($setup)
+        ->toContain('Existing development configuration detected.')
+        ->toContain('Preserving database, administrator and local state; continuing with dev ready.')
+        ->toContain('exec "$ROOT/songchart" dev ready')
+        ->not->toContain('docker compose down -v')
+        ->not->toContain('migrate:fresh');
+
+    expect($dockerContract['development']['lifecycle'] ?? null)
+        ->toBeArray()
+        ->and($dockerContract['development']['lifecycle']['ready_when_unconfigured'] ?? null)
+        ->toBe('delegate-to-setup')
+        ->and($dockerContract['development']['lifecycle']['setup_when_configured'] ?? null)
+        ->toBe('delegate-to-ready')
+        ->and($dockerContract['development']['lifecycle']['setup_semantics'] ?? null)
+        ->toBe('bootstrap-only')
+        ->and($dockerContract['development']['lifecycle']['destructive_reset_requires_explicit_command'] ?? null)
+        ->toBeTrue()
+        ->and($dockerContract['verification']['may_mutate_development_database'] ?? null)
+        ->toBeFalse();
 
     expect($demoEnv)
         ->toContain("APP_URL=\n")

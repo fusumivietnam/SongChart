@@ -61,6 +61,7 @@ env_value(){
   local file="$1" key="$2"
   grep -m1 -E "^${key}=" "$file" 2>/dev/null | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true
 }
+lock_fingerprint(){ cat "$@" | sha256sum | awk '{print $1}'; }
 ensure_local_admin(){
   local email name role
   email="$(env_value "$ROOT/.env.docker" SONGCHART_LOCAL_ADMIN_EMAIL)"
@@ -73,19 +74,40 @@ ensure_local_admin(){
   dev_exec_or_run php artisan admin:ensure-local "$email" "--name=$name" "--role=$role"
 }
 ensure_dev_dependencies(){
-  if ! dev run --rm app test -f /workspace/vendor/autoload.php; then
-    printf '[SongChart dev] PHP dependencies missing from Docker volume; installing locked Composer dependencies.\n'
+  local composer_fingerprint npm_fingerprint current
+  composer_fingerprint="$(lock_fingerprint "$ROOT/composer.json" "$ROOT/composer.lock")"
+  current="$(dev run --rm -T app sh -lc 'cat /workspace/vendor/.songchart-composer-fingerprint 2>/dev/null || true')"
+  if [[ "$current" != "$composer_fingerprint" ]] || ! dev run --rm -T app test -f /workspace/vendor/autoload.php; then
+    printf '[SongChart dev] Hydrating locked Composer dependencies for fingerprint %s.\n' "$composer_fingerprint"
     dev run --rm app composer install --no-interaction --prefer-dist --no-progress
+    dev run --rm -T app sh -lc "printf '%s\\n' '$composer_fingerprint' > /workspace/vendor/.songchart-composer-fingerprint"
+  else
+    printf '[SongChart dev] Reusing locked Composer dependencies for fingerprint %s.\n' "$composer_fingerprint"
   fi
-  if ! dev run --rm app test -d /workspace/node_modules; then
-    printf '[SongChart dev] Node dependencies missing from Docker volume; installing locked npm dependencies.\n'
+
+  npm_fingerprint="$(lock_fingerprint "$ROOT/package.json" "$ROOT/package-lock.json")"
+  current="$(dev run --rm -T app sh -lc 'cat /workspace/node_modules/.songchart-npm-fingerprint 2>/dev/null || true')"
+  if [[ "$current" != "$npm_fingerprint" ]] || ! dev run --rm -T app test -x /workspace/node_modules/.bin/vite; then
+    printf '[SongChart dev] Hydrating locked npm dependencies for fingerprint %s.\n' "$npm_fingerprint"
     dev run --rm app npm ci --no-audit --no-fund
+    dev run --rm -T app sh -lc "printf '%s\\n' '$npm_fingerprint' > /workspace/node_modules/.songchart-npm-fingerprint"
+  else
+    printf '[SongChart dev] Reusing locked npm dependencies for fingerprint %s.\n' "$npm_fingerprint"
+  fi
+
+  current="$(dev run --rm -T app sh -lc 'cat /ms-playwright/.songchart-playwright-fingerprint 2>/dev/null || true')"
+  if [[ "$current" != "$npm_fingerprint" ]] || ! dev run --rm -T app sh -lc 'find /ms-playwright -maxdepth 1 -type d -name "chromium-*" -print -quit | grep -q .'; then
+    printf '[SongChart dev] Hydrating verified Playwright Chromium runtime for fingerprint %s.\n' "$npm_fingerprint"
+    dev run --rm app npx playwright install chromium
+    dev run --rm -T app sh -lc "printf '%s\\n' '$npm_fingerprint' > /ms-playwright/.songchart-playwright-fingerprint"
+  else
+    printf '[SongChart dev] Reusing Playwright Chromium runtime for fingerprint %s.\n' "$npm_fingerprint"
   fi
 }
 repair_dev_runtime_ownership(){
   printf '[SongChart dev] Repairing generated runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
   dev run --rm --user root app sh -lc \
-    "mkdir -p /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/bootstrap/cache /workspace/storage"
+    "mkdir -p /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs /tmp/composer-cache /tmp/npm-cache && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache"
 }
 dev_db_backup(){
   ensure_dev_config
@@ -117,29 +139,44 @@ dev_db_restore(){
 setup_demo(){
   ensure_dev_config
   [[ -f "$ROOT/.env.demo" ]] || cp "$ROOT/.env.demo.example" "$ROOT/.env.demo"
-  python3 - "$ROOT/.env.demo" "$SONGCHART_DEMO_APP_URL" <<'PY2'
-from pathlib import Path
-import base64, os, re, sys
-p = Path(sys.argv[1])
-demo_url = sys.argv[2]
-t = p.read_text()
-if re.search(r'(?m)^APP_KEY=\s*$', t):
-    t = re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:' + base64.b64encode(os.urandom(32)).decode(), t)
-if re.search(r'(?m)^APP_URL=', t):
-    t = re.sub(r'(?m)^APP_URL=.*$', 'APP_URL=' + demo_url, t)
-else:
-    t += '\nAPP_URL=' + demo_url + '\n'
-p.write_text(t)
-PY2
+  if grep -Eq '^APP_KEY=[[:space:]]*$' "$ROOT/.env.demo"; then
+    local app_key
+    app_key="base64:$(head -c 32 /dev/urandom | base64 | tr -d '\n')"
+    sed -i -E "s|^APP_KEY=[[:space:]]*$|APP_KEY=$app_key|" "$ROOT/.env.demo"
+  fi
+  if grep -Eq '^APP_URL=' "$ROOT/.env.demo"; then
+    sed -i -E "s|^APP_URL=.*$|APP_URL=$SONGCHART_DEMO_APP_URL|" "$ROOT/.env.demo"
+  else
+    printf '\nAPP_URL=%s\n' "$SONGCHART_DEMO_APP_URL" >> "$ROOT/.env.demo"
+  fi
   printf '[SongChart demo] URL authority: %s\n' "$SONGCHART_DEMO_APP_URL"
   printf '[SongChart demo] Ensuring development PostgreSQL authority is running.\n'
   dev up -d postgres
   demo build app
   printf '[SongChart demo] Repairing dependency/runtime ownership for UID:GID %s:%s.\n' "$SONGCHART_HOST_UID" "$SONGCHART_HOST_GID"
   demo run --rm --user root app sh -lc \
-    "mkdir -p /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache && find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} + && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache"
-  demo run --rm app composer install --no-interaction --prefer-dist --no-progress
-  demo run --rm app npm ci --no-audit --no-fund
+    "mkdir -p /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache && chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache"
+
+  local composer_fingerprint npm_fingerprint current
+  composer_fingerprint="$(lock_fingerprint "$ROOT/composer.json" "$ROOT/composer.lock")"
+  current="$(demo run --rm -T app sh -lc 'cat /workspace/vendor/.songchart-composer-fingerprint 2>/dev/null || true')"
+  if [[ "$current" != "$composer_fingerprint" ]] || ! demo run --rm -T app test -f /workspace/vendor/autoload.php; then
+    printf '[SongChart demo] Hydrating locked Composer dependencies for fingerprint %s.\n' "$composer_fingerprint"
+    demo run --rm app composer install --no-interaction --prefer-dist --no-progress
+    demo run --rm -T app sh -lc "printf '%s\\n' '$composer_fingerprint' > /workspace/vendor/.songchart-composer-fingerprint"
+  else
+    printf '[SongChart demo] Reusing locked Composer dependencies for fingerprint %s.\n' "$composer_fingerprint"
+  fi
+
+  npm_fingerprint="$(lock_fingerprint "$ROOT/package.json" "$ROOT/package-lock.json")"
+  current="$(demo run --rm -T app sh -lc 'cat /workspace/node_modules/.songchart-npm-fingerprint 2>/dev/null || true')"
+  if [[ "$current" != "$npm_fingerprint" ]] || ! demo run --rm -T app test -x /workspace/node_modules/.bin/vite; then
+    printf '[SongChart demo] Hydrating locked npm dependencies for fingerprint %s.\n' "$npm_fingerprint"
+    demo run --rm app npm ci --no-audit --no-fund
+    demo run --rm -T app sh -lc "printf '%s\\n' '$npm_fingerprint' > /workspace/node_modules/.songchart-npm-fingerprint"
+  else
+    printf '[SongChart demo] Reusing locked npm dependencies for fingerprint %s.\n' "$npm_fingerprint"
+  fi
   demo run --rm app npm run build
   demo up -d redis app
   printf '[SongChart demo] READY — '; demo_url
@@ -160,11 +197,11 @@ focused_test(){
       docker compose -p "$project" -f "$VERIFY_COMPOSE" build verify
     fi
     if [[ "$focused" == tests/Unit/* || "$focused" == tests/Architecture/* ]]; then
-      test_command="composer install --no-interaction --prefer-dist --no-progress && php artisan test '$focused'"
+      test_command="php artisan test '$focused'"
     else
-      test_command="composer install --no-interaction --prefer-dist --no-progress && php scripts/run-database-tests.php postgres --prepare-schema '$focused'"
+      test_command="php scripts/run-database-tests.php postgres --prepare-schema '$focused'"
     fi
-    docker compose -p "$project" -f "$VERIFY_COMPOSE" run --rm verify bash -lc "$test_command"
+    docker compose -p "$project" -f "$VERIFY_COMPOSE" run --rm verify bash -lc "set -euo pipefail; marker=/workspace/vendor/.songchart-dependency-fingerprint; fingerprint=\$(sha256sum composer.json composer.lock | sha256sum | awk '{print \$1}'); current=\$(cat \"\$marker\" 2>/dev/null || true); if [[ ! -f /workspace/vendor/autoload.php || \"\$current\" != \"\$fingerprint\" ]]; then composer install --no-interaction --prefer-dist --no-progress; printf '%s\\n' \"\$fingerprint\" > \"\$marker\"; fi; $test_command"
   )
 }
 stage_verify(){
@@ -220,7 +257,7 @@ prepare_candidate_authority(){
   printf '[SongChart candidate] Generated repository authority committed.\n'
 }
 help(){ cat <<'EOF'
-SongChart Linux-first development CLI
+SongChart Linux-first development and operations CLI
   ./songchart ai status
   ./songchart ai doctor
   ./songchart impact [--diff|--verify] [--json] <planned-paths...>
@@ -232,6 +269,7 @@ SongChart Linux-first development CLI
   ./songchart dev db backup|restore [dump-path]
   ./songchart demo setup|up|down|status|logs|url
   ./songchart demo url
+  ./songchart prod configure|install|doctor|build|up|down|status
   ./songchart artisan|composer|npm <args...>
   ./songchart context [args...]
   ./songchart candidate [--prepare]
@@ -247,11 +285,19 @@ AI/workflow convergence:
   ./songchart audit                collect all quality/static/governance failures without fail-fast
 
 Development/live test:
-  ./songchart dev ready     start persistent development runtime on port 8000
+  ./songchart dev ready     ensure the persistent development runtime is usable; bootstrap automatically when missing
+  ./songchart dev setup     bootstrap only when local development configuration is missing; otherwise delegate to ready
   ./songchart dev url       print the governed development URL for local/Codespaces
   ./songchart demo setup    prepare production-like public demo on port 8001 using development PostgreSQL data
   ./songchart demo up       start demo app and ensure the single shared development queue worker authority
   ./songchart demo url      print the governed demo URL for local/Codespaces
+
+Production operations:
+  ./songchart prod configure   create/update gitignored production configuration
+  ./songchart prod install     build the immutable artifact, migrate and start the selected topology
+  ./songchart prod doctor      validate environment, Compose and runtime connectivity
+  ./songchart prod status      show production process and Horizon status
+  Production supports bundled or external PostgreSQL/Redis; external services are recommended for production isolation.
 
 AI session:
   ./songchart ai status     print current stage, Git, context and verification status
@@ -270,7 +316,7 @@ Data resilience:
   ./songchart dev db backup
   ./songchart dev db restore [dump-path]
 
-Stable projects: songchart-dev / songchart-demo / songchart-verify
+Stable projects: songchart-dev / songchart-demo / songchart-verify / configurable production instance
 EOF
 }
 cmd="${1:-help}"; shift || true
@@ -298,8 +344,13 @@ case "$cmd" in
   case "$sub" in
    setup) exec bash "$ROOT/scripts/setup-docker-dev.sh" "$@" ;;
    ready)
+    if [[ ! -f "$ROOT/.env.docker" ]]; then
+      printf '[SongChart dev] Development configuration is missing; bootstrapping before ready.\n'
+      exec bash "$ROOT/scripts/setup-docker-dev.sh"
+    fi
     ensure_dev_config
     printf '[SongChart dev] Starting development services.\n'
+    repair_dev_runtime_ownership
     ensure_dev_dependencies
     dev_up
     repair_dev_runtime_ownership
@@ -338,6 +389,7 @@ case "$cmd" in
    url) ensure_demo_config; demo_url ;;
    *) die 'Usage: ./songchart demo [setup|up|down|status|logs|url]' ;;
   esac ;;
+ prod) exec bash "$ROOT/scripts/production/manage.sh" "$@" ;;
  artisan) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart artisan <args...>'; dev_exec_or_run php artisan "$@" ;;
  composer) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart composer <args...>'; dev_exec_or_run composer "$@" ;;
  npm) require_docker; ensure_dev_config; [[ $# -gt 0 ]] || die 'Usage: ./songchart npm <args...>'; dev_exec_or_run npm "$@" ;;

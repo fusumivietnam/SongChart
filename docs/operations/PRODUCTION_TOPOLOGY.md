@@ -1,92 +1,19 @@
 # Production Topology
 
-Status: Stage 19.0.1 inventory authority for the supported first-release runtime shape. This document describes topology and gaps only; later Stage 19 slices own implementation details.
+Status: Stage 19 production runtime authority for the supported first-release shape.
 
-## Accepted baseline
+## Runtime principles
 
-- Stage 19 starts from accepted `main` merge `40eba85e36bed1d3a5604975e45ad3234aca6e25`.
-- Current development runtime is Docker-first through `compose.dev.yml`.
-- PostgreSQL 18 remains the release-authoritative database.
-- Redis is already used for queue/cache coordination.
-- Laravel `/up` is the existing application health endpoint.
-- Existing authorization, audit, provider credential/rate and canonical-identity boundaries are unchanged by production topology work.
+- Development remains Docker-first through `compose.dev.yml`.
+- Production uses `compose.production.yml` and the immutable multi-stage artifact in `docker/production/Dockerfile`.
+- PostgreSQL 18 remains release-authoritative durable data.
+- Redis owns queue/cache/runtime state and is not a substitute for PostgreSQL durability.
+- Web, Horizon and scheduler run as independent processes from the same immutable SongChart application image.
+- Caddy is the production TLS/static edge and is built from the same accepted source tree.
+- Real secrets live only in the runtime environment/secret boundary; `.env.production` is gitignored and must be mode `0600` when file-backed.
+- Production artifacts are traceable to the accepted Git SHA through OCI image metadata and `SONGCHART_RELEASE_SHA`.
 
-## Current runtime inventory
-
-### Web
-
-Current development web runtime:
-
-- image source: `docker/verify/Dockerfile`;
-- PHP baseline: PHP 8.5 CLI on Debian Bookworm;
-- development process: PHP built-in server on port 8000;
-- source, vendor and node_modules are bind/named-volume mounted;
-- health check calls `http://127.0.0.1:8000/up`;
-- Caddy terminates local TLS and reverse-proxies to `app:8000`.
-
-Production conclusion: the development PHP built-in server and bind-mounted source tree are not supported production primitives.
-
-### Queue
-
-Development and production use a separate long-running queue process based on the same application artifact. Laravel Horizon is the canonical Redis queue supervisor:
-
-```text
-php artisan horizon
-```
-
-Queue taxonomy, supervisor allocation, balancing, process limits and worker lifecycle are owned by `config/horizon.php`. Compose and production shell wrappers only start Horizon; they must not duplicate queue topology or introduce a second native `queue:work` supervision model.
-
-Production conclusion: preserve an independent queue lifecycle and the existing queue taxonomy, with Horizon as the single queue-supervision authority.
-
-### Scheduler
-
-`routes/console.php` defines scheduled provider health checks, Discovery rebuilds and Horizon snapshots where Horizon is installed. The development Compose stack does not run an independent scheduler process.
-
-Production conclusion: production requires one independently managed scheduler process using the same immutable application image. Stage 19.0.3 owns the concrete lifecycle.
-
-### PostgreSQL
-
-Current Docker development runtime uses `postgres:18.4-bookworm` with a persistent volume and health check through `pg_isready`.
-
-Production conclusion:
-
-- PostgreSQL major 18 is mandatory;
-- database storage is stateful and must not live inside the application image;
-- production credentials must be injected, not copied from development defaults;
-- backup/restore lifecycle is a separate required responsibility owned by Stage 19.0.5.
-
-### Redis
-
-Current Docker development runtime uses `redis:7.4-alpine` with persistent storage and a `redis-cli ping` health check. Redis coordinates queue/cache/runtime state.
-
-Production conclusion:
-
-- Redis is a required runtime dependency for the first release while Redis queues are enabled;
-- Redis must be independently restartable from web/worker processes;
-- production authentication/network exposure must fail closed and is owned by the environment/security slices;
-- Redis is not a substitute for PostgreSQL durability.
-
-### TLS / edge
-
-Current development edge uses Caddy 2.11.3 with local mkcert certificates and HTTP-to-HTTPS redirect.
-
-Production conclusion: Caddy remains the selected first-release reverse-proxy/TLS primitive unless later implementation evidence proves a blocker. Production must use real ACME/provider-managed certificates rather than tracked/local development certificate files.
-
-### Observability
-
-The repository already contains Laravel Pulse configuration and optional Sentry/PostHog environment inputs. `/up` provides application liveness/readiness evidence at the HTTP layer.
-
-Production conclusion: reuse existing observability primitives first. Stage 19.0.4 owns actionable health/alert definitions and must not expose secrets.
-
-### Release/CI
-
-GitHub Actions already provides deterministic PR verification. Canonical release packaging remains post-canonical and must originate from an accepted exact `main` tree.
-
-Production conclusion: deployment must consume a closed immutable artifact/image rather than rebuild from an unverified working tree on the server.
-
-## Supported first-release process topology
-
-The minimal supported runtime topology is:
+## Supported process topology
 
 ```text
 INTERNET
@@ -95,130 +22,180 @@ INTERNET
 CADDY / TLS EDGE
    |
    v
-WEB PROCESS ---------------> POSTGRESQL 18
+PHP-FPM WEB ---------------> POSTGRESQL 18
    |                              ^
    |                              |
    +-----------> REDIS <----------+
                     ^
                     |
-             QUEUE WORKER(S)
+                 HORIZON
                     ^
                     |
                 SCHEDULER
-
-All application processes use the same immutable SongChart application image/artifact.
 ```
 
-Required independent lifecycle units:
+Independent lifecycle units are `edge`, `app`, `queue`, `scheduler`, `postgres` and `redis`. Host count is not an application invariant.
 
-1. `edge` — Caddy TLS/reverse proxy;
-2. `web` — production PHP web runtime;
-3. `queue` — Laravel queue worker/Horizon runtime;
-4. `scheduler` — Laravel scheduler runtime;
-5. `postgres` — PostgreSQL 18 stateful service or compatible managed PostgreSQL 18 service;
-6. `redis` — Redis stateful/runtime service or compatible managed Redis service.
+## Installation profiles
 
-The first release may place these processes on one host for operational simplicity, but process boundaries must remain explicit so web, worker and scheduler can restart independently. Host count is not an application invariant.
+### Single-host
 
-## Immutable application artifact requirements
+The bundled profile starts PostgreSQL 18 and Redis on the same Docker host with named durable volumes. Neither service publishes its database/cache port to the host by default. This profile is appropriate for staging, small installations and simple VPS operation.
 
-A production application image/artifact must eventually:
+### Production
 
-- contain application source at the accepted exact commit;
-- install Composer dependencies without development packages;
-- build frontend assets before runtime;
-- avoid bind-mounting repository source, `vendor` or `node_modules` from the host;
-- run with `APP_ENV=production` and `APP_DEBUG=false`;
-- support web, queue and scheduler entrypoints from the same artifact;
-- expose only required runtime files/ports;
-- contain no real environment secrets;
-- be traceable to the accepted Git commit used for candidate/canonical/PR closure.
+External PostgreSQL 18 and external Redis are recommended for production because their storage, backup, failure and scaling lifecycle can be isolated from disposable application hosts. SongChart code does not distinguish local from remote services beyond the governed environment contract.
 
-Concrete image implementation belongs to later Stage 19 slices after the environment contract is hardened.
+### Custom
 
-## Production environment inventory
+Operators may select bundled or external PostgreSQL/Redis independently. External boundaries are configurable; internal Compose service names and internal ports remain stable to avoid turning the installer into a general Compose generator.
 
-### Required application identity/runtime
+## Operator-configurable deployment boundary
 
-- `APP_KEY` — secret, mandatory;
-- `APP_ENV=production` — non-secret, mandatory;
-- `APP_DEBUG=false` — non-secret, mandatory;
-- `APP_URL` — public HTTPS canonical origin, mandatory;
-- `APP_TIMEZONE`, locale/fallback locale — explicit runtime configuration;
-- logging channel/level — production values must not default to debug.
+The production installer owns the following deployment-facing values:
 
-### Required PostgreSQL
+- `SONGCHART_INSTANCE`;
+- `SONGCHART_DOMAIN`, `SONGCHART_ACME_EMAIL`;
+- `SONGCHART_HTTP_PORT`, `SONGCHART_HTTPS_PORT`;
+- `SONGCHART_DATABASE_MODE= bundled|external`;
+- PostgreSQL host, port, database, username, password and `DB_SSLMODE`;
+- `SONGCHART_REDIS_MODE=bundled|external`;
+- Redis host, port, username and password.
 
-- `DB_CONNECTION=pgsql`;
-- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`;
-- `DB_PASSWORD` — secret, mandatory where password auth is used.
+Stable internal authority remains:
 
-Development credentials from `compose.dev.yml` are local-only and forbidden as production defaults.
+- service names `edge`, `app`, `queue`, `scheduler`, `postgres`, `redis`;
+- PHP-FPM port 9000;
+- PostgreSQL internal port 5432;
+- Redis internal port 6379;
+- PostgreSQL major 18;
+- Horizon queue supervision and `config/horizon.php` queue topology;
+- Laravel `schedule:work` scheduler lifecycle.
 
-### Required Redis / async runtime
+## Immutable application artifact
 
-- `REDIS_CLIENT=phpredis`;
-- `REDIS_HOST`, `REDIS_PORT`;
-- `REDIS_PASSWORD` when Redis authentication is enabled;
-- queue connection/database and retry configuration;
-- `QUEUE_CONNECTION=redis` for the accepted first-release async topology.
+`docker/production/Dockerfile` builds production assets in stages:
 
-### Sessions/cache
+1. locked Node 24 dependencies build the Vite frontend;
+2. locked Composer dependencies install with `--no-dev`;
+3. PHP 8.5 FPM receives source, optimized vendor autoloading and built frontend assets;
+4. the Caddy edge target receives only the public tree and governed Caddy configuration.
 
-Current repository defaults vary between local examples and Docker development. Stage 19.0.2 must select explicit production session/cache stores rather than inherit ambiguous local defaults.
+Production must not use the PHP built-in development server, host bind-mounted source, host `vendor`, or host `node_modules`.
 
-### Mail / external services
+The `app`, `queue` and `scheduler` services share one application image. Commands are intentionally thin:
 
-Mail, analytics, Sentry, Turnstile, Resend and music-provider credentials are capability-dependent. Empty/disabled configuration must remain fail-closed. Enabling a provider requires its existing policy/credential boundaries; production topology does not weaken those checks.
+```text
+app       -> php-fpm -F
+queue     -> php artisan horizon
+scheduler -> php artisan schedule:work
+```
 
-### Provider schedules
+Before replacing a running artifact, terminate Horizon gracefully with `php artisan horizon:terminate` and allow the process manager to start Horizon from the newly accepted image.
 
-- `SONGCHART_PROVIDER_HEALTH_SCHEDULE_ENABLED` controls provider health scheduling;
-- `SONGCHART_DISCOVERY_SCHEDULE_ENABLED` controls Discovery scheduled rebuilds;
-- queue names/batch/TTL settings remain existing application configuration.
+## Edge / TLS
 
-### Observability
+Caddy owns public HTTP/HTTPS ports, automatic TLS and static public assets. PostgreSQL and Redis are private runtime dependencies and are not publicly exposed by the first-release Compose authority.
 
-Pulse configuration already exists. Sentry/PostHog inputs are optional until Stage 19.0.4 accepts an operator use case and concrete production configuration.
+Production domain and public host ports are configurable. Container ports and service identities remain fixed.
 
-### Development-only settings forbidden in production
+For a normal public domain, the first-release default is direct Caddy automatic HTTPS rather than a separate certificate panel. DNS must resolve to the host and public ports 80/443 must be reachable. `SONGCHART_ACME_EMAIL` should be configured so certificate-account problems are actionable. A CDN/DNS proxy may sit in front of Caddy, but it is optional and must not become a hard runtime dependency.
 
-The following current development assumptions must not leak into production:
+## Control-plane policy
 
-- `APP_ENV=local`;
-- `APP_DEBUG=true`;
-- `DESIGN_LAB_ENABLED=true` unless explicitly justified;
-- `SONGCHART_ADMIN_2FA_MODE=disabled`;
-- development database usernames/passwords;
-- local mkcert certificate paths;
-- PHP built-in web server;
-- bind-mounted repository/dependency trees;
-- testing database variables as production configuration.
+The first release does not require a web hosting control panel. The supported control plane is deliberately small:
 
-## Explicit gaps after inventory
+```text
+Git / accepted release artifact
+        |
+        v
+./songchart prod ...
+        |
+        v
+Docker Compose
+        |
+        +--> Caddy
+        +--> app / Horizon / scheduler
+        +--> PostgreSQL / Redis or external services
+```
 
-19.0.1 intentionally does not implement these gaps:
+A control panel such as a Docker/PaaS management UI may be evaluated later only when user evidence shows that it retires meaningful operational friction without creating a second deployment authority. If one is adopted, it must call or faithfully implement the same image, environment, health, backup and rollback contracts rather than becoming an independent source of configuration truth.
 
-1. no production Dockerfile/application runtime image yet;
-2. no production Compose/deployment manifest yet;
-3. no production Caddyfile/domain/TLS environment contract yet;
-4. no `.env.production.example` or equivalent hardened environment template yet;
-5. no fail-closed production configuration validation for critical values yet;
-6. no independent production scheduler lifecycle yet;
-7. queue/Horizon production process choice and restart policy not yet sealed;
-8. no documented/verified PostgreSQL backup + restore procedure yet;
-9. no production alerting/health escalation contract yet;
-10. no final production smoke/release-tag procedure yet.
+## Optional low-cost / free service baseline
 
-These gaps map directly to Stage 19.0.2 through 19.0.6 and final release closure. They are not reasons to create additional infrastructure frameworks in 19.0.1.
+Optional services are integration profiles, not correctness dependencies. They should be selected behind stable boundaries so SongChart can move providers without rewriting the application.
 
-## 19.0.1 acceptance
+- DNS / proxy / basic edge protection: a Cloudflare-compatible profile may be documented, while direct DNS-to-Caddy remains supported.
+- TLS certificates: Caddy automatic HTTPS is the default; no paid certificate service is required for the standard public-domain path.
+- Container registry: GitHub Container Registry is a natural first candidate for release images because it aligns with repository/Actions provenance; retention and budget limits must be explicit before private-image usage grows.
+- Uptime / incident notification: expose health and notification hooks first, then plug in a provider; do not couple application health semantics to one SaaS.
+- Error monitoring: prefer an adapter boundary and data-minimizing defaults; adoption requires a privacy/retention decision.
+- Object storage/CDN: add only when real media/blob usage justifies it; PostgreSQL remains structured-data authority, not an object store.
 
-This slice is complete when:
+Free tiers are treated as cost optimizations, not availability guarantees. Every adopted external service needs an owner, limits/quota documentation, failure mode and exit path.
 
-- current runtime assumptions are inventoried;
-- the supported minimal process topology is explicit;
-- production-relevant environment ownership is categorized;
-- development-only assumptions are explicitly rejected for production;
-- implementation gaps are mapped to later accepted Stage 19 slices;
-- no production deployment implementation has been prematurely introduced.
+## Environment and secrets
+
+`.env.production.example` documents non-secret defaults and required keys. `./songchart prod configure` creates the runtime-only `.env.production`; `./songchart prod install --env-file=... --no-interaction` supports secret-manager/deployment automation without requiring an interactive wizard.
+
+Mandatory safety invariants include:
+
+- `APP_ENV=production`;
+- `APP_DEBUG=false`;
+- HTTPS canonical `APP_URL`;
+- PostgreSQL connection;
+- Redis queue/cache connection;
+- secure sessions;
+- required Admin 2FA;
+- Design Lab disabled;
+- no tracked real secrets.
+
+## Production operations CLI
+
+The supported operator surface is:
+
+```text
+./songchart prod configure
+./songchart prod install
+./songchart prod doctor
+./songchart prod build
+./songchart prod up
+./songchart prod down
+./songchart prod status
+```
+
+The CLI delegates to Docker Compose and Laravel; it does not replace either runtime owner. Normal `down` never deletes durable volumes.
+
+Stage 19.0.7 extends this surface with operator-experience evidence: domain/DNS/port preflight, automatic-TLS verification, upgrade/rollback guidance, registry decision and optional service profiles. It must not introduce a second deployment authority.
+
+## Queue / scheduler / observability
+
+Laravel Horizon owns Redis queue supervision, worker lifecycle, queue throughput/wait visibility and failed-job operational context. Laravel Pulse owns broader application/runtime observability. SongChart Admin may summarize their state but must not duplicate their dashboards.
+
+`/up` remains application HTTP health evidence. Production diagnostics must redact credentials, tokens, cookies and private configuration.
+
+## Data durability and growth
+
+Application images are disposable. PostgreSQL is durable. Redis is replaceable runtime state. Large media/blob payloads should remain externalizable rather than making PostgreSQL an object store.
+
+External PostgreSQL is recommended as data size and operational criticality grow. Moving from bundled to external PostgreSQL is an operational migration, not an application/domain rewrite, because the application consumes only the configured PostgreSQL boundary.
+
+Stage 19.0.5 owns backup retention and verified restore evidence. A backup is not accepted until an isolated restore proves a usable application state.
+
+## Customer-evidence roadmap loop
+
+Deployment and operational friction are product evidence. Structured case studies are recorded in `docs/project/engineering/customer-evidence-roadmap.json`. At each stage boundary, repeated or high-severity evidence may promote, split, defer or retire roadmap work. Evidence can reprioritize implementation, but it cannot silently bypass domain, security, durability or release invariants.
+
+## Remaining Stage 19 closure
+
+Production artifact and installer authority now exist. Remaining release work is bounded to:
+
+1. real-browser desktop/mobile critical smoke coverage;
+2. verifier reduction, exact-main provenance and CI failure classification;
+3. provider transport/typed-data package admission decisions where they produce net reduction;
+4. PostgreSQL backup + isolated restore drill;
+5. security review and deployed production smoke;
+6. production operations UX, automatic TLS and low-cost service baseline;
+7. first release package/tag from an accepted exact `main` tree.
+
+No additional deployment framework is required unless accepted user evidence proves a concrete blocker.

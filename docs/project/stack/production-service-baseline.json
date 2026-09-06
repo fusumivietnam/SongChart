@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "stage": "19.0.7",
+  "capability_owner": "production-operations-ux",
+  "principle": "The first release must remain operable with Docker Compose + Caddy alone. External services are optional adapters admitted only when they reduce operator friction or improve reliability without becoming a second deployment authority.",
+  "baseline": {
+    "deployment_control": {
+      "required": "docker-compose-v2",
+      "operator_surface": "./songchart prod",
+      "control_panel_required": false
+    },
+    "tls": {
+      "owner": "caddy",
+      "automatic_https": true,
+      "paid_certificate_required": false,
+      "requirements": ["public DNS resolves to the host", "ports 80 and 443 are reachable", "runtime domain is configured"]
+    },
+    "registry": {
+      "first_release": "local-build-or-approved-OCI-registry",
+      "preferred_future_adapter": "GitHub Container Registry",
+      "admission_rule": "publish only accepted exact-main artifacts with immutable SHA metadata"
+    },
+    "dns_proxy": {
+      "required": false,
+      "compatible_adapter": "Cloudflare or equivalent",
+      "ownership": "external DNS/proxy only; must not replace Caddy/application runtime authority"
+    },
+    "uptime_monitoring": {
+      "required": false,
+      "integration_boundary": "/up",
+      "admission_rule": "prefer low-cost/free service only after an operator needs external availability notification"
+    },
+    "error_monitoring": {
+      "required": false,
+      "configured_boundary": "SENTRY_LARAVEL_DSN",
+      "admission_rule": "enable when production incident evidence shows application exception aggregation is needed"
+    },
+    "analytics": {
+      "required": false,
+      "configured_boundary": "ANALYTICS_DRIVER",
+      "privacy_rule": "product analytics is independent of operational health and must remain opt-in"
+    },
+    "object_storage": {
+      "required": false,
+      "admission_rule": "introduce when media/blob growth proves local or database storage is operationally inappropriate"
+    }
+  },
+  "customer_evidence_loop": "docs/project/engineering/customer-evidence-roadmap.json",
+  "anti_lock_in_rule": "A convenience control panel or SaaS integration may wrap the supported production contract but must not become the only way to deploy, recover or inspect SongChart."
+}

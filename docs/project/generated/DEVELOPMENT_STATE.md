@@ -6,7 +6,7 @@
 
 - Stage `19.0 — Production Readiness & First Release`
 - Status: `implementing`
-- Accepted through: `19.0.4-C1C`
+- Accepted through: `19.0.5`
 - Task contract: `docs/foundation/STAGE_19_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -19,18 +19,20 @@
 - `19.0.4-C1A` — `ACCEPTED` — Consolidation authority + derived project state/work lease
 - `19.0.4-C1B` — `ACCEPTED` — Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration
 - `19.0.4-C1C` — `ACCEPTED` — Laravel Boost dev-tool adoption + framework MCP overlap retirement
-- `19.0.4-C2` — `IMPLEMENTING` — Horizon + Pulse observability consolidation
-- `19.0.4-C3` — `PLANNED` — Pest Browser desktop/mobile critical smoke
-- `19.0.4-C4` — `PLANNED` — Verifier reduction + main provenance + failure classification
-- `19.0.4-C5` — `PLANNED` — Provider transport inventory + Saloon decision
-- `19.0.4-C6` — `PLANNED` — Typed data/API inventory + Laravel Data decision
-- `19.0.5` — `PLANNED` — Backup/recovery
-- `19.0.6` — `PLANNED` — Security review + production smoke
+- `19.0.4-C2` — `ACCEPTED` — Horizon + Pulse observability consolidation
+- `19.0.4-C3` — `ACCEPTED` — Pest Browser desktop/mobile critical smoke
+- `19.0.4-C4` — `ACCEPTED` — Verifier reduction + main provenance + failure classification
+- `19.0.4-C5` — `ACCEPTED` — Provider transport inventory + Saloon decision
+- `19.0.4-C6` — `ACCEPTED` — Typed data/API inventory + Laravel Data decision
+- `19.0.4-C7` — `ACCEPTED` — Production artifact + installer + operational control
+- `19.0.5` — `ACCEPTED` — Backup/recovery
+- `19.0.6` — `IMPLEMENTING` — Security review + production smoke
+- `19.0.7` — `PLANNED` — Production operations UX + automatic TLS + low-cost service baseline
 - `final` — `PLANNED` — First release package/tag
 
 ## Next bounded tranche
 
-- `19.0.4-C3` — Adopt Pest Browser for desktop/mobile critical smoke coverage
+- `19.0.7` — Production operations UX + automatic TLS + low-cost service baseline
 
 ## Live work lease
 

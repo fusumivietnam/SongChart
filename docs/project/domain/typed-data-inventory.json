@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "capability_owner": "cross-boundary-data",
+  "reviewed_at_stage": "19.0.4-C6",
+  "current_owner": "songchart-data-contract-plus-laravel-native-validation",
+  "inventory_summary": {
+    "public_api_v1_expanded": false,
+    "json_resource_surface_detected": false,
+    "current_contract": "docs/project/domain/DATA_CONTRACT.md",
+    "typed_provider_taxonomy": "existing SongChart domain authority",
+    "request_validation": "Laravel-native request/validation primitives"
+  },
+  "decision": {
+    "candidate": "spatie/laravel-data",
+    "result": "defer",
+    "reason": "Current cross-boundary shapes are already governed by SongChart's data contract and typed domain/provider owners, while a broad public API resource/DTO surface has not yet emerged. Adopting Laravel Data now would add package glue before there is enough duplicated DTO/request/resource transformation surface to retire.",
+    "revisit_when": [
+      "public API v1 enters implementation",
+      "the same cross-boundary shape is maintained independently in request validation, DTOs, resources and TypeScript",
+      "schema/TypeScript generation can replace duplicate manually maintained contracts"
+    ]
+  },
+  "retained_songchart_authority": [
+    "domain invariants",
+    "canonical/provider identity semantics",
+    "machine reason codes",
+    "cross-boundary representation rules"
+  ]
+}

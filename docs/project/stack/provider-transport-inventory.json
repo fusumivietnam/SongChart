@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "capability_owner": "provider-http-transport",
+  "reviewed_at_stage": "19.0.4-C5",
+  "current_owner": "laravel-http-client",
+  "inventory": [
+    {
+      "path": "app/Support/Providers/Catalog/MusicBrainzProviderCatalogAdapter.php",
+      "transport": "Illuminate\\Support\\Facades\\Http",
+      "role": "provider catalog adapter"
+    },
+    {
+      "path": "app/Support/Providers/Destinations/YouTubeVideoDestinationDiscovery.php",
+      "transport": "Illuminate\\Support\\Facades\\Http",
+      "role": "destination discovery"
+    }
+  ],
+  "decision": {
+    "candidate": "saloonphp/laravel-plugin",
+    "result": "defer",
+    "reason": "The live provider HTTP surface is small and already shares Laravel's first-party PendingRequest/fake/retry primitives. Adding Saloon before additional provider breadth would introduce a parallel connector/request abstraction without retiring enough custom surface to produce a positive net reduction.",
+    "revisit_when": [
+      "three or more materially distinct provider transports repeat request/auth/retry/test plumbing",
+      "provider connector fixtures or request recording become a recurring maintenance burden",
+      "a new provider tranche can remove more custom transport code than the Saloon integration adds"
+    ]
+  },
+  "retained_songchart_authority": [
+    "provider taxonomy",
+    "provider capability/readiness semantics",
+    "rate/admission policy",
+    "canonical identity and mutation boundaries"
+  ]
+}

@@ -17,14 +17,29 @@ cd "$ROOT"
 command -v docker >/dev/null || { echo 'Docker CLI required' >&2; exit 1; }
 docker version >/dev/null || { echo 'Docker Engine not reachable' >&2; exit 1; }
 docker compose version >/dev/null || { echo 'Docker Compose v2 required' >&2; exit 1; }
+
+# setup is bootstrap-only. Once a usable local configuration exists, preserve all
+# persistent development state and converge through the normal ready lifecycle.
+if [[ -f .env.docker ]] && grep -Eq '^APP_KEY=.+$' .env.docker; then
+  printf '[SongChart dev setup] Existing development configuration detected.\n'
+  printf '[SongChart dev setup] Preserving database, administrator and local state; continuing with dev ready.\n'
+  exec "$ROOT/songchart" dev ready
+fi
+
 [[ -f .env.docker ]] || cp .env.docker.example .env.docker
-python3 - .env.docker <<'PY2'
-from pathlib import Path
-import base64,os,re,sys
-p=Path(sys.argv[1]); t=p.read_text()
-if re.search(r'(?m)^APP_KEY=\s*$',t):
- t=re.sub(r'(?m)^APP_KEY=\s*$', 'APP_KEY=base64:'+base64.b64encode(os.urandom(32)).decode(), t); p.write_text(t)
-PY2
+
+# Keep host requirements to Docker + basic shell/coreutils only. Do not require Python/PHP/Node on the host.
+if grep -Eq '^APP_KEY=[[:space:]]*$' .env.docker; then
+  APP_KEY_VALUE="base64:$(head -c 32 /dev/urandom | base64 | tr -d '\n')"
+  sed -i -E "s|^APP_KEY=[[:space:]]*$|APP_KEY=$APP_KEY_VALUE|" .env.docker
+fi
+if grep -Eq '^APP_NAME=SongChartWeb[[:space:]]*$' .env.docker; then
+  sed -i -E 's|^APP_NAME=SongChartWeb[[:space:]]*$|APP_NAME=SongChart|' .env.docker
+fi
+if grep -Eq '^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$' .env.docker; then
+  sed -i -E 's|^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$|SONGCHART_LOCAL_ADMIN_EMAIL=admin@songchart.local|' .env.docker
+fi
+
 mkdir -p bootstrap/cache storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
 if [[ "$IS_CODESPACES" == false ]]; then
   mkdir -p .certs
@@ -44,15 +59,39 @@ export SONGCHART_HOST_GID="$HOST_GID"
 
 printf '[SongChart Linux Setup] Preparing writable Docker development paths for UID:GID %s:%s\n' "$HOST_UID" "$HOST_GID"
 "${COMPOSE[@]}" run --rm --user root app sh -lc \
-  "mkdir -p /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $HOST_UID:$HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage"
+  "mkdir -p /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs /tmp/composer-cache /tmp/npm-cache && chown -R $HOST_UID:$HOST_GID /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache"
 
 "${COMPOSE[@]}" up -d postgres redis
-printf '[SongChart Linux Setup] Preparing Composer/npm cache ownership for UID:GID %s:%s\n' "$HOST_UID" "$HOST_GID"
-"${COMPOSE[@]}" run --rm --user root app sh -lc \
-  "mkdir -p /tmp/composer-cache /tmp/npm-cache && chown -R $HOST_UID:$HOST_GID /tmp/composer-cache /tmp/npm-cache"
 
-"${COMPOSE[@]}" run --rm app composer install --no-interaction --prefer-dist --no-progress
-"${COMPOSE[@]}" run --rm app npm ci --no-audit --no-fund
+COMPOSER_FINGERPRINT="$(cat composer.json composer.lock | sha256sum | awk '{print $1}')"
+CURRENT_COMPOSER_FINGERPRINT="$("${COMPOSE[@]}" run --rm -T app sh -lc 'cat /workspace/vendor/.songchart-composer-fingerprint 2>/dev/null || true')"
+if [[ "$CURRENT_COMPOSER_FINGERPRINT" != "$COMPOSER_FINGERPRINT" ]] || ! "${COMPOSE[@]}" run --rm -T app test -f /workspace/vendor/autoload.php; then
+  printf '[SongChart Linux Setup] Hydrating locked Composer dependencies for fingerprint %s.\n' "$COMPOSER_FINGERPRINT"
+  "${COMPOSE[@]}" run --rm app composer install --no-interaction --prefer-dist --no-progress
+  "${COMPOSE[@]}" run --rm -T app sh -lc "printf '%s\\n' '$COMPOSER_FINGERPRINT' > /workspace/vendor/.songchart-composer-fingerprint"
+else
+  printf '[SongChart Linux Setup] Reusing locked Composer dependencies for fingerprint %s.\n' "$COMPOSER_FINGERPRINT"
+fi
+
+NPM_FINGERPRINT="$(cat package.json package-lock.json | sha256sum | awk '{print $1}')"
+CURRENT_NPM_FINGERPRINT="$("${COMPOSE[@]}" run --rm -T app sh -lc 'cat /workspace/node_modules/.songchart-npm-fingerprint 2>/dev/null || true')"
+if [[ "$CURRENT_NPM_FINGERPRINT" != "$NPM_FINGERPRINT" ]] || ! "${COMPOSE[@]}" run --rm -T app test -x /workspace/node_modules/.bin/vite; then
+  printf '[SongChart Linux Setup] Hydrating locked npm dependencies for fingerprint %s.\n' "$NPM_FINGERPRINT"
+  "${COMPOSE[@]}" run --rm app npm ci --no-audit --no-fund
+  "${COMPOSE[@]}" run --rm -T app sh -lc "printf '%s\\n' '$NPM_FINGERPRINT' > /workspace/node_modules/.songchart-npm-fingerprint"
+else
+  printf '[SongChart Linux Setup] Reusing locked npm dependencies for fingerprint %s.\n' "$NPM_FINGERPRINT"
+fi
+
+CURRENT_BROWSER_FINGERPRINT="$("${COMPOSE[@]}" run --rm -T app sh -lc 'cat /ms-playwright/.songchart-playwright-fingerprint 2>/dev/null || true')"
+if [[ "$CURRENT_BROWSER_FINGERPRINT" != "$NPM_FINGERPRINT" ]] || ! "${COMPOSE[@]}" run --rm -T app sh -lc 'find /ms-playwright -maxdepth 1 -type d -name "chromium-*" -print -quit | grep -q .'; then
+  printf '[SongChart Linux Setup] Hydrating verified Playwright Chromium runtime for fingerprint %s.\n' "$NPM_FINGERPRINT"
+  "${COMPOSE[@]}" run --rm app npx playwright install chromium
+  "${COMPOSE[@]}" run --rm -T app sh -lc "printf '%s\\n' '$NPM_FINGERPRINT' > /ms-playwright/.songchart-playwright-fingerprint"
+else
+  printf '[SongChart Linux Setup] Reusing Playwright Chromium runtime for fingerprint %s.\n' "$NPM_FINGERPRINT"
+fi
+
 "${COMPOSE[@]}" run --rm app npm run build
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
 "${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force

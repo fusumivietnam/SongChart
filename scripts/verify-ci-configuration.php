@@ -42,11 +42,27 @@ if (! is_array($composer)) {
     }
 }
 
+/**
+ * @param  list<string>  $actions
+ */
+$verifyImmutableActions = static function (string $source, array $actions, string $surface) use (&$errors): void {
+    foreach ($actions as $action) {
+        $pattern = '/uses:\s*'.preg_quote($action, '/').'@([0-9a-f]{40})\b/m';
+        if (preg_match($pattern, $source) !== 1) {
+            $errors[] = "{$surface} action must be pinned by immutable commit SHA: {$action}.";
+        }
+
+        if (preg_match('/uses:\s*'.preg_quote($action, '/').'@v\d+/m', $source) === 1) {
+            $errors[] = "{$surface} action must not use a rolling major tag: {$action}.";
+        }
+    }
+};
+
 $workflow = is_file($root.'/.github/workflows/tests.yml')
     ? file_get_contents($root.'/.github/workflows/tests.yml')
     : '';
 
-foreach (['quality:', 'tests-postgres:', 'frontend-build:'] as $job) {
+foreach (['quality:', 'tests-postgres:', 'frontend-build:', 'classify:'] as $job) {
     if (! is_string($workflow) || ! str_contains($workflow, $job)) {
         $errors[] = "GitHub Actions job is missing: {$job}";
     }
@@ -64,10 +80,15 @@ $requiredWorkflowFragments = [
     'workflow_call:',
     'target_sha:',
     'SONGCHART_CI_SHA: ${{ inputs.target_sha || github.sha }}',
+    "permissions:\n  contents: read",
     'concurrency:',
     'cancel-in-progress: true',
-    'actions/checkout@v6',
-    'actions/setup-node@v6',
+    'ci-failure-classification.json',
+    'quality-governance',
+    'database-runtime',
+    'frontend-build',
+    'accepted-main-provenance.json',
+    'accepted-main-provenance-${{ env.SONGCHART_CI_SHA }}',
 ];
 
 foreach ($requiredWorkflowFragments as $fragment) {
@@ -76,11 +97,21 @@ foreach ($requiredWorkflowFragments as $fragment) {
     }
 }
 
+if (is_string($workflow)) {
+    $verifyImmutableActions($workflow, [
+        'actions/checkout',
+        'actions/setup-node',
+        'actions/cache',
+        'actions/upload-artifact',
+        'shivammathur/setup-php',
+    ], 'Reusable tests workflow');
+}
+
 if (is_string($workflow) && str_contains($workflow, "pull_request:\n    branches:\n      - main")) {
     $errors[] = 'Reusable tests workflow must not duplicate PR verification owned by auto closure.';
 }
 if (is_string($workflow) && substr_count($workflow, "node-version: '24'") < 2) {
-    $errors[] = 'GitHub application quality/frontend lanes must both use Node 24 LTS.';
+    $errors[] = 'GitHub application browser/frontend lanes must both use Node 24 LTS.';
 }
 if (is_string($workflow) && str_contains($workflow, "node-version: '22'")) {
     $errors[] = 'GitHub workflow must not drift back to Node 22 after Node 24 alignment.';
@@ -93,8 +124,10 @@ $autoClosure = is_file($root.'/.github/workflows/auto-closure.yml')
 $requiredAutoClosureFragments = [
     'name: SongChart Auto Closure',
     'pull_request:',
-    'permissions:',
+    "permissions:\n  contents: read",
+    "prepare:\n    if:",
     'contents: write',
+    'pull-requests: read',
     'pull-requests: write',
     'github.event.pull_request.head.repo.full_name == github.repository',
     'persist-credentials: false',
@@ -115,6 +148,18 @@ foreach ($requiredAutoClosureFragments as $fragment) {
     if (! is_string($autoClosure) || ! str_contains($autoClosure, $fragment)) {
         $errors[] = 'GitHub auto-closure contract is missing: '.$fragment;
     }
+}
+
+if (is_string($autoClosure)) {
+    $verifyImmutableActions($autoClosure, [
+        'actions/checkout',
+        'actions/cache',
+        'shivammathur/setup-php',
+    ], 'Auto Closure');
+}
+
+if (is_string($autoClosure) && preg_match('/^permissions:\s*\n\s*contents:\s*write/m', $autoClosure) === 1) {
+    $errors[] = 'Auto Closure must not grant contents:write at workflow scope; write permission belongs only to PREPARE.';
 }
 
 foreach (['./mobile close', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenAutoClosureFragment) {
@@ -150,9 +195,20 @@ foreach ($requiredMobileWorkflowFragments as $fragment) {
     }
 }
 
+if (is_string($mobileWorkflow)) {
+    $verifyImmutableActions($mobileWorkflow, ['actions/checkout'], 'Mobile fallback');
+}
+
 foreach (['pull_request:', './mobile close', 'git commit', 'git push', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenMobileFragment) {
     if (is_string($mobileWorkflow) && str_contains($mobileWorkflow, $forbiddenMobileFragment)) {
         $errors[] = 'GitHub mobile fallback must remain read-only and manual: '.$forbiddenMobileFragment;
+    }
+}
+
+foreach (glob($root.'/tests/Architecture/*.php') ?: [] as $testPath) {
+    $testSource = (string) file_get_contents($testPath);
+    if (preg_match('/(?:actions\/[a-z0-9_.-]+|shivammathur\/setup-php)@[0-9a-f]{40}\b/i', $testSource) === 1) {
+        $errors[] = 'Architecture tests must verify immutable action-pin shape/behavior instead of duplicating volatile external action SHAs: '.basename($testPath);
     }
 }
 

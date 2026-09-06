@@ -1,15 +1,13 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "development-demo-adapter",
-  "purpose": "One persistent shared demo dataset reachable from Windows, macOS and GitHub Codespaces without sharing the destructive development/test database.",
+  "purpose": "Provide one production-like public demo surface without creating a second database or queue authority.",
   "database": {
     "engine": "postgresql",
-    "ownership": "remote-managed",
-    "connection_env": "SONGCHART_DEMO_DATABASE_URL",
-    "required_ssl": true,
-    "local_database_forbidden": true,
-    "recommended_zero_cost_provider": "Supabase Free",
-    "destructive_reset_allowed": false
+    "ownership": "development-authority",
+    "database": "songchart_docker",
+    "destructive_reset_allowed": false,
+    "canonical_verification_database_remains_isolated": true
   },
   "application": {
     "compose_file": "compose.demo.yml",
@@ -18,29 +16,34 @@
     "codespaces_visibility": "private-by-default",
     "https_owner_in_codespaces": "GitHub Codespaces port forwarding proxy",
     "auto_start": false,
-    "services": ["redis", "app", "queue"]
+    "services": ["redis", "app"],
+    "runtime_image": "songchart/dev-runtime:local",
+    "queue_owner": "single-shared-development-horizon-worker"
   },
   "secrets": {
-    "database_url": "SONGCHART_DEMO_DATABASE_URL",
-    "app_key": "SONGCHART_DEMO_APP_KEY",
+    "runtime_file": ".env.demo",
     "committed": false,
-    "local_materialization": ".env.demo"
+    "default_passwords": false
   },
   "commands": {
-    "setup": "./scripts/shared-demo.sh setup",
-    "migrate": "./scripts/shared-demo.sh migrate",
-    "seed": "./scripts/shared-demo.sh seed",
-    "ready": "./scripts/shared-demo.sh ready",
-    "up": "./scripts/shared-demo.sh up",
-    "down": "./scripts/shared-demo.sh down",
-    "status": "./scripts/shared-demo.sh status",
-    "url": "./scripts/shared-demo.sh url"
+    "canonical_entrypoint": "./songchart demo",
+    "setup": "./songchart demo setup",
+    "up": "./songchart demo up",
+    "down": "./songchart demo down",
+    "status": "./songchart demo status",
+    "logs": "./songchart demo logs",
+    "url": "./songchart demo url",
+    "legacy_adapter": "./scripts/shared-demo.sh"
   },
   "safety": {
-    "setup_runs_migrations": false,
     "migrate_fresh_exposed": false,
     "generic_artisan_against_demo_exposed": false,
-    "development_database_remains_isolated": true,
+    "duplicate_queue_service_forbidden": true,
+    "duplicate_database_authority_forbidden": true,
     "canonical_verification_database_remains_isolated": true
+  },
+  "compatibility": {
+    "shared_demo_script": "thin-delegating-adapter",
+    "legacy_migrate_and_seed_commands": "retired"
   }
 }

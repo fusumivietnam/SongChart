@@ -18,14 +18,27 @@ final class CreateAdminCommand extends Command
     protected $signature = 'admin:create
         {email? : Administrator email address}
         {--name= : Administrator display name}
-        {--role=super_admin : Privileged role to assign}';
+        {--role=super_admin : Privileged role to assign}
+        {--if-missing : Create interactively only when the account is missing; preserve existing credentials}
+        {--require-existing : Succeed only when the administrator already exists; never prompt for credentials}';
 
     protected $description = 'Create a verified privileged SongChart administrator without a default password.';
 
     public function handle(AuthorizationMatrix $authorization): int
     {
-        $email = mb_strtolower(trim((string) ($this->argument('email') ?: $this->ask('Email'))));
-        $name = trim((string) ($this->option('name') ?: $this->ask('Name', 'SongChart Admin')));
+        $requireExisting = (bool) $this->option('require-existing');
+        $ifMissing = (bool) $this->option('if-missing');
+        $emailArgument = mb_strtolower(trim((string) $this->argument('email')));
+
+        if ($requireExisting && $emailArgument === '') {
+            $this->error('Administrator email is required when --require-existing is used.');
+
+            return self::FAILURE;
+        }
+
+        $email = $emailArgument !== ''
+            ? $emailArgument
+            : mb_strtolower(trim((string) $this->ask('Email')));
         $role = UserRole::tryFrom((string) $this->option('role'));
 
         if ($role === null || ! $authorization->roleAllows($role, Capability::AccessAdmin)) {
@@ -35,11 +48,24 @@ final class CreateAdminCommand extends Command
         }
 
         if (User::query()->where('email', $email)->exists()) {
+            if ($ifMissing || $requireExisting) {
+                $this->info(sprintf('Administrator %s already exists; credentials were preserved.', $email));
+
+                return self::SUCCESS;
+            }
+
             $this->error('A user with this email already exists.');
 
             return self::FAILURE;
         }
 
+        if ($requireExisting) {
+            $this->error(sprintf('Administrator %s does not exist. Run interactive production install once to create it.', $email));
+
+            return self::FAILURE;
+        }
+
+        $name = trim((string) ($this->option('name') ?: $this->ask('Name', 'SongChart Admin')));
         $password = (string) $this->secret('Password');
         $confirmation = (string) $this->secret('Confirm password');
 
