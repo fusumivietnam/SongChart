@@ -1,144 +1,76 @@
 {
-    "schema_version": 4,
-    "public_entrypoints": {
-        "development": [
-            "songchart ai status",
-            "songchart ai doctor",
-            "songchart impact",
-            "songchart impact --diff",
-            "songchart impact --verify",
-            "songchart reconcile",
-            "songchart audit",
-            "songchart dev setup",
-            "songchart dev ready",
-            "songchart dev up",
-            "songchart dev status",
-            "songchart dev logs",
-            "songchart dev shell",
-            "songchart dev test",
-            "songchart dev db backup",
-            "songchart dev db restore",
-            "songchart demo setup",
-            "songchart demo up",
-            "songchart demo down",
-            "songchart demo status",
-            "songchart demo logs",
-            "songchart demo url",
-            "songchart context"
-        ],
-        "diagnostic": [
-            "songchart impact",
-            "songchart impact --diff",
-            "songchart reconcile",
-            "songchart audit"
-        ],
-        "focused": [
-            "songchart impact --verify",
-            "songchart dev test",
-            "songchart dev test --no-build",
-            "songchart test"
-        ],
-        "candidate_closure": [
-            "songchart candidate",
-            "composer stage:verify"
-        ],
-        "canonical_closure": [
-            "songchart close",
-            "songchart verify",
-            "composer canonical:verify"
-        ],
-        "mobile_adapter": [
-            "mobile check",
-            "mobile close"
-        ],
-        "packaging": [
-            "composer release:package"
-        ]
-    },
-    "delivery_kernel": {
-        "contract": "docs/project/engineering/delivery-kernel.json",
-        "authority": "docs/project/engineering/DELIVERY_KERNEL.md",
-        "backend": "scripts/delivery-kernel.sh",
-        "status": "pilot-internal",
-        "migration_strategy": "strangler",
-        "target_public_facade": [
-            "songchart status",
-            "songchart plan",
-            "songchart check",
-            "songchart close",
-            "songchart promote",
-            "songchart doctor"
-        ],
-        "current_delegates": {
-            "plan": "./songchart impact",
-            "check": "./songchart impact --verify",
-            "close": "./songchart close",
-            "doctor": "./songchart ai doctor"
-        },
-        "may_reimplement_candidate_or_canonical": false,
-        "may_remove_existing_gate_before_equivalence": false
-    },
-    "mobile_adapter": {
-        "path": "mobile",
-        "role": "presentation-only adapter over canonical SongChart entrypoints",
-        "check_delegate": "./songchart impact --verify",
-        "close_delegate": "./songchart close",
-        "success_output": "compact summary with full runtime log preserved under storage/logs",
-        "failure_output": "bounded tail plus full runtime log path",
-        "verbose_option": "--verbose",
-        "may_skip_or_cache_gates": false,
-        "may_define_verification_logic": false
-    },
-    "internal_building_blocks": [
-        "quality:normalize",
-        "quality:verify",
-        "test:postgres",
-        "repository-contracts:verify",
-        "verification-topology:verify",
-        "ai-protocol:verify",
-        "runtime-artifact:verify",
-        "artifact-provenance:verify"
-    ],
-    "removed_aliases": {
-        "verify": "Use composer stage:verify or songchart test.",
-        "release:verify": "Use composer canonical:verify or songchart verify.",
-        "test:all": "Use composer test:postgres or songchart test.",
-        "test:postgres-clean": "Use composer test:postgres; schema preparation is already authoritative.",
-        "release-contract:verify": "Repository/canonical closure owns these gates.",
-        "delivery:verify": "Use composer release:package after canonical/provenance PASS."
-    },
-    "historical_orchestration": {
-        "retired_files": [
-            "songchart.bat",
-            "stage-verify.bat",
-            "verify-songchart.bat",
-            "docker-dev-setup.bat",
-            "docker-dev-up.bat",
-            "docker-dev-down.bat",
-            "scripts/songchart.ps1",
-            "scripts/verify-canonical.ps1",
-            "scripts/ai-status.ps1"
-        ],
-        "reason": "Git + Linux/WSL2 + Docker is the sole active development and verification workflow; native Windows and ZIP handoff compatibility were retired."
-    },
-    "policy": {
-        "active_docs_must_use_public_entrypoints": true,
-        "removed_aliases_must_not_be_defined": true,
-        "historical_docs_may_reference_removed_commands": true,
-        "new_verifier_requires_registered_authority_owner": true,
-        "diagnostic_entrypoints_do_not_replace_closure": true,
-        "mobile_adapter_must_delegate_to_canonical_entrypoints": true,
-        "mobile_adapter_must_not_suppress_failures": true,
-        "delivery_kernel_must_delegate_to_existing_closure_owners": true,
-        "delivery_kernel_cannot_retire_gates_without_equivalence": true
-    },
-    "host_entrypoints": {
-        "primary_linux_wsl": "./songchart",
-        "mobile_compact_adapter": "./mobile",
-        "delivery_kernel_pilot": "bash scripts/delivery-kernel.sh",
-        "native_windows": "retired-use-wsl2",
-        "development_compose_project": "songchart-dev",
-        "demo_compose_project": "songchart-demo",
-        "verification_compose_project": "songchart-verify"
-    }
+  "schema_version": 5,
+  "public_entrypoints": {
+    "development": ["songchart ai status", "songchart ai doctor", "songchart impact", "songchart impact --diff", "songchart impact --verify", "songchart reconcile", "songchart audit", "songchart dev setup", "songchart dev ready", "songchart dev up", "songchart dev status", "songchart dev logs", "songchart dev shell", "songchart dev test", "songchart dev db backup", "songchart dev db restore", "songchart demo setup", "songchart demo up", "songchart demo down", "songchart demo status", "songchart demo logs", "songchart demo url", "songchart context"],
+    "diagnostic": ["songchart impact", "songchart impact --diff", "songchart reconcile", "songchart audit"],
+    "focused": ["songchart impact --verify", "songchart dev test", "songchart dev test --no-build", "songchart test"],
+    "candidate_closure": ["songchart candidate", "composer stage:verify"],
+    "canonical_closure": ["songchart close", "songchart verify", "composer canonical:verify"],
+    "mobile_adapter": ["mobile check", "mobile close"],
+    "packaging": ["composer release:package"]
+  },
+  "delivery_kernel": {
+    "contract": "docs/project/engineering/delivery-kernel.json",
+    "authority": "docs/project/engineering/DELIVERY_KERNEL.md",
+    "backend": "scripts/delivery-kernel.sh",
+    "status": "pilot-internal",
+    "migration_strategy": "strangler",
+    "target_public_facade": ["songchart status", "songchart plan", "songchart check", "songchart close", "songchart promote", "songchart doctor"],
+    "current_delegates": {"plan": "./songchart impact", "check": "./songchart impact --verify", "close": "./songchart close", "doctor": "./songchart ai doctor"},
+    "may_reimplement_candidate_or_canonical": false,
+    "may_remove_existing_gate_before_equivalence": false
+  },
+  "mobile_adapter": {
+    "path": "mobile",
+    "role": "presentation-only adapter over canonical SongChart entrypoints",
+    "check_delegate": "./songchart impact --verify",
+    "close_delegate": "./songchart close",
+    "success_output": "compact summary with full runtime log preserved under storage/logs",
+    "failure_output": "bounded tail plus full runtime log path",
+    "verbose_option": "--verbose",
+    "may_skip_or_cache_gates": false,
+    "may_define_verification_logic": false
+  },
+  "internal_building_blocks": ["quality:normalize", "quality:verify", "test:postgres", "repository-contracts:verify", "verification-topology:verify", "ai-protocol:verify", "runtime-artifact:verify", "artifact-provenance:verify"],
+  "removed_aliases": {
+    "verify": "Use composer stage:verify or songchart test.",
+    "release:verify": "Use composer canonical:verify or songchart verify.",
+    "test:all": "Use composer test:postgres or songchart test.",
+    "test:postgres-clean": "Use composer test:postgres; schema preparation is already authoritative.",
+    "release-contract:verify": "Repository/canonical closure owns these gates.",
+    "delivery:verify": "Use composer release:package after canonical/provenance PASS."
+  },
+  "historical_orchestration": {
+    "retired_files": ["songchart.bat", "stage-verify.bat", "verify-songchart.bat", "docker-dev-setup.bat", "docker-dev-up.bat", "docker-dev-down.bat", "scripts/songchart.ps1", "scripts/verify-canonical.ps1", "scripts/ai-status.ps1"],
+    "reason": "Git + Linux/WSL2 + Docker is the sole active development and verification workflow; native Windows and ZIP handoff compatibility were retired."
+  },
+  "deduplication": {
+    "authority": "docs/project/engineering/verification-topology.json#deduplication_policy",
+    "rule": "Public facades may delegate for ergonomics, but only one semantic owner may implement each invariant/test responsibility.",
+    "new_surface_threshold": "A new verifier, test harness or command alias must prove a distinct failure class, lifecycle boundary or UX adapter role that cannot be served by an existing owner.",
+    "retirement_rule": "When equivalence is proven, delete the redundant script/test/alias and all active references instead of retaining compatibility clutter."
+  },
+  "policy": {
+    "active_docs_must_use_public_entrypoints": true,
+    "removed_aliases_must_not_be_defined": true,
+    "historical_docs_may_reference_removed_commands": true,
+    "new_verifier_requires_registered_authority_owner": true,
+    "new_verifier_requires_distinct_failure_class": true,
+    "duplicate_semantic_verifiers_forbidden": true,
+    "thin_delegating_facades_allowed": true,
+    "diagnostic_entrypoints_do_not_replace_closure": true,
+    "mobile_adapter_must_delegate_to_canonical_entrypoints": true,
+    "mobile_adapter_must_not_suppress_failures": true,
+    "delivery_kernel_must_delegate_to_existing_closure_owners": true,
+    "delivery_kernel_cannot_retire_gates_without_equivalence": true
+  },
+  "host_entrypoints": {
+    "primary_linux_wsl": "./songchart",
+    "mobile_compact_adapter": "./mobile",
+    "delivery_kernel_pilot": "bash scripts/delivery-kernel.sh",
+    "native_windows": "retired-use-wsl2",
+    "development_compose_project": "songchart-dev",
+    "demo_compose_project": "songchart-demo",
+    "verification_compose_project": "songchart-verify"
+  }
 }
