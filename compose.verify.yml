@@ -51,6 +51,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       COMPOSER_CACHE_DIR: /tmp/composer-cache
+      NPM_CONFIG_CACHE: /tmp/npm-cache
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,9 +63,11 @@ services:
       - songchart_verify_vendor:/workspace/vendor
       - songchart_verify_node_modules:/workspace/node_modules
       - songchart_verify_composer_cache:/tmp/composer-cache
+      - songchart_verify_npm_cache:/tmp/npm-cache
     command: ["bash", "scripts/canonical-verify.sh"]
 
 volumes:
   songchart_verify_vendor:
   songchart_verify_node_modules:
   songchart_verify_composer_cache:
+  songchart_verify_npm_cache:
