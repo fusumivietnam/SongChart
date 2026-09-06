@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "76225e583ff31b18583aef6244ba9fd696e030a7af06b52d7d0353b7bb391818",
+    "source_fingerprint": "9323d771b89cfb62a3582a26c7e47f474c90626933103c20f3189f320e0af9ce",
     "candidate": {
         "stage": "19.0",
         "candidate": "v1",
@@ -1016,8 +1016,8 @@
     },
     "source_hashes": {
         "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
-        "compose.dev.yml": "63217f930e886a9dceb79d3e954a647a75589cf3518b6adad4f124d7b9f6c3a9",
-        "compose.verify.yml": "d7d2a4a73a19fa24414a9087df76af68d688c3814e151740edd4cbdbf1cad112",
+        "compose.dev.yml": "9a8f35a1c26b7021d90979f5236145612a6c901ed952eaf9222bb39e445876b6",
+        "compose.verify.yml": "a297f17431f1e715906db4e09e553d64d893b02e67a9a41b6a96339868c5c1b7",
         "composer.json": "51083c318f1f043e83ba2b6f88be6b6f76e13b540341ce4d5d124d710458a058",
         "composer.lock": "b63317f16db0f9c19dbc241ad4bf964f552048ebde15a73d9e28c1c366e938af",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
@@ -1067,6 +1067,6 @@
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
         "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
-        "songchart": "8852f294d088dd7baf0cffd3d6f78f5232a7b3fc5858df399ec9faf837ced122"
+        "songchart": "b32009c1774021efefb583dc001d39a0a33d87f80badb8adbcba666bc685c14b"
     }
 }
