@@ -58,6 +58,14 @@ foreach (['composer validate --strict', 'composer quality:verify', 'composer tes
     }
 }
 
+$immutableActions = [
+    'actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803',
+    'actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38',
+    'actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830',
+    'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02',
+    'shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240',
+];
+
 $requiredWorkflowFragments = [
     "push:\n    branches:\n      - main",
     'workflow_dispatch:',
@@ -67,8 +75,7 @@ $requiredWorkflowFragments = [
     "permissions:\n  contents: read",
     'concurrency:',
     'cancel-in-progress: true',
-    'actions/checkout@v6',
-    'actions/setup-node@v6',
+    ...$immutableActions,
     'ci-failure-classification.json',
     'quality-governance',
     'database-runtime',
@@ -83,11 +90,17 @@ foreach ($requiredWorkflowFragments as $fragment) {
     }
 }
 
+foreach (['actions/checkout@v', 'actions/setup-node@v', 'actions/cache@v', 'actions/upload-artifact@v', 'shivammathur/setup-php@v'] as $rollingAction) {
+    if (is_string($workflow) && preg_match('/uses:\s*'.preg_quote($rollingAction, '/').'\d+/m', $workflow) === 1) {
+        $errors[] = 'Release-critical CI action must be pinned by immutable commit SHA: '.$rollingAction;
+    }
+}
+
 if (is_string($workflow) && str_contains($workflow, "pull_request:\n    branches:\n      - main")) {
     $errors[] = 'Reusable tests workflow must not duplicate PR verification owned by auto closure.';
 }
 if (is_string($workflow) && substr_count($workflow, "node-version: '24'") < 2) {
-    $errors[] = 'GitHub application quality/frontend lanes must both use Node 24 LTS.';
+    $errors[] = 'GitHub application browser/frontend lanes must both use Node 24 LTS.';
 }
 if (is_string($workflow) && str_contains($workflow, "node-version: '22'")) {
     $errors[] = 'GitHub workflow must not drift back to Node 22 after Node 24 alignment.';
@@ -107,6 +120,9 @@ $requiredAutoClosureFragments = [
     'pull-requests: write',
     'github.event.pull_request.head.repo.full_name == github.repository',
     'persist-credentials: false',
+    'actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803',
+    'actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830',
+    'shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240',
     'php scripts/project-context.php --write-source',
     'php scripts/compile-repository-contracts.php --refresh-check',
     'grep -vE \'^.. docs/project/generated(/|$)\'',
@@ -123,6 +139,12 @@ $requiredAutoClosureFragments = [
 foreach ($requiredAutoClosureFragments as $fragment) {
     if (! is_string($autoClosure) || ! str_contains($autoClosure, $fragment)) {
         $errors[] = 'GitHub auto-closure contract is missing: '.$fragment;
+    }
+}
+
+foreach (['actions/checkout@v', 'actions/cache@v', 'shivammathur/setup-php@v'] as $rollingAction) {
+    if (is_string($autoClosure) && preg_match('/uses:\s*'.preg_quote($rollingAction, '/').'\d+/m', $autoClosure) === 1) {
+        $errors[] = 'Auto Closure action must be pinned by immutable commit SHA: '.$rollingAction;
     }
 }
 
@@ -149,6 +171,7 @@ $requiredMobileWorkflowFragments = [
     'permissions:',
     'contents: read',
     'SONGCHART_TARGET_SHA: ${{ github.sha }}',
+    'actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803',
     'ref: ${{ env.SONGCHART_TARGET_SHA }}',
     'run: ./mobile check --verbose',
     'run: ./songchart verify',
@@ -161,6 +184,10 @@ foreach ($requiredMobileWorkflowFragments as $fragment) {
     if (! is_string($mobileWorkflow) || ! str_contains($mobileWorkflow, $fragment)) {
         $errors[] = 'GitHub mobile control-plane contract is missing: '.$fragment;
     }
+}
+
+if (is_string($mobileWorkflow) && preg_match('/uses:\s*actions\/checkout@v\d+/m', $mobileWorkflow) === 1) {
+    $errors[] = 'Mobile fallback checkout action must be pinned by immutable commit SHA.';
 }
 
 foreach (['pull_request:', './mobile close', 'git commit', 'git push', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenMobileFragment) {
