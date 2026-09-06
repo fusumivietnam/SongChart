@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "ad10002218a7e14cd3cbc50ea6a2b42b24874f05438ed2e0ffbcdcac9aeb17fe",
+    "source_fingerprint": "e4cbbdcbfa2874f465e05f88f7bfb7bbaefd77a1793cfbb5972841482ec825d3",
     "candidate": {
         "stage": "19.0",
         "candidate": "v1",
@@ -1067,6 +1067,6 @@
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
         "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
-        "songchart": "b32009c1774021efefb583dc001d39a0a33d87f80badb8adbcba666bc685c14b"
+        "songchart": "6bea4bba64ee06dcf1aa2416c205f03166d39034df9c46d7f4da3bbac297a368"
     }
 }

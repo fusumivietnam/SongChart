@@ -131,7 +131,7 @@
         },
         "docker-development": {
             "source": "docs/project/stack/docker-development-contract.json",
-            "fingerprint": "3955893c7d8687afa409eb703a47c9555fcda072fa156dc1d0576b3f94cc6705",
+            "fingerprint": "24ca021e2d033a3098addfd380754ce11944ad1190a6914f23c42e5709c925fe",
             "consumers": [
                 "songchart",
                 "docs/project/stack/runtime-environments.json",
@@ -1697,5 +1697,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "6c35b6ffaffc2bc675c5c34742154d6b1d6b89f94affcec69550c21e72083ad6"
+    "graph_fingerprint": "d5bea1af9ce8b3ae78010bd0c4422d4961d58a6df18c713ebad48b1db8d9c60d"
 }
