@@ -1423,6 +1423,12 @@
             ]
         },
         {
+            "target": "tests/Architecture/ProductionReleaseHardeningTest.php",
+            "rule": "",
+            "classification": "unresolved",
+            "semantic_authorities": []
+        },
+        {
             "target": "tests/Architecture/ProviderAsyncInfrastructureTest.php",
             "rule": "provider",
             "classification": "behavioral",
@@ -1684,5 +1690,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "8459094e834b4ea837f8ca2c7f4af253f42df446f1b6614a9c590e55d3c4392b"
+    "graph_fingerprint": "e7039dc418cb6c4814ea340680516e2b1911bef27dd08e2f7b4ff85e229b077c"
 }
