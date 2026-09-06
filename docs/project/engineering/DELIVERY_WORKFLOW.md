@@ -139,6 +139,7 @@ RUN FOCUSED GOVERNANCE VERIFICATION
 - Machine contracts and verifiers must consume those authorities rather than silently introducing a newer workflow only in code/tests.
 - A script/test optimization without matching Markdown authority is workflow drift even when the code is technically correct.
 - A Markdown-only workflow rule that is intended to be permanent should gain a machine-readable contract or regression consumer whenever practical.
+- Verification consumers should assert owned behavior, structure and invariants rather than copy volatile external implementation literals. In particular, exact third-party GitHub Action SHAs belong in executable workflow YAML; tests/verifiers should require immutable 40-character SHA pinning and reject rolling tags without duplicating the current SHA value.
 - Do not teach a new workflow only in chat, PR comments, generated context, or model-specific bootstrap files.
 
 When a new failure class reveals a reusable workflow lesson, fix the immediate defect first, then promote the durable rule to its owning `.md` authority and permanent guard before considering the correction complete.
@@ -257,13 +258,3 @@ Required status checks and protected-branch controls remain GitHub-owned integra
 Release artifacts must never contain local secrets, `.env`, `.env.docker`, private certificates, database volumes, `vendor/`, `node_modules/`, logs, or mutable local runtime state unless an owning release contract explicitly requires a generated artifact.
 
 Release automation should prefer GitHub-native release/tag/check provenance once the accepted exact `main` SHA is known. GitHub Releases may transport governed release artifacts, but they do not replace SongChart candidate/canonical verification or the repository release package contract.
-
-## Corrective candidates
-
-A same-stage correction remains on the current stage branch as a logical commit unless governance explicitly requires a separate revision. Re-run only the affected focused gates during iteration, then re-run exact-tree candidate/canonical closure before merge.
-
-A workflow/documentation hardening change made after canonical PASS is still a tracked change. It must be implemented on a follow-up branch/revision from the exact closed HEAD (or otherwise rerun full closure) rather than silently mutating the sealed stage branch.
-
-## Native Windows workflow
-
-Native Batch/PowerShell development wrappers are retired. Windows development, when needed, uses WSL2/Linux with Docker and the same `./songchart` entrypoint as every other supported development environment.
