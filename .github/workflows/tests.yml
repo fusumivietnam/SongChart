@@ -26,17 +26,17 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ env.SONGCHART_CI_SHA }}
       - run: touch .env
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2 / 2.37.2
         with:
           php-version: '8.5'
           extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
           coverage: none
       - name: Cache Composer downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/composer/files
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -91,17 +91,17 @@ jobs:
       REDIS_HOST: 127.0.0.1
       REDIS_PORT: 6379
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ env.SONGCHART_CI_SHA }}
       - run: touch .env
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2 / 2.37.2
         with:
           php-version: '8.5'
           extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
           coverage: none
       - name: Cache Composer downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/composer/files
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -135,7 +135,7 @@ jobs:
           echo '::endgroup::'
       - name: Preserve PostgreSQL failure evidence
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: postgres-failure-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
           path: storage/logs/postgres-test-last-failure.log
@@ -183,28 +183,28 @@ jobs:
       REDIS_HOST: 127.0.0.1
       REDIS_PORT: 6379
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ env.SONGCHART_CI_SHA }}
       - run: touch .env
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2 / 2.37.2
         with:
           php-version: '8.5'
           extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
           coverage: none
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
           cache: npm
       - name: Cache Composer downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/composer/files
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
@@ -220,7 +220,7 @@ jobs:
         run: vendor/bin/pest tests/Browser --compact
       - name: Preserve browser diagnostics
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: browser-failure-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
           path: |
@@ -232,10 +232,10 @@ jobs:
   frontend-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ env.SONGCHART_CI_SHA }}
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
           cache: npm
@@ -301,7 +301,7 @@ jobs:
           echo "classification=$classification" >> "$GITHUB_OUTPUT"
 
       - name: Preserve bounded machine classification
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ci-classification-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
           path: ci-failure-classification.json
@@ -322,7 +322,7 @@ jobs:
 
       - name: Preserve accepted-main provenance
         if: steps.classify.outputs.classification == 'passed' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: accepted-main-provenance-${{ env.SONGCHART_CI_SHA }}
           path: accepted-main-provenance.json
