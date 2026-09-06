@@ -27,20 +27,20 @@ jobs:
       effective_sha: ${{ steps.result.outputs.effective_sha }}
     steps:
       - name: Checkout exact PR head without persistent credentials
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2 / 2.37.2
         with:
           php-version: '8.5'
           extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, xml, zip
           coverage: none
 
       - name: Cache Composer downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/composer/files
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -111,7 +111,7 @@ jobs:
       SONGCHART_CLOSE_SHA: ${{ needs.prepare.outputs.effective_sha }}
     steps:
       - name: Checkout verified exact SHA
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ env.SONGCHART_CLOSE_SHA }}
           fetch-depth: 0
