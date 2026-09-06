@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "status": "active",
   "purpose": "Govern external AI agents, MCP servers, provider skills and connected developer tools without allowing external live state or chat memory to replace SongChart repository authority.",
   "precedence": [
@@ -22,6 +22,24 @@
     "adoption_threshold": "Official availability alone is insufficient; adoption must reduce guessing, manual work or maintenance without creating duplicate authority or unnecessary runtime weight.",
     "default_installation": "not-automatic",
     "application_dependency": "forbidden-unless-product-runtime-use-case-is-explicitly-accepted"
+  },
+  "upgrade_and_recheck_policy": {
+    "authority": "docs/project/engineering/recheck-policy.json",
+    "rule": "MCP upgrades are compatibility/capability changes, not routine latest-version churn. Recheck official documentation, auth, permissions, tool/resource surface and overlap before accepting changed behavior.",
+    "local_or_package_managed": [
+      "pin a deterministic version when supported",
+      "upgrade through a reviewed change rather than dev-ready auto-update",
+      "compare breaking/deprecation/auth/tool-surface changes before adoption"
+    ],
+    "remote_managed": [
+      "do not invent a version pin that the provider does not expose",
+      "track last review plus expected auth/permission/capability assumptions",
+      "treat observed tool/resource/auth drift as a recheck trigger"
+    ],
+    "permission_invariant": "A provider update never expands SongChart mutation authority automatically.",
+    "new_capability_default": "deny-until-explicitly-admitted",
+    "major_or_breaking_change": "explicit compatibility review plus impacted development verification is required before continued governed use",
+    "security_or_auth_change": "review immediately when it affects configured SongChart access; rotate/re-scope credentials outside source when required"
   },
   "planes": {
     "development": {
@@ -47,7 +65,8 @@
     "An MCP tool must not bypass the supported ./songchart lifecycle merely because a lower-level provider API is available.",
     "No agent may silently fall back to a different development database, storage authority or environment after a configured external authority fails.",
     "Generated repository authority is updated only through SongChart generation/reconciliation tooling.",
-    "Agent-local persistent memory is convenience state only and must yield to current repository and live-state evidence."
+    "Agent-local persistent memory is convenience state only and must yield to current repository and live-state evidence.",
+    "Earlier successful verification never authorizes skipping re-verification after the verified tree or relevant external capability changes."
   ],
   "capability_classes": {
     "observer": ["read repository state", "read documented external state", "inspect diagnostics and metrics"],
@@ -62,6 +81,8 @@
     "committing generated provider credentials or connection strings",
     "granting broad account mutation permissions only for convenience",
     "installing optional AI routers/agents into production before a product or workflow requirement exists",
-    "installing both an official provider MCP and an overlapping custom/native bridge without documented unique responsibilities"
+    "installing both an official provider MCP and an overlapping custom/native bridge without documented unique responsibilities",
+    "auto-updating MCP packages to latest during ./songchart dev ready",
+    "automatically accepting newly exposed MCP mutation tools or broader scopes after a provider update"
   ]
 }
