@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 it('keeps candidate read-only and exposes optimized closure and demo workflows', function (): void {
     $cli = file_get_contents(base_path('songchart'));
+    $setup = file_get_contents(base_path('scripts/setup-docker-dev.sh'));
     $dev = file_get_contents(base_path('compose.dev.yml'));
     $demo = file_get_contents(base_path('compose.demo.yml'));
     $demoEnv = file_get_contents(base_path('.env.demo.example'));
+    $dockerContract = json_decode((string) file_get_contents(base_path('docs/project/stack/docker-development-contract.json')), true, 512, JSON_THROW_ON_ERROR);
     $databaseConfig = file_get_contents(base_path('config/database.php'));
     $queueConfig = file_get_contents(base_path('config/queue.php'));
     $appProvider = file_get_contents(base_path('app/Providers/AppServiceProvider.php'));
@@ -38,9 +40,31 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('chown -R $SONGCHART_HOST_UID:$SONGCHART_HOST_GID')
         ->toContain('APP_URL=$SONGCHART_DEMO_APP_URL')
         ->toContain('SONGCHART_DEMO_APP_URL="https://${CODESPACE_NAME}-8001.')
+        ->toContain('Development configuration is missing; bootstrapping before ready.')
+        ->toContain('exec bash "$ROOT/scripts/setup-docker-dev.sh"')
         ->not->toContain('find /workspace/node_modules -mindepth 1 -maxdepth 1 -exec rm -rf {} +')
         ->not->toContain('python3 - "$ROOT/.env.demo"')
         ->not->toContain('demo up -d redis app queue');
+
+    expect($setup)
+        ->toContain('Existing development configuration detected.')
+        ->toContain('Preserving database, administrator and local state; continuing with dev ready.')
+        ->toContain('exec "$ROOT/songchart" dev ready')
+        ->not->toContain('docker compose down -v')
+        ->not->toContain('migrate:fresh');
+
+    expect($dockerContract['development']['lifecycle'] ?? null)
+        ->toBeArray()
+        ->and($dockerContract['development']['lifecycle']['ready_when_unconfigured'] ?? null)
+        ->toBe('delegate-to-setup')
+        ->and($dockerContract['development']['lifecycle']['setup_when_configured'] ?? null)
+        ->toBe('delegate-to-ready')
+        ->and($dockerContract['development']['lifecycle']['setup_semantics'] ?? null)
+        ->toBe('bootstrap-only')
+        ->and($dockerContract['development']['lifecycle']['destructive_reset_requires_explicit_command'] ?? null)
+        ->toBeTrue()
+        ->and($dockerContract['verification']['may_mutate_development_database'] ?? null)
+        ->toBeFalse();
 
     expect($demoEnv)
         ->toContain("APP_URL=\n")
@@ -66,7 +90,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('URL::forceRootUrl($demoUrl)')
         ->toContain('URL::forceScheme($scheme)')
         ->toContain('Vite::createAssetPathsUsing')
-        ->toContain("'/'.ltrim(\$path, '/')");
+        ->toContain("'/'.ltrim($path, '/')");
 
     expect($twoFactorMiddleware)
         ->toContain('$twoFactorMode = (string) config(\'songchart.security.admin_2fa_mode\', \'required\')')
@@ -110,13 +134,13 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain("Rule::in(['enabled', 'disabled'])");
 
     expect($providerConfigurationController)
-        ->toContain("\$credentialPools['api_key']")
-        ->toContain("enabled: (string) \$validated['provider_operational_state'] === 'enabled'");
+        ->toContain("$credentialPools['api_key']")
+        ->toContain("enabled: (string) $validated['provider_operational_state'] === 'enabled'");
 
     expect($providerConfigurationService)
         ->toContain('array $credentialPools')
         ->toContain('ProviderCredential::query()')
-        ->toContain("'is_enabled' => \$enabled")
+        ->toContain("'is_enabled' => $enabled")
         ->toContain('credential_pool_counts');
 
     expect($credentialResolver)
@@ -127,9 +151,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
 
     expect($youtubeDiscovery)
         ->toContain('ProviderCredentialResolver')
-        ->toContain("\$this->credentials->resolve('youtube', 'api_key'")
-        ->toContain("\$this->quota->consume('search.list')")
-        ->toContain("\$this->quota->consume('videos.list')");
+        ->toContain("$this->credentials->resolve('youtube', 'api_key'")
+        ->toContain("$this->quota->consume('search.list')")
+        ->toContain("$this->quota->consume('videos.list')");
 
     expect($credentialMigration)
         ->toContain("Schema::create('provider_credentials'")
