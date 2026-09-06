@@ -1,5 +1,15 @@
 name: songchart-dev
 
+x-dev-runtime: &dev-runtime
+  image: songchart/dev-runtime:local
+  build:
+    context: .
+    dockerfile: docker/verify/Dockerfile
+  working_dir: /workspace
+  user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
+  env_file:
+    - .env.docker
+
 services:
   postgres:
     image: postgres:18.4-bookworm
@@ -32,13 +42,7 @@ services:
           - songchart-shared-queue
 
   app:
-    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
-    build:
-      context: .
-      dockerfile: docker/verify/Dockerfile
-    working_dir: /workspace
-    env_file:
-      - .env.docker
+    <<: *dev-runtime
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
@@ -105,13 +109,7 @@ services:
       - songchart_dev_npm_cache:/tmp/npm-cache
 
   queue:
-    user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
-    build:
-      context: .
-      dockerfile: docker/verify/Dockerfile
-    working_dir: /workspace
-    env_file:
-      - .env.docker
+    <<: *dev-runtime
     environment:
       APP_ENV: local
       DB_CONNECTION: pgsql
