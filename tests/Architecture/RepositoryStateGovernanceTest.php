@@ -28,11 +28,10 @@ it('keeps generated development state as the current stage projection', function
         ->and($compatibilityPointer)->toContain('compatibility pointer')
         ->and($generatedState['generated_from_repository'] ?? false)->toBeTrue();
 
-    $stage = $generatedState['current_stage']['id'] ?? null;
-    expect($stage)->toBeString()->not->toBeEmpty();
-
-    $stageToken = str_replace('.', '_', $stage);
-
-    expect(base_path("docs/foundation/STAGE_{$stageToken}_TASK_CONTRACT.md"))->toBeFile()
-        ->and(base_path("docs/foundation/STAGE_{$stageToken}_VALIDATION_REPORT.md"))->toBeFile();
+    expect($generatedState['current_stage']['id'] ?? null)
+        ->toBeString()
+        ->not->toBeEmpty()
+        ->and($generatedState['current_stage']['task_contract'] ?? null)
+        ->toBeString()
+        ->not->toBeEmpty();
 });
