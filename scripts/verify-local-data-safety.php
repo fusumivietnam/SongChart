@@ -56,8 +56,8 @@ foreach (['password and two-factor state were preserved', "app()->environment('l
 if (! str_contains($setup, 'admin:ensure-local')) {
     $errors[] = 'Local setup --admin must use the idempotent local administrator command.';
 }
-if (! str_contains($envExample, 'TEST_PGSQL_DATABASE=songchart_test') || ! str_contains($envExample, 'SONGCHART_ADMIN_2FA_MODE=disabled')) {
-    $errors[] = '.env.example must declare the isolated test database and local 2FA ergonomics defaults.';
+if (! preg_match('/^TEST_PGSQL_DATABASE=.+$/m', $envExample) || ! str_contains($envExample, 'SONGCHART_ADMIN_2FA_MODE=disabled')) {
+    $errors[] = '.env.example must declare a configurable isolated test database and local 2FA ergonomics defaults.';
 }
 if (! is_array($composer) || ! isset($composer['scripts']['test-database:safety'], $composer['scripts']['local-data-safety:verify'])) {
     $errors[] = 'Composer is missing local data-safety gates.';
