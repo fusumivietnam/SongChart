@@ -90,7 +90,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain('URL::forceRootUrl($demoUrl)')
         ->toContain('URL::forceScheme($scheme)')
         ->toContain('Vite::createAssetPathsUsing')
-        ->toContain("'/'.ltrim($path, '/')");
+        ->toContain("'/'.ltrim(\$path, '/')");
 
     expect($twoFactorMiddleware)
         ->toContain('$twoFactorMode = (string) config(\'songchart.security.admin_2fa_mode\', \'required\')')
@@ -134,13 +134,13 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toContain("Rule::in(['enabled', 'disabled'])");
 
     expect($providerConfigurationController)
-        ->toContain("$credentialPools['api_key']")
-        ->toContain("enabled: (string) $validated['provider_operational_state'] === 'enabled'");
+        ->toContain("\$credentialPools['api_key']")
+        ->toContain("enabled: (string) \$validated['provider_operational_state'] === 'enabled'");
 
     expect($providerConfigurationService)
         ->toContain('array $credentialPools')
         ->toContain('ProviderCredential::query()')
-        ->toContain("'is_enabled' => $enabled")
+        ->toContain("'is_enabled' => \$enabled")
         ->toContain('credential_pool_counts');
 
     expect($credentialResolver)
@@ -151,9 +151,9 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
 
     expect($youtubeDiscovery)
         ->toContain('ProviderCredentialResolver')
-        ->toContain("$this->credentials->resolve('youtube', 'api_key'")
-        ->toContain("$this->quota->consume('search.list')")
-        ->toContain("$this->quota->consume('videos.list')");
+        ->toContain("\$this->credentials->resolve('youtube', 'api_key'")
+        ->toContain("\$this->quota->consume('search.list')")
+        ->toContain("\$this->quota->consume('videos.list')");
 
     expect($credentialMigration)
         ->toContain("Schema::create('provider_credentials'")
