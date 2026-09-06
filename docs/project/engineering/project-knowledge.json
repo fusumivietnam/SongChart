@@ -1,5 +1,5 @@
 {
-  "schema_version": 7,
+  "schema_version": 8,
   "status": "active",
   "purpose": "Compact machine-readable knowledge authority for AI development, API planning, developer documentation and FAQ generation. Repository-owned; chat memory is never authority.",
   "identity": {"product": "SongChart", "repository": "fusumivietnam/SongChart", "legacy_brand_aliases": ["SongChartWeb"], "product_summary": "Music discovery, canonical metadata, provenance, provider evidence and legal listening or viewing destinations."},
@@ -14,6 +14,7 @@
     "docs/project/engineering/technology-watchlist.json",
     "docs/project/engineering/mcp-governance-contract.json",
     "docs/project/engineering/external-systems-registry.json",
+    "docs/project/engineering/recheck-policy.json",
     "docs/project/engineering/documentation-consolidation-contract.json",
     "docs/project/release/versioning-policy.json",
     "docs/project/domain/DATA_CONTRACT.md",
@@ -30,6 +31,7 @@
     "dependency_policy": "Laravel first-party, then mature documented package, then product-specific custom code",
     "technology_policy": "Fresh technology/package decisions require compatibility evidence, overlap/reuse/retirement analysis and net ROI; novelty alone is not adoption evidence.",
     "external_ai_policy": "Repository authority outranks MCP/provider skills and agent-local memory; official provider MCPs are evaluated before custom bridges only when the provider is relevant to an active use case.",
+    "recheck_policy": "Re-resolve live state on session resume, regenerate after authored authority changes, rerun stage verification before tranche advancement, and review external capability/auth drift before expanding integrations.",
     "documentation_policy": "Active knowledge is organized by semantic owner. Legacy stage documents are consolidation inputs and are retired after durable semantics and consumers are migrated."
   },
   "domain_boundaries": {
@@ -46,15 +48,18 @@
     "project_kernel_authority": "docs/project/engineering/project-kernel-contract.json",
     "mcp_governance_authority": "docs/project/engineering/mcp-governance-contract.json",
     "external_systems_authority": "docs/project/engineering/external-systems-registry.json",
+    "recheck_authority": "docs/project/engineering/recheck-policy.json",
     "documentation_consolidation_authority": "docs/project/engineering/documentation-consolidation-contract.json"
   },
   "project_intelligence": {"compiler": "scripts/project-intelligence.php", "snapshot_consistency": "eventual", "runtime_storage": "storage/project-intelligence/{sha}/", "rule": "Serve latest completed snapshot and expose staleness; rebuild only through explicit/background refresh."},
   "ai_working_rules": [
     "Read generated project-context.json and live ai status before relying on conversation context for volatile facts.",
     "Use current repository authorities over historical stage documents.",
+    "Use recheck-policy.json whenever a session resumes, authored authority changes, a tranche advances, closure starts or an external integration changes behavior/capabilities.",
     "Use MCP governance and external-system registry before connecting or relying on external provider tooling.",
     "When a relevant provider offers an official MCP, evaluate that official integration before custom MCP code, but reject duplicate/low-value tool surfaces.",
     "Do not install provider MCPs automatically or commit their credentials.",
+    "Do not auto-accept new MCP mutation tools, permissions or scopes after provider updates.",
     "Treat legacy STAGE_* files as migration inputs; use documentation-consolidation-contract.json to extract durable semantics and retire redundant files.",
     "Exact retired historical text is recovered from Git/PR history; active AI orientation must not depend on old stage files.",
     "Do not add a new verifier when an existing contract/Pest Architecture test can own the invariant.",
