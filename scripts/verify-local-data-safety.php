@@ -32,8 +32,13 @@ foreach (['must end with _test', 'same as the development database'] as $needle)
         $errors[] = "Test database safety policy is missing invariant: {$needle}";
     }
 }
-if (! str_contains($safety, 'database_role')) {
-    $errors[] = 'Test database safety verifier must validate the database marker role.';
+foreach (['database_role', "sqlState !== '3D000'", 'TEST_PGSQL_MAINTENANCE_DATABASE', 'select exists(select 1 from pg_database where datname = :database)', 'CREATE DATABASE {$quotedDatabase}', 'creating the isolated test database after name-safety validation'] as $needle) {
+    if (! str_contains($safety, $needle)) {
+        $errors[] = "Test database safety verifier is missing bootstrap/safety invariant: {$needle}";
+    }
+}
+if (str_contains($safety, 'DROP DATABASE')) {
+    $errors[] = 'Test database safety verifier must never drop a database while bootstrapping the test lane.';
 }
 if (
     ! str_contains($middleware, "app()->environment(['local', 'demo', 'testing'])")
