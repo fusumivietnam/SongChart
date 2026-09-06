@@ -13,6 +13,7 @@ services:
       - demo
 
   app:
+    image: songchart/dev-runtime:local
     user: "${SONGCHART_HOST_UID:-1000}:${SONGCHART_HOST_GID:-1000}"
     build:
       context: .
