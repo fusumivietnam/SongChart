@@ -63,7 +63,7 @@ services:
       SESSION_SECURE_COOKIE: "true"
       SESSION_DOMAIN: docker.songchart.test
       SONGCHART_TRUST_DOCKER_PROXY: "true"
-      PLAYWRIGHT_BROWSERS_PATH: /workspace/node_modules/.cache/ms-playwright
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       MUSICBRAINZ_ENABLED: "${MUSICBRAINZ_ENABLED:-false}"
       MUSICBRAINZ_BASE_URL: "${MUSICBRAINZ_BASE_URL:-https://musicbrainz.org/ws/2}"
       MUSICBRAINZ_USER_AGENT: "${MUSICBRAINZ_USER_AGENT:-SongChartWeb/0.1 (contact@example.com)}"
@@ -100,6 +100,7 @@ services:
       - .:/workspace
       - songchart_dev_vendor:/workspace/vendor
       - songchart_dev_node_modules:/workspace/node_modules
+      - songchart_dev_playwright:/ms-playwright
       - songchart_dev_composer_cache:/tmp/composer-cache
       - songchart_dev_npm_cache:/tmp/npm-cache
 
@@ -179,5 +180,6 @@ volumes:
   songchart_dev_redis:
   songchart_dev_vendor:
   songchart_dev_node_modules:
+  songchart_dev_playwright:
   songchart_dev_composer_cache:
   songchart_dev_npm_cache:
