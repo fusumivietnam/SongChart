@@ -36,7 +36,7 @@
       "plane": ["development"],
       "role": "accepted visual/design-system authority for mapped design nodes",
       "integration": "Figma connector/MCP and Code Connect plus browser screenshot and visual-regression verification",
-      "official_mcp": {"status": "confirmed", "source": "https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Dev-Mode-MCP-Server", "decision": "use only for active design-to-code work; do not add as an application dependency"},
+      "official_mcp": {"status": "confirmed", "source": "https://help.figma.com/hc/en-us/articles/35280968300439-Figma-MCP-collection-What-is-the-Figma-MCP-server", "decision": "use only for active design-to-code work; prefer Figma's remote MCP where supported and do not add it as an application dependency"},
       "allowed": ["read accepted design context", "map design components to production components"],
       "forbidden": ["override domain/application contracts", "force a frontend-stack migration solely for fidelity"]
     },
