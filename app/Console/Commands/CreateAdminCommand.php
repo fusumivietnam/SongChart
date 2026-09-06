@@ -26,8 +26,19 @@ final class CreateAdminCommand extends Command
 
     public function handle(AuthorizationMatrix $authorization): int
     {
-        $email = mb_strtolower(trim((string) ($this->argument('email') ?: $this->ask('Email'))));
-        $name = trim((string) ($this->option('name') ?: $this->ask('Name', 'SongChart Admin')));
+        $requireExisting = (bool) $this->option('require-existing');
+        $ifMissing = (bool) $this->option('if-missing');
+        $emailArgument = mb_strtolower(trim((string) $this->argument('email')));
+
+        if ($requireExisting && $emailArgument === '') {
+            $this->error('Administrator email is required when --require-existing is used.');
+
+            return self::FAILURE;
+        }
+
+        $email = $emailArgument !== ''
+            ? $emailArgument
+            : mb_strtolower(trim((string) $this->ask('Email')));
         $role = UserRole::tryFrom((string) $this->option('role'));
 
         if ($role === null || ! $authorization->roleAllows($role, Capability::AccessAdmin)) {
@@ -37,7 +48,7 @@ final class CreateAdminCommand extends Command
         }
 
         if (User::query()->where('email', $email)->exists()) {
-            if ((bool) $this->option('if-missing') || (bool) $this->option('require-existing')) {
+            if ($ifMissing || $requireExisting) {
                 $this->info(sprintf('Administrator %s already exists; credentials were preserved.', $email));
 
                 return self::SUCCESS;
@@ -48,12 +59,13 @@ final class CreateAdminCommand extends Command
             return self::FAILURE;
         }
 
-        if ((bool) $this->option('require-existing')) {
+        if ($requireExisting) {
             $this->error(sprintf('Administrator %s does not exist. Run interactive production install once to create it.', $email));
 
             return self::FAILURE;
         }
 
+        $name = trim((string) ($this->option('name') ?: $this->ask('Name', 'SongChart Admin')));
         $password = (string) $this->secret('Password');
         $confirmation = (string) $this->secret('Confirm password');
 
