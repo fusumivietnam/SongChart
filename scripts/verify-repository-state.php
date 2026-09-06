@@ -32,9 +32,11 @@ $index = $read('docs/DOCUMENTATION_INDEX.md');
 $developmentPointer = $read('docs/project/DEVELOPMENT_STATE.md');
 $generatedStateJson = $read('docs/project/generated/development-state.json');
 $generatedStateMarkdown = $read('docs/project/generated/DEVELOPMENT_STATE.md');
+$stagePlanJson = $read('docs/project/engineering/stage-plan.json');
+$consolidationJson = $read('docs/project/engineering/documentation-consolidation-contract.json');
+$recheckPolicyJson = $read('docs/project/engineering/recheck-policy.json');
 $roadmap = $read('docs/project/docs/ROADMAP.md');
 $releaseStatus = $read('docs/project/RELEASE_BASELINE_STATUS.md');
-$stage12Manifest = $read('STAGE_12_CHANGE_MANIFEST.md');
 $taskTemplate = $read('docs/templates/TASK_CONTRACT_TEMPLATE.md');
 
 foreach (['Current stage:', 'Candidate delivery:', '## Current development stage'] as $marker) {
@@ -44,12 +46,19 @@ foreach (['Current stage:', 'Candidate delivery:', '## Current development stage
 }
 
 $currentStage = null;
+$currentTaskContract = null;
 try {
     $state = json_decode($generatedStateJson, true, flags: JSON_THROW_ON_ERROR);
-    $currentStage = is_array($state['current_stage'] ?? null) ? ($state['current_stage']['id'] ?? null) : null;
+    $currentStageNode = is_array($state['current_stage'] ?? null) ? $state['current_stage'] : [];
+    $currentStage = $currentStageNode['id'] ?? null;
+    $currentTaskContract = $currentStageNode['task_contract'] ?? null;
     if (! is_string($currentStage) || preg_match('/^[0-9]+(?:\.[0-9]+)+$/', $currentStage) !== 1) {
         $errors[] = 'Generated development-state.json must declare current_stage.id.';
         $currentStage = null;
+    }
+    if (! is_string($currentTaskContract) || $currentTaskContract === '') {
+        $errors[] = 'Generated development-state.json must declare current_stage.task_contract.';
+        $currentTaskContract = null;
     }
     if (($state['generated_from_repository'] ?? false) !== true) {
         $errors[] = 'Generated development-state.json must be repository-derived.';
@@ -78,6 +87,52 @@ try {
     $errors[] = 'Unable to decode generated development-state.json: '.$exception->getMessage();
 }
 
+try {
+    $stagePlan = json_decode($stagePlanJson, true, flags: JSON_THROW_ON_ERROR);
+    $authoredStage = is_array($stagePlan['current_stage'] ?? null) ? $stagePlan['current_stage'] : [];
+    if (is_string($currentStage) && ($authoredStage['id'] ?? null) !== $currentStage) {
+        $errors[] = 'Generated current stage must match docs/project/engineering/stage-plan.json.';
+    }
+    if (is_string($currentTaskContract) && ($authoredStage['task_contract'] ?? null) !== $currentTaskContract) {
+        $errors[] = 'Generated current-stage task contract must match docs/project/engineering/stage-plan.json.';
+    }
+} catch (Throwable $exception) {
+    $errors[] = 'Unable to decode stage-plan.json: '.$exception->getMessage();
+}
+
+if (is_string($currentTaskContract)) {
+    $taskPath = $root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $currentTaskContract);
+    if (! is_file($taskPath)) {
+        $errors[] = "Missing current-stage task contract declared by stage authority: {$currentTaskContract}";
+    }
+}
+
+try {
+    $consolidation = json_decode($consolidationJson, true, flags: JSON_THROW_ON_ERROR);
+    if (($consolidation['status'] ?? null) !== 'active') {
+        $errors[] = 'Documentation consolidation contract must remain active while legacy stage records are being retired.';
+    }
+    if (($consolidation['target_owners']['exact_historical_evidence'] ?? null) !== 'Git commit, pull-request and release history') {
+        $errors[] = 'Documentation consolidation must keep Git/PR/release history as exact retired-stage evidence authority.';
+    }
+} catch (Throwable $exception) {
+    $errors[] = 'Unable to decode documentation-consolidation-contract.json: '.$exception->getMessage();
+}
+
+try {
+    $recheckPolicy = json_decode($recheckPolicyJson, true, flags: JSON_THROW_ON_ERROR);
+    if (($recheckPolicy['status'] ?? null) !== 'active') {
+        $errors[] = 'Recheck policy must be active.';
+    }
+    foreach (['session_resume_or_new_ai', 'authored_authority_change', 'before_tranche_advance', 'before_candidate_or_canonical_closure', 'external_integration_change'] as $trigger) {
+        if (! is_array($recheckPolicy['triggers'][$trigger] ?? null)) {
+            $errors[] = "Recheck policy is missing trigger [{$trigger}].";
+        }
+    }
+} catch (Throwable $exception) {
+    $errors[] = 'Unable to decode recheck-policy.json: '.$exception->getMessage();
+}
+
 foreach (['compatibility pointer', 'docs/project/generated/development-state.json', './songchart ai status --json'] as $signal) {
     if (! str_contains($developmentPointer, $signal)) {
         $errors[] = "DEVELOPMENT_STATE.md compatibility pointer is missing [{$signal}].";
@@ -97,29 +152,17 @@ if (preg_match('/^## Current stage\s*$/mi', $roadmap) === 1 || str_contains($roa
     $errors[] = 'ROADMAP.md must be future-looking and must not own current-stage state.';
 }
 
-if (is_string($currentStage)) {
-    $stageToken = str_replace('.', '_', $currentStage);
-    foreach (['TASK_CONTRACT', 'VALIDATION_REPORT'] as $kind) {
-        $relative = "docs/foundation/STAGE_{$stageToken}_{$kind}.md";
-        if (! is_file($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative))) {
-            $errors[] = "Missing current-stage governance record: {$relative}";
-        }
-    }
-}
-
 foreach (['## Expected files', '## Allowed incidental files', '## Post-diff impact and scope deviations'] as $section) {
     if (! str_contains($taskTemplate, $section)) {
         $errors[] = "TASK_CONTRACT_TEMPLATE.md must include {$section}.";
     }
-}
-if (! str_contains($stage12Manifest, 'Status: historical manifest; frozen at Stage 16.4.4.')) {
-    $errors[] = 'STAGE_12_CHANGE_MANIFEST.md must be explicitly historical and frozen.';
 }
 
 $requiredIndexFragments = [
     'project/DEVELOPMENT_STATE.md',
     'project/DEVELOPMENT_HISTORY.md',
     'project/RELEASE_BASELINE_STATUS.md',
+    'project/engineering/recheck-policy.json',
     'project/engineering/AI_DEVELOPMENT_PROTOCOL.md',
     'project/domain/domain-contracts.json',
     'project/domain/operational-contracts.json',
