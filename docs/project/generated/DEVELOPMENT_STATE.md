@@ -4,35 +4,27 @@
 
 ## Current stage
 
-- Stage `19.0 — Production Readiness & First Release`
+- Stage `20.0 — Product Foundation & Development Continuity`
 - Status: `implementing`
-- Accepted through: `19.0.5`
-- Task contract: `docs/foundation/STAGE_19_0_TASK_CONTRACT.md`
+- Accepted through: `19.0`
+- Task contract: `docs/foundation/STAGE_20_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `19.0.1` — `ACCEPTED` — Production topology + environment inventory
-- `19.0.1.1` — `ACCEPTED` — Data contract + provider taxonomy convergence
-- `19.0.1.2` — `ACCEPTED` — Mobile verification + AI UI design harness
-- `19.0.2` — `ACCEPTED` — Secrets/environment hardening
-- `19.0.3` — `ACCEPTED` — Queue/scheduler production runtime
-- `19.0.4-C1A` — `ACCEPTED` — Consolidation authority + derived project state/work lease
-- `19.0.4-C1B` — `ACCEPTED` — Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration
-- `19.0.4-C1C` — `ACCEPTED` — Laravel Boost dev-tool adoption + framework MCP overlap retirement
-- `19.0.4-C2` — `ACCEPTED` — Horizon + Pulse observability consolidation
-- `19.0.4-C3` — `ACCEPTED` — Pest Browser desktop/mobile critical smoke
-- `19.0.4-C4` — `ACCEPTED` — Verifier reduction + main provenance + failure classification
-- `19.0.4-C5` — `ACCEPTED` — Provider transport inventory + Saloon decision
-- `19.0.4-C6` — `ACCEPTED` — Typed data/API inventory + Laravel Data decision
-- `19.0.4-C7` — `ACCEPTED` — Production artifact + installer + operational control
-- `19.0.5` — `ACCEPTED` — Backup/recovery
-- `19.0.6` — `IMPLEMENTING` — Security review + production smoke
-- `19.0.7` — `PLANNED` — Production operations UX + automatic TLS + low-cost service baseline
-- `final` — `PLANNED` — First release package/tag
+- `20.0A` — `IMPLEMENTING` — Development continuity + AI/MCP governance
+- `20.0B` — `PLANNED` — Durable remote development PostgreSQL authority
+- `20.0C` — `PLANNED` — Durable object storage + development diagnostics
+- `20.1` — `PLANNED` — Product/User Journey Authority
+- `20.2` — `PLANNED` — Provider Reference Matrix
+- `20.3` — `PLANNED` — Domain Gap Map
+- `20.4` — `PLANNED` — Canonical Model Proposal
+- `20.5` — `PLANNED` — Schema & Migration Implementation
+- `20.6` — `PLANNED` — Read Models / Application Contracts
+- `20.7` — `PLANNED` — Stage 20 Acceptance & Closure
 
 ## Next bounded tranche
 
-- `19.0.7` — Production operations UX + automatic TLS + low-cost service baseline
+- `20.0B` — Durable remote development PostgreSQL authority
 
 ## Live work lease
 
