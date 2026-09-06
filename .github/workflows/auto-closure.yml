@@ -39,6 +39,14 @@ jobs:
           extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, xml, zip
           coverage: none
 
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: Install locked PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
