@@ -90,6 +90,24 @@ for check in "${checks[@]}"; do
 done
 checks=("${filtered_checks[@]}")
 
+# A stage verification owns quality verification, the PostgreSQL test lane and the
+# frontend production build. When the impact graph already requires stage:verify,
+# running every discovered child first only repeats the same work and can even run
+# database checks against the wrong (development) runtime boundary. Collapse the
+# plan to the semantic owner and let the isolated stage verifier execute it once.
+stage_required=false
+for check in "${checks[@]}"; do
+    if [[ "$check" == 'composer stage:verify' || "$check" == 'songchart test' ]]; then
+        stage_required=true
+        break
+    fi
+done
+if [[ "$stage_required" == true ]]; then
+    original_count=${#checks[@]}
+    checks=('composer stage:verify')
+    printf '[SongChart impact verify] Collapsed %d overlapping checks under the single stage verification owner.\n' "$original_count"
+fi
+
 printf '[SongChart impact verify] Required pre-closure checks (%d):\n' "${#checks[@]}"
 printf -- '- %s\n' "${checks[@]}"
 if [[ ${#closure_checks[@]} -gt 0 ]]; then
