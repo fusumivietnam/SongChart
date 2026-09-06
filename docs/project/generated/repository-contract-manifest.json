@@ -236,7 +236,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "67e17cf1e867d701c5cc50c5c10691114697edbb85e6fbec23781d915f382b8e",
+            "fingerprint": "44686d22fb6585eabeec114cbc625261b276481e490989abc99a58f2e868b0ed",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -1424,9 +1424,16 @@
         },
         {
             "target": "tests/Architecture/ProductionReleaseHardeningTest.php",
-            "rule": "",
-            "classification": "unresolved",
-            "semantic_authorities": []
+            "rule": "production-release-hardening",
+            "classification": "behavioral",
+            "semantic_authorities": [
+                "release-pipeline",
+                "runtime-environment",
+                "operational-contracts",
+                "authorization",
+                "verification-command-surface",
+                "stack-manifest"
+            ]
         },
         {
             "target": "tests/Architecture/ProviderAsyncInfrastructureTest.php",
@@ -1690,5 +1697,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "e7039dc418cb6c4814ea340680516e2b1911bef27dd08e2f7b4ff85e229b077c"
+    "graph_fingerprint": "6c35b6ffaffc2bc675c5c34742154d6b1d6b89f94affcec69550c21e72083ad6"
 }
