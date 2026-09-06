@@ -17,6 +17,15 @@ cd "$ROOT"
 command -v docker >/dev/null || { echo 'Docker CLI required' >&2; exit 1; }
 docker version >/dev/null || { echo 'Docker Engine not reachable' >&2; exit 1; }
 docker compose version >/dev/null || { echo 'Docker Compose v2 required' >&2; exit 1; }
+
+# setup is bootstrap-only. Once a usable local configuration exists, preserve all
+# persistent development state and converge through the normal ready lifecycle.
+if [[ -f .env.docker ]] && grep -Eq '^APP_KEY=.+$' .env.docker; then
+  printf '[SongChart dev setup] Existing development configuration detected.\n'
+  printf '[SongChart dev setup] Preserving database, administrator and local state; continuing with dev ready.\n'
+  exec "$ROOT/songchart" dev ready
+fi
+
 [[ -f .env.docker ]] || cp .env.docker.example .env.docker
 
 # Keep host requirements to Docker + basic shell/coreutils only. Do not require Python/PHP/Node on the host.
