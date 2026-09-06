@@ -1,157 +1,82 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "lanes": {
     "impact": {
       "owner": "scripts/resolve-repository-impact.php",
       "purpose": "Resolve planned and actual-diff authorities/consumers/focused checks before closure.",
-      "commands": [
-        "./songchart impact <changed-paths>",
-        "./songchart impact --diff"
-      ],
-      "rules": {
-        "planned_before_implementation": true,
-        "actual_diff_after_implementation": true,
-        "include_untracked_files": true,
-        "include_reverse_verification_consumers": true
-      }
+      "commands": ["./songchart impact <changed-paths>", "./songchart impact --diff"],
+      "rules": {"planned_before_implementation": true, "actual_diff_after_implementation": true, "include_untracked_files": true, "include_reverse_verification_consumers": true}
     },
     "reconcile": {
       "owner": "./songchart reconcile",
       "purpose": "Regenerate committed project/repository authority from the current exact tree and expose the diff without committing.",
-      "rules": {
-        "automatic_commit": false,
-        "manual_generated_json_merge": false
-      }
+      "rules": {"automatic_commit": false, "manual_generated_json_merge": false}
     },
     "diagnostic": {
       "owner": "./songchart audit",
       "purpose": "Collect all quality/static/governance failures in one iteration without replacing strict closure.",
-      "rules": {
-        "fail_fast": false,
-        "closure_evidence": false,
-        "must_not_call_stage": true,
-        "must_not_call_canonical": true,
-        "must_not_call_full_postgres": true,
-        "must_not_call_frontend_build": true
-      }
+      "rules": {"fail_fast": false, "closure_evidence": false, "must_not_call_stage": true, "must_not_call_canonical": true, "must_not_call_full_postgres": true, "must_not_call_frontend_build": true}
     },
     "focused": {
       "owner": "task-specific",
       "purpose": "Run only impacted static/focused gates during implementation.",
-      "rules": {
-        "full_postgres_for_every_edit": false,
-        "full_frontend_build_for_every_edit": false,
-        "phpstan_baseline_widening": false
-      }
+      "rules": {"full_postgres_for_every_edit": false, "full_frontend_build_for_every_edit": false, "phpstan_baseline_widening": false}
     },
     "ci_feedback": {
       "owner": ".github/workflows/tests.yml",
       "purpose": "Run full shared CI at pull-request and main integration boundaries while avoiding redundant feature-branch push runs.",
-      "rules": {
-        "feature_branch_push_runs_full_ci": false,
-        "pull_request_to_main_runs_full_ci": true,
-        "push_to_main_runs_full_ci": true,
-        "manual_dispatch_supported": true,
-        "cancel_stale_same_ref_runs": true,
-        "path_filter_gate_reduction": false
-      },
-      "required_jobs": [
-        "quality",
-        "tests-postgres",
-        "frontend-build"
-      ]
+      "rules": {"feature_branch_push_runs_full_ci": false, "pull_request_to_main_runs_full_ci": true, "push_to_main_runs_full_ci": true, "manual_dispatch_supported": true, "cancel_stale_same_ref_runs": true, "path_filter_gate_reduction": false},
+      "required_jobs": ["quality", "tests-postgres", "frontend-build"]
     },
     "quality": {
       "owner": "composer quality:verify",
       "purpose": "Repository-wide static, architecture-source and governance closure.",
-      "must_not_call": [
-        "@stage:verify",
-        "@canonical:verify",
-        "@test:postgres",
-        "npm run build"
-      ],
-      "owns": [
-        "historical migration immutability and forward-only migration policy",
-        "runtime artifact tracked-tree ownership"
-      ]
+      "must_not_call": ["@stage:verify", "@canonical:verify", "@test:postgres", "npm run build"],
+      "owns": ["historical migration immutability and forward-only migration policy", "runtime artifact tracked-tree ownership"]
     },
     "stage": {
       "owner": "composer stage:verify",
       "purpose": "One candidate-stage closure on the exact target tree.",
-      "ordered_steps": [
-        "@php artisan optimize:clear --ansi",
-        "@php artisan route:list --except-vendor --ansi",
-        "@quality:verify",
-        "@test:postgres",
-        "npm run build"
-      ]
+      "ordered_steps": ["@php artisan optimize:clear --ansi", "@php artisan route:list --except-vendor --ansi", "@quality:verify", "@test:postgres", "npm run build"]
     },
     "canonical": {
       "owner": "composer canonical:verify",
       "purpose": "Canonical runtime/release closure after locked dependencies are installed.",
-      "ordered_steps": [
-        "@lockfile-authority:release",
-        "@environment:verify",
-        "@postgres-major:verify",
-        "@test-database:safety",
-        "@locks:verify",
-        "@package-upstream:verify",
-        "@stage:verify",
-        "@migration-lifecycle:seal",
-        "@migration-lifecycle:verify",
-        "@migration-upgrade:verify",
-        "@migration-runtime-contract:verify",
-        "@postgres-schema:snapshot",
-        "@project-context:runtime-verify",
-        "@foundation:release",
-        "@candidate-evidence:record",
-        "@candidate-contract:verify"
-      ],
-      "must_call_once": [
-        "@stage:verify"
-      ],
-      "owns": [
-        "previous-release-to-current PostgreSQL migration upgrade verification",
-        "one-time exact-canonical-target migration history baseline sealing"
-      ]
+      "ordered_steps": ["@lockfile-authority:release", "@environment:verify", "@postgres-major:verify", "@test-database:safety", "@locks:verify", "@package-upstream:verify", "@stage:verify", "@migration-lifecycle:seal", "@migration-lifecycle:verify", "@migration-upgrade:verify", "@migration-runtime-contract:verify", "@postgres-schema:snapshot", "@project-context:runtime-verify", "@foundation:release", "@candidate-evidence:record", "@candidate-contract:verify"],
+      "must_call_once": ["@stage:verify"],
+      "owns": ["previous-release-to-current PostgreSQL migration upgrade verification", "one-time exact-canonical-target migration history baseline sealing"]
     }
   },
-  "installer_contract": {
-    "allowed_verification_entrypoints": [
-      "composer stage:verify",
-      "composer canonical:verify"
+  "deduplication_policy": {
+    "rule": "One invariant or behavioral contract has one semantic verifier owner. Wrappers/adapters may delegate to that owner but must not reimplement its assertions or rerun the same expensive gate within one closure path without a distinct lifecycle reason.",
+    "retire_when": [
+      "two scripts/tests enforce the same invariant against the same authority and one provides no unique failure classification or runtime coverage",
+      "a historical stage-specific verifier is fully subsumed by a current owner and has no active consumer",
+      "a command alias adds no distinct UX boundary and only forwards to another public entrypoint",
+      "an Architecture test duplicates a script byte-for-byte or semantically without adding executable framework-level coverage"
     ],
-    "forbidden_direct_gates": [
-      "composer analyse",
-      "composer quality:verify",
-      "composer test:postgres",
-      "vendor/bin/phpstan",
-      "vendor/bin/pint",
-      "npm run build"
+    "keep_when": [
+      "a thin public facade delegates to one owner for developer/mobile ergonomics",
+      "a static contract check and a behavioral runtime test cover different failure classes",
+      "canonical closure intentionally invokes stage closure once and then adds canonical-only release/runtime gates",
+      "a regression test uniquely guards a historical failure class recorded in the regression ledger"
+    ],
+    "migration_requirements": [
+      "prove consumer equivalence before deletion",
+      "update verification-consumer-graph and command-surface authorities",
+      "remove dead composer aliases/scripts/tests and documentation references in the same bounded change",
+      "run impact resolution plus repository-contract and stage verification after consolidation"
     ]
   },
+  "installer_contract": {
+    "allowed_verification_entrypoints": ["composer stage:verify", "composer canonical:verify"],
+    "forbidden_direct_gates": ["composer analyse", "composer quality:verify", "composer test:postgres", "vendor/bin/phpstan", "vendor/bin/pint", "npm run build"]
+  },
   "canonical_shell_contract": {
-    "preparation_only": [
-      "lockfile preflight",
-      "canonical PHP extensions",
-      "composer install",
-      "npm ci",
-      "exact-container repository contract refresh",
-      "quality normalization"
-    ],
+    "preparation_only": ["lockfile preflight", "canonical PHP extensions", "composer install", "npm ci", "exact-container repository contract refresh", "quality normalization"],
     "single_closure_entrypoint": "composer canonical:verify"
   },
-  "evidence_reuse": {
-    "enabled": false,
-    "reason": "Deferred until impact/reconcile/audit topology is stable; correctness before cache optimization."
-  },
-  "removed_aliases": [
-    "verify",
-    "release:verify",
-    "test:all",
-    "test:postgres-clean",
-    "release-contract:verify",
-    "delivery:verify"
-  ],
+  "evidence_reuse": {"enabled": false, "reason": "Deferred until impact/reconcile/audit topology is stable; correctness before cache optimization."},
+  "removed_aliases": ["verify", "release:verify", "test:all", "test:postgres-clean", "release-contract:verify", "delivery:verify"],
   "public_entrypoints_authority": "docs/project/engineering/verification-command-surface.json"
 }
