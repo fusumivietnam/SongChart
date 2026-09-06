@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Define when SongChart must re-resolve repository, generated, external-integration and verification state so stale assumptions do not survive across AI sessions, provider changes or stage transitions.",
+  "principles": [
+    "Recheck reuses existing authorities and verification surfaces; it must not create a parallel verifier hierarchy.",
+    "Repository/GitHub facts are resolved live, generated projections are regenerated from authored authorities, and provider facts are rechecked only within their declared external-system authority scope.",
+    "A successful earlier verification is historical evidence, not permission to skip verification after the verified tree or relevant external capability changes.",
+    "New MCP tools, scopes or mutations are denied by default until the owning registry/governance contract explicitly admits them."
+  ],
+  "triggers": {
+    "session_resume_or_new_ai": [
+      "resolve live branch/head/upstream state",
+      "read ./songchart ai status --json or equivalent generated project context before substantial writes"
+    ],
+    "authored_authority_change": [
+      "run ./songchart reconcile",
+      "review generated diff instead of hand-editing generated authority",
+      "rerun impacted focused checks"
+    ],
+    "before_tranche_advance": [
+      "working tree must be intentional and synchronized",
+      "run repository-contracts verification and stage verification on the current tree",
+      "do not mark the tranche accepted from an older SHA"
+    ],
+    "before_candidate_or_canonical_closure": [
+      "regenerate required authority from the exact target tree",
+      "rerun canonical governed verification on the exact head",
+      "do not mutate the target SHA while closure is running"
+    ],
+    "external_integration_change": [
+      "recheck official provider documentation or release notes",
+      "compare tool/resource/auth/permission/capability surface with the last accepted registry assumptions",
+      "review overlap with already connected native tools, CLI, SDK or API",
+      "record adoption, compatibility, deferral or retirement before expanding agent permissions"
+    ]
+  },
+  "mcp_upgrade_policy": {
+    "local_or_package_managed": {
+      "versioning": "pin when the distribution supports deterministic version pinning",
+      "upgrade_path": "reviewed dependency change -> capability/auth diff -> development smoke -> existing impacted verification -> explicit adoption",
+      "automatic_latest_on_dev_ready": false,
+      "automatic_major_upgrade": false
+    },
+    "remote_managed": {
+      "versioning": "do not invent a local version pin when the provider owns deployment",
+      "track": ["last_reviewed", "official source", "expected capability/auth/permission profile", "known deprecations when relevant"],
+      "upgrade_path": "detect behavior/toolset/auth drift -> compare with official documentation -> update registry/permissions if accepted -> rerun impacted verification"
+    },
+    "permission_rule": "A provider update must never automatically expand development or production mutation authority.",
+    "new_capability_rule": "Discovery of a new tool/resource does not imply SongChart adoption or permission.",
+    "retirement_rule": "Remove obsolete MCP/client configuration after active consumers migrate; do not keep duplicate old/new integrations for convenience."
+  },
+  "verification_ownership": {
+    "orientation_and_live_state": "./songchart ai status --json and ./songchart ai doctor",
+    "generated_authority": "./songchart reconcile",
+    "repository_contracts": "./songchart composer repository-contracts:verify",
+    "stage_gate": "./songchart composer stage:verify",
+    "candidate_and_canonical": "existing governed candidate/canonical workflow"
+  }
+}
