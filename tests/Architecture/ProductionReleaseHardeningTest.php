@@ -36,7 +36,7 @@ it('keeps production release provenance transport recovery and operator boundari
 
     expect($compose)
         ->toContain('php artisan horizon:status --no-ansi | grep -qi running')
-        ->toContain("artisan schedule:work")
+        ->toContain('artisan schedule:work')
         ->toContain('condition: service_healthy');
 
     expect($caddy)
