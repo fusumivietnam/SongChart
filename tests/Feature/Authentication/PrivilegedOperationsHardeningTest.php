@@ -62,3 +62,31 @@ it('creates a privileged administrator through the interactive command', functio
         ->and($user->email_verified_at)->not->toBeNull()
         ->and(Hash::check('StrongPassword!123', $user->password))->toBeTrue();
 });
+
+it('preserves existing administrator credentials during idempotent production bootstrap', function (): void {
+    $user = User::factory()->create([
+        'email' => 'owner@example.test',
+        'password' => Hash::make('ExistingPassword!123'),
+        'role' => UserRole::SuperAdmin,
+        'is_active' => true,
+        'email_verified_at' => now(),
+    ]);
+
+    $this->artisan('admin:create', [
+        'email' => 'owner@example.test',
+        '--if-missing' => true,
+    ])->assertSuccessful();
+
+    $user->refresh();
+
+    expect(Hash::check('ExistingPassword!123', $user->password))->toBeTrue();
+});
+
+it('fails noninteractive production bootstrap when the configured administrator is missing', function (): void {
+    $this->artisan('admin:create', [
+        'email' => 'missing@example.test',
+        '--require-existing' => true,
+    ])->assertFailed();
+
+    expect(User::query()->where('email', 'missing@example.test')->exists())->toBeFalse();
+});
