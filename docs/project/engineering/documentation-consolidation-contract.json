@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Consolidate legacy stage-centric documentation into current owner-based authorities without creating a second archive hierarchy in the active source tree.",
+  "source_classes_pending_consolidation": [
+    "docs/foundation historical STAGE_* task contracts, validation reports, audits and baselines",
+    "root STAGE_*_CHANGE_MANIFEST.md files",
+    "stage-specific records under provider, UI, catalog, discovery and operations documentation"
+  ],
+  "target_owners": {
+    "current_stage_semantics": "docs/project/engineering/stage-plan.json",
+    "generated_current_state": "docs/project/generated/development-state.json",
+    "live_volatile_state": "Git and GitHub resolved by ./songchart ai status --json",
+    "accepted_chronology": "docs/project/DEVELOPMENT_HISTORY.md",
+    "durable_architecture_decisions": "docs/project/docs/adr/ plus docs/project/docs/DECISIONS.md",
+    "durable_rules": "current project/module machine and Markdown authorities",
+    "guarded_regressions": "docs/project/engineering/regression-ledger.json",
+    "provisional_reusable_learning": "docs/project/engineering/AI_LEARNING_LEDGER.md",
+    "exact_historical_evidence": "Git commit, pull-request and release history"
+  },
+  "conversion_rules": [
+    "Do not move every legacy stage document into a new archive folder; that only relocates duplication.",
+    "Extract durable rules and decisions into their current semantic owner before deleting a legacy source.",
+    "Extract accepted chronology into DEVELOPMENT_HISTORY without preserving obsolete operational instructions as active guidance.",
+    "Promote repeated guarded failures into regression-ledger.json and reusable but unguarded lessons into AI_LEARNING_LEDGER.md.",
+    "Use Git/PR history as the exact immutable copy of retired stage evidence unless legal, compliance or release evidence requires an explicit retained document.",
+    "A historical file may be deleted only after active links, tests, verifiers, generators and documentation consumers no longer require its path.",
+    "Compatibility pointers are permitted only when they route to one current owner and do not duplicate content.",
+    "Historical stage documents are migration inputs, not AI orientation sources; AI must use current authorities first."
+  ],
+  "retention_exception": {
+    "allowed_when": [
+      "unique legal or compliance evidence cannot be represented by current authority plus Git history",
+      "release evidence is required by an active release contract",
+      "an external immutable reference requires the historical path"
+    ],
+    "requirement": "Retained historical files must declare why Git history plus structured owners are insufficient."
+  },
+  "migration_sequence": [
+    "inventory legacy stage files and all active consumers",
+    "classify each file by durable information owner",
+    "extract or reconcile durable semantics",
+    "migrate active path consumers",
+    "delete redundant historical files in bounded batches",
+    "run existing documentation/architecture/impact verification",
+    "reconcile generated authority"
+  ],
+  "migration_state": "inventory-and-consumer-closure-in-progress"
+}

@@ -16,6 +16,11 @@ test('it keeps development progress out of README and in generated repository st
         ->and($generatedState['current_stage']['id'] ?? null)->toBeString();
 });
 
-test('it preserves historical Stage 11 closure evidence', function (): void {
-    expect(base_path('docs/foundation/STAGE_11_8_TASK_CONTRACT.md'))->toBeFile();
+test('it routes historical stage evidence through structured owners instead of requiring legacy stage files', function (): void {
+    $history = (string) file_get_contents(base_path('docs/project/DEVELOPMENT_HISTORY.md'));
+    $contract = json_decode((string) file_get_contents(base_path('docs/project/engineering/documentation-consolidation-contract.json')), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($history)->toContain('Development History')
+        ->and($contract['target_owners']['accepted_chronology'] ?? null)->toBe('docs/project/DEVELOPMENT_HISTORY.md')
+        ->and($contract['target_owners']['exact_historical_evidence'] ?? null)->toBe('Git commit, pull-request and release history');
 });

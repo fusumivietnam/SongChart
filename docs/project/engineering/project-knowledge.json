@@ -1,25 +1,20 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "status": "active",
-  "purpose": "Compact machine-readable knowledge authority for AI development, API planning, developer documentation and FAQ generation. This file is repository-owned and must not depend on chat memory.",
-  "identity": {
-    "product": "SongChart",
-    "repository": "fusumivietnam/SongChart",
-    "legacy_brand_aliases": ["SongChartWeb"],
-    "product_summary": "Music discovery, canonical metadata, provenance, provider evidence and legal listening or viewing destinations."
-  },
+  "purpose": "Compact machine-readable knowledge authority for AI development, API planning, developer documentation and FAQ generation. Repository-owned; chat memory is never authority.",
+  "identity": {"product": "SongChart", "repository": "fusumivietnam/SongChart", "legacy_brand_aliases": ["SongChartWeb"], "product_summary": "Music discovery, canonical metadata, provenance, provider evidence and legal listening or viewing destinations."},
   "authoritative_entrypoints": [
     "PROJECT_AUTHORITY.md",
     "docs/START_HERE.md",
     "docs/project/generated/project-context.json",
-    "docs/project/engineering/consolidation-plan.json",
+    "docs/project/engineering/stage-plan.json",
     "docs/project/engineering/project-kernel-contract.json",
     "docs/project/engineering/architecture-graph-contract.json",
-    "docs/project/engineering/use-case-contract.schema.json",
     "docs/project/engineering/technology-evaluation-contract.json",
     "docs/project/engineering/technology-watchlist.json",
     "docs/project/engineering/mcp-governance-contract.json",
     "docs/project/engineering/external-systems-registry.json",
+    "docs/project/engineering/documentation-consolidation-contract.json",
     "docs/project/release/versioning-policy.json",
     "docs/project/domain/DATA_CONTRACT.md",
     "docs/providers/PROVIDER_TAXONOMY.md",
@@ -33,69 +28,36 @@
     "frontend": "Livewire 4",
     "verification": "GitHub Auto Closure plus accepted-main CI",
     "dependency_policy": "Laravel first-party, then mature documented package, then product-specific custom code",
-    "optimization_policy": "Continuous per bounded tranche; do not wait for periodic architecture audits to discover known cleanup or automation opportunities.",
-    "technology_policy": "Fresh technology/package decisions require compatibility evidence plus SWOT and net-ROI assessment; novelty alone is not a reason to adopt.",
-    "versioning_policy": "Product version uses Semantic Versioning; build identity is derived from Git SHA and GitHub Actions evidence; Stage/tranche numbers are never product versions.",
-    "project_intelligence": "Project Kernel contracts normalize repository state, use cases and architecture graph data for CLI/CI/MCP/Admin consumers; expensive graph analysis is snapshot-based and never request-time.",
-    "external_ai_policy": "Repository authority outranks MCP/provider skills and agent-local memory; development MCP connections are evidence/tooling and must not become implicit production dependencies."
+    "technology_policy": "Fresh technology/package decisions require compatibility evidence, overlap/reuse/retirement analysis and net ROI; novelty alone is not adoption evidence.",
+    "external_ai_policy": "Repository authority outranks MCP/provider skills and agent-local memory; official provider MCPs are evaluated before custom bridges only when the provider is relevant to an active use case.",
+    "documentation_policy": "Active knowledge is organized by semantic owner. Legacy stage documents are consolidation inputs and are retired after durable semantics and consumers are migrated."
   },
   "domain_boundaries": {
-    "canonical_identity": "SongChart owns canonical music identity and reconciliation semantics unless a future proven package can preserve the same typed/product semantics with less custom code.",
-    "provider_taxonomy": "SongChart owns provider category, role, capability and readiness vocabulary; transport/auth/retry/pagination mechanics should be delegated to standard integration packages where practical.",
-    "authorization": "Laravel Gates remain the authorization enforcement surface unless runtime-managed permissions become a product requirement.",
-    "audit": "Privileged mutations explicitly emit audit evidence at the use-case boundary; persistence may use spatie/laravel-activitylog.",
-    "security": "Framework and platform controls own generic web security; custom security is retained only for product-specific trust boundaries after checking whether an established framework/package primitive already owns the requirement."
+    "canonical_identity": "SongChart owns canonical music identity and reconciliation semantics.",
+    "provider_taxonomy": "SongChart owns provider category, role, capability and readiness vocabulary; providers supply evidence and provider-native operational state.",
+    "authorization": "Laravel Gates remain authorization enforcement unless a new accepted runtime permission requirement proves otherwise.",
+    "audit": "Privileged mutations emit audit evidence at the governed use-case boundary.",
+    "security": "Framework/platform controls own generic web security; custom security remains only for product-specific trust boundaries."
   },
   "delivery_model": {
     "normal_path": "bounded branch -> Draft PR -> Auto PREPARE -> Auto CHECK -> browser smoke when applicable -> canonical CLOSE -> Auto Ready -> human Merge -> accepted-main CI",
     "mobile_first": true,
     "chat_is_not_memory_authority": true,
-    "continuous_optimization_authority": "docs/project/engineering/consolidation-plan.json",
-    "technology_evaluation_authority": "docs/project/engineering/technology-evaluation-contract.json",
-    "technology_watchlist": "docs/project/engineering/technology-watchlist.json",
-    "versioning_authority": "docs/project/release/versioning-policy.json",
     "project_kernel_authority": "docs/project/engineering/project-kernel-contract.json",
-    "architecture_graph_authority": "docs/project/engineering/architecture-graph-contract.json",
     "mcp_governance_authority": "docs/project/engineering/mcp-governance-contract.json",
-    "external_systems_authority": "docs/project/engineering/external-systems-registry.json"
+    "external_systems_authority": "docs/project/engineering/external-systems-registry.json",
+    "documentation_consolidation_authority": "docs/project/engineering/documentation-consolidation-contract.json"
   },
-  "project_intelligence": {
-    "compiler": "scripts/project-intelligence.php",
-    "snapshot_consistency": "eventual",
-    "runtime_storage": "storage/project-intelligence/{sha}/",
-    "admin_panels": ["Now", "Architecture", "Evolution", "Technology"],
-    "use_case_schema": "docs/project/engineering/use-case-contract.schema.json",
-    "technology_source": "docs/project/engineering/technology-watchlist.json",
-    "rule": "Serve the latest completed snapshot and expose staleness; rebuild only through explicit/background refresh with single-flight concurrency."
-  },
-  "documentation_surfaces": {
-    "api": {
-      "status": "planned",
-      "source": "typed cross-boundary data contracts plus route authority",
-      "preferred_generation": "derive schemas/examples from typed data objects rather than duplicate prose"
-    },
-    "developer": {
-      "status": "active",
-      "source": "project context, project knowledge, project intelligence graph, authority graph, command surface, technology watchlist, MCP governance, external-system registry and package ownership"
-    },
-    "faq": {
-      "status": "planned",
-      "source": "project knowledge, product boundaries, provider semantics, operational reason codes and stable public behavior"
-    }
-  },
+  "project_intelligence": {"compiler": "scripts/project-intelligence.php", "snapshot_consistency": "eventual", "runtime_storage": "storage/project-intelligence/{sha}/", "rule": "Serve latest completed snapshot and expose staleness; rebuild only through explicit/background refresh."},
   "ai_working_rules": [
-    "Read generated project-context.json before relying on conversational context.",
+    "Read generated project-context.json and live ai status before relying on conversation context for volatile facts.",
     "Use current repository authorities over historical stage documents.",
-    "Use mcp-governance-contract.json and external-systems-registry.json before relying on an external MCP, provider skill or agent-local persistent memory.",
-    "External MCP live state is authoritative only for the provider resource state within its declared scope; it does not own SongChart architecture, domain or schema evolution.",
-    "Development MCP/tool installations must not silently become production application dependencies.",
-    "Before adding custom infrastructure or business support code, check consolidation-plan.json and technology-watchlist.json for an existing Laravel/package owner and replacement path.",
-    "At every bounded tranche, review reuse/package opportunity, code retirement, automation, verifier reduction, docs/knowledge impact, brand cleanup, release weight, mobile operability and technology SWOT/ROI freshness.",
-    "Do not add a new verifier script when an existing repository contract or Pest/Architecture test can own the invariant.",
-    "When touching legacy naming, converge active source to the canonical SongChart brand unless the text is immutable historical evidence.",
-    "Prefer bounded migrations that remove replaced custom code rather than maintaining parallel implementations.",
-    "Record deferred optimization in consolidation-plan.json or technology-watchlist.json with a target phase instead of leaving it only in chat or prose discussion.",
-    "Use docs/project/release/versioning-policy.json for product version, build identity, runtime display and graph snapshot version semantics; never derive product version from Stage/tranche identifiers.",
-    "Use project-intelligence snapshots for architecture/use-case impact instead of rescanning the entire source in request paths; AI may request an explicit refresh when the snapshot is stale."
+    "Use MCP governance and external-system registry before connecting or relying on external provider tooling.",
+    "When a relevant provider offers an official MCP, evaluate that official integration before custom MCP code, but reject duplicate/low-value tool surfaces.",
+    "Do not install provider MCPs automatically or commit their credentials.",
+    "Treat legacy STAGE_* files as migration inputs; use documentation-consolidation-contract.json to extract durable semantics and retire redundant files.",
+    "Exact retired historical text is recovered from Git/PR history; active AI orientation must not depend on old stage files.",
+    "Do not add a new verifier when an existing contract/Pest Architecture test can own the invariant.",
+    "Record deferred technology decisions in the watchlist/owning contract rather than only in chat."
   ]
 }

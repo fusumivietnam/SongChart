@@ -4,86 +4,55 @@ Status: implementing on the Stage 20 umbrella branch.
 
 ## Goal
 
-Stage 20 establishes a durable, AI-safe development foundation before expanding the SongChart product/domain model. The stage must reduce environment loss and agent guesswork without adding duplicate runtime authorities or speculative AI/product dependencies.
+Establish durable, AI-safe development continuity and a clean owner-based knowledge surface before expanding the SongChart product/domain model.
 
 ## Authority order
 
-1. `PROJECT_AUTHORITY.md` and current repository machine contracts own SongChart architecture and workflow.
-2. `docs/project/engineering/stage-plan.json` owns authored current-stage progress.
-3. `docs/project/engineering/project-knowledge.json` owns compact repository knowledge for AI/developer consumers.
-4. `docs/project/engineering/mcp-governance-contract.json` owns external agent/MCP boundaries.
-5. `docs/project/engineering/external-systems-registry.json` owns the intended role/status of external services; live resource identity remains an environment/runtime fact.
-6. Laravel migrations own application schema evolution. Provider/MCP tools may inspect live state but must not replace migrations or canonical domain contracts.
+1. `PROJECT_AUTHORITY.md` and current machine/domain contracts.
+2. `docs/project/engineering/stage-plan.json` for authored progress.
+3. generated project context/state plus live Git/GitHub for volatile facts.
+4. `project-knowledge.json`, `mcp-governance-contract.json`, `external-systems-registry.json` and `documentation-consolidation-contract.json` for AI/external/documentation governance.
+5. Laravel migrations for application schema evolution.
 
-## Stage 20 roadmap
+## 20.0A — Development continuity + AI/MCP/documentation governance
 
-### 20.0A — Development continuity + AI/MCP governance
+- preserve Project Kernel/repository authority above MCP/provider skills and agent memory;
+- discover/evaluate an official provider MCP first when an active use case needs provider-native AI tooling, then compare overlap with native connector/CLI/API before adoption;
+- keep developer MCP connections out of production application dependencies;
+- record GitHub, Neon, Cloudflare, Figma and Grafana official MCP availability/evaluation in the external-system registry;
+- convert legacy stage-centric documentation toward current semantic owners instead of creating another archive hierarchy;
+- use Development History for accepted chronology, ADR/current contracts for durable rules, regression ledger for guarded failures and Git/PR history for exact retired evidence;
+- migrate active links/tests/verifiers before deleting each historical stage file;
+- keep GitHub as source/delivery authority and Docker/runtime state disposable.
 
-- make external-system roles, authority scopes and mutation limits machine-readable;
-- preserve the Project Kernel as the highest AI authority;
-- distinguish development-plane MCP/tooling from production application dependencies;
-- keep GitHub as source/delivery authority;
-- record technology deferrals instead of installing tools because they are available;
-- treat container/runtime state as disposable and canonical development data as durable authority.
+## 20.0B — Durable development database authority
 
-### 20.0B — Durable development database authority
+- support durable remote PostgreSQL suitable for Codespaces/mobile continuity, with Neon as preferred provider;
+- local PostgreSQL remains an explicit fallback mode only;
+- fail closed when configured remote DB is unreachable/wrong environment;
+- verification/test PostgreSQL remains isolated and disposable;
+- backup/restore and diagnostics must not assume Compose PostgreSQL;
+- APP_KEY and development secrets remain stable outside source.
 
-- support a durable remote PostgreSQL development authority suitable for Codespaces/mobile continuity, with Neon as the current preferred provider;
-- keep local PostgreSQL as an explicit fallback mode rather than a silent universe switch;
-- fail closed when a configured remote development DB is unreachable or has the wrong environment identity;
-- preserve verification/test PostgreSQL as isolated and disposable;
-- update backup/restore and diagnostics so they do not assume the development database is always a Compose container;
-- keep `APP_KEY` and development secrets stable outside source.
+## 20.0C — Durable object storage + diagnostics
 
-### 20.0C — Durable object storage + development diagnostics
+- Cloudflare R2 through Laravel Filesystem is preferred durable media/storage candidate;
+- Redis/cache/Horizon remain disposable unless evidence says otherwise;
+- diagnostics expose DB/storage/environment identity without leaking secrets;
+- never silently fall back to empty DB/local filesystem after durable authority is configured.
 
-- use Cloudflare R2 as the preferred durable development/media object-storage candidate through Laravel Filesystem;
-- keep Redis/cache/Horizon development state disposable unless product evidence requires otherwise;
-- extend `./songchart dev doctor`/AI diagnostics with database authority, storage connectivity and environment-identity evidence;
-- never silently fall back to an empty database or local filesystem when a durable authority was explicitly configured.
+## 20.1–20.7
 
-### 20.1 — Product/User Journey Authority
+20.1 Product/User Journey Authority → 20.2 Provider Reference Matrix → 20.3 Domain Gap Map → 20.4 Canonical Model Proposal → 20.5 Schema & Migration Implementation → 20.6 Read Models/Application Contracts → 20.7 exact-head acceptance/closure.
 
-Define visitor/editor/admin journeys before adding schema.
+## External AI/tooling
 
-### 20.2 — Provider Reference Matrix
-
-Use providers as evidence/reference, never as canonical schema authority.
-
-### 20.3 — Domain Gap Map
-
-Compare current domain contracts against product journeys and classify each gap as sufficient, missing, derived, provider-only, UI-hidden or retirement candidate.
-
-### 20.4 — Canonical Model Proposal
-
-Define accepted entities, relationships, invariants, identity rules, provenance boundaries and chart-specific product semantics.
-
-### 20.5 — Schema & Migration Implementation
-
-Implement only accepted model changes using guarded forward Laravel migrations and existing migration lifecycle policy.
-
-### 20.6 — Read Models / Application Contracts
-
-Expose task-oriented product read models without allowing controllers/views to become ad-hoc data-access authorities.
-
-### 20.7 — Stage 20 Acceptance & Closure
-
-Reconcile generated authority, run focused verification, candidate verification and canonical closure on the exact head before one final Stage 20 PR is merged.
-
-## External AI/tooling policy for Stage 20
-
-The following are development-plane capabilities, not production dependencies: GitHub connector/MCP, Neon Skills/MCP, Cloudflare Docs/API MCP and Figma/Code Connect where applicable. They may improve evidence and reduce guessing but do not own SongChart architecture.
-
-Hermes Agent, OpenCode, OpenRouter, 9Router and custom multi-agent orchestration are not Stage 20 application dependencies. They may be evaluated as optional developer clients/gateways only when they reduce an evidenced workflow cost. A visitor-facing AI assistant is a separate future product capability and requires product evidence, retrieval/read-model boundaries, cost controls and read-only/citation-aware behavior before adoption.
+GitHub/Neon/Cloudflare/Figma/Grafana MCP capabilities are development/operations tools only within declared scope. Hermes Agent, OpenCode, OpenRouter, 9Router and custom multi-agent orchestration are not Stage 20 application dependencies. Visitor AI is a separate future product capability requiring evidence, retrieval/read-model boundaries, cost controls and read-only/citation-aware behavior first.
 
 ## Infrastructure/scale policy
 
-Stage 20 records observability and scale decision requirements but does not pre-scale. Later adoption of Workers, Hyperdrive, additional app replicas, external APM or proxy/service-mesh technology must be justified by measured latency, saturation, queue, cache, database or search-visibility evidence.
+Workers, Hyperdrive, replicas, external APM or proxy/service-mesh technology require measured latency/saturation/queue/cache/database/search evidence. Stage 20 does not pre-scale.
 
 ## Verification and closure
 
-- preserve `./songchart` as the supported workflow facade;
-- verification/test data must remain isolated from shared development data;
-- generated files under `docs/project/generated/*` are regenerated only by repository tooling;
-- source/contract changes are committed before generated reconciliation;
-- Stage 20 closes only after exact-head candidate and canonical verification pass and the tracked tree remains clean.
+Preserve `./songchart` facade; keep verification DB isolated; regenerate `docs/project/generated/*` only through repository tooling; commit source/contract changes before generated reconciliation; close Stage 20 only after exact-head candidate/canonical verification and clean tracked tree.

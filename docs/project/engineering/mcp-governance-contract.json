@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "active",
   "purpose": "Govern external AI agents, MCP servers, provider skills and connected developer tools without allowing external live state or chat memory to replace SongChart repository authority.",
   "precedence": [
@@ -9,6 +9,20 @@
     "official provider documentation and installed provider skills",
     "conversation memory and agent-local memory"
   ],
+  "official_provider_integration_policy": {
+    "rule": "When a provider or platform becomes relevant to an active SongChart use case, evaluate its official MCP/agent integration before designing a custom MCP bridge.",
+    "evaluation_order": [
+      "confirm the MCP/integration is officially owned or documented by the provider",
+      "compare it with already connected native tools, CLI, SDK and API access",
+      "identify unique value and overlap",
+      "prefer remote OAuth or provider-recommended authentication when it reduces secret handling",
+      "scope tools and permissions to the smallest useful read/development surface",
+      "record adoption, deferral or rejection in external-systems-registry.json"
+    ],
+    "adoption_threshold": "Official availability alone is insufficient; adoption must reduce guessing, manual work or maintenance without creating duplicate authority or unnecessary runtime weight.",
+    "default_installation": "not-automatic",
+    "application_dependency": "forbidden-unless-product-runtime-use-case-is-explicitly-accepted"
+  },
   "planes": {
     "development": {
       "rule": "Developer AI/MCP integrations may inspect and, when explicitly permitted, mutate development resources. Their installation must not create a production runtime dependency.",
@@ -36,22 +50,10 @@
     "Agent-local persistent memory is convenience state only and must yield to current repository and live-state evidence."
   ],
   "capability_classes": {
-    "observer": [
-      "read repository state",
-      "read documented external state",
-      "inspect diagnostics and metrics"
-    ],
-    "developer": [
-      "edit the active synchronized development branch",
-      "run governed development/test commands",
-      "mutate explicitly declared development resources"
-    ],
-    "operator": [
-      "perform explicit development/staging infrastructure operations within declared provider scope"
-    ],
-    "release": [
-      "perform production mutations only through the release/operations workflow with explicit authorization"
-    ]
+    "observer": ["read repository state", "read documented external state", "inspect diagnostics and metrics"],
+    "developer": ["edit the active synchronized development branch", "run governed development/test commands", "mutate explicitly declared development resources"],
+    "operator": ["perform explicit development/staging infrastructure operations within declared provider scope"],
+    "release": ["perform production mutations only through the release/operations workflow with explicit authorization"]
   },
   "default_agent_class": "developer",
   "forbidden_shortcuts": [
@@ -59,6 +61,7 @@
     "direct canonical-data mutation from an external MCP without SongChart application/domain enforcement",
     "committing generated provider credentials or connection strings",
     "granting broad account mutation permissions only for convenience",
-    "installing optional AI routers/agents into production before a product or workflow requirement exists"
+    "installing optional AI routers/agents into production before a product or workflow requirement exists",
+    "installing both an official provider MCP and an overlapping custom/native bridge without documented unique responsibilities"
   ]
 }

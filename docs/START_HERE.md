@@ -1,6 +1,6 @@
 # Start Here
 
-SongChart documentation is organized by ownership rather than by development chronology.
+SongChart documentation is organized by semantic ownership, not development chronology.
 
 ## Before implementation
 
@@ -8,62 +8,45 @@ Read in this order:
 
 1. `PROJECT_AUTHORITY.md`
 2. `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
-3. `docs/project/DEVELOPMENT_STATE.md` when working on the active stage
-4. the current task contract
-5. the authority for the domain being changed
+3. `./songchart ai status --json` and `docs/project/generated/project-context.json` for current/runtime-sensitive work
+4. the current task contract named by `docs/project/engineering/stage-plan.json`
+5. the owning domain/stack/security/provider/UI/operations authority
 
-Use `docs/DOCUMENTATION_INDEX.md` to locate the owning authority.
+Use `docs/DOCUMENTATION_INDEX.md` to locate owners.
 
 ## Routing
 
-### Domain and persistence
-
-Use `docs/project/domain/` for canonical entities, fields, identifiers, relationships, schema ownership, URL contracts, application data boundaries, and use-case contracts.
-
-### Providers
-
-Use `docs/providers/` together with provider-related machine contracts under `docs/project/domain/`.
-
-### Runtime and dependencies
-
-Use `docs/project/stack/`.
-
-### Verification and development workflow
-
-Use `docs/project/engineering/`.
-
-### Security and authorization
-
-Use `docs/project/security/` and `docs/project/docs/SECURITY.md`.
-
-### UI
-
-Use `docs/ui/`.
-
-### Operations
-
-Use `docs/operations/`.
-
-### Extensions
-
-Use `docs/extensions/`.
+- Domain/persistence: `docs/project/domain/`
+- Providers: `docs/providers/` plus provider machine contracts
+- Runtime/dependencies: `docs/project/stack/`
+- Verification/development/MCP/project intelligence: `docs/project/engineering/`
+- Security: `docs/project/security/` and `docs/project/docs/SECURITY.md`
+- UI/design: `docs/ui/`
+- Operations: `docs/operations/`
+- Extensions: `docs/extensions/`
 
 ## Project state
 
-Current work belongs in `docs/project/DEVELOPMENT_STATE.md`.
+Authored stage semantics: `docs/project/engineering/stage-plan.json`.
 
-Accepted history belongs in `docs/project/DEVELOPMENT_HISTORY.md`.
+Generated current state: `docs/project/generated/development-state.json` and `docs/project/generated/DEVELOPMENT_STATE.md`.
 
-Future direction belongs in `docs/project/docs/ROADMAP.md`.
+Live branch/PR/SHA/check state: resolve from Git/GitHub with `./songchart ai status --json`.
 
-Historical `STAGE_*` documents are implementation evidence. They are not active navigation or current-state authority.
+Accepted chronology: `docs/project/DEVELOPMENT_HISTORY.md`.
+
+Future direction: `docs/project/docs/ROADMAP.md`.
+
+`docs/project/DEVELOPMENT_STATE.md` is compatibility-pointer only.
+
+## Historical stage records
+
+Historical `STAGE_*` files are not orientation sources. They are being consolidated according to `docs/project/engineering/documentation-consolidation-contract.json`. Use current authorities and Development History first; inspect Git/PR history when exact retired evidence is needed.
+
+## External providers and MCP
+
+Use `docs/project/engineering/external-systems-registry.json` and `docs/project/engineering/mcp-governance-contract.json`. When a relevant provider has an official MCP/integration, evaluate it before custom bridging, but adopt only when it adds non-overlapping value.
 
 ## Verification
 
-Before architecture, persistence, Docker, provider, migration, seeder, or verification changes:
-
-```bash
-./songchart context --json
-```
-
-Use focused tests during implementation and governed candidate/canonical verification for closure.
+For architecture, persistence, Docker, provider, migration, seeder or verification changes, read the generated context and use `./songchart impact`/focused checks. Closure still requires governed candidate and canonical verification.
