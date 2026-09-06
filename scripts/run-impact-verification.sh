@@ -10,6 +10,13 @@ VERIFY_COMPOSE="$ROOT/compose.verify.yml"
 FOCUSED_PROJECT="${SONGCHART_FOCUSED_PROJECT:-songchart-focused}"
 FOCUSED_COMPOSE=(docker compose -p "$FOCUSED_PROJECT" -f "$VERIFY_COMPOSE")
 focused_session_ready=false
+mode=verify
+
+if [[ "${1:-}" == '--repair' ]]; then
+    mode=repair
+    shift
+fi
+[[ $# -eq 0 ]] || { printf 'Usage: run-impact-verification.sh [--repair]\n' >&2; exit 1; }
 
 impact_json="$($SONGCHART impact --diff --json)"
 
@@ -34,26 +41,19 @@ cleanup_focused_session(){
 }
 trap cleanup_focused_session EXIT
 
-printf '[SongChart impact verify] Running fast preflight guards.\n'
+printf '[SongChart impact %s] Running fast preflight guards.\n' "$mode"
 git -C "$ROOT" diff --check
 
 if git -C "$ROOT" rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' >/dev/null 2>&1; then
     read -r behind ahead < <(git -C "$ROOT" rev-list --left-right --count '@{upstream}...HEAD')
     if (( behind > 0 )); then
         if (( ahead > 0 )); then
-            printf '[SongChart impact verify] Branch is diverged from its upstream (%d behind, %d ahead). Rebase/synchronize before verification.\n' "$behind" "$ahead" >&2
+            printf '[SongChart impact %s] Branch is diverged from its upstream (%d behind, %d ahead). Rebase/synchronize before verification.\n' "$mode" "$behind" "$ahead" >&2
         else
-            printf '[SongChart impact verify] Branch is behind its upstream by %d commit(s). Synchronize before verification.\n' "$behind" >&2
+            printf '[SongChart impact %s] Branch is behind its upstream by %d commit(s). Synchronize before verification.\n' "$mode" "$behind" >&2
         fi
         exit 1
     fi
-fi
-
-generated_status="$(git -C "$ROOT" status --short --untracked-files=all -- docs/project/generated)"
-if [[ -n "$generated_status" ]]; then
-    printf '[SongChart impact verify] Generated repository authority has uncommitted changes. Commit or restore generated authority before pre-closure verification.\n' >&2
-    printf '%s\n' "$generated_status" >&2
-    exit 1
 fi
 
 php_paths=()
@@ -62,6 +62,34 @@ for path in "${changed_paths[@]}"; do
     [[ -f "$ROOT/$path" ]] || continue
     php_paths+=("$path")
 done
+
+if [[ "$mode" == repair ]]; then
+    if [[ ${#php_paths[@]} -gt 0 ]]; then
+        printf '[SongChart impact repair] Normalizing Pint on changed PHP paths.\n'
+        "$SONGCHART" composer exec pint -- "${php_paths[@]}"
+        printf '[SongChart impact repair] Proving changed PHP paths are Pint-clean.\n'
+        "$SONGCHART" composer exec pint -- --test "${php_paths[@]}"
+    else
+        printf '[SongChart impact repair] No changed PHP paths require formatter normalization.\n'
+    fi
+
+    git -C "$ROOT" diff --check
+    printf '[SongChart impact repair] Checking verifier ownership/repository compiler before source commit.\n'
+    if ! "$SONGCHART" composer repository-compiler:verify; then
+        printf '[SongChart impact repair] Deterministic formatting is complete, but semantic ownership or generated repository authority still needs correction/reconcile.\n' >&2
+        exit 1
+    fi
+
+    printf '[SongChart impact repair] PASSED deterministic source hygiene. Review/commit authoritative source, then run ./songchart reconcile before strict verification when generated inputs changed.\n'
+    exit 0
+fi
+
+generated_status="$(git -C "$ROOT" status --short --untracked-files=all -- docs/project/generated)"
+if [[ -n "$generated_status" ]]; then
+    printf '[SongChart impact verify] Generated repository authority has uncommitted changes. Commit or restore generated authority before pre-closure verification.\n' >&2
+    printf '%s\n' "$generated_status" >&2
+    exit 1
+fi
 
 if [[ ${#php_paths[@]} -gt 0 ]]; then
     printf '[SongChart impact verify] Checking Pint on changed PHP paths before the expensive lane.\n'
