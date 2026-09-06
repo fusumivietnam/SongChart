@@ -1,7 +1,7 @@
-FROM composer:2 AS composer
-FROM node:24-bookworm-slim AS node
+FROM composer:2@sha256:d8f6343d3fae98107426bc49163ccad46ef85aabd4a27d80a74401fab4aba332 AS composer
+FROM node:24-bookworm-slim@sha256:ba849c60be29959425b8734d57b8b4b7d56f98edd9504c9af091d5281095a71e AS node
 
-FROM php:8.5-cli-bookworm
+FROM php:8.5-cli-bookworm@sha256:b80dfc7d2bc0fc97755620a0dfb3d5e8e9cbf70a2970ea2d5c9dc64154b31422
 
 ENV DEBIAN_FRONTEND=noninteractive
 
