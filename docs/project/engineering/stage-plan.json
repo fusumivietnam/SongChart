@@ -1,44 +1,36 @@
 {
   "schema_version": 2,
   "current_stage": {
-    "id": "19.0",
-    "title": "Production Readiness & First Release",
-    "task_contract": "docs/foundation/STAGE_19_0_TASK_CONTRACT.md",
+    "id": "20.0",
+    "title": "Product Foundation & Development Continuity",
+    "task_contract": "docs/foundation/STAGE_20_0_TASK_CONTRACT.md",
     "status": "implementing"
   },
-  "accepted_through": "19.0.5",
+  "accepted_through": "19.0",
   "active_tranche": {
-    "id": "19.0.6",
-    "title": "Security review + production smoke",
-    "semantic_owner": "security-release-readiness"
+    "id": "20.0A",
+    "title": "Development continuity + AI/MCP governance",
+    "semantic_owner": "development-continuity-ai-governance"
   },
   "stage_progress": [
-    {"id": "19.0.1", "status": "accepted", "title": "Production topology + environment inventory"},
-    {"id": "19.0.1.1", "status": "accepted", "title": "Data contract + provider taxonomy convergence"},
-    {"id": "19.0.1.2", "status": "accepted", "title": "Mobile verification + AI UI design harness"},
-    {"id": "19.0.2", "status": "accepted", "title": "Secrets/environment hardening"},
-    {"id": "19.0.3", "status": "accepted", "title": "Queue/scheduler production runtime"},
-    {"id": "19.0.4-C1A", "status": "accepted", "title": "Consolidation authority + derived project state/work lease"},
-    {"id": "19.0.4-C1B", "status": "accepted", "title": "Project Kernel + MCP contract + Development Intelligence graph + active brand/AI framework integration"},
-    {"id": "19.0.4-C1C", "status": "accepted", "title": "Laravel Boost dev-tool adoption + framework MCP overlap retirement"},
-    {"id": "19.0.4-C2", "status": "accepted", "title": "Horizon + Pulse observability consolidation"},
-    {"id": "19.0.4-C3", "status": "accepted", "title": "Pest Browser desktop/mobile critical smoke"},
-    {"id": "19.0.4-C4", "status": "accepted", "title": "Verifier reduction + main provenance + failure classification"},
-    {"id": "19.0.4-C5", "status": "accepted", "title": "Provider transport inventory + Saloon decision"},
-    {"id": "19.0.4-C6", "status": "accepted", "title": "Typed data/API inventory + Laravel Data decision"},
-    {"id": "19.0.4-C7", "status": "accepted", "title": "Production artifact + installer + operational control"},
-    {"id": "19.0.5", "status": "accepted", "title": "Backup/recovery"},
-    {"id": "19.0.6", "status": "implementing", "title": "Security review + production smoke"},
-    {"id": "19.0.7", "status": "planned", "title": "Production operations UX + automatic TLS + low-cost service baseline"},
-    {"id": "final", "status": "planned", "title": "First release package/tag"}
+    {"id": "20.0A", "status": "implementing", "title": "Development continuity + AI/MCP governance"},
+    {"id": "20.0B", "status": "planned", "title": "Durable remote development PostgreSQL authority"},
+    {"id": "20.0C", "status": "planned", "title": "Durable object storage + development diagnostics"},
+    {"id": "20.1", "status": "planned", "title": "Product/User Journey Authority"},
+    {"id": "20.2", "status": "planned", "title": "Provider Reference Matrix"},
+    {"id": "20.3", "status": "planned", "title": "Domain Gap Map"},
+    {"id": "20.4", "status": "planned", "title": "Canonical Model Proposal"},
+    {"id": "20.5", "status": "planned", "title": "Schema & Migration Implementation"},
+    {"id": "20.6", "status": "planned", "title": "Read Models / Application Contracts"},
+    {"id": "20.7", "status": "planned", "title": "Stage 20 Acceptance & Closure"}
   ],
   "next_tranche": {
-    "id": "19.0.7",
-    "title": "Production operations UX + automatic TLS + low-cost service baseline"
+    "id": "20.0B",
+    "title": "Durable remote development PostgreSQL authority"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
-    "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage 19 remaining work may share one umbrella branch while semantic tranche ownership remains explicit in this plan."
+    "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage 20 uses one umbrella branch while logical tranche ownership remains explicit in this plan."
   },
   "projection": {
     "json": "docs/project/generated/development-state.json",

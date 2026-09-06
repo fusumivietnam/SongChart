@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Govern external AI agents, MCP servers, provider skills and connected developer tools without allowing external live state or chat memory to replace SongChart repository authority.",
+  "precedence": [
+    "PROJECT_AUTHORITY.md and current SongChart machine/domain contracts",
+    "current stage task contract and authored stage plan",
+    "live external resource state within the external system's declared authority scope",
+    "official provider documentation and installed provider skills",
+    "conversation memory and agent-local memory"
+  ],
+  "planes": {
+    "development": {
+      "rule": "Developer AI/MCP integrations may inspect and, when explicitly permitted, mutate development resources. Their installation must not create a production runtime dependency.",
+      "default_mutation_policy": "read-first-explicit-write"
+    },
+    "production": {
+      "rule": "Production mutations require the explicit release/operations workflow, least privilege and human-authorized intent. Development agents must not gain production mutation authority by being connected to an account.",
+      "default_mutation_policy": "deny-unless-explicit-release-operation"
+    },
+    "product_ai": {
+      "rule": "Visitor-facing AI is a separate application capability. It must use governed SongChart read models/APIs, be retrieval-grounded and start read-only; development MCP connections are never exposed to visitors.",
+      "status": "deferred-until-product-evidence"
+    }
+  },
+  "invariants": [
+    "Git/GitHub plus repository contracts remain the source and delivery authority.",
+    "Laravel migrations remain the application schema-evolution authority.",
+    "Canonical music identity, reconciliation and provenance remain SongChart domain authorities.",
+    "External provider payloads, MCP responses and skills are evidence or product-specific operational state, not canonical schema authority.",
+    "MCP/agent credentials and provider secrets must never be committed to source or generated authority.",
+    "Live project IDs, branch IDs, account IDs, URLs and quotas are runtime facts unless a dedicated repository contract explicitly owns a stable identifier.",
+    "An MCP tool must not bypass the supported ./songchart lifecycle merely because a lower-level provider API is available.",
+    "No agent may silently fall back to a different development database, storage authority or environment after a configured external authority fails.",
+    "Generated repository authority is updated only through SongChart generation/reconciliation tooling.",
+    "Agent-local persistent memory is convenience state only and must yield to current repository and live-state evidence."
+  ],
+  "capability_classes": {
+    "observer": [
+      "read repository state",
+      "read documented external state",
+      "inspect diagnostics and metrics"
+    ],
+    "developer": [
+      "edit the active synchronized development branch",
+      "run governed development/test commands",
+      "mutate explicitly declared development resources"
+    ],
+    "operator": [
+      "perform explicit development/staging infrastructure operations within declared provider scope"
+    ],
+    "release": [
+      "perform production mutations only through the release/operations workflow with explicit authorization"
+    ]
+  },
+  "default_agent_class": "developer",
+  "forbidden_shortcuts": [
+    "direct production SQL as a replacement for Laravel migrations",
+    "direct canonical-data mutation from an external MCP without SongChart application/domain enforcement",
+    "committing generated provider credentials or connection strings",
+    "granting broad account mutation permissions only for convenience",
+    "installing optional AI routers/agents into production before a product or workflow requirement exists"
+  ]
+}

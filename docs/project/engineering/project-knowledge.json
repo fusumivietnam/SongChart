@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "status": "active",
   "purpose": "Compact machine-readable knowledge authority for AI development, API planning, developer documentation and FAQ generation. This file is repository-owned and must not depend on chat memory.",
   "identity": {
@@ -18,6 +18,8 @@
     "docs/project/engineering/use-case-contract.schema.json",
     "docs/project/engineering/technology-evaluation-contract.json",
     "docs/project/engineering/technology-watchlist.json",
+    "docs/project/engineering/mcp-governance-contract.json",
+    "docs/project/engineering/external-systems-registry.json",
     "docs/project/release/versioning-policy.json",
     "docs/project/domain/DATA_CONTRACT.md",
     "docs/providers/PROVIDER_TAXONOMY.md",
@@ -34,7 +36,8 @@
     "optimization_policy": "Continuous per bounded tranche; do not wait for periodic architecture audits to discover known cleanup or automation opportunities.",
     "technology_policy": "Fresh technology/package decisions require compatibility evidence plus SWOT and net-ROI assessment; novelty alone is not a reason to adopt.",
     "versioning_policy": "Product version uses Semantic Versioning; build identity is derived from Git SHA and GitHub Actions evidence; Stage/tranche numbers are never product versions.",
-    "project_intelligence": "Project Kernel contracts normalize repository state, use cases and architecture graph data for CLI/CI/MCP/Admin consumers; expensive graph analysis is snapshot-based and never request-time."
+    "project_intelligence": "Project Kernel contracts normalize repository state, use cases and architecture graph data for CLI/CI/MCP/Admin consumers; expensive graph analysis is snapshot-based and never request-time.",
+    "external_ai_policy": "Repository authority outranks MCP/provider skills and agent-local memory; development MCP connections are evidence/tooling and must not become implicit production dependencies."
   },
   "domain_boundaries": {
     "canonical_identity": "SongChart owns canonical music identity and reconciliation semantics unless a future proven package can preserve the same typed/product semantics with less custom code.",
@@ -52,7 +55,9 @@
     "technology_watchlist": "docs/project/engineering/technology-watchlist.json",
     "versioning_authority": "docs/project/release/versioning-policy.json",
     "project_kernel_authority": "docs/project/engineering/project-kernel-contract.json",
-    "architecture_graph_authority": "docs/project/engineering/architecture-graph-contract.json"
+    "architecture_graph_authority": "docs/project/engineering/architecture-graph-contract.json",
+    "mcp_governance_authority": "docs/project/engineering/mcp-governance-contract.json",
+    "external_systems_authority": "docs/project/engineering/external-systems-registry.json"
   },
   "project_intelligence": {
     "compiler": "scripts/project-intelligence.php",
@@ -71,7 +76,7 @@
     },
     "developer": {
       "status": "active",
-      "source": "project context, project knowledge, project intelligence graph, authority graph, command surface, technology watchlist and package ownership"
+      "source": "project context, project knowledge, project intelligence graph, authority graph, command surface, technology watchlist, MCP governance, external-system registry and package ownership"
     },
     "faq": {
       "status": "planned",
@@ -81,6 +86,9 @@
   "ai_working_rules": [
     "Read generated project-context.json before relying on conversational context.",
     "Use current repository authorities over historical stage documents.",
+    "Use mcp-governance-contract.json and external-systems-registry.json before relying on an external MCP, provider skill or agent-local persistent memory.",
+    "External MCP live state is authoritative only for the provider resource state within its declared scope; it does not own SongChart architecture, domain or schema evolution.",
+    "Development MCP/tool installations must not silently become production application dependencies.",
     "Before adding custom infrastructure or business support code, check consolidation-plan.json and technology-watchlist.json for an existing Laravel/package owner and replacement path.",
     "At every bounded tranche, review reuse/package opportunity, code retirement, automation, verifier reduction, docs/knowledge impact, brand cleanup, release weight, mobile operability and technology SWOT/ROI freshness.",
     "Do not add a new verifier script when an existing repository contract or Pest/Architecture test can own the invariant.",
