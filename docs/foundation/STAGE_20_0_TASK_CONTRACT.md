@@ -26,6 +26,7 @@ Establish durable, AI-safe development continuity and a clean owner-based knowle
 - `docs/project/engineering/external-systems-registry.json` — provider integration status and official-MCP evidence.
 - `docs/project/engineering/recheck-policy.json` — mandatory freshness/re-verification triggers.
 - `docs/project/engineering/documentation-consolidation-contract.json` — legacy stage-document migration/retirement authority.
+- `docs/project/engineering/verification-topology.json` and `verification-command-surface.json` — verification ownership, public entrypoints and deduplication authority.
 - `docs/project/stack/stack-manifest.json`, `composer.json`, `composer.lock`, `package.json` and `package-lock.json` — runtime/dependency evidence.
 - Laravel migrations remain the application schema-evolution authority.
 
@@ -60,6 +61,7 @@ Stage 20 prefers existing SongChart/Laravel/platform capabilities before adding 
 
 - Git/GitHub already owns source, branch/PR, CI and exact-head delivery evidence; an additional GitHub MCP is unnecessary when the connected GitHub surface already covers the active workflow.
 - `./songchart`, existing repository contracts, Project Kernel, `ai status/doctor`, `reconcile`, impact resolution and stage/canonical verification already own project navigation/freshness/closure; no parallel recheck framework is needed.
+- Existing verification topology already separates impact, focused, quality, stage and canonical lanes; duplicate tests/verifiers must be consolidated instead of preserved as historical compatibility clutter.
 - Laravel migrations already own schema evolution; Neon MCP/CLI may inspect or operate provider-native development resources but cannot replace migration ownership.
 - Laravel Filesystem is the future application abstraction for R2; Cloudflare MCP is development/operations evidence, not a second storage API authority inside the application.
 - Figma/Code Connect is appropriate only when design-to-code work is active; it must not force a frontend stack migration.
@@ -74,8 +76,9 @@ Custom Stage 20 code/contracts are permitted only where no existing native owner
 - Fail-closed development database identity/authority controls planned for 20.0B because silently switching database universes is a SongChart development-safety invariant, not a generic provider feature.
 - Documentation-consolidation ownership because Git history alone does not tell active AI/developer consumers which durable semantics replaced a retired stage document.
 - Recheck trigger policy because freshness depends on SongChart lifecycle boundaries across repository state and external integrations; it reuses existing verifier commands rather than creating another verification engine.
+- Verification deduplication rules because one semantic invariant must have one executable owner while public/mobile wrappers remain thin delegates only.
 
-No custom MCP server, model router, multi-agent runtime, second schema authority, second CI/promotion system or duplicate provider bridge is justified in Stage 20 without a separately evidenced use case and package/native capability review.
+No custom MCP server, model router, multi-agent runtime, second schema authority, second CI/promotion system, duplicate verifier/test owner or duplicate provider bridge is justified in Stage 20 without a separately evidenced use case and package/native capability review.
 
 ## 20.0A — Development continuity + AI/MCP/documentation governance
 
@@ -89,6 +92,8 @@ No custom MCP server, model router, multi-agent runtime, second schema authority
 - convert legacy stage-centric documentation toward current semantic owners instead of creating another archive hierarchy;
 - use Development History for accepted chronology, ADR/current contracts for durable rules, regression ledger for guarded failures and Git/PR history for exact retired evidence;
 - migrate active links/tests/verifiers before deleting each historical stage file;
+- audit duplicate tests/verifier scripts/aliases against `verification-topology.json`; keep only one semantic owner per invariant, preserving thin delegating facades and distinct static-vs-runtime coverage where they protect different failure classes;
+- delete redundant verification files and references once equivalence/consumer closure is proven instead of retaining compatibility clutter;
 - keep GitHub as source/delivery authority and Docker/runtime state disposable.
 
 ## Recheck / re-verification discipline
@@ -141,6 +146,7 @@ Stage 20 uses existing governed verification surfaces; successful evidence is SH
 - focused Pest/Architecture/runtime checks returned by impact resolution for implementation changes.
 - candidate/canonical exact-head verification only after the tracked tree is reconciled and clean.
 - official external integration evidence must be re-reviewed when an MCP/provider trigger in `recheck-policy.json` fires; newly exposed mutation capabilities remain denied until explicitly admitted.
+- verification consolidation must use existing ownership/consumer graph evidence: duplicate semantic checks are removed only after the surviving owner preserves the required failure class; distinct static and behavioral checks may coexist when they prove different things.
 
 ## Verification and closure
 
