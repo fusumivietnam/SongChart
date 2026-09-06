@@ -50,17 +50,39 @@ export SONGCHART_HOST_GID="$HOST_GID"
 
 printf '[SongChart Linux Setup] Preparing writable Docker development paths for UID:GID %s:%s\n' "$HOST_UID" "$HOST_GID"
 "${COMPOSE[@]}" run --rm --user root app sh -lc \
-  "mkdir -p /workspace/vendor /workspace/node_modules /workspace/node_modules/.cache/ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs && chown -R $HOST_UID:$HOST_GID /workspace/vendor /workspace/node_modules /workspace/public/build /workspace/bootstrap/cache /workspace/storage"
+  "mkdir -p /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs /tmp/composer-cache /tmp/npm-cache && chown -R $HOST_UID:$HOST_GID /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache"
 
 "${COMPOSE[@]}" up -d postgres redis
-printf '[SongChart Linux Setup] Preparing Composer/npm cache ownership for UID:GID %s:%s\n' "$HOST_UID" "$HOST_GID"
-"${COMPOSE[@]}" run --rm --user root app sh -lc \
-  "mkdir -p /tmp/composer-cache /tmp/npm-cache && chown -R $HOST_UID:$HOST_GID /tmp/composer-cache /tmp/npm-cache"
 
-"${COMPOSE[@]}" run --rm app composer install --no-interaction --prefer-dist --no-progress
-"${COMPOSE[@]}" run --rm app npm ci --no-audit --no-fund
-printf '[SongChart Linux Setup] Ensuring the verified Playwright Chromium runtime is present in the persistent node_modules volume.\n'
-"${COMPOSE[@]}" run --rm -e PLAYWRIGHT_BROWSERS_PATH=/workspace/node_modules/.cache/ms-playwright app npx playwright install chromium
+COMPOSER_FINGERPRINT="$(cat composer.json composer.lock | sha256sum | awk '{print $1}')"
+CURRENT_COMPOSER_FINGERPRINT="$("${COMPOSE[@]}" run --rm -T app sh -lc 'cat /workspace/vendor/.songchart-composer-fingerprint 2>/dev/null || true')"
+if [[ "$CURRENT_COMPOSER_FINGERPRINT" != "$COMPOSER_FINGERPRINT" ]] || ! "${COMPOSE[@]}" run --rm -T app test -f /workspace/vendor/autoload.php; then
+  printf '[SongChart Linux Setup] Hydrating locked Composer dependencies for fingerprint %s.\n' "$COMPOSER_FINGERPRINT"
+  "${COMPOSE[@]}" run --rm app composer install --no-interaction --prefer-dist --no-progress
+  "${COMPOSE[@]}" run --rm -T app sh -lc "printf '%s\\n' '$COMPOSER_FINGERPRINT' > /workspace/vendor/.songchart-composer-fingerprint"
+else
+  printf '[SongChart Linux Setup] Reusing locked Composer dependencies for fingerprint %s.\n' "$COMPOSER_FINGERPRINT"
+fi
+
+NPM_FINGERPRINT="$(cat package.json package-lock.json | sha256sum | awk '{print $1}')"
+CURRENT_NPM_FINGERPRINT="$("${COMPOSE[@]}" run --rm -T app sh -lc 'cat /workspace/node_modules/.songchart-npm-fingerprint 2>/dev/null || true')"
+if [[ "$CURRENT_NPM_FINGERPRINT" != "$NPM_FINGERPRINT" ]] || ! "${COMPOSE[@]}" run --rm -T app test -x /workspace/node_modules/.bin/vite; then
+  printf '[SongChart Linux Setup] Hydrating locked npm dependencies for fingerprint %s.\n' "$NPM_FINGERPRINT"
+  "${COMPOSE[@]}" run --rm app npm ci --no-audit --no-fund
+  "${COMPOSE[@]}" run --rm -T app sh -lc "printf '%s\\n' '$NPM_FINGERPRINT' > /workspace/node_modules/.songchart-npm-fingerprint"
+else
+  printf '[SongChart Linux Setup] Reusing locked npm dependencies for fingerprint %s.\n' "$NPM_FINGERPRINT"
+fi
+
+CURRENT_BROWSER_FINGERPRINT="$("${COMPOSE[@]}" run --rm -T app sh -lc 'cat /ms-playwright/.songchart-playwright-fingerprint 2>/dev/null || true')"
+if [[ "$CURRENT_BROWSER_FINGERPRINT" != "$NPM_FINGERPRINT" ]] || ! "${COMPOSE[@]}" run --rm -T app sh -lc 'find /ms-playwright -maxdepth 1 -type d -name "chromium-*" -print -quit | grep -q .'; then
+  printf '[SongChart Linux Setup] Hydrating verified Playwright Chromium runtime for fingerprint %s.\n' "$NPM_FINGERPRINT"
+  "${COMPOSE[@]}" run --rm app npx playwright install chromium
+  "${COMPOSE[@]}" run --rm -T app sh -lc "printf '%s\\n' '$NPM_FINGERPRINT' > /ms-playwright/.songchart-playwright-fingerprint"
+else
+  printf '[SongChart Linux Setup] Reusing Playwright Chromium runtime for fingerprint %s.\n' "$NPM_FINGERPRINT"
+fi
+
 "${COMPOSE[@]}" run --rm app npm run build
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
 "${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force
