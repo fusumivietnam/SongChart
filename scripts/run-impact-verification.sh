@@ -6,6 +6,10 @@ SONGCHART="$ROOT/songchart"
 DEV_PROJECT="${SONGCHART_DEV_PROJECT:-songchart-dev}"
 DEV_COMPOSE="$ROOT/compose.dev.yml"
 CODESPACES_COMPOSE="$ROOT/compose.codespaces.yml"
+VERIFY_COMPOSE="$ROOT/compose.verify.yml"
+FOCUSED_PROJECT="${SONGCHART_FOCUSED_PROJECT:-songchart-focused}"
+FOCUSED_COMPOSE=(docker compose -p "$FOCUSED_PROJECT" -f "$VERIFY_COMPOSE")
+focused_session_ready=false
 
 impact_json="$($SONGCHART impact --diff --json)"
 
@@ -22,6 +26,13 @@ json_array_lines(){
 
 mapfile -t checks < <(printf '%s\n' "$impact_json" | json_array_lines required_focused_checks)
 mapfile -t changed_paths < <(printf '%s\n' "$impact_json" | json_array_lines changed_paths)
+
+cleanup_focused_session(){
+    if [[ "$focused_session_ready" == true ]]; then
+        "${FOCUSED_COMPOSE[@]}" down --remove-orphans >/dev/null 2>&1 || true
+    fi
+}
+trap cleanup_focused_session EXIT
 
 printf '[SongChart impact verify] Running fast preflight guards.\n'
 git -C "$ROOT" diff --check
@@ -87,14 +98,37 @@ if [[ ${#closure_checks[@]} -gt 0 ]]; then
     printf '[SongChart impact verify] Canonical verification is closure-only; run it through candidate/close on an exact committed tree.\n'
 fi
 
-focused_image_ready=false
+ensure_focused_session(){
+    if [[ "$focused_session_ready" == true ]]; then
+        return
+    fi
+
+    printf '[SongChart impact verify] Preparing one reusable focused verification session.\n'
+    "${FOCUSED_COMPOSE[@]}" build verify
+    "${FOCUSED_COMPOSE[@]}" run --rm verify bash -lc '
+        set -euo pipefail
+        marker=/workspace/vendor/.songchart-dependency-fingerprint
+        fingerprint="$(sha256sum composer.json composer.lock | sha256sum | awk '\''{print $1}'\'')"
+        current="$(cat "$marker" 2>/dev/null || true)"
+        if [[ ! -f /workspace/vendor/autoload.php || ! -f /workspace/vendor/composer/installed.php || "$current" != "$fingerprint" ]]; then
+            printf "[SongChart focused] Hydrating locked Composer dependencies for fingerprint %s.\n" "$fingerprint"
+            composer install --no-interaction --prefer-dist --no-progress
+            printf "%s\n" "$fingerprint" > "$marker"
+        else
+            printf "[SongChart focused] Reusing locked Composer dependencies for fingerprint %s.\n" "$fingerprint"
+        fi
+    '
+    focused_session_ready=true
+}
+
 run_focused_test(){
     local target="$1"
-    if [[ "$focused_image_ready" == true ]]; then
-        "$SONGCHART" dev test --no-build "$target"
+    ensure_focused_session
+
+    if [[ "$target" == tests/Unit/* || "$target" == tests/Architecture/* ]]; then
+        "${FOCUSED_COMPOSE[@]}" run --rm verify php artisan test "$target"
     else
-        "$SONGCHART" dev test "$target"
-        focused_image_ready=true
+        "${FOCUSED_COMPOSE[@]}" run --rm verify php scripts/run-database-tests.php postgres --prepare-schema "$target"
     fi
 }
 
