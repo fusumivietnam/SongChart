@@ -88,7 +88,7 @@
         },
         "verification-topology": {
             "source": "docs/project/engineering/verification-topology.json",
-            "fingerprint": "4c71882b4039419f695394580d25d3acd76e7acf4929e7441563fe2f4ea79b36",
+            "fingerprint": "33530964a3456382ef69878884e16febdb38a0dded376a396b7300097197e76c",
             "consumers": [
                 "composer.json",
                 "docs/project/stack/release-pipeline-contract.json",
@@ -150,7 +150,7 @@
         },
         "verification-command-surface": {
             "source": "docs/project/engineering/verification-command-surface.json",
-            "fingerprint": "1c2e3acd411e7a8e474c30c48ff4d41aba1170235f1597375b0de5aabca9974a",
+            "fingerprint": "7dc33da4648c55ba84b5ff93138e5be2bf353875cd6204c06b98666ec4b5292b",
             "consumers": [
                 "composer.json",
                 "PROJECT_AUTHORITY.md",
@@ -1697,5 +1697,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "dc78f01ee23e6c9f2343c6f4dca76ec2aac84e6dd6ac67f83717aed92544590e"
+    "graph_fingerprint": "d7914b743d493656a989e8b7bef8c9646593d417731027d783630318f089890f"
 }

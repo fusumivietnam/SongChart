@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "20c4048164bf95874733b25aad86314887d644b015918a908f33957e4d495d88",
+    "source_fingerprint": "f8dec873d871ecfc32adee26993c0c4b50f1b0f9fc0828207bcceee24f8d85a6",
     "candidate": {
         "stage": "20.0",
         "candidate": "v1",
@@ -1061,8 +1061,8 @@
         "docs/project/engineering/technology-evaluation-contract.json": "37546f94e594655adae3a50e703394b13cabc790f56e1443bc4be29ba2c0c01a",
         "docs/project/engineering/technology-watchlist.json": "a488a10b0f37b3be92b7be6a775454dd2a21006a57e81fab637200eb5b084c1b",
         "docs/project/engineering/use-case-contract.schema.json": "eddc2071d4f58c6e86fae9a87a687a591f597a82b032bd6c1df8bd6eec9ec2f0",
-        "docs/project/engineering/verification-command-surface.json": "8be0e68b1da9158fb97086ab62477cf08bb295f7a69080f941b9f1661ec958f7",
-        "docs/project/engineering/verification-topology.json": "dc01f61790a856d6f6acaee9c9a36ca292d586c0c81cada45a14e05ca20ab42f",
+        "docs/project/engineering/verification-command-surface.json": "64fa57a5a66bf2f8a75e6baee8095002b3ad5696ee0306f6bc2d4a4b9d93ceb2",
+        "docs/project/engineering/verification-topology.json": "2e77d2926cc3212c4276bc45a64da0f68d4ff3b278286e04629f294c0d9aeb4a",
         "docs/project/release/versioning-policy.json": "c4ebec8bf9a9dfb791a46f9532b428e15e647a045588d3bca004c85c59971ffe",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
