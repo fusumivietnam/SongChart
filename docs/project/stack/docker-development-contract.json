@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "primary_local_runtime": "docker-development",
   "remote_development_adapters": [
     "github-codespaces"
@@ -45,13 +45,38 @@
       "songchart_dev_redis",
       "songchart_dev_vendor",
       "songchart_dev_node_modules",
-      "songchart_dev_composer_cache"
+      "songchart_dev_playwright",
+      "songchart_dev_composer_cache",
+      "songchart_dev_npm_cache"
     ],
     "postgres_volume_mount": "/var/lib/postgresql",
     "postgres_pgdata": "/var/lib/postgresql/18/docker",
     "data_backup_entrypoint": "songchart dev db backup",
     "data_restore_entrypoint": "songchart dev db restore",
-    "local_admin_bootstrap": "SONGCHART_LOCAL_ADMIN_EMAIL + admin:ensure-local; no repository password"
+    "local_admin_bootstrap": "SONGCHART_LOCAL_ADMIN_EMAIL + admin:ensure-local; existing local administrator credentials are preserved",
+    "lifecycle": {
+      "ready_entrypoint": "songchart dev ready",
+      "setup_entrypoint": "songchart dev setup",
+      "ready_when_unconfigured": "delegate-to-setup",
+      "setup_when_configured": "delegate-to-ready",
+      "setup_semantics": "bootstrap-only",
+      "ready_semantics": "convergent-idempotent",
+      "persistent_state_must_survive_normal_lifecycle": [
+        "development PostgreSQL data",
+        "local administrator identity and credentials",
+        "Redis development state",
+        "locked Composer dependencies when fingerprint matches",
+        "locked npm dependencies when fingerprint matches",
+        "Playwright browser runtime when fingerprint matches"
+      ],
+      "forbidden_implicit_reset_operations": [
+        "migrate:fresh",
+        "database drop/recreate",
+        "development volume deletion",
+        "local administrator password reset"
+      ],
+      "destructive_reset_requires_explicit_command": true
+    }
   },
   "demo": {
     "compose_file": "compose.demo.yml",
@@ -103,6 +128,7 @@
     "stage_entrypoint": "songchart test",
     "streamlined_closure_entrypoint": "songchart close",
     "isolated_from_development_database": true,
+    "may_mutate_development_database": false,
     "derived_manifest_refresh": "inside Docker before stage/canonical verification; only candidate --prepare may commit generated repository authority"
   },
   "cli": {
