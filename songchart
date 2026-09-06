@@ -285,7 +285,8 @@ AI/workflow convergence:
   ./songchart audit                collect all quality/static/governance failures without fail-fast
 
 Development/live test:
-  ./songchart dev ready     start persistent development runtime on port 8000
+  ./songchart dev ready     ensure the persistent development runtime is usable; bootstrap automatically when missing
+  ./songchart dev setup     bootstrap only when local development configuration is missing; otherwise delegate to ready
   ./songchart dev url       print the governed development URL for local/Codespaces
   ./songchart demo setup    prepare production-like public demo on port 8001 using development PostgreSQL data
   ./songchart demo up       start demo app and ensure the single shared development queue worker authority
@@ -343,6 +344,10 @@ case "$cmd" in
   case "$sub" in
    setup) exec bash "$ROOT/scripts/setup-docker-dev.sh" "$@" ;;
    ready)
+    if [[ ! -f "$ROOT/.env.docker" ]]; then
+      printf '[SongChart dev] Development configuration is missing; bootstrapping before ready.\n'
+      exec bash "$ROOT/scripts/setup-docker-dev.sh"
+    fi
     ensure_dev_config
     printf '[SongChart dev] Starting development services.\n'
     repair_dev_runtime_ownership
