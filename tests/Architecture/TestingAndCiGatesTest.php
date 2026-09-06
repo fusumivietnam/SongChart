@@ -27,11 +27,11 @@ it('keeps required reusable CI jobs and commands', function (): void {
         ->toContain('npm run build')
         ->toContain('touch .env')
         ->toContain('Preserve PostgreSQL failure evidence')
-        ->toContain('actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02')
         ->toContain('storage/logs/postgres-test-last-failure.log')
         ->toContain('postgres-failure-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}');
 
-    expect(str_contains((string) $workflow, "pull_request:\n    branches:\n      - main"))->toBeFalse()
+    expect(preg_match('/uses:\s*actions\/upload-artifact@[0-9a-f]{40}/m', (string) $workflow))->toBe(1)
+        ->and(str_contains((string) $workflow, "pull_request:\n    branches:\n      - main"))->toBeFalse()
         ->and(str_contains((string) $workflow, 'tests-sqlite:'))->toBeFalse()
         ->and(str_contains((string) $workflow, 'composer test:sqlite'))->toBeFalse();
 });
