@@ -11,6 +11,7 @@ $required = [
     '.env.docker.example',
     'docker/dev/Caddyfile',
     'scripts/setup-docker-dev.sh',
+    'scripts/recover-docker-dev-runtime.sh',
     'songchart',
     'docs/project/stack/docker-development-contract.json',
 ];
@@ -136,9 +137,26 @@ foreach ([
     'SONGCHART_CODESPACES_APP_URL',
     'if [[ "$IS_CODESPACES" == false ]]',
     'if [[ "$IS_CODESPACES" == true ]]',
+    'recover-docker-dev-runtime.sh',
 ] as $signal) {
     if (! str_contains($setup, $signal)) {
-        $errors[] = "setup-docker-dev.sh Codespaces workflow missing [{$signal}].";
+        $errors[] = "setup-docker-dev.sh Codespaces/recovery workflow missing [{$signal}].";
+    }
+}
+
+$recovery = (string) file_get_contents($root.'/scripts/recover-docker-dev-runtime.sh');
+foreach ([
+    'com.docker.compose.project=',
+    'docker rm -f',
+    'named volumes are preserved',
+] as $signal) {
+    if (! str_contains($recovery, $signal)) {
+        $errors[] = "recover-docker-dev-runtime.sh missing [{$signal}].";
+    }
+}
+foreach (['volume rm', 'volume prune', 'down -v', 'system prune --volumes'] as $unsafe) {
+    if (str_contains($recovery, $unsafe)) {
+        $errors[] = "recover-docker-dev-runtime.sh must not contain destructive volume operation [{$unsafe}].";
     }
 }
 
@@ -153,6 +171,13 @@ if (! is_array($contract)) {
         || ($codespaces['auto_start_services'] ?? null) !== false
         || ($codespaces['url_entrypoint'] ?? null) !== 'songchart dev url') {
         $errors[] = 'Docker development contract must govern the Codespaces adapter, private app port, no-auto-start policy and URL entrypoint.';
+    }
+    $recoveryContract = $contract['development']['runtime_recovery'] ?? null;
+    if (! is_array($recoveryContract)
+        || ($contract['development']['runtime_recovery_entrypoint'] ?? null) !== 'bash scripts/recover-docker-dev-runtime.sh'
+        || ($recoveryContract['named_volumes_must_be_preserved'] ?? null) !== true
+        || ($recoveryContract['container_objects_are_disposable'] ?? null) !== true) {
+        $errors[] = 'Docker development contract must govern non-destructive stale-container recovery and preserve named volumes.';
     }
     if (($contract['compatibility']['native_windows_cli']['status'] ?? null) !== 'retired') {
         $errors[] = 'Docker development contract must mark native Windows CLI as retired.';

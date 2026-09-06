@@ -18,6 +18,11 @@ command -v docker >/dev/null || { echo 'Docker CLI required' >&2; exit 1; }
 docker version >/dev/null || { echo 'Docker Engine not reachable' >&2; exit 1; }
 docker compose version >/dev/null || { echo 'Docker Compose v2 required' >&2; exit 1; }
 
+# Container objects are disposable runtime state. Recover non-running/stale
+# Compose containers before any app one-off run can implicitly start dependencies.
+# The recovery script never removes named volumes.
+bash "$ROOT/scripts/recover-docker-dev-runtime.sh"
+
 # setup is bootstrap-only. Once a usable local configuration exists, preserve all
 # persistent development state and converge through the normal ready lifecycle.
 if [[ -f .env.docker ]] && grep -Eq '^APP_KEY=.+$' .env.docker; then
@@ -114,7 +119,7 @@ fi
 "${COMPOSE[@]}" ps
 if [[ "$IS_CODESPACES" == true ]]; then
   printf '\nReady: %s (private Codespaces forwarded port 8000, project %s)\n' "$SONGCHART_CODESPACES_APP_URL" "$PROJECT"
-  printf 'Development data persists in the songchart_dev_pgdata Docker volume for the life of this Docker/Codespaces environment.\n'
+  printf 'Local Docker PostgreSQL persists only for the life of this Docker/Codespaces environment; Stage 20 durable remote development DB mode removes that host-lifetime limitation.\n'
 else
   printf '\nReady: https://%s:8443 (project %s)\n' "$DOMAIN" "$PROJECT"
   printf 'If Windows browser cannot resolve the host, add once to Windows hosts: 127.0.0.1 %s\n' "$DOMAIN"

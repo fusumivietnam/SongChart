@@ -7,7 +7,7 @@ This index lists active documentation ownership. Historical stage records are in
 - `PROJECT_AUTHORITY.md` — repository engineering authority.
 - `docs/START_HERE.md` — reading and routing entry point.
 - `docs/DOCUMENTATION_GOVERNANCE.md` — documentation lifecycle and ownership rules.
-- `docs/project/DEVELOPMENT_STATE.md` — current operational development checkpoint.
+- `docs/project/DEVELOPMENT_STATE.md` — compatibility pointer to generated current development state.
 - `docs/project/DEVELOPMENT_HISTORY.md` — accepted development chronology.
 - `docs/project/RELEASE_BASELINE_STATUS.md` — release baseline requirements.
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` — development and AI workflow.
@@ -43,6 +43,10 @@ This index lists active documentation ownership. Historical stage records are in
 ### Engineering
 
 - `docs/project/engineering/ai-development-contract.json`
+- `docs/project/engineering/stage-plan.json`
+- `docs/project/engineering/project-knowledge.json`
+- `docs/project/engineering/mcp-governance-contract.json`
+- `docs/project/engineering/external-systems-registry.json`
 - `docs/project/engineering/verification-topology.json`
 - `docs/project/engineering/verification-command-surface.json`
 - `docs/project/engineering/verification-consumer-graph.json`
