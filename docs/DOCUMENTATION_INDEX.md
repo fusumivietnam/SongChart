@@ -11,8 +11,10 @@ This index lists active documentation ownership. Legacy stage records are migrat
 - `docs/project/generated/development-state.json` — generated current-state machine projection.
 - `docs/project/DEVELOPMENT_STATE.md` — compatibility pointer only.
 - `docs/project/DEVELOPMENT_HISTORY.md` — accepted chronology.
+- `docs/project/RELEASE_BASELINE_STATUS.md` — durable release-baseline invariants and closure prerequisites.
 - `docs/project/docs/ROADMAP.md` — active/future product direction.
 - `docs/project/engineering/documentation-consolidation-contract.json` — legacy stage conversion/retirement authority.
+- `docs/project/engineering/recheck-policy.json` — governed freshness/recheck triggers for repository, generated and external integration state.
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md` — AI/development workflow.
 - `docs/project/engineering/mcp-governance-contract.json` — external AI/MCP boundary.
 - `docs/project/engineering/external-systems-registry.json` — external system role/adoption/MCP evidence registry.
@@ -45,6 +47,7 @@ This index lists active documentation ownership. Legacy stage records are migrat
 - `docs/project/engineering/project-kernel-contract.json`
 - `docs/project/engineering/architecture-graph-contract.json`
 - `docs/project/engineering/documentation-consolidation-contract.json`
+- `docs/project/engineering/recheck-policy.json`
 - `docs/project/engineering/verification-topology.json`
 - `docs/project/engineering/verification-command-surface.json`
 - `docs/project/engineering/verification-consumer-graph.json`
