@@ -11,14 +11,14 @@
 
 ## Stage progress
 
-- `21.0A` — `IMPLEMENTING` — Admission queue information hierarchy
-- `21.0B` — `PLANNED` — Decision safety and review context
+- `21.0A` — `ACCEPTED` — Admission queue information hierarchy
+- `21.0B` — `IMPLEMENTING` — Decision safety and review context
 - `21.0C` — `PLANNED` — Editorial navigation and accessibility
 - `21.0D` — `PLANNED` — Stage acceptance and closure
 
 ## Next bounded tranche
 
-- `21.0B` — Decision safety and review context
+- `21.0C` — Editorial navigation and accessibility
 
 ## Live work lease
 
