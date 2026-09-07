@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "0a2e0703af11b928f2ab44a9f623d8237c4b7febee414e672f6da95973b78bdb",
+    "source_fingerprint": "74dc9b3653cea969fc51f62addf8fdbe47b9b5ca5d2425b2bd7f760dd59a6841",
     "candidate": {
         "stage": "20.0",
         "candidate": "v1",
@@ -1045,6 +1045,7 @@
         "database/migrations/2026_08_24_000200_add_execution_outcomes_to_enrichment_attempts.php": "b129a152f69ff877c73052662efba1179d070bc14a1ca18af425374f3e4218bd",
         "database/migrations/2026_08_26_000100_create_canonical_admission_decisions_table.php": "faa967c798f821519f854f8545cc35c554ed7810eb6bb5c49a60cf342ab93c5b",
         "database/migrations/2026_08_27_000100_create_provider_credentials_table.php": "10346e2aa9eacd8880d31ecb478126681e099f1ca04c80444e57df961015110b",
+        "database/migrations/2026_09_07_000100_add_public_read_indexes_to_entity_relationships.php": "5eb7023e7985c67e200d7ee103b4f622ed08df764ed231f8e44d863610acd41b",
         "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
         "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
         "database/seeders/ProviderRegistrySeeder.php": "1337fd46a76721466ed147b24e808cb0b632dc45fbcbaa742b79c8d699e684d3",
