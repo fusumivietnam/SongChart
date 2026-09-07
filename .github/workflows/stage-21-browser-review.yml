@@ -1,0 +1,98 @@
+name: Stage 21 Browser Review Evidence
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'resources/views/admin/**'
+      - 'resources/views/components/admin/**'
+      - 'resources/views/layouts/admin.blade.php'
+      - 'tests/Browser/EditorialAdminReviewEvidenceTest.php'
+      - '.github/workflows/stage-21-browser-review.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage-21-browser-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture-review-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18.4-bookworm
+        env:
+          POSTGRES_DB: songchart_browser_review
+          POSTGRES_USER: songchart_browser_review
+          POSTGRES_PASSWORD: songchart_browser_review_only
+        options: >-
+          --health-cmd "pg_isready -U songchart_browser_review -d songchart_browser_review"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+        ports:
+          - 5432:5432
+    env:
+      APP_ENV: testing
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      APP_URL: http://127.0.0.1:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: songchart_browser_review
+      DB_USERNAME: songchart_browser_review
+      DB_PASSWORD: songchart_browser_review_only
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      SONGCHART_ADMIN_2FA_MODE: required
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - run: touch .env
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2 / 2.37.2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, sockets, xml, zip
+          coverage: none
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Cache Composer downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Cache Playwright browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: npm ci --no-audit --no-fund
+      - name: Install Chromium runtime
+        run: npx playwright install --with-deps chromium
+      - name: Prepare review database
+        run: php artisan migrate --force --no-interaction
+      - name: Capture Stage 21 desktop/mobile review screenshots
+        run: vendor/bin/pest tests/Browser/EditorialAdminReviewEvidenceTest.php --compact
+      - name: Upload owner review screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: stage-21-owner-review-${{ github.event.pull_request.head.sha || github.sha }}
+          path: tests/Browser/Screenshots
+          if-no-files-found: warn
+          retention-days: 3
