@@ -150,7 +150,7 @@ Acceptance:
 
 ### 21.0D — Stage acceptance and closure
 
-Status: implementing
+Status: accepted
 
 Goals:
 - Run impact/canonical verification on exact head.
