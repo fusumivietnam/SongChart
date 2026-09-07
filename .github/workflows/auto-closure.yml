@@ -20,7 +20,7 @@ jobs:
   prepare:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: write
       pull-requests: read
@@ -66,11 +66,8 @@ jobs:
             exit 1
           fi
 
-      - name: Commit generated authority when required
+      - name: Commit generated authority locally when required
         id: generated_commit
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_BRANCH: ${{ github.head_ref }}
         run: |
           if [ -z "$(git status --porcelain -- docs/project/generated)" ]; then
             echo 'changed=false' >> "$GITHUB_OUTPUT"
@@ -81,9 +78,21 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add docs/project/generated
           git commit -m 'chore: refresh generated repository authority'
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: QUALITY — fail fast on effective prepared tree
+        run: |
+          composer validate --strict
+          composer quality:verify
+
+      - name: Push generated authority only after quality passes
+        if: steps.generated_commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
           git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" \
             push https://github.com/${{ github.repository }}.git "HEAD:${HEAD_BRANCH}"
-          echo 'changed=true' >> "$GITHUB_OUTPUT"
 
       - name: Publish effective exact SHA
         id: result
@@ -99,6 +108,7 @@ jobs:
     uses: ./.github/workflows/tests.yml
     with:
       target_sha: ${{ needs.prepare.outputs.effective_sha }}
+      quality_preverified: true
 
   close:
     needs:
@@ -172,7 +182,8 @@ jobs:
             echo
             echo "- Exact SHA: $SONGCHART_PROMOTION_SHA"
             echo '- PREPARE: generated project context + derived development state reconciled'
-            echo '- CHECK: Quality + PostgreSQL + browser + frontend passed'
+            echo '- QUALITY: governance/static verification passed before runtime lanes started'
+            echo '- CHECK: PostgreSQL + browser + frontend passed'
             echo '- CLOSE: canonical verification passed without tracked-tree mutation'
             if [ "$SONGCHART_PR_DRAFT" = 'true' ]; then
               echo '- PR state: draft; promote via GitHub UI or an authorized connector'
