@@ -281,7 +281,7 @@
         },
         "application-data-boundary": {
             "source": "docs/project/domain/application-data-boundary.json",
-            "fingerprint": "c52707485ece67b8578fa990b240b35a606f5536ec0b62c2496e21c443e45ccb",
+            "fingerprint": "b4dc78517329a9630c08deb1e4a999aa95f91be8fa37c8c52694ef7779b77b09",
             "consumers": [
                 "app/Application/Admin/Queries/ExtensionReadModel.php",
                 "app/Http/Controllers/Admin/ExtensionController.php",
@@ -1687,5 +1687,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "1dd23ca417893ef1441b3f2c7895d8a79eb5cca17b79b27accc31398051dbc34"
+    "graph_fingerprint": "3e86f5c9658a12744baa5575a1ea8554b24ec07e2e129e0976aaff5a0e58283e"
 }
