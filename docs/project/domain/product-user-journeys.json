@@ -65,9 +65,9 @@
     },
     "member.manage_account": {
       "actor": "authenticated_active_verified_user",
-      "status": "implemented-foundation",
+      "status": "surface-implemented-contract-gap",
       "goal": "Manage account identity and security without coupling account data to provider identities.",
-      "use_cases": [
+      "route_names": [
         "account.overview",
         "account.profile",
         "account.security"
@@ -78,6 +78,7 @@
         "security state"
       ],
       "stage_20_gaps": [
+        "Account routes exist but are not yet represented in the executable use-case contract registry.",
         "Do not invent social/follow/recommendation persistence until a separately accepted journey owns it."
       ]
     },
