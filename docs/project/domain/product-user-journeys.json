@@ -89,8 +89,13 @@
       "use_case_prefixes": [
         "admin.providers.",
         "admin.imports.",
-        "admin.identity-conflicts.",
-        "admin.canonical-admissions."
+        "admin.identity-conflicts."
+      ],
+      "route_names": [
+        "admin.canonical-admissions.index",
+        "admin.canonical-admissions.show",
+        "admin.canonical-admissions.stage",
+        "admin.canonical-admissions.decide"
       ],
       "required_domain_capabilities": [
         "normalized provider evidence",
@@ -101,6 +106,7 @@
         "privileged audit"
       ],
       "stage_20_gaps": [
+        "Canonical-admission routes exist but are not yet represented in the executable use-case contract registry.",
         "Provider reference evidence must be mapped to canonical concepts before schema changes.",
         "Canonical mutation must preserve field authority and provenance."
       ]
@@ -112,8 +118,10 @@
       "use_case_prefixes": [
         "admin.providers.",
         "admin.imports.",
-        "admin.quarantine.",
-        "admin.audit."
+        "admin.quarantine."
+      ],
+      "route_names": [
+        "admin.audit.index"
       ],
       "required_domain_capabilities": [
         "provider health/status",
@@ -122,6 +130,7 @@
         "privileged audit"
       ],
       "stage_20_gaps": [
+        "Audit route exists but is not yet represented in the executable use-case contract registry.",
         "Operational state stays separate from canonical music-domain identity."
       ]
     }
