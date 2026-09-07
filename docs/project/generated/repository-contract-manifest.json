@@ -25,7 +25,7 @@
         },
         "runtime-environment": {
             "source": "docs/project/stack/runtime-environments.json",
-            "fingerprint": "751ee06350ade73283de37a52af1f3867135b1bdc170a31e0d3ebdf66a458bf8",
+            "fingerprint": "f87fe7a2175be453376b62b7f84c80cbf14a38e35afd3c24edd946d538940aad",
             "consumers": [
                 "compose.verify.yml",
                 "docker/verify/Dockerfile",
@@ -1687,5 +1687,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "704f7bbf55c0672b76ea68f92807c89d4c20076fe291628437fa7b9b90568f89"
+    "graph_fingerprint": "1dd23ca417893ef1441b3f2c7895d8a79eb5cca17b79b27accc31398051dbc34"
 }

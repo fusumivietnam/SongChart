@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "11cb8e22a96aa2f12d02fa579b314cb866b5289b3087075c55401f1f301ac651",
+    "source_fingerprint": "0a2e0703af11b928f2ab44a9f623d8237c4b7febee414e672f6da95973b78bdb",
     "candidate": {
         "stage": "20.0",
         "candidate": "v1",
@@ -1065,7 +1065,7 @@
         "docs/project/engineering/verification-topology.json": "2e77d2926cc3212c4276bc45a64da0f68d4ff3b278286e04629f294c0d9aeb4a",
         "docs/project/release/versioning-policy.json": "c4ebec8bf9a9dfb791a46f9532b428e15e647a045588d3bca004c85c59971ffe",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
-        "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
+        "docs/project/stack/runtime-environments.json": "fc5fe4c02cfb7a03157d64e395dd16e4807fcd7fc53155bdf634a8b49123a449",
         "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
         "songchart": "6aae071b0acb257c7a573f3c75664dd185155ea550b1903be0cf14d1e3345e3a"
     }
