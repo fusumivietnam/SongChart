@@ -11,6 +11,11 @@ on:
         description: 'Exact repository SHA to verify'
         required: false
         type: string
+      quality_preverified:
+        description: 'Quality/governance already passed on target_sha in the caller'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -24,6 +29,7 @@ concurrency:
 
 jobs:
   quality:
+    if: ${{ !inputs.quality_preverified }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -266,12 +272,18 @@ jobs:
         shell: bash
         env:
           QUALITY: ${{ needs.quality.result }}
+          QUALITY_PREVERIFIED: ${{ inputs.quality_preverified }}
           POSTGRES: ${{ needs.tests-postgres.result }}
           BROWSER: ${{ needs.browser-smoke.result }}
           FRONTEND: ${{ needs.frontend-build.result }}
         run: |
           failures=()
-          [ "$QUALITY" = success ] || failures+=(quality-governance)
+          quality_effective="$QUALITY"
+          if [ "$QUALITY_PREVERIFIED" = true ] && [ "$QUALITY" = skipped ]; then
+            quality_effective=preverified
+          fi
+
+          { [ "$quality_effective" = success ] || [ "$quality_effective" = preverified ]; } || failures+=(quality-governance)
           [ "$POSTGRES" = success ] || failures+=(database-runtime)
           [ "$BROWSER" = success ] || failures+=(browser-smoke)
           [ "$FRONTEND" = success ] || failures+=(frontend-build)
@@ -288,7 +300,7 @@ jobs:
             "exact_sha": "$SONGCHART_CI_SHA",
             "run_id": "${{ github.run_id }}",
             "run_attempt": "${{ github.run_attempt }}",
-            "quality": "$QUALITY",
+            "quality": "$quality_effective",
             "postgres": "$POSTGRES",
             "browser": "$BROWSER",
             "frontend": "$FRONTEND",
@@ -300,7 +312,7 @@ jobs:
             echo '## Exact-head verification classification'
             echo
             echo "- SHA: $SONGCHART_CI_SHA"
-            echo "- Quality: $QUALITY"
+            echo "- Quality: $quality_effective"
             echo "- PostgreSQL: $POSTGRES"
             echo "- Browser: $BROWSER"
             echo "- Frontend: $FRONTEND"
