@@ -60,7 +60,7 @@
                         <span class="shrink-0 rounded border px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span>
                     </div>
                     <dl class="mt-3 space-y-2 text-sm">
-                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">{{ is_scalar($decision->assertion?->value) || $decision->assertion?->value === null ? (string) ($decision->assertion?->value ?? 'Không có giá trị') : json_encode($decision->assertion?->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</dd></div>
+                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">@include('admin.canonical-admissions.partials.value', ['value' => $decision->assertion?->value])</dd></div>
                         <div><dt class="text-xs font-semibold text-slate-500">Nguồn</dt><dd class="mt-1">{{ $decision->assertion?->source?->name ?? 'Không xác định' }}</dd></div>
                     </dl>
                     <a class="mt-4 flex min-h-11 items-center justify-center rounded border px-3 py-2 font-semibold" href="{{ route('admin.canonical-admissions.show', $decision) }}">Xem chi tiết</a>
@@ -79,7 +79,7 @@
                             <td class="p-3"><div class="font-semibold">{{ $decision->entity_type->label() }}</div></td>
                             <td class="p-3">
                                 <div class="font-medium">{{ str($decision->field_name)->replace('_', ' ')->headline() }}</div>
-                                <div class="mt-1 break-words text-slate-600">{{ is_scalar($decision->assertion?->value) || $decision->assertion?->value === null ? (string) ($decision->assertion?->value ?? 'Không có giá trị') : json_encode($decision->assertion?->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</div>
+                                <div class="mt-1 break-words text-slate-600">@include('admin.canonical-admissions.partials.value', ['value' => $decision->assertion?->value])</div>
                             </td>
                             <td class="p-3">{{ $decision->assertion?->source?->name ?? 'Không xác định' }}</td>
                             <td class="p-3"><span class="inline-flex rounded border px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span></td>
@@ -109,7 +109,7 @@
                     <p class="font-semibold">{{ $assertion->entity_type->label() }}</p>
                     <p class="mt-1 text-sm text-slate-600">{{ str($assertion->field_name)->replace('_', ' ')->headline() }}</p>
                     <dl class="mt-3 space-y-2 text-sm">
-                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">{{ is_scalar($assertion->value) || $assertion->value === null ? (string) ($assertion->value ?? 'Không có giá trị') : json_encode($assertion->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</dd></div>
+                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">@include('admin.canonical-admissions.partials.value', ['value' => $assertion->value])</dd></div>
                         <div><dt class="text-xs font-semibold text-slate-500">Nguồn</dt><dd class="mt-1">{{ $assertion->source?->name ?? 'Không xác định' }}</dd></div>
                     </dl>
                     <form class="mt-4" method="post" action="{{ route('admin.canonical-admissions.stage', $assertion) }}">
@@ -131,7 +131,7 @@
                             <td class="p-3"><div class="font-semibold">{{ $assertion->entity_type->label() }}</div></td>
                             <td class="p-3">
                                 <div class="font-medium">{{ str($assertion->field_name)->replace('_', ' ')->headline() }}</div>
-                                <div class="mt-1 break-words text-slate-600">{{ is_scalar($assertion->value) || $assertion->value === null ? (string) ($assertion->value ?? 'Không có giá trị') : json_encode($assertion->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</div>
+                                <div class="mt-1 break-words text-slate-600">@include('admin.canonical-admissions.partials.value', ['value' => $assertion->value])</div>
                             </td>
                             <td class="p-3">{{ $assertion->source?->name ?? 'Không xác định' }}</td>
                             <td class="p-3">
