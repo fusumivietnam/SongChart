@@ -28,7 +28,7 @@ $groups = [
     ]))],
 ];
 @endphp
-<aside class="admin-sidebar" :class="{'is-open': sidebarOpen}" aria-label="Điều hướng quản trị">
+<aside id="admin-sidebar" class="admin-sidebar" :class="{'is-open': sidebarOpen}" aria-label="Điều hướng quản trị">
     <div class="admin-sidebar-brand">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
             <span class="sc-brand-mark">SC</span>
@@ -36,13 +36,13 @@ $groups = [
         </a>
         <button class="admin-sidebar-close lg:hidden" type="button" @click="sidebarOpen=false" aria-label="Đóng menu"><x-icons.icon name="close" /></button>
     </div>
-    <nav class="admin-sidebar-nav">
+    <nav class="admin-sidebar-nav" aria-label="Khu vực quản trị">
         @foreach($groups as $group)
             @if($group['items'] !== [])
                 <div class="admin-nav-group">
                     @if($group['label'])<p class="admin-nav-label">{{ $group['label'] }}</p>@endif
                     @foreach($group['items'] as $item)
-                        <a href="{{ $item['href'] }}" data-admin-nav="{{ $item['key'] }}" @class(['admin-nav-item', 'is-active' => $active === $item['key']])>
+                        <a href="{{ $item['href'] }}" data-admin-nav="{{ $item['key'] }}" @if($active === $item['key']) aria-current="page" @endif @class(['admin-nav-item', 'is-active' => $active === $item['key']])>
                             <x-icons.icon :name="$item['icon']" class="h-5 w-5" />
                             <span>{{ $item['label'] }}</span>
                         </a>
