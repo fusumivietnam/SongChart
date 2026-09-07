@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "owner": "product-user-journey-authority",
+  "product_purpose": "Open music knowledge and discovery over a provider-neutral canonical catalog with provenance and governed destinations.",
+  "principles": [
+    "Journeys own product requirements before provider fields or schema changes.",
+    "Public discovery remains provider-neutral; provider data is evidence and destination context, not canonical identity.",
+    "Stage 20 establishes domain/application foundations; Stage 23 owns full public-product UX refinement.",
+    "Administrative ingestion and canonical-admission workflows remain governed editorial/operator journeys rather than public product shortcuts."
+  ],
+  "journeys": {
+    "visitor.discover": {
+      "actor": "guest_or_authenticated_user",
+      "status": "implemented-foundation",
+      "goal": "Find canonical music entities and navigate trustworthy public detail pages.",
+      "use_cases": [
+        "public.search",
+        "public.artists.index",
+        "public.groups.index",
+        "public.releases.index",
+        "public.recordings.index",
+        "public.works.index",
+        "public.collections.index",
+        "public.artists.show",
+        "public.groups.show",
+        "public.release-groups.show",
+        "public.releases.show",
+        "public.recordings.show",
+        "public.works.show",
+        "public.versions.show",
+        "public.collections.show"
+      ],
+      "required_domain_capabilities": [
+        "stable canonical public identity",
+        "searchable display metadata",
+        "canonical relationships",
+        "verification/provenance state"
+      ],
+      "stage_20_gaps": [
+        "Make relationship/credit semantics explicit enough for read models without provider-specific branching.",
+        "Make destination/media evidence explicitly projectable from canonical entities without becoming canonical identity."
+      ]
+    },
+    "visitor.follow_destination": {
+      "actor": "guest_or_authenticated_user",
+      "status": "foundation-partial",
+      "goal": "Move from a canonical SongChart entity to an approved listening/watching destination while retaining canonical context.",
+      "use_cases": [
+        "public.artists.show",
+        "public.groups.show",
+        "public.release-groups.show",
+        "public.releases.show",
+        "public.recordings.show"
+      ],
+      "required_domain_capabilities": [
+        "provider-neutral canonical entity",
+        "provider destination association",
+        "destination verification/status",
+        "market/provider context when applicable"
+      ],
+      "stage_20_gaps": [
+        "Define a canonical read contract for provider destinations and media evidence.",
+        "Keep destination availability/provider identifiers outside canonical primary identity."
+      ]
+    },
+    "member.manage_account": {
+      "actor": "authenticated_active_verified_user",
+      "status": "implemented-foundation",
+      "goal": "Manage account identity and security without coupling account data to provider identities.",
+      "use_cases": [
+        "account.overview",
+        "account.profile",
+        "account.security"
+      ],
+      "required_domain_capabilities": [
+        "user identity",
+        "account profile",
+        "security state"
+      ],
+      "stage_20_gaps": [
+        "Do not invent social/follow/recommendation persistence until a separately accepted journey owns it."
+      ]
+    },
+    "editor.ingest_and_admit": {
+      "actor": "authorized_editor_or_admin",
+      "status": "implemented-foundation",
+      "goal": "Discover/import provider evidence, resolve identity, review conflicts, and admit provider-neutral canonical data.",
+      "use_case_prefixes": [
+        "admin.providers.",
+        "admin.imports.",
+        "admin.identity-conflicts.",
+        "admin.canonical-admissions."
+      ],
+      "required_domain_capabilities": [
+        "normalized provider evidence",
+        "provider entity identity",
+        "identity conflict review",
+        "metadata assertions/conflicts",
+        "canonical admission decisions",
+        "privileged audit"
+      ],
+      "stage_20_gaps": [
+        "Provider reference evidence must be mapped to canonical concepts before schema changes.",
+        "Canonical mutation must preserve field authority and provenance."
+      ]
+    },
+    "operator.observe_and_recover": {
+      "actor": "authorized_admin_or_operator",
+      "status": "implemented-foundation",
+      "goal": "Observe provider/import/runtime state and recover bounded failures without bypassing canonical admission rules.",
+      "use_case_prefixes": [
+        "admin.providers.",
+        "admin.imports.",
+        "admin.quarantine.",
+        "admin.audit."
+      ],
+      "required_domain_capabilities": [
+        "provider health/status",
+        "import run/item/failure ledger",
+        "quarantine/retry state",
+        "privileged audit"
+      ],
+      "stage_20_gaps": [
+        "Operational state stays separate from canonical music-domain identity."
+      ]
+    }
+  },
+  "explicit_non_goals": [
+    "Recommendation engine",
+    "Social graph",
+    "Visitor-facing AI assistant",
+    "Full Stage 23 public UX redesign",
+    "Provider-specific canonical entities"
+  ]
+}
