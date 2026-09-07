@@ -1,6 +1,6 @@
 # Stage 20.0 Task Contract — Product Foundation & Development Continuity
 
-Status: implementing on the Stage 20 umbrella branch.
+Status: accepted; Stage 20 closure is recorded by authored progress plus exact-head Git/PR/CI evidence.
 
 ## Goal
 
