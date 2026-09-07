@@ -20,6 +20,7 @@ jobs:
   prepare:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
       pull-requests: read
@@ -40,7 +41,7 @@ jobs:
           coverage: none
 
       - name: Cache Composer downloads
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/composer/files
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -104,6 +105,7 @@ jobs:
       - prepare
       - verify
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: read
@@ -142,9 +144,10 @@ jobs:
       - verify
       - close
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
-      pull-requests: write
+      pull-requests: read
     env:
       SONGCHART_PROMOTION_SHA: ${{ needs.prepare.outputs.effective_sha }}
       GH_TOKEN: ${{ github.token }}
@@ -154,26 +157,28 @@ jobs:
           current_head="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .head.sha)"
           test "$current_head" = "$SONGCHART_PROMOTION_SHA"
 
-      - name: Mark draft PR ready for human promotion
+      - name: Capture PR promotion state
+        id: promotion
         run: |
           is_draft="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .draft)"
-          if [ "$is_draft" = 'true' ]; then
-            pr_node_id="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .node_id)"
-            gh api graphql \
-              -f query='mutation($id:ID!){markPullRequestReadyForReview(input:{pullRequestId:$id}){pullRequest{isDraft}}}' \
-              -f id="$pr_node_id" \
-              --jq '.data.markPullRequestReadyForReview.pullRequest.isDraft' | grep -qx 'false'
-          fi
+          printf 'is_draft=%s\n' "$is_draft" >> "$GITHUB_OUTPUT"
 
       - name: Promotion summary
+        env:
+          SONGCHART_PR_DRAFT: ${{ steps.promotion.outputs.is_draft }}
         run: |
           {
             echo '## Ready to promote'
             echo
             echo "- Exact SHA: $SONGCHART_PROMOTION_SHA"
             echo '- PREPARE: generated project context + derived development state reconciled'
-            echo '- CHECK: Quality + PostgreSQL + frontend passed'
+            echo '- CHECK: Quality + PostgreSQL + browser + frontend passed'
             echo '- CLOSE: canonical verification passed without tracked-tree mutation'
+            if [ "$SONGCHART_PR_DRAFT" = 'true' ]; then
+              echo '- PR state: draft; promote via GitHub UI or an authorized connector'
+            else
+              echo '- PR state: already ready for review'
+            fi
             echo '- Human gate: merge this exact PR head in GitHub'
             echo '- Any new commit invalidates this evidence and restarts auto closure'
           } >> "$GITHUB_STEP_SUMMARY"
