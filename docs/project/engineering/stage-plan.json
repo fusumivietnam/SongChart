@@ -4,14 +4,10 @@
     "id": "20.0",
     "title": "Product Foundation & Development Continuity",
     "task_contract": "docs/foundation/STAGE_20_0_TASK_CONTRACT.md",
-    "status": "implementing"
+    "status": "accepted"
   },
-  "accepted_through": "19.0",
-  "active_tranche": {
-    "id": "20.7",
-    "title": "Stage 20 Acceptance & Closure",
-    "semantic_owner": "stage-20-acceptance-closure"
-  },
+  "accepted_through": "20.0",
+  "active_tranche": null,
   "stage_progress": [
     {
       "id": "20.0A",
@@ -60,11 +56,14 @@
     },
     {
       "id": "20.7",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Stage 20 Acceptance & Closure"
     }
   ],
-  "next_tranche": null,
+  "next_tranche": {
+    "id": "21.0",
+    "title": "Editorial Admin UX"
+  },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
     "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage 20 uses one umbrella branch while logical tranche ownership remains explicit in this plan."
