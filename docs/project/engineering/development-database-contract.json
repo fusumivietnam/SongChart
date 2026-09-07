@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "owner": "development-database-authority",
   "application_connection": "pgsql",
   "configuration_authority": ".env.docker",
@@ -7,6 +7,7 @@
     "remote": {
       "preferred_provider": "neon",
       "requires_database_url": true,
+      "requires_expected_database_identity": true,
       "requires_tls": true,
       "allows_local_host_fallback": false,
       "starts_local_postgres_service": false,
@@ -19,6 +20,15 @@
       "durability": "developer-owned"
     }
   },
+  "neon_codespaces": {
+    "connection_secret": "SONGCHART_DEV_NEON_DATABASE_URL",
+    "recommended_connection": "pooled",
+    "required_sslmode": "require",
+    "setup_entrypoint": "songchart dev setup",
+    "rehydrates_gitignored_env": true,
+    "derives_expected_database_from_url": true,
+    "must_not_commit_connection_string": true
+  },
   "runtime_identity": {
     "entrypoint": "songchart dev db status",
     "artisan_command": "development:database-status",
@@ -28,10 +38,20 @@
       "current_user",
       "server_address",
       "server_version",
-      "expected_database_when_configured"
+      "expected_database"
     ],
     "ai_diagnostics": "songchart ai doctor",
-    "must_not_expose_secrets": true
+    "must_not_expose_secrets": true,
+    "must_not_expose_driver_exception_messages": true
+  },
+  "development_admin_continuity": {
+    "ensure_command": "admin:ensure-local",
+    "email_variable": "SONGCHART_DEV_ADMIN_EMAIL",
+    "password_secret": "SONGCHART_DEV_ADMIN_PASSWORD",
+    "existing_password_must_be_preserved": true,
+    "existing_two_factor_state_must_be_preserved": true,
+    "missing_account_may_be_recreated_from_secret": true,
+    "plaintext_password_must_not_be_committed": true
   },
   "operations": {
     "backup_entrypoint": "songchart dev db backup",
@@ -54,6 +74,7 @@
   },
   "fail_closed": [
     "remote mode without DB_URL",
+    "remote mode without expected database identity",
     "remote mode resolving to a local PostgreSQL host",
     "remote mode without TLS",
     "unexpected development database identity",
@@ -61,6 +82,7 @@
   ],
   "secrets": {
     "committed": false,
-    "app_key_must_remain_stable": true
+    "app_key_must_remain_stable": true,
+    "codespaces_secret_values_must_not_be_written_to_tracked_files": true
   }
 }

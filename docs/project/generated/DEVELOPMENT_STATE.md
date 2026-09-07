@@ -4,27 +4,21 @@
 
 ## Current stage
 
-- Stage `20.0 — Product Foundation & Development Continuity`
+- Stage `21.0 — Editorial Admin UX`
 - Status: `accepted`
-- Accepted through: `20.0`
-- Task contract: `docs/foundation/STAGE_20_0_TASK_CONTRACT.md`
+- Accepted through: `21.0`
+- Task contract: `docs/foundation/STAGE_21_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `20.0A` — `ACCEPTED` — Development continuity + AI/MCP governance
-- `20.0B` — `ACCEPTED` — Durable remote development PostgreSQL authority
-- `20.0C` — `ACCEPTED` — Durable object storage + development diagnostics
-- `20.1` — `ACCEPTED` — Product/User Journey Authority
-- `20.2` — `ACCEPTED` — Provider Reference Matrix
-- `20.3` — `ACCEPTED` — Domain Gap Map
-- `20.4` — `ACCEPTED` — Canonical Model Proposal
-- `20.5` — `ACCEPTED` — Schema & Migration Implementation
-- `20.6` — `ACCEPTED` — Read Models / Application Contracts
-- `20.7` — `ACCEPTED` — Stage 20 Acceptance & Closure
+- `21.0A` — `ACCEPTED` — Admission queue information hierarchy
+- `21.0B` — `ACCEPTED` — Decision safety and review context
+- `21.0C` — `ACCEPTED` — Editorial navigation and accessibility
+- `21.0D` — `ACCEPTED` — Stage acceptance and closure
 
 ## Next bounded tranche
 
-- `21.0` — Editorial Admin UX
+- `unknown` — unknown
 
 ## Live work lease
 

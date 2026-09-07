@@ -26,6 +26,7 @@ it('requires a database url in remote mode', function (): void {
     expect(fn () => DevelopmentDatabaseAuthority::assertSafe([
         'mode' => 'remote',
         'url' => '',
+        'expected_database' => 'songchart',
         'sslmode' => 'require',
     ]))->toThrow(
         RuntimeException::class,
@@ -37,6 +38,7 @@ it('rejects local postgres hosts in remote mode', function (string $url): void {
     expect(fn () => DevelopmentDatabaseAuthority::assertSafe([
         'mode' => 'remote',
         'url' => $url,
+        'expected_database' => 'songchart',
         'sslmode' => 'require',
     ]))->toThrow(
         RuntimeException::class,
@@ -48,10 +50,23 @@ it('rejects local postgres hosts in remote mode', function (string $url): void {
     'compose postgres' => 'postgresql://songchart:secret@postgres:5432/songchart',
 ]);
 
+it('requires an expected database identity in remote mode', function (): void {
+    expect(fn () => DevelopmentDatabaseAuthority::assertSafe([
+        'mode' => 'remote',
+        'url' => 'postgresql://songchart:secret@example.neon.tech/songchart',
+        'expected_database' => '',
+        'sslmode' => 'require',
+    ]))->toThrow(
+        RuntimeException::class,
+        'requires an expected database identity',
+    );
+});
+
 it('requires tls in remote mode', function (): void {
     expect(fn () => DevelopmentDatabaseAuthority::assertSafe([
         'mode' => 'remote',
         'url' => 'postgresql://songchart:secret@example.neon.tech/songchart',
+        'expected_database' => 'songchart',
         'sslmode' => 'prefer',
     ]))->toThrow(
         RuntimeException::class,
@@ -59,10 +74,11 @@ it('requires tls in remote mode', function (): void {
     );
 });
 
-it('accepts a durable tls remote database', function (): void {
+it('accepts a durable tls remote database with explicit identity', function (): void {
     DevelopmentDatabaseAuthority::assertSafe([
         'mode' => 'remote',
         'url' => 'postgresql://songchart:secret@example.neon.tech/songchart',
+        'expected_database' => 'songchart',
         'sslmode' => 'require',
     ]);
 

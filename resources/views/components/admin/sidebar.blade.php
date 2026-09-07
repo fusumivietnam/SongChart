@@ -15,7 +15,7 @@ $groups = [
     ['label' => 'Vận hành dữ liệu', 'items' => array_values(array_filter([
         $canManageProviders ? ['key' => 'providers', 'label' => 'Nguồn dữ liệu', 'icon' => 'external', 'href' => route('admin.providers.index')] : null,
         $canManageProviders ? ['key' => 'import-workbench', 'label' => 'Nhập dữ liệu', 'icon' => 'collection', 'href' => route('admin.imports.preview')] : null,
-        $canManageCatalog ? ['key' => 'canonical-admissions', 'label' => 'Duyệt vào dữ liệu chuẩn', 'icon' => 'shield', 'href' => route('admin.canonical-admissions.index')] : null,
+        $canManageCatalog ? ['key' => 'canonical-admissions', 'label' => 'Duyệt thay đổi dữ liệu', 'icon' => 'shield', 'href' => route('admin.canonical-admissions.index')] : null,
         $canManageProviders ? ['key' => 'imports', 'label' => 'Lịch sử tác vụ', 'icon' => 'database', 'href' => route('admin.imports.index')] : null,
         $canManageProviders ? ['key' => 'quarantine', 'label' => 'Dữ liệu cần rà soát', 'icon' => 'shield', 'href' => route('admin.quarantine.index')] : null,
         $canReviewIdentity ? ['key' => 'identity-conflicts', 'label' => 'Xung đột định danh', 'icon' => 'shield', 'href' => route('admin.identity-conflicts.index')] : null,
@@ -24,11 +24,11 @@ $groups = [
         ['key' => 'users', 'label' => 'Người dùng & quyền', 'icon' => 'user', 'href' => route('admin.users.index')],
         ($canManageSystem || $canManageProviders) ? ['key' => 'system', 'label' => 'Thiết lập hệ thống', 'icon' => 'settings', 'href' => route('admin.system.index')] : null,
         $canManageSystem ? ['key' => 'extensions', 'label' => 'Tiện ích hệ thống', 'icon' => 'plug', 'href' => route('admin.extensions.index')] : null,
-        $canViewAudit ? ['key' => 'audit', 'label' => 'Nhật ký đặc quyền', 'icon' => 'shield', 'href' => route('admin.audit.index')] : null,
+        $canViewAudit ? ['key' => 'audit', 'label' => 'Nhật ký quản trị', 'icon' => 'shield', 'href' => route('admin.audit.index')] : null,
     ]))],
 ];
 @endphp
-<aside class="admin-sidebar" :class="{'is-open': sidebarOpen}" aria-label="Điều hướng quản trị">
+<aside id="admin-sidebar" class="admin-sidebar" :class="{'is-open': sidebarOpen}" aria-label="Điều hướng quản trị">
     <div class="admin-sidebar-brand">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
             <span class="sc-brand-mark">SC</span>
@@ -36,13 +36,13 @@ $groups = [
         </a>
         <button class="admin-sidebar-close lg:hidden" type="button" @click="sidebarOpen=false" aria-label="Đóng menu"><x-icons.icon name="close" /></button>
     </div>
-    <nav class="admin-sidebar-nav">
+    <nav class="admin-sidebar-nav" aria-label="Khu vực quản trị">
         @foreach($groups as $group)
             @if($group['items'] !== [])
                 <div class="admin-nav-group">
                     @if($group['label'])<p class="admin-nav-label">{{ $group['label'] }}</p>@endif
                     @foreach($group['items'] as $item)
-                        <a href="{{ $item['href'] }}" data-admin-nav="{{ $item['key'] }}" @class(['admin-nav-item', 'is-active' => $active === $item['key']])>
+                        <a href="{{ $item['href'] }}" data-admin-nav="{{ $item['key'] }}" @if($active === $item['key']) aria-current="page" @endif @class(['admin-nav-item', 'is-active' => $active === $item['key']])>
                             <x-icons.icon :name="$item['icon']" class="h-5 w-5" />
                             <span>{{ $item['label'] }}</span>
                         </a>
@@ -52,7 +52,6 @@ $groups = [
         @endforeach
     </nav>
     <div class="admin-sidebar-footer">
-        <p class="text-xs text-white/45">SongChartWeb 0.1.0-dev</p>
-        <p class="mt-1 text-xs text-white/70">Vận hành theo công việc · Stage 18.3</p>
+        <p class="text-xs text-white/70">SongChart · Quản trị nội dung và dữ liệu</p>
     </div>
 </aside>

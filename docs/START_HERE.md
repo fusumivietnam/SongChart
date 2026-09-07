@@ -7,15 +7,17 @@ SongChart documentation is organized by semantic ownership, not development chro
 Read in this order:
 
 1. `PROJECT_AUTHORITY.md`
-2. `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
-3. `./songchart ai status --json` and `docs/project/generated/project-context.json` for current/runtime-sensitive work
-4. the current task contract named by `docs/project/engineering/stage-plan.json`
-5. the owning domain/stack/security/provider/UI/operations authority
+2. `docs/ATLAS.md` for the human-readable system map connecting product, source, database, AI/MCP and delivery
+3. `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
+4. `./songchart ai status --json` and `docs/project/generated/project-context.json` for current/runtime-sensitive work
+5. the current task contract named by `docs/project/engineering/stage-plan.json`
+6. the owning domain/stack/security/provider/UI/operations authority
 
-Use `docs/DOCUMENTATION_INDEX.md` to locate owners.
+Use `docs/DOCUMENTATION_INDEX.md` to locate owners. `docs/ATLAS.md` is an orientation aid; machine-readable semantic owners remain authoritative when a detail differs.
 
 ## Routing
 
+- System overview: `docs/ATLAS.md`
 - Domain/persistence: `docs/project/domain/`
 - Providers: `docs/providers/` plus provider machine contracts
 - Runtime/dependencies: `docs/project/stack/`

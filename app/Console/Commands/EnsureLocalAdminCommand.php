@@ -9,6 +9,9 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Support\Auth\AuthorizationMatrix;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 final class EnsureLocalAdminCommand extends Command
 {
@@ -17,7 +20,7 @@ final class EnsureLocalAdminCommand extends Command
         {--name=SongChart Admin : Display name used only when a new administrator must be created}
         {--role=super_admin : Privileged role to ensure}';
 
-    protected $description = 'Ensure a local administrator exists without resetting password or two-factor secrets.';
+    protected $description = 'Ensure a development administrator exists without resetting existing password or two-factor secrets.';
 
     public function handle(AuthorizationMatrix $authorization): int
     {
@@ -27,7 +30,8 @@ final class EnsureLocalAdminCommand extends Command
             return self::FAILURE;
         }
 
-        $email = mb_strtolower(trim((string) ($this->argument('email') ?: $this->ask('Email'))));
+        $configuredEmail = trim((string) getenv('SONGCHART_DEV_ADMIN_EMAIL'));
+        $email = mb_strtolower(trim((string) ($this->argument('email') ?: $configuredEmail ?: $this->ask('Email'))));
         $role = UserRole::tryFrom((string) $this->option('role'));
 
         if ($role === null || ! $authorization->roleAllows($role, Capability::AccessAdmin)) {
@@ -38,13 +42,51 @@ final class EnsureLocalAdminCommand extends Command
 
         $user = User::query()->where('email', $email)->first();
         if ($user === null) {
-            $this->info('No matching local account exists; launching the administrator creator.');
+            $configuredPassword = (string) getenv('SONGCHART_DEV_ADMIN_PASSWORD');
 
-            return $this->call('admin:create', [
+            if ($configuredPassword === '') {
+                $this->info('No matching local account exists and no development bootstrap password is configured; launching the interactive administrator creator.');
+
+                return $this->call('admin:create', [
+                    'email' => $email,
+                    '--name' => (string) $this->option('name'),
+                    '--role' => $role->value,
+                ]);
+            }
+
+            $name = trim((string) $this->option('name'));
+            $validator = Validator::make([
                 'email' => $email,
-                '--name' => (string) $this->option('name'),
-                '--role' => $role->value,
+                'name' => $name,
+                'password' => $configuredPassword,
+                'password_confirmation' => $configuredPassword,
+            ], [
+                'email' => ['required', 'email:rfc', 'max:255'],
+                'name' => ['required', 'string', 'max:255'],
+                'password' => ['required', 'confirmed', Password::defaults()],
             ]);
+
+            if ($validator->fails()) {
+                foreach ($validator->errors()->all() as $message) {
+                    $this->error($message);
+                }
+
+                return self::FAILURE;
+            }
+
+            $user = new User;
+            $user->forceFill([
+                'name' => $name,
+                'email' => $email,
+                'password' => Hash::make($configuredPassword),
+                'role' => $role,
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ])->save();
+
+            $this->info(sprintf('Development administrator %s was recreated from configured secret-backed bootstrap credentials.', $email));
+
+            return self::SUCCESS;
         }
 
         $user->forceFill([

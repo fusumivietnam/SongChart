@@ -34,9 +34,9 @@ select
     current_setting('server_version') as server_version
 SQL
             );
-        } catch (Throwable $exception) {
+        } catch (Throwable) {
             return $this->failCommand(
-                'Configured development PostgreSQL is unreachable: '.$exception->getMessage(),
+                'Configured development PostgreSQL is unreachable.',
                 [
                     'mode' => $mode,
                     'reachable' => false,

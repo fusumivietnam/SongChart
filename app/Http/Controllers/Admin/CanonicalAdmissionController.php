@@ -38,7 +38,7 @@ final class CanonicalAdmissionController extends Controller
         $decision = $service->stage($assertion);
 
         return redirect()->route('admin.canonical-admissions.show', $decision)
-            ->with('status', 'Evidence staged for canonical admission review.');
+            ->with('status', 'Đề xuất đã được đưa vào danh sách duyệt. Dữ liệu SongChart chưa thay đổi.');
     }
 
     public function decide(Request $request, CanonicalAdmissionDecision $admission, GovernedCanonicalAdmissionService $service, PrivilegedAuditLogger $audit): RedirectResponse
@@ -82,7 +82,11 @@ final class CanonicalAdmissionController extends Controller
             rationale: $rationale,
         );
 
+        $message = $action === 'apply'
+            ? 'Đã chấp nhận đề xuất và cập nhật dữ liệu SongChart.'
+            : 'Đã từ chối đề xuất. Dữ liệu SongChart không bị thay đổi.';
+
         return redirect()->route('admin.canonical-admissions.show', $decision)
-            ->with('status', 'Canonical admission decision recorded.');
+            ->with('status', $message);
     }
 }
