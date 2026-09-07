@@ -116,6 +116,12 @@ if (is_string($workflow) && substr_count($workflow, "node-version: '24'") < 2) {
 if (is_string($workflow) && str_contains($workflow, "node-version: '22'")) {
     $errors[] = 'GitHub workflow must not drift back to Node 22 after Node 24 alignment.';
 }
+if (is_string($workflow) && substr_count($workflow, 'persist-credentials: false') < 4) {
+    $errors[] = 'Reusable tests workflow checkouts must not persist GitHub credentials.';
+}
+if (is_string($workflow) && substr_count($workflow, 'timeout-minutes:') < 5) {
+    $errors[] = 'Reusable tests workflow jobs must keep bounded execution timeouts.';
+}
 
 $autoClosure = is_file($root.'/.github/workflows/auto-closure.yml')
     ? file_get_contents($root.'/.github/workflows/auto-closure.yml')
@@ -128,7 +134,6 @@ $requiredAutoClosureFragments = [
     "prepare:\n    if:",
     'contents: write',
     'pull-requests: read',
-    'pull-requests: write',
     'github.event.pull_request.head.repo.full_name == github.repository',
     'persist-credentials: false',
     'php scripts/project-context.php --write-source',
@@ -140,7 +145,8 @@ $requiredAutoClosureFragments = [
     'target_sha: ${{ needs.prepare.outputs.effective_sha }}',
     'run: ./songchart verify',
     'test -z "$(git status --porcelain --untracked-files=no)"',
-    'markPullRequestReadyForReview',
+    'Capture PR promotion state',
+    'PR state: draft; promote via GitHub UI or an authorized connector',
     'Any new commit invalidates this evidence and restarts auto closure',
 ];
 
@@ -161,10 +167,16 @@ if (is_string($autoClosure)) {
 if (is_string($autoClosure) && preg_match('/^permissions:\s*\n\s*contents:\s*write/m', $autoClosure) === 1) {
     $errors[] = 'Auto Closure must not grant contents:write at workflow scope; write permission belongs only to PREPARE.';
 }
+if (is_string($autoClosure) && str_contains($autoClosure, 'pull-requests: write')) {
+    $errors[] = 'Auto Closure promotion handoff must remain read-only; CI must not mutate PR UI state.';
+}
+if (is_string($autoClosure) && substr_count($autoClosure, 'timeout-minutes:') < 3) {
+    $errors[] = 'Auto Closure execution jobs must keep bounded timeouts.';
+}
 
-foreach (['./mobile close', 'composer canonical:verify', 'composer stage:verify'] as $forbiddenAutoClosureFragment) {
+foreach (['./mobile close', 'composer canonical:verify', 'composer stage:verify', 'markPullRequestReadyForReview', 'gh api graphql'] as $forbiddenAutoClosureFragment) {
     if (is_string($autoClosure) && str_contains($autoClosure, $forbiddenAutoClosureFragment)) {
-        $errors[] = 'GitHub auto closure must delegate without reimplementing closure: '.$forbiddenAutoClosureFragment;
+        $errors[] = 'GitHub auto closure must delegate without reimplementing closure or PR mutation: '.$forbiddenAutoClosureFragment;
     }
 }
 
