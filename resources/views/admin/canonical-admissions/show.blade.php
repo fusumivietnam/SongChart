@@ -42,7 +42,7 @@
         </dl>
 
         <details class="mt-5 border-t pt-4 text-sm">
-            <summary class="cursor-pointer font-semibold">Chi tiết kỹ thuật</summary>
+            <summary class="min-h-11 cursor-pointer py-2 font-semibold">Chi tiết kỹ thuật</summary>
             <dl class="mt-3 grid gap-2 text-slate-600 md:grid-cols-2">
                 <div><dt class="font-medium">ID đối tượng</dt><dd class="break-all font-mono text-xs">{{ $admission->entity_id }}</dd></div>
                 <div><dt class="font-medium">Trường dữ liệu</dt><dd class="break-all font-mono text-xs">{{ $admission->field_name }}</dd></div>
@@ -68,8 +68,8 @@
             <p id="decision-rationale-help" class="text-xs text-slate-500">Ví dụ: nguồn đáng tin cậy, giá trị phù hợp với dữ liệu hiện có, hoặc có mâu thuẫn cần từ chối.</p>
 
             <div class="flex flex-col gap-3 sm:flex-row">
-                <button name="action" value="apply" class="rounded border px-4 py-2 font-semibold">Chấp nhận và cập nhật dữ liệu</button>
-                <button name="action" value="reject" class="rounded border px-4 py-2 font-semibold">Từ chối đề xuất</button>
+                <button name="action" value="apply" class="min-h-11 rounded border px-4 py-2 font-semibold">Chấp nhận và cập nhật dữ liệu</button>
+                <button name="action" value="reject" class="min-h-11 rounded border px-4 py-2 font-semibold">Từ chối đề xuất</button>
             </div>
         </form>
     </div>
