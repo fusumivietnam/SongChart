@@ -216,9 +216,12 @@ if (! is_array($contract)) {
 $databaseContract = json_decode((string) file_get_contents($root.'/docs/project/engineering/development-database-contract.json'), true);
 if (! is_array($databaseContract)
     || ($databaseContract['modes']['remote']['allows_local_host_fallback'] ?? null) !== false
+    || ($databaseContract['modes']['remote']['starts_local_postgres_service'] ?? null) !== false
     || ($databaseContract['modes']['local']['explicit_fallback_only'] ?? null) !== true
-    || ($databaseContract['backup']['database_backup_directory'] ?? null) !== '.songchart-db-backups') {
-    $errors[] = 'Development database contract must govern remote fail-closed behavior, explicit local fallback and separate database backup storage.';
+    || ($databaseContract['backup_artifacts']['development_database_directory'] ?? null) !== '.songchart-db-backups'
+    || ($databaseContract['backup_artifacts']['source_overwrite_backup_directory'] ?? null) !== '.songchart-backups'
+    || ($databaseContract['operations']['remote_client_image'] ?? null) !== 'postgres:18.4-bookworm') {
+    $errors[] = 'Development database contract must govern remote fail-closed behavior, explicit local fallback, PostgreSQL 18 operations and separate database backup storage.';
 }
 
 $gitignore = (string) file_get_contents($root.'/.gitignore');
