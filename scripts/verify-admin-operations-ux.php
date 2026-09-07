@@ -6,7 +6,7 @@ $root = dirname(__DIR__);
 $errors = [];
 $checks = [
     'app/Support/Admin/AdminOperationsPresentation.php' => ['providerStatus(', 'importStatus(', 'providerAction(', 'recoveryAction('],
-    'resources/views/components/admin/sidebar.blade.php' => ['Nguồn dữ liệu', 'Nhập dữ liệu', 'Lịch sử tác vụ', 'Dữ liệu cần rà soát', 'Xung đột định danh', 'Vận hành theo công việc'],
+    'resources/views/components/admin/sidebar.blade.php' => ['Nguồn dữ liệu', 'Nhập dữ liệu', 'Duyệt thay đổi dữ liệu', 'Lịch sử tác vụ', 'Dữ liệu cần rà soát', 'Xung đột định danh', 'Nhật ký quản trị', 'SongChart · Quản trị nội dung và dữ liệu'],
     'resources/views/admin/dashboard.blade.php' => ['attention-first', 'Cần xử lý', 'Nhập dữ liệu', 'data-admin-technical-details'],
     'resources/views/admin/operations/providers.blade.php' => ['Nguồn dữ liệu'],
     'resources/views/admin/operations/system.blade.php' => ['Thiết lập hệ thống', 'API & tích hợp', 'YouTube Data API credential pool', 'Secret được mã hóa', 'admin.providers.configuration.update'],
@@ -31,6 +31,54 @@ foreach ($checks as $file => $needles) {
         if (! str_contains($body, $needle)) {
             $errors[] = "{$file} missing {$needle}.";
         }
+    }
+}
+
+$sidebar = (string) file_get_contents($root.'/resources/views/components/admin/sidebar.blade.php');
+foreach ([
+    'SongChartWeb 0.1.0-dev',
+    'Stage 18.3',
+    'Duyệt vào dữ liệu chuẩn',
+    'Nhật ký đặc quyền',
+] as $staleOperatorCopy) {
+    if (str_contains($sidebar, $staleOperatorCopy)) {
+        $errors[] = "Admin sidebar must not expose stale/developer-facing copy [{$staleOperatorCopy}].";
+    }
+}
+
+$admissionIndex = (string) file_get_contents($root.'/resources/views/admin/canonical-admissions/index.blade.php');
+$admissionShow = (string) file_get_contents($root.'/resources/views/admin/canonical-admissions/show.blade.php');
+foreach ([
+    'Duyệt thay đổi dữ liệu',
+    'Đề xuất cần bạn xem xét',
+    'Đề xuất mới từ các nguồn dữ liệu',
+    'md:hidden',
+    'hidden overflow-x-auto md:block',
+    'min-h-11',
+] as $operatorSignal) {
+    if (! str_contains($admissionIndex, $operatorSignal)) {
+        $errors[] = "Canonical admission index is missing operator-first UX signal [{$operatorSignal}].";
+    }
+}
+foreach ([
+    'Xem xét thay đổi dữ liệu',
+    'Chi tiết kỹ thuật',
+    'Chấp nhận và cập nhật dữ liệu',
+    'Từ chối đề xuất',
+    'min-h-11',
+] as $operatorSignal) {
+    if (! str_contains($admissionShow, $operatorSignal)) {
+        $errors[] = "Canonical admission review is missing operator-first UX signal [{$operatorSignal}].";
+    }
+}
+foreach ([
+    './songchart dev ready',
+    'Canonical admission review',
+    'Apply canonical',
+    'Reject evidence',
+] as $technicalPrimaryCopy) {
+    if (str_contains($admissionIndex, $technicalPrimaryCopy) || str_contains($admissionShow, $technicalPrimaryCopy)) {
+        $errors[] = "Editorial admission primary UI must not expose developer-facing copy [{$technicalPrimaryCopy}].";
     }
 }
 
