@@ -226,7 +226,7 @@
         },
         "impact-test-map": {
             "source": "docs/project/stack/impact-test-map.json",
-            "fingerprint": "85c8bffe6f25188e0520ba70ec2f8f93c5c2c5e2ef07d9388aac26c48a2daf11",
+            "fingerprint": "5eb3987d2da672ccfaa36738237cee4c88722135e665b2121e17ae2b45585b5c",
             "consumers": []
         },
         "regression-ledger": {
@@ -236,7 +236,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "44686d22fb6585eabeec114cbc625261b276481e490989abc99a58f2e868b0ed",
+            "fingerprint": "9e70404ddc0c5ddad0378666a2fffb8c89978e8a0d4e10725016251238f71026",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -1008,16 +1008,6 @@
             ]
         },
         {
-            "target": "scripts/verify-stage-16.5-focused-lane.php",
-            "rule": "verification-governance",
-            "classification": "declarative",
-            "semantic_authorities": [
-                "verification-topology",
-                "verification-command-surface",
-                "impact-test-map"
-            ]
-        },
-        {
             "target": "scripts/verify-test-database-safety.php",
             "rule": "database",
             "classification": "behavioral",
@@ -1697,5 +1687,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "d7914b743d493656a989e8b7bef8c9646593d417731027d783630318f089890f"
+    "graph_fingerprint": "704f7bbf55c0672b76ea68f92807c89d4c20076fe291628437fa7b9b90568f89"
 }
