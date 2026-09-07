@@ -50,6 +50,7 @@ printf '%s\n' '- PROJECT_AUTHORITY.md'
 printf '%s\n' '- docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md'
 printf '%s\n' '- docs/project/engineering/mcp-governance-contract.json'
 printf '%s\n' '- docs/project/engineering/external-systems-registry.json'
+printf '%s\n' '- docs/project/engineering/development-database-contract.json'
 printf -- '- %s\n' "$task_contract"
 printf '%s\n' '- docs/project/generated/development-state.json (generated projection)'
 
@@ -79,6 +80,20 @@ else
     printf '%s\n' 'Non-running development containers detected. Safe recovery: bash scripts/recover-docker-dev-runtime.sh'
   fi
   printf '%s\n' 'Recovery removes container objects only; named volumes are preserved.'
+fi
+
+section 'Development database authority'
+if [[ ! -f "$ROOT/.env.docker" ]]; then
+  printf '%s\n' '.env.docker is not configured.'
+elif ! command -v docker >/dev/null 2>&1 || ! docker version >/dev/null 2>&1; then
+  printf '%s\n' 'Docker runtime unavailable; database diagnostics skipped.'
+else
+  database_status="$("$ROOT/songchart" dev db status --json 2>&1 | redact || true)"
+  if [[ -n "$database_status" ]]; then
+    printf '%s\n' "$database_status"
+  else
+    printf '%s\n' 'Development database diagnostics returned no output.'
+  fi
 fi
 
 section 'Latest focused-test evidence'
