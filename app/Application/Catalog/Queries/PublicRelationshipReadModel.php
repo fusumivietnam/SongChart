@@ -40,27 +40,29 @@ final readonly class PublicRelationshipReadModel
 
         $items = [];
         foreach ($rows as $row) {
-            $subjectType = $row->subject_type;
-            $objectType = $row->object_type;
-            if (! $subjectType instanceof EntityType || ! $objectType instanceof EntityType) {
-                continue;
-            }
-
-            $isSubject = $subjectType === $type && (string) $row->subject_id === (string) $model->getKey();
+            $subjectType = EntityType::from((string) $row->getRawOriginal('subject_type'));
+            $objectType = EntityType::from((string) $row->getRawOriginal('object_type'));
+            $isSubject = $subjectType === $type && (string) $row->getAttribute('subject_id') === (string) $model->getKey();
             $targetType = $isSubject ? $objectType : $subjectType;
-            $targetId = $isSubject ? (string) $row->object_id : (string) $row->subject_id;
+            $targetId = $isSubject
+                ? (string) $row->getAttribute('object_id')
+                : (string) $row->getAttribute('subject_id');
             $target = $targetType->modelClass()::query()->find($targetId);
             if (! $target instanceof Model) {
                 continue;
             }
 
-            $relationshipType = $row->relationship_type;
-            $metadata = is_array($row->metadata) ? $row->metadata : [];
-            $artistType = $targetType === EntityType::Artist ? (string) ($target->getAttribute('artist_type') ?? '') : null;
+            $relationshipType = RelationshipType::from((string) $row->getRawOriginal('relationship_type'));
+            $metadata = $row->getAttribute('metadata');
+            $metadata = is_array($metadata) ? $metadata : [];
+            $artistType = $targetType === EntityType::Artist
+                ? (string) ($target->getAttribute('artist_type') ?? '')
+                : null;
             $display = (string) $target->getAttribute($this->contracts->displayField($targetType));
             $creditedAs = trim((string) ($metadata['credited_as'] ?? ''));
             $joinPhrase = trim((string) ($metadata['join_phrase'] ?? ''));
-            $position = $metadata['position'] ?? null;
+            $positionValue = $metadata['position'] ?? null;
+            $position = is_numeric($positionValue) ? (int) $positionValue : null;
 
             $items[] = [
                 'type' => $targetType->value,
@@ -69,10 +71,10 @@ final readonly class PublicRelationshipReadModel
                 'slug' => (string) $target->getAttribute($this->contracts->slugField($targetType)),
                 'title' => $creditedAs !== '' ? $creditedAs : $display,
                 'canonical_title' => $display,
-                'relationship_type' => $relationshipType instanceof RelationshipType ? $relationshipType->value : (string) $relationshipType,
+                'relationship_type' => $relationshipType->value,
                 'direction' => $isSubject ? 'outbound' : 'inbound',
                 'join_phrase' => $joinPhrase !== '' ? $joinPhrase : null,
-                'position' => is_numeric($position) ? (int) $position : null,
+                'position' => $position,
                 'verified' => true,
                 'url' => PublicEntityUrl::to(
                     $targetType,
@@ -83,9 +85,14 @@ final readonly class PublicRelationshipReadModel
         }
 
         usort($items, static function (array $left, array $right): int {
-            $position = ($left['position'] ?? PHP_INT_MAX) <=> ($right['position'] ?? PHP_INT_MAX);
+            $leftPosition = $left['position'];
+            $rightPosition = $right['position'];
+            $position = ($leftPosition === null ? PHP_INT_MAX : (int) $leftPosition)
+                <=> ($rightPosition === null ? PHP_INT_MAX : (int) $rightPosition);
 
-            return $position !== 0 ? $position : strnatcasecmp((string) $left['title'], (string) $right['title']);
+            return $position !== 0
+                ? $position
+                : strnatcasecmp((string) $left['title'], (string) $right['title']);
         });
 
         return $items;
