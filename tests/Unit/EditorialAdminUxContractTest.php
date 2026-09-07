@@ -15,9 +15,9 @@ it('keeps Stage 21 editorial admission queue bounded by existing governed action
         ->toContain('Quy trình duyệt')
         ->toContain('Hàng chờ quyết định')
         ->toContain('Evidence chưa xếp hàng')
-        ->toContain("route('admin.canonical-admissions.show', $decision)")
-        ->toContain("route('admin.canonical-admissions.stage', $assertion)")
+        ->toContain('route(\'admin.canonical-admissions.show\', $decision)')
+        ->toContain('route(\'admin.canonical-admissions.stage\', $assertion)')
         ->toContain('aria-current="page"')
         ->toContain('aria-labelledby="admission-decisions-heading"')
-        ->not->toContain("route('admin.canonical-admissions.decide'");
+        ->not->toContain('route(\'admin.canonical-admissions.decide\'');
 });
