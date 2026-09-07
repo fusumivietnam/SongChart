@@ -6,11 +6,15 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
     $root = dirname(__DIR__, 2);
     $index = (string) file_get_contents($root.'/resources/views/admin/canonical-admissions/index.blade.php');
     $show = (string) file_get_contents($root.'/resources/views/admin/canonical-admissions/show.blade.php');
+    $sidebar = (string) file_get_contents($root.'/resources/views/components/admin/sidebar.blade.php');
+    $topbar = (string) file_get_contents($root.'/resources/views/components/admin/topbar.blade.php');
+    $layout = (string) file_get_contents($root.'/resources/views/layouts/admin.blade.php');
     $contract = (string) file_get_contents($root.'/docs/foundation/STAGE_21_0_TASK_CONTRACT.md');
 
     expect($contract)
         ->toContain('21.0A — Admission queue information hierarchy')
         ->toContain('21.0B — Decision safety and review context')
+        ->toContain('21.0C — Editorial navigation and accessibility')
         ->toContain('Canonical mutation remains owned by the existing governed admission service.')
         ->toContain('No Stage 21 tranche may silently add schema/domain concepts to solve a presentation problem.')
         ->and($index)
@@ -47,5 +51,23 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
         ->toContain('aria-describedby="reject-consequence"')
         ->toContain('@error(\'rationale\')')
         ->toContain('role="alert"')
-        ->toContain('min-h-11');
+        ->toContain('min-h-11')
+        ->and($sidebar)
+        ->toContain('id="admin-sidebar"')
+        ->toContain('aria-label="Khu vực quản trị"')
+        ->toContain('aria-current="page"')
+        ->toContain('Duyệt thay đổi dữ liệu')
+        ->toContain('Nhật ký quản trị')
+        ->and($topbar)
+        ->toContain('aria-controls="admin-sidebar"')
+        ->toContain(':aria-expanded="sidebarOpen.toString()"')
+        ->toContain('Quản trị nội dung và dữ liệu SongChart')
+        ->not->toContain('admin-search')
+        ->not->toContain('aria-label="Thông báo"')
+        ->and($layout)
+        ->toContain('href="#admin-main"')
+        ->toContain('Bỏ qua điều hướng, đến nội dung chính')
+        ->toContain('id="admin-main"')
+        ->toContain('tabindex="-1"')
+        ->toContain('aria-hidden="true"');
 });
