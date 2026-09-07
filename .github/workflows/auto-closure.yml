@@ -24,6 +24,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
+      issues: write
     outputs:
       effective_sha: ${{ steps.result.outputs.effective_sha }}
     steps:
@@ -101,6 +102,50 @@ jobs:
           printf 'effective_sha=%s\n' "$effective_sha" >> "$GITHUB_OUTPUT"
           printf 'Effective exact SHA: %s\n' "$effective_sha"
 
+      - name: Update sticky PR progress — prepared
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXACT_SHA: ${{ steps.result.outputs.effective_sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          stage="$(jq -r '.current_stage.id' docs/project/engineering/stage-plan.json)"
+          stage_title="$(jq -r '.current_stage.title' docs/project/engineering/stage-plan.json)"
+          tranche="$(jq -r '.active_tranche // "none"' docs/project/engineering/stage-plan.json)"
+          body="$(cat <<EOF
+          <!-- songchart-ai-progress -->
+          ## SongChart AI progress
+
+          **${stage} — ${stage_title}** · active tranche **${tranche}**
+
+          | Gate | Status |
+          | --- | --- |
+          | PREPARE / generated authority | ✅ Passed |
+          | QUALITY / governance | ✅ Passed |
+          | PostgreSQL | ⏳ Running |
+          | Browser smoke | ⏳ Running |
+          | Frontend build | ⏳ Running |
+          | Canonical CLOSE | ⏸ Waiting |
+
+          **Exact head:** \`${EXACT_SHA}\`
+
+          Current state: runtime verification is running. No owner input is required unless a later gate reports a blocker.
+
+          <details><summary>Machine state</summary>
+
+          \`\`\`json
+          {"stage":"${stage}","tranche":"${tranche}","exact_sha":"${EXACT_SHA}","phase":"runtime-verification","needs_owner_input":false}
+          \`\`\`
+          </details>
+          EOF
+          )"
+          comment_id="$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" --paginate --jq '.[] | select(.body | contains("<!-- songchart-ai-progress -->")) | .id' | head -n1)"
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/${comment_id}" -f body="$body" >/dev/null
+          else
+            gh api --method POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -f body="$body" >/dev/null
+          fi
+
   verify:
     needs: prepare
     permissions:
@@ -109,6 +154,68 @@ jobs:
     with:
       target_sha: ${{ needs.prepare.outputs.effective_sha }}
       quality_preverified: true
+
+  progress-verified:
+    needs:
+      - prepare
+      - verify
+    if: ${{ needs.prepare.result == 'success' && needs.verify.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: write
+    steps:
+      - name: Checkout verified exact SHA without persistent credentials
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.prepare.outputs.effective_sha }}
+          persist-credentials: false
+
+      - name: Update sticky PR progress — runtime verified
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXACT_SHA: ${{ needs.prepare.outputs.effective_sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          stage="$(jq -r '.current_stage.id' docs/project/engineering/stage-plan.json)"
+          stage_title="$(jq -r '.current_stage.title' docs/project/engineering/stage-plan.json)"
+          tranche="$(jq -r '.active_tranche // "none"' docs/project/engineering/stage-plan.json)"
+          body="$(cat <<EOF
+          <!-- songchart-ai-progress -->
+          ## SongChart AI progress
+
+          **${stage} — ${stage_title}** · active tranche **${tranche}**
+
+          | Gate | Status |
+          | --- | --- |
+          | PREPARE / generated authority | ✅ Passed |
+          | QUALITY / governance | ✅ Passed |
+          | PostgreSQL | ✅ Passed |
+          | Browser smoke | ✅ Passed |
+          | Frontend build | ✅ Passed |
+          | Canonical CLOSE | ⏳ Running |
+
+          **Exact head:** \`${EXACT_SHA}\`
+
+          Current state: all runtime lanes passed. Canonical exact-tree closure is now the only remaining automated gate.
+
+          <details><summary>Machine state</summary>
+
+          \`\`\`json
+          {"stage":"${stage}","tranche":"${tranche}","exact_sha":"${EXACT_SHA}","phase":"canonical-close","needs_owner_input":false}
+          \`\`\`
+          </details>
+          EOF
+          )"
+          comment_id="$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" --paginate --jq '.[] | select(.body | contains("<!-- songchart-ai-progress -->")) | .id' | head -n1)"
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/${comment_id}" -f body="$body" >/dev/null
+          else
+            gh api --method POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -f body="$body" >/dev/null
+          fi
 
   close:
     needs:
@@ -148,6 +255,60 @@ jobs:
           test "$(git rev-parse HEAD)" = "$SONGCHART_CLOSE_SHA"
           test -z "$(git status --porcelain --untracked-files=no)"
 
+  progress-failure:
+    needs:
+      - prepare
+      - verify
+      - close
+    if: ${{ always() && (needs.prepare.result == 'failure' || needs.verify.result == 'failure' || needs.close.result == 'failure') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: write
+    steps:
+      - name: Update sticky PR progress — blocker
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREPARE_RESULT: ${{ needs.prepare.result }}
+          VERIFY_RESULT: ${{ needs.verify.result }}
+          CLOSE_RESULT: ${{ needs.close.result }}
+          EXACT_SHA: ${{ needs.prepare.outputs.effective_sha || github.event.pull_request.head.sha }}
+        run: |
+          body="$(cat <<EOF
+          <!-- songchart-ai-progress -->
+          ## SongChart AI progress
+
+          🔴 **Automated blocker detected**
+
+          | Gate | Result |
+          | --- | --- |
+          | PREPARE / QUALITY | ${PREPARE_RESULT} |
+          | Runtime verification | ${VERIFY_RESULT} |
+          | Canonical CLOSE | ${CLOSE_RESULT} |
+
+          **Exact head:** \`${EXACT_SHA}\`
+
+          Current state: implementation should not advance or merge until the failing owner is corrected and exact-head closure passes again.
+
+          <details><summary>Machine state</summary>
+
+          \`\`\`json
+          {"exact_sha":"${EXACT_SHA}","phase":"blocked","prepare":"${PREPARE_RESULT}","verify":"${VERIFY_RESULT}","close":"${CLOSE_RESULT}","needs_owner_input":false}
+          \`\`\`
+          </details>
+          EOF
+          )"
+          comment_id="$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" --paginate --jq '.[] | select(.body | contains("<!-- songchart-ai-progress -->")) | .id' | head -n1)"
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/${comment_id}" -f body="$body" >/dev/null
+          else
+            gh api --method POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -f body="$body" >/dev/null
+          fi
+
   ready-to-promote:
     needs:
       - prepare
@@ -158,6 +319,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+      issues: write
     env:
       SONGCHART_PROMOTION_SHA: ${{ needs.prepare.outputs.effective_sha }}
       GH_TOKEN: ${{ github.token }}
@@ -193,3 +355,54 @@ jobs:
             echo '- Human gate: merge this exact PR head in GitHub'
             echo '- Any new commit invalidates this evidence and restarts auto closure'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Update sticky PR progress — exact head verified
+        continue-on-error: true
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SONGCHART_PR_DRAFT: ${{ steps.promotion.outputs.is_draft }}
+        run: |
+          stage_json="$(gh api "repos/${{ github.repository }}/contents/docs/project/engineering/stage-plan.json?ref=${SONGCHART_PROMOTION_SHA}" --jq .content | base64 -d)"
+          stage="$(jq -r '.current_stage.id' <<<"$stage_json")"
+          stage_title="$(jq -r '.current_stage.title' <<<"$stage_json")"
+          tranche="$(jq -r '.active_tranche // "none"' <<<"$stage_json")"
+          if [ "$SONGCHART_PR_DRAFT" = 'true' ]; then
+            next_action='PR is still draft; promote through GitHub UI or an authorized connector.'
+          else
+            next_action='Exact head is ready for the next governed tranche action or human merge gate.'
+          fi
+          body="$(cat <<EOF
+          <!-- songchart-ai-progress -->
+          ## SongChart AI progress
+
+          🟢 **${stage} — ${stage_title}** · active tranche **${tranche}**
+
+          | Gate | Status |
+          | --- | --- |
+          | PREPARE / generated authority | ✅ Passed |
+          | QUALITY / governance | ✅ Passed |
+          | PostgreSQL | ✅ Passed |
+          | Browser smoke | ✅ Passed |
+          | Frontend build | ✅ Passed |
+          | Canonical CLOSE | ✅ Passed |
+
+          **Exact head:** \`${SONGCHART_PROMOTION_SHA}\`
+
+          ${next_action}
+
+          Any new commit invalidates this exact-head evidence and automatically restarts closure.
+
+          <details><summary>Machine state</summary>
+
+          \`\`\`json
+          {"stage":"${stage}","tranche":"${tranche}","exact_sha":"${SONGCHART_PROMOTION_SHA}","phase":"verified","needs_owner_input":false}
+          \`\`\`
+          </details>
+          EOF
+          )"
+          comment_id="$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" --paginate --jq '.[] | select(.body | contains("<!-- songchart-ai-progress -->")) | .id' | head -n1)"
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/${comment_id}" -f body="$body" >/dev/null
+          else
+            gh api --method POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -f body="$body" >/dev/null
+          fi
