@@ -18,20 +18,55 @@ command -v docker >/dev/null || { echo 'Docker CLI required' >&2; exit 1; }
 docker version >/dev/null || { echo 'Docker Engine not reachable' >&2; exit 1; }
 docker compose version >/dev/null || { echo 'Docker Compose v2 required' >&2; exit 1; }
 
+upsert_env(){
+  local key="$1" value="$2" file="$3" tmp
+  tmp="$(mktemp)"
+  awk -v key="$key" -v value="$value" '
+    BEGIN { written = 0 }
+    index($0, key "=") == 1 {
+      if (! written) {
+        print key "=" value
+        written = 1
+      }
+      next
+    }
+    { print }
+    END {
+      if (! written) print key "=" value
+    }
+  ' "$file" > "$tmp"
+  mv "$tmp" "$file"
+}
+
 # Container objects are disposable runtime state. Recover non-running/stale
 # Compose containers before any app one-off run can implicitly start dependencies.
 # The recovery script never removes named volumes.
 bash "$ROOT/scripts/recover-docker-dev-runtime.sh"
 
-# setup is bootstrap-only. Once a usable local configuration exists, preserve all
-# persistent development state and converge through the normal ready lifecycle.
-if [[ -f .env.docker ]] && grep -Eq '^APP_KEY=.+$' .env.docker; then
+[[ -f .env.docker ]] || cp .env.docker.example .env.docker
+
+# Codespaces secrets are durable account/repository configuration, while .env.docker
+# is intentionally gitignored and may disappear with a Codespace. Rehydrate the same
+# Neon database authority whenever the secret is available.
+if [[ -n "${SONGCHART_DEV_NEON_DATABASE_URL:-}" ]]; then
+  NEON_DATABASE_URL="$SONGCHART_DEV_NEON_DATABASE_URL"
+  NEON_DATABASE_PATH="${NEON_DATABASE_URL%%\?*}"
+  NEON_DATABASE_NAME="${NEON_DATABASE_PATH##*/}"
+  [[ -n "$NEON_DATABASE_NAME" ]] || { echo 'SONGCHART_DEV_NEON_DATABASE_URL must include a database name.' >&2; exit 1; }
+  upsert_env SONGCHART_DEV_DATABASE_MODE remote .env.docker
+  upsert_env DB_URL "$NEON_DATABASE_URL" .env.docker
+  upsert_env DB_SSLMODE require .env.docker
+  upsert_env SONGCHART_DEV_DATABASE_EXPECTED_NAME "$NEON_DATABASE_NAME" .env.docker
+  printf '[SongChart dev setup] Rehydrated durable Neon development database authority from Codespaces secret.\n'
+fi
+
+# setup is bootstrap-only. Once a usable configuration exists, preserve persistent
+# development state and converge through the normal ready lifecycle.
+if grep -Eq '^APP_KEY=.+$' .env.docker; then
   printf '[SongChart dev setup] Existing development configuration detected.\n'
   printf '[SongChart dev setup] Preserving database, administrator and local state; continuing with dev ready.\n'
   exec "$ROOT/songchart" dev ready
 fi
-
-[[ -f .env.docker ]] || cp .env.docker.example .env.docker
 
 # Keep host requirements to Docker + basic shell/coreutils only. Do not require Python/PHP/Node on the host.
 if grep -Eq '^APP_KEY=[[:space:]]*$' .env.docker; then
@@ -41,9 +76,6 @@ fi
 if grep -Eq '^APP_NAME=SongChartWeb[[:space:]]*$' .env.docker; then
   sed -i -E 's|^APP_NAME=SongChartWeb[[:space:]]*$|APP_NAME=SongChart|' .env.docker
 fi
-if grep -Eq '^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$' .env.docker; then
-  sed -i -E 's|^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$|SONGCHART_LOCAL_ADMIN_EMAIL=admin@songchart.local|' .env.docker
-fi
 
 DEV_DB_MODE="$(grep -m1 '^SONGCHART_DEV_DATABASE_MODE=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
 [[ -n "$DEV_DB_MODE" ]] || DEV_DB_MODE='local'
@@ -51,7 +83,9 @@ case "$DEV_DB_MODE" in
   local) ;;
   remote)
     DB_URL_VALUE="$(grep -m1 '^DB_URL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+    EXPECTED_DB_VALUE="$(grep -m1 '^SONGCHART_DEV_DATABASE_EXPECTED_NAME=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
     [[ -n "$DB_URL_VALUE" ]] || { echo 'Remote development database mode requires DB_URL in .env.docker.' >&2; exit 1; }
+    [[ -n "$EXPECTED_DB_VALUE" ]] || { echo 'Remote development database mode requires SONGCHART_DEV_DATABASE_EXPECTED_NAME.' >&2; exit 1; }
     ;;
   *) echo 'SONGCHART_DEV_DATABASE_MODE must be local or remote.' >&2; exit 1 ;;
 esac
@@ -118,14 +152,15 @@ fi
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
 "${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force
 
-LOCAL_ADMIN_EMAIL="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_EMAIL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
-if [[ -n "$LOCAL_ADMIN_EMAIL" ]]; then
-  LOCAL_ADMIN_NAME="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_NAME=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
-  LOCAL_ADMIN_ROLE="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_ROLE=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
-  [[ -n "$LOCAL_ADMIN_NAME" ]] || LOCAL_ADMIN_NAME='SongChart Admin'
-  [[ -n "$LOCAL_ADMIN_ROLE" ]] || LOCAL_ADMIN_ROLE='super_admin'
-  printf '[SongChart Linux Setup] Ensuring configured local administrator %s.\n' "$LOCAL_ADMIN_EMAIL"
-  "${COMPOSE[@]}" run --rm app php artisan admin:ensure-local "$LOCAL_ADMIN_EMAIL" "--name=$LOCAL_ADMIN_NAME" "--role=$LOCAL_ADMIN_ROLE"
+DEV_ADMIN_EMAIL="$(grep -m1 '^SONGCHART_DEV_ADMIN_EMAIL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+[[ -n "$DEV_ADMIN_EMAIL" ]] || DEV_ADMIN_EMAIL="$(grep -m1 '^SONGCHART_LOCAL_ADMIN_EMAIL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+if [[ -n "$DEV_ADMIN_EMAIL" ]]; then
+  DEV_ADMIN_NAME="$(grep -m1 '^SONGCHART_DEV_ADMIN_NAME=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+  DEV_ADMIN_ROLE="$(grep -m1 '^SONGCHART_DEV_ADMIN_ROLE=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+  [[ -n "$DEV_ADMIN_NAME" ]] || DEV_ADMIN_NAME='SongChart Admin'
+  [[ -n "$DEV_ADMIN_ROLE" ]] || DEV_ADMIN_ROLE='super_admin'
+  printf '[SongChart Linux Setup] Ensuring configured development administrator %s.\n' "$DEV_ADMIN_EMAIL"
+  "${COMPOSE[@]}" run --rm app php artisan admin:ensure-local "$DEV_ADMIN_EMAIL" "--name=$DEV_ADMIN_NAME" "--role=$DEV_ADMIN_ROLE"
 fi
 
 if [[ "$IS_CODESPACES" == true ]]; then
