@@ -43,7 +43,7 @@ it('keeps the delivery kernel facade delegating instead of reimplementing closur
         ->not->toContain('composer stage:verify');
 });
 
-it('keeps GitHub auto closure exact-SHA and human-promoted', function (): void {
+it('keeps GitHub auto closure exact-SHA with a read-only promotion handoff', function (): void {
     $root = dirname(__DIR__, 2);
     $workflow = (string) file_get_contents($root.'/.github/workflows/auto-closure.yml');
     $contract = json_decode(
@@ -60,7 +60,8 @@ it('keeps GitHub auto closure exact-SHA and human-promoted', function (): void {
         ->and($closure['must_use_effective_exact_sha'])->toBeTrue()
         ->and($closure['must_revalidate_pr_head_before_close'])->toBeTrue()
         ->and($closure['must_prove_tracked_tree_clean_after_close'])->toBeTrue()
-        ->and($closure['auto_ready_after_closure'])->toBeTrue()
+        ->and($closure['auto_ready_after_closure'])->toBeFalse()
+        ->and($closure['promotion_handoff_read_only'])->toBeTrue()
         ->and($closure['auto_merge'])->toBeFalse()
         ->and($closure['fork_write_execution_allowed'])->toBeFalse()
         ->and($workflow)
@@ -70,8 +71,12 @@ it('keeps GitHub auto closure exact-SHA and human-promoted', function (): void {
         ->toContain('uses: ./.github/workflows/tests.yml')
         ->toContain('target_sha: ${{ needs.prepare.outputs.effective_sha }}')
         ->toContain('run: ./songchart verify')
-        ->toContain('markPullRequestReadyForReview')
+        ->toContain('Capture PR promotion state')
+        ->toContain('PR state: draft; promote via GitHub UI or an authorized connector')
         ->toContain('Any new commit invalidates this evidence and restarts auto closure')
+        ->not->toContain('pull-requests: write')
+        ->not->toContain('markPullRequestReadyForReview')
+        ->not->toContain('gh api graphql')
         ->not->toContain('./mobile close')
         ->not->toContain('mergePullRequest');
 });
