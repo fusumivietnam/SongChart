@@ -13,12 +13,12 @@
 
 - `21.0A` — `ACCEPTED` — Admission queue information hierarchy
 - `21.0B` — `ACCEPTED` — Decision safety and review context
-- `21.0C` — `IMPLEMENTING` — Editorial navigation and accessibility
-- `21.0D` — `PLANNED` — Stage acceptance and closure
+- `21.0C` — `ACCEPTED` — Editorial navigation and accessibility
+- `21.0D` — `IMPLEMENTING` — Stage acceptance and closure
 
 ## Next bounded tranche
 
-- `21.0D` — Stage acceptance and closure
+- `unknown` — unknown
 
 ## Live work lease
 
