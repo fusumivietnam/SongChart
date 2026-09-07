@@ -79,6 +79,10 @@ $requiredWorkflowFragments = [
     'workflow_dispatch:',
     'workflow_call:',
     'target_sha:',
+    'quality_preverified:',
+    'if: ${{ !inputs.quality_preverified }}',
+    'QUALITY_PREVERIFIED: ${{ inputs.quality_preverified }}',
+    'quality_effective=preverified',
     'SONGCHART_CI_SHA: ${{ inputs.target_sha || github.sha }}',
     "permissions:\n  contents: read",
     'concurrency:',
@@ -141,8 +145,12 @@ $requiredAutoClosureFragments = [
     'grep -vE \'^.. docs/project/generated(/|$)\'',
     'git add docs/project/generated',
     'commit -m \'chore: refresh generated repository authority\'',
+    'QUALITY — fail fast on effective prepared tree',
+    'composer quality:verify',
+    'Push generated authority only after quality passes',
     'uses: ./.github/workflows/tests.yml',
     'target_sha: ${{ needs.prepare.outputs.effective_sha }}',
+    'quality_preverified: true',
     'run: ./songchart verify',
     'test -z "$(git status --porcelain --untracked-files=no)"',
     'Capture PR promotion state',
@@ -162,6 +170,12 @@ if (is_string($autoClosure)) {
         'actions/cache',
         'shivammathur/setup-php',
     ], 'Auto Closure');
+
+    $qualityPosition = strpos($autoClosure, 'QUALITY — fail fast on effective prepared tree');
+    $pushPosition = strpos($autoClosure, 'Push generated authority only after quality passes');
+    if (! is_int($qualityPosition) || ! is_int($pushPosition) || $qualityPosition >= $pushPosition) {
+        $errors[] = 'Auto Closure must prove quality before pushing generated authority or starting runtime verification.';
+    }
 }
 
 if (is_string($autoClosure) && preg_match('/^permissions:\s*\n\s*contents:\s*write/m', $autoClosure) === 1) {
