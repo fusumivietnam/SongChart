@@ -132,7 +132,7 @@ Acceptance:
 
 ### 21.0C — Editorial navigation and accessibility
 
-Status: implementing
+Status: accepted
 
 Goals:
 - Normalize editorial navigation vocabulary.
@@ -150,12 +150,19 @@ Acceptance:
 
 ### 21.0D — Stage acceptance and closure
 
-Status: planned
+Status: implementing
 
 Goals:
 - Run impact/canonical verification on exact head.
 - Confirm no domain/schema drift was introduced by UX work.
 - Close Stage 21.0 only from clean, verified exact-head evidence.
+
+Acceptance:
+- A/B/C are accepted in authored stage authority before final closure begins.
+- Quality, PostgreSQL, browser smoke and frontend build pass on the exact prepared Stage 21 closure tree.
+- Canonical verification passes without tracked-tree mutation.
+- No Stage 21 UX change introduces a new schema/domain owner or bypasses canonical admission, authorization or audit boundaries.
+- Final accepted Stage 21 authority is verified again before merge; merge remains a human gate.
 
 ## Tests and verification
 
