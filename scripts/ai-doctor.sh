@@ -51,6 +51,7 @@ printf '%s\n' '- docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md'
 printf '%s\n' '- docs/project/engineering/mcp-governance-contract.json'
 printf '%s\n' '- docs/project/engineering/external-systems-registry.json'
 printf '%s\n' '- docs/project/engineering/development-database-contract.json'
+printf '%s\n' '- docs/project/engineering/development-storage-contract.json'
 printf -- '- %s\n' "$task_contract"
 printf '%s\n' '- docs/project/generated/development-state.json (generated projection)'
 
@@ -93,6 +94,20 @@ else
     printf '%s\n' "$database_status"
   else
     printf '%s\n' 'Development database diagnostics returned no output.'
+  fi
+fi
+
+section 'Development storage authority'
+if [[ ! -f "$ROOT/.env.docker" ]]; then
+  printf '%s\n' '.env.docker is not configured.'
+elif ! command -v docker >/dev/null 2>&1 || ! docker version >/dev/null 2>&1; then
+  printf '%s\n' 'Docker runtime unavailable; storage diagnostics skipped.'
+else
+  storage_status="$("$ROOT/songchart" artisan development:storage-status --json 2>&1 | redact || true)"
+  if [[ -n "$storage_status" ]]; then
+    printf '%s\n' "$storage_status"
+  else
+    printf '%s\n' 'Development storage diagnostics returned no output.'
   fi
 fi
 
