@@ -82,6 +82,8 @@ jobs:
             ${{ runner.os }}-playwright-
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --no-audit --no-fund
+      - name: Build frontend assets for visual fidelity
+        run: npm run build
       - name: Install Chromium runtime
         run: npx playwright install --with-deps chromium
       - name: Prepare review database
