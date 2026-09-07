@@ -23,14 +23,14 @@
 
 <nav class="mt-6" aria-label="Trạng thái duyệt dữ liệu">
     <x-ui.card>
-        <div class="flex flex-wrap gap-3 p-4 text-sm">
+        <div class="grid gap-2 p-4 text-sm sm:grid-cols-3">
             @foreach([
                 'pending' => ['label' => 'Cần duyệt', 'description' => 'Đang chờ quyết định'],
                 'applied' => ['label' => 'Đã chấp nhận', 'description' => 'Đã cập nhật SongChart'],
                 'rejected' => ['label' => 'Đã từ chối', 'description' => 'Không cập nhật dữ liệu'],
             ] as $key => $item)
                 <a
-                    class="rounded border px-3 py-2 @if($status === $key) font-semibold ring-1 @endif"
+                    class="min-h-11 rounded border px-3 py-2 @if($status === $key) font-semibold ring-1 @endif"
                     href="{{ route('admin.canonical-admissions.index', ['status' => $key]) }}"
                     @if($status === $key) aria-current="page" @endif
                 >
@@ -48,7 +48,29 @@
             <h2 id="admission-decisions-heading" class="font-semibold">{{ $status === 'pending' ? 'Đề xuất cần bạn xem xét' : 'Lịch sử quyết định' }}</h2>
             <p class="mt-1 text-sm text-slate-500">Mở từng đề xuất để xem đầy đủ thông tin trước khi quyết định.</p>
         </div>
-        <div class="overflow-x-auto">
+
+        <div class="divide-y md:hidden">
+            @forelse($decisions as $decision)
+                <article class="p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="font-semibold">{{ $decision->entity_type->label() }}</p>
+                            <p class="mt-1 text-sm text-slate-600">{{ str($decision->field_name)->replace('_', ' ')->headline() }}</p>
+                        </div>
+                        <span class="shrink-0 rounded border px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span>
+                    </div>
+                    <dl class="mt-3 space-y-2 text-sm">
+                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">{{ is_scalar($decision->assertion?->value) || $decision->assertion?->value === null ? (string) ($decision->assertion?->value ?? 'Không có giá trị') : json_encode($decision->assertion?->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</dd></div>
+                        <div><dt class="text-xs font-semibold text-slate-500">Nguồn</dt><dd class="mt-1">{{ $decision->assertion?->source?->name ?? 'Không xác định' }}</dd></div>
+                    </dl>
+                    <a class="mt-4 flex min-h-11 items-center justify-center rounded border px-3 py-2 font-semibold" href="{{ route('admin.canonical-admissions.show', $decision) }}">Xem chi tiết</a>
+                </article>
+            @empty
+                <p class="p-8 text-center text-sm text-slate-500">Không có đề xuất nào ở trạng thái này.</p>
+            @endforelse
+        </div>
+
+        <div class="hidden overflow-x-auto md:block">
             <table class="min-w-full text-left text-sm">
                 <thead><tr class="border-b"><th class="p-3">Loại dữ liệu</th><th class="p-3">Nội dung đề xuất</th><th class="p-3">Nguồn</th><th class="p-3">Trạng thái</th><th class="p-3"><span class="sr-only">Thao tác</span></th></tr></thead>
                 <tbody class="divide-y">
@@ -61,7 +83,7 @@
                             </td>
                             <td class="p-3">{{ $decision->assertion?->source?->name ?? 'Không xác định' }}</td>
                             <td class="p-3"><span class="inline-flex rounded border px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span></td>
-                            <td class="p-3"><a class="font-semibold underline" href="{{ route('admin.canonical-admissions.show', $decision) }}">Xem chi tiết</a></td>
+                            <td class="p-3"><a class="inline-flex min-h-11 items-center font-semibold underline" href="{{ route('admin.canonical-admissions.show', $decision) }}">Xem chi tiết</a></td>
                         </tr>
                     @empty
                         <tr><td colspan="5" class="p-8 text-center text-slate-500">Không có đề xuất nào ở trạng thái này.</td></tr>
@@ -80,7 +102,27 @@
             <h2 id="unstaged-evidence-heading" class="font-semibold">Đề xuất mới từ các nguồn dữ liệu</h2>
             <p class="mt-1 text-sm text-slate-500">Thêm một đề xuất vào danh sách duyệt để xem xét riêng. Bước này chưa cập nhật dữ liệu SongChart.</p>
         </div>
-        <div class="overflow-x-auto">
+
+        <div class="divide-y md:hidden">
+            @forelse($unstaged as $assertion)
+                <article class="p-4">
+                    <p class="font-semibold">{{ $assertion->entity_type->label() }}</p>
+                    <p class="mt-1 text-sm text-slate-600">{{ str($assertion->field_name)->replace('_', ' ')->headline() }}</p>
+                    <dl class="mt-3 space-y-2 text-sm">
+                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">{{ is_scalar($assertion->value) || $assertion->value === null ? (string) ($assertion->value ?? 'Không có giá trị') : json_encode($assertion->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</dd></div>
+                        <div><dt class="text-xs font-semibold text-slate-500">Nguồn</dt><dd class="mt-1">{{ $assertion->source?->name ?? 'Không xác định' }}</dd></div>
+                    </dl>
+                    <form class="mt-4" method="post" action="{{ route('admin.canonical-admissions.stage', $assertion) }}">
+                        @csrf
+                        <button class="min-h-11 w-full rounded border px-3 py-2 font-semibold">Đưa vào danh sách duyệt</button>
+                    </form>
+                </article>
+            @empty
+                <p class="p-8 text-center text-sm text-slate-500">Hiện không có đề xuất mới cần đưa vào danh sách duyệt.</p>
+            @endforelse
+        </div>
+
+        <div class="hidden overflow-x-auto md:block">
             <table class="min-w-full text-left text-sm">
                 <thead><tr class="border-b"><th class="p-3">Loại dữ liệu</th><th class="p-3">Nội dung đề xuất</th><th class="p-3">Nguồn</th><th class="p-3"><span class="sr-only">Thao tác</span></th></tr></thead>
                 <tbody class="divide-y">
@@ -95,7 +137,7 @@
                             <td class="p-3">
                                 <form method="post" action="{{ route('admin.canonical-admissions.stage', $assertion) }}">
                                     @csrf
-                                    <button class="rounded border px-3 py-2 font-semibold">Đưa vào danh sách duyệt</button>
+                                    <button class="min-h-11 rounded border px-3 py-2 font-semibold">Đưa vào danh sách duyệt</button>
                                 </form>
                             </td>
                         </tr>
