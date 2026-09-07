@@ -21,6 +21,8 @@ it('defines a port-safe Docker local development HTTPS profile', function (): vo
         ->not->toContain('command: ["php", "artisan", "serve"')
         ->toContain('command: ["php", "artisan", "horizon"]')
         ->not->toContain('queue:work')
+        ->not->toContain('DB_HOST: postgres')
+        ->not->toContain('DB_DATABASE: songchart_docker')
         ->and($caddy)
         ->toContain('docker.songchart.test')
         ->toContain('reverse_proxy app:8000');
@@ -50,4 +52,30 @@ it('provides idempotent Docker development readiness and isolated verification',
         ->toContain('docker-stage-verify.sh')
         ->and($setup)
         ->toContain('.env.docker');
+});
+
+it('supports durable remote development PostgreSQL without silent local fallback', function (): void {
+    $root = dirname(__DIR__, 2);
+    $cli = (string) file_get_contents($root.'/songchart');
+    $setup = (string) file_get_contents($root.'/scripts/setup-docker-dev.sh');
+    $contract = json_decode(
+        (string) file_get_contents($root.'/docs/project/engineering/development-database-contract.json'),
+        true,
+        512,
+        JSON_THROW_ON_ERROR,
+    );
+
+    expect($cli)
+        ->toContain('SONGCHART_DEV_DATABASE_MODE')
+        ->toContain('local postgres service will not be started')
+        ->toContain('development:database-status')
+        ->toContain('.songchart-db-backups')
+        ->toContain('postgres:18.4-bookworm')
+        ->not->toContain('BACKUP_DIR="$ROOT/.songchart-backups"')
+        ->and($setup)
+        ->toContain('Remote development database mode requires DB_URL')
+        ->toContain('local postgres service remains stopped')
+        ->and($contract['modes']['remote']['allows_local_host_fallback'] ?? null)->toBeFalse()
+        ->and($contract['modes']['remote']['starts_local_postgres_service'] ?? null)->toBeFalse()
+        ->and($contract['backup_artifacts']['development_database_directory'] ?? null)->toBe('.songchart-db-backups');
 });

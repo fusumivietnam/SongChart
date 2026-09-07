@@ -20,9 +20,11 @@ $decode = static function (string $relative) use ($root, &$errors): array {
 $domain = $decode('docs/project/domain/domain-contracts.json');
 $operational = $decode('docs/project/domain/operational-contracts.json');
 $registry = $decode('docs/project/domain/use-case-contracts.json');
+$journeys = $decode('docs/project/domain/product-user-journeys.json');
 $routes = (string) file_get_contents($root.'/routes/web.php');
 $domainEntities = is_array($domain['entities'] ?? null) ? $domain['entities'] : [];
 $operationalSurfaces = is_array($operational['surfaces'] ?? null) ? $operational['surfaces'] : [];
+$useCases = is_array($registry['use_cases'] ?? null) ? $registry['use_cases'] : [];
 $allowedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 $adminMiddleware = ['web', 'auth', 'active', 'verified', 'can:access-admin', 'two-factor.confirmed'];
 
@@ -30,7 +32,7 @@ if (($registry['schema_version'] ?? null) !== 1) {
     $errors[] = 'Use-case contract schema_version must be 1.';
 }
 
-foreach (($registry['use_cases'] ?? []) as $key => $contract) {
+foreach ($useCases as $key => $contract) {
     if (! is_string($key) || ! is_array($contract)) {
         $errors[] = 'Every use-case contract must be a keyed object.';
 
@@ -157,6 +159,68 @@ foreach (($registry['use_cases'] ?? []) as $key => $contract) {
         }
         if (! in_array($type, ['entity_type', 'ulid', 'slug', 'string'], true)) {
             $errors[] = "Use-case [{$key}] route parameter [{$parameter}] has unsupported type [{$type}].";
+        }
+    }
+}
+
+if (($journeys['schema_version'] ?? null) !== 1 || ($journeys['owner'] ?? null) !== 'product-user-journey-authority') {
+    $errors[] = 'Product/user journey authority must use schema_version 1 and the canonical owner.';
+}
+
+$allowedJourneyStatuses = ['implemented-foundation', 'foundation-partial', 'surface-implemented-contract-gap', 'planned'];
+foreach (($journeys['journeys'] ?? []) as $journeyKey => $journey) {
+    if (! is_string($journeyKey) || ! is_array($journey)) {
+        $errors[] = 'Every product/user journey must be a keyed object.';
+
+        continue;
+    }
+
+    foreach (['actor', 'status', 'goal', 'required_domain_capabilities', 'stage_20_gaps'] as $required) {
+        if (! array_key_exists($required, $journey)) {
+            $errors[] = "Journey [{$journeyKey}] is missing [{$required}].";
+        }
+    }
+
+    if (! is_string($journey['actor'] ?? null) || ($journey['actor'] ?? '') === '') {
+        $errors[] = "Journey [{$journeyKey}] must declare a non-empty actor.";
+    }
+    if (! in_array($journey['status'] ?? null, $allowedJourneyStatuses, true)) {
+        $errors[] = "Journey [{$journeyKey}] has an unsupported status.";
+    }
+    if (! is_array($journey['required_domain_capabilities'] ?? null) || ($journey['required_domain_capabilities'] ?? []) === []) {
+        $errors[] = "Journey [{$journeyKey}] must declare required domain capabilities.";
+    }
+    if (! is_array($journey['stage_20_gaps'] ?? null)) {
+        $errors[] = "Journey [{$journeyKey}] stage_20_gaps must be a list.";
+    }
+
+    foreach (($journey['use_cases'] ?? []) as $useCaseKey) {
+        if (! is_string($useCaseKey) || ! array_key_exists($useCaseKey, $useCases)) {
+            $errors[] = "Journey [{$journeyKey}] references unregistered executable use case [{$useCaseKey}].";
+        }
+    }
+
+    foreach (($journey['use_case_prefixes'] ?? []) as $prefix) {
+        if (! is_string($prefix) || $prefix === '') {
+            $errors[] = "Journey [{$journeyKey}] has an invalid use-case prefix.";
+
+            continue;
+        }
+        $matches = array_filter(array_keys($useCases), static fn (string $key): bool => str_starts_with($key, $prefix));
+        if ($matches === []) {
+            $errors[] = "Journey [{$journeyKey}] use-case prefix [{$prefix}] matches no executable use case.";
+        }
+    }
+
+    foreach (($journey['route_names'] ?? []) as $routeName) {
+        if (! is_string($routeName) || ! str_contains($routeName, '.')) {
+            $errors[] = "Journey [{$journeyKey}] has an invalid route-only surface.";
+
+            continue;
+        }
+        [$group, $suffix] = explode('.', $routeName, 2);
+        if (! str_contains($routes, "->name('{$group}.')") || ! str_contains($routes, "->name('{$suffix}')")) {
+            $errors[] = "Journey [{$journeyKey}] route-only surface [{$routeName}] is not present in routes/web.php.";
         }
     }
 }

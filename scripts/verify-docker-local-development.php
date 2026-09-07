@@ -11,8 +11,12 @@ $required = [
     '.env.docker.example',
     'docker/dev/Caddyfile',
     'scripts/setup-docker-dev.sh',
+    'scripts/recover-docker-dev-runtime.sh',
     'songchart',
     'docs/project/stack/docker-development-contract.json',
+    'docs/project/engineering/development-database-contract.json',
+    'app/Support/Development/DevelopmentDatabaseAuthority.php',
+    'app/Console/Commands/DevelopmentDatabaseStatusCommand.php',
 ];
 
 foreach ($required as $relative) {
@@ -56,13 +60,23 @@ foreach ([
     }
 }
 
+foreach ([
+    'DB_HOST: postgres',
+    'DB_DATABASE: songchart_docker',
+    'DB_USERNAME: songchart_docker',
+    'DB_PASSWORD: songchart_docker_only',
+] as $forbiddenOverride) {
+    if (str_contains($compose, $forbiddenOverride)) {
+        $errors[] = "compose.dev.yml must not override development database authority with [{$forbiddenOverride}].";
+    }
+}
+
 if (str_contains($compose, 'queue:work')) {
     $errors[] = 'Docker local queue runtime must use Horizon and must not retain native queue:work supervision.';
 }
 if (str_contains($compose, 'command: ["php", "artisan", "serve"')) {
     $errors[] = 'Docker app runtime must not use Laravel ServeCommand; launch the PHP built-in server directly so Docker environment variables reach the HTTP process unchanged.';
 }
-
 if (str_contains($compose, '443:443') && ! str_contains($compose, '127.0.0.1:8443:443')) {
     $errors[] = 'Docker local development must not claim host port 443 by default.';
 }
@@ -105,7 +119,11 @@ if (
 $env = (string) file_get_contents($root.'/.env.docker.example');
 foreach ([
     'APP_URL=https://docker.songchart.test:8443',
+    'SONGCHART_DEV_DATABASE_MODE=local',
+    'SONGCHART_DEV_DATABASE_EXPECTED_NAME=songchart_docker',
+    'DB_URL=',
     'DB_HOST=postgres',
+    'DB_SSLMODE=prefer',
     'REDIS_HOST=redis',
     'SESSION_SECURE_COOKIE=true',
     'SONGCHART_TRUST_DOCKER_PROXY=true',
@@ -121,12 +139,20 @@ foreach ([
     'CODESPACES:-false',
     'SONGCHART_CODESPACES_APP_URL',
     'GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev',
-    'dev up -d postgres redis app queue',
+    'SONGCHART_DEV_DATABASE_MODE',
+    'Using durable remote PostgreSQL authority; local postgres service will not be started.',
+    '.songchart-db-backups',
+    'postgres:18.4-bookworm',
+    'development:database-status',
+    'dev db status|backup|restore',
     'dev url',
 ] as $signal) {
     if (! str_contains($songchart, $signal)) {
-        $errors[] = "songchart Codespaces workflow missing [{$signal}].";
+        $errors[] = "songchart Codespaces/database workflow missing [{$signal}].";
     }
+}
+if (str_contains($songchart, 'BACKUP_DIR="$ROOT/.songchart-backups"')) {
+    $errors[] = '.songchart-backups is source/file overwrite recovery authority and must not be reused for development database dumps.';
 }
 
 $setup = (string) file_get_contents($root.'/scripts/setup-docker-dev.sh');
@@ -136,9 +162,30 @@ foreach ([
     'SONGCHART_CODESPACES_APP_URL',
     'if [[ "$IS_CODESPACES" == false ]]',
     'if [[ "$IS_CODESPACES" == true ]]',
+    'recover-docker-dev-runtime.sh',
+    'DEV_DB_MODE=',
+    'Remote development database mode requires DB_URL',
+    'local postgres service remains stopped',
+    'development:database-status --json',
 ] as $signal) {
     if (! str_contains($setup, $signal)) {
-        $errors[] = "setup-docker-dev.sh Codespaces workflow missing [{$signal}].";
+        $errors[] = "setup-docker-dev.sh Codespaces/recovery/database workflow missing [{$signal}].";
+    }
+}
+
+$recovery = (string) file_get_contents($root.'/scripts/recover-docker-dev-runtime.sh');
+foreach ([
+    'com.docker.compose.project=',
+    'docker rm -f',
+    'named volumes are preserved',
+] as $signal) {
+    if (! str_contains($recovery, $signal)) {
+        $errors[] = "recover-docker-dev-runtime.sh missing [{$signal}].";
+    }
+}
+foreach (['volume rm', 'volume prune', 'down -v', 'system prune --volumes'] as $unsafe) {
+    if (str_contains($recovery, $unsafe)) {
+        $errors[] = "recover-docker-dev-runtime.sh must not contain destructive volume operation [{$unsafe}].";
     }
 }
 
@@ -154,13 +201,31 @@ if (! is_array($contract)) {
         || ($codespaces['url_entrypoint'] ?? null) !== 'songchart dev url') {
         $errors[] = 'Docker development contract must govern the Codespaces adapter, private app port, no-auto-start policy and URL entrypoint.';
     }
+    $recoveryContract = $contract['development']['runtime_recovery'] ?? null;
+    if (! is_array($recoveryContract)
+        || ($contract['development']['runtime_recovery_entrypoint'] ?? null) !== 'bash scripts/recover-docker-dev-runtime.sh'
+        || ($recoveryContract['named_volumes_must_be_preserved'] ?? null) !== true
+        || ($recoveryContract['container_objects_are_disposable'] ?? null) !== true) {
+        $errors[] = 'Docker development contract must govern non-destructive stale-container recovery and preserve named volumes.';
+    }
     if (($contract['compatibility']['native_windows_cli']['status'] ?? null) !== 'retired') {
         $errors[] = 'Docker development contract must mark native Windows CLI as retired.';
     }
 }
 
+$databaseContract = json_decode((string) file_get_contents($root.'/docs/project/engineering/development-database-contract.json'), true);
+if (! is_array($databaseContract)
+    || ($databaseContract['modes']['remote']['allows_local_host_fallback'] ?? null) !== false
+    || ($databaseContract['modes']['remote']['starts_local_postgres_service'] ?? null) !== false
+    || ($databaseContract['modes']['local']['explicit_fallback_only'] ?? null) !== true
+    || ($databaseContract['backup_artifacts']['development_database_directory'] ?? null) !== '.songchart-db-backups'
+    || ($databaseContract['backup_artifacts']['source_overwrite_backup_directory'] ?? null) !== '.songchart-backups'
+    || ($databaseContract['operations']['remote_client_image'] ?? null) !== 'postgres:18.4-bookworm') {
+    $errors[] = 'Development database contract must govern remote fail-closed behavior, explicit local fallback, PostgreSQL 18 operations and separate database backup storage.';
+}
+
 $gitignore = (string) file_get_contents($root.'/.gitignore');
-foreach (['.env.docker', '.certs/*'] as $signal) {
+foreach (['.env.docker', '.certs/*', '/.songchart-db-backups/*'] as $signal) {
     if (! str_contains($gitignore, $signal)) {
         $errors[] = ".gitignore must protect [{$signal}].";
     }

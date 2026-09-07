@@ -1,0 +1,98 @@
+{
+  "schema_version": 3,
+  "status": "active",
+  "purpose": "Declare the intended role, adoption status and authority boundary of external systems considered by SongChart. This registry records architecture intent, official integration evidence and evaluation status, not secret credentials or volatile live resource identifiers.",
+  "official_mcp_review_date": "2026-09-06",
+  "recheck_policy": "docs/project/engineering/recheck-policy.json",
+  "integration_lifecycle": {
+    "default_upgrade_mode": "reviewed-upgrade",
+    "new_capabilities": "deny-until-explicitly-admitted",
+    "permission_expansion": "never-automatic",
+    "remote_managed_rule": "track review/auth/capability assumptions rather than inventing a provider version pin",
+    "local_package_rule": "pin deterministic versions when supported and upgrade through reviewed repository changes",
+    "recheck_triggers": [
+      "active SongChart tranche begins using the provider",
+      "official provider documentation or release notes announce breaking, deprecation, auth, permission or security changes",
+      "connected MCP tool/resource surface or behavior differs from recorded assumptions",
+      "before candidate/canonical closure when the external integration is part of acceptance evidence"
+    ]
+  },
+  "systems": {
+    "github": {
+      "status": "adopted",
+      "plane": ["development", "delivery"],
+      "role": "source, branch/PR, CI and exact-head release evidence authority",
+      "integration": "native Git/GitHub tooling and connected GitHub developer tools",
+      "official_mcp": {"status": "confirmed", "source": "https://github.com/github/github-mcp-server", "last_reviewed": "2026-09-06", "deployment_model": "local-or-remote-client-dependent", "decision": "available but not required when an existing connected GitHub tool already covers the active workflow; avoid duplicate tool surfaces"},
+      "allowed": ["repository read/write on synchronized active branch", "PR/check/release evidence operations"],
+      "forbidden": ["storing secrets in source", "remote writes while a different writer owns unpushed overlapping changes"]
+    },
+    "neon": {
+      "status": "preferred-for-stage-20-durable-development-postgres",
+      "plane": ["development"],
+      "role": "durable remote PostgreSQL development authority candidate for Codespaces/local continuity",
+      "integration": "PostgreSQL connection plus Neon Skills/MCP when useful for provider knowledge and live development resource inspection",
+      "official_mcp": {"status": "confirmed", "source": "https://neon.com/docs/ai/neon-mcp-server", "last_reviewed": "2026-09-06", "deployment_model": "provider-supported", "decision": "evaluate/adopt for Stage 20.0B development inspection and provider-native operations with least privilege; never substitute for Laravel migration authority"},
+      "allowed": ["inspect development project/branch/database state", "explicitly permitted development resource operations"],
+      "forbidden": ["replace Laravel migrations", "store connection credentials or project secrets in source", "silent fallback to an empty local database"]
+    },
+    "cloudflare": {
+      "status": "preferred-for-r2-and-global-edge-evaluation",
+      "plane": ["development", "delivery"],
+      "role": "R2 object storage candidate plus DNS/CDN/security edge; Workers/Hyperdrive are evidence-driven future capabilities",
+      "integration": "Laravel Filesystem for R2 plus official Cloudflare Docs/API MCP where it reduces provider guesswork",
+      "official_mcp": {"status": "confirmed", "source": "https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/", "last_reviewed": "2026-09-06", "deployment_model": "remote-managed", "decision": "prefer focused official remote MCPs or narrowly scoped API MCP permissions; start with documentation/development R2 evidence rather than broad account mutation"},
+      "allowed": ["read documentation", "inspect explicitly scoped development resources", "operate development R2 when authorized"],
+      "forbidden": ["broad production account mutation from a development agent", "make Workers a second canonical application backend without an accepted use case"]
+    },
+    "figma": {
+      "status": "adopted-when-design-work-requires-it",
+      "plane": ["development"],
+      "role": "accepted visual/design-system authority for mapped design nodes",
+      "integration": "Figma connector/MCP and Code Connect plus browser screenshot and visual-regression verification",
+      "official_mcp": {"status": "confirmed", "source": "https://help.figma.com/hc/en-us/articles/35280968300439-Figma-MCP-collection-What-is-the-Figma-MCP-server", "last_reviewed": "2026-09-06", "deployment_model": "remote-managed-preferred", "decision": "use only for active design-to-code work; prefer Figma's remote MCP where supported and do not add it as an application dependency"},
+      "allowed": ["read accepted design context", "map design components to production components"],
+      "forbidden": ["override domain/application contracts", "force a frontend-stack migration solely for fidelity"]
+    },
+    "grafana_cloud": {
+      "status": "planned-observability-candidate",
+      "plane": ["operations"],
+      "role": "central external metrics/logs/traces/alerts candidate when production telemetry justifies it",
+      "integration": "deferred until Stage 24 operational-intelligence evaluation",
+      "official_mcp": {"status": "confirmed", "source": "https://grafana.com/docs/grafana/latest/developer-resources/mcp/introduction/", "last_reviewed": "2026-09-06", "deployment_model": "provider-supported", "decision": "defer connection until Grafana is adopted; then use RBAC/read-first tools for evidence-driven operations"},
+      "allowed": ["collect bounded operational telemetry"],
+      "forbidden": ["become a prerequisite for local development"]
+    },
+    "google_search_console": {
+      "status": "planned",
+      "plane": ["product-analytics", "operations"],
+      "role": "Google search visibility, indexing and query/page performance evidence",
+      "integration": "Stage 23/24 search-visibility work",
+      "official_mcp": {"status": "not-evaluated", "decision": "evaluate official provider integration when implementation begins; use documented API meanwhile if no accepted official MCP adds value"},
+      "allowed": ["read search analytics and URL inspection evidence", "manage declared site/sitemap operations when explicitly implemented"],
+      "forbidden": ["treat search-engine data as canonical music-domain data"]
+    },
+    "bing_webmaster": {
+      "status": "planned",
+      "plane": ["product-analytics", "operations"],
+      "role": "Bing search visibility/crawl/keyword evidence and sitemap/URL submission",
+      "integration": "Stage 23/24 search-visibility work",
+      "official_mcp": {"status": "not-evaluated", "decision": "evaluate official provider integration when implementation begins"},
+      "allowed": ["read search/crawl metrics", "submit declared sitemap/URL changes"],
+      "forbidden": ["become canonical product analytics authority"]
+    },
+    "indexnow": {
+      "status": "planned",
+      "plane": ["delivery"],
+      "role": "asynchronous deduplicated search-index change notification for canonical public URLs",
+      "integration": "queue-backed Stage 23/24 capability",
+      "official_mcp": {"status": "not-evaluated", "decision": "MCP is not required for the runtime notification path; evaluate only if it provides useful development/operations evidence"},
+      "allowed": ["notify changed public URLs after committed canonical application changes"],
+      "forbidden": ["synchronous notification in user mutations", "use as proof that a URL is indexed"]
+    },
+    "openrouter": {"status": "watchlist", "plane": ["development", "future-product-ai"], "role": "optional multi-model gateway only when developer cost/fallback or visitor AI requirements are evidenced", "integration": "not a current SongChart application dependency", "allowed": ["future explicit evaluation with model/cost policy"], "forbidden": ["install into production without an accepted AI product use case"]},
+    "hermes_agent": {"status": "watchlist", "plane": ["development"], "role": "optional personal/remote developer agent", "integration": "not repository or project-memory authority", "allowed": ["consume current SongChart project context if independently adopted"], "forbidden": ["replace repository-owned project memory", "become a production dependency"]},
+    "opencode": {"status": "optional-developer-client", "plane": ["development"], "role": "optional terminal coding-agent client", "integration": "personal tooling only unless a future workflow contract proves repository value", "allowed": ["use governed project context and MCPs"], "forbidden": ["become an application runtime dependency"]},
+    "9router": {"status": "not-adopted", "plane": ["development"], "role": "additional model-routing layer currently judged overlapping", "integration": "none", "allowed": ["personal experiment outside core project tooling"], "forbidden": ["core dependency or required CI/development path"]}
+  }
+}

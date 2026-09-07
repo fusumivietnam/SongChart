@@ -1,0 +1,88 @@
+{
+  "schema_version": 3,
+  "status": "active",
+  "purpose": "Govern external AI agents, MCP servers, provider skills and connected developer tools without allowing external live state or chat memory to replace SongChart repository authority.",
+  "precedence": [
+    "PROJECT_AUTHORITY.md and current SongChart machine/domain contracts",
+    "current stage task contract and authored stage plan",
+    "live external resource state within the external system's declared authority scope",
+    "official provider documentation and installed provider skills",
+    "conversation memory and agent-local memory"
+  ],
+  "official_provider_integration_policy": {
+    "rule": "When a provider or platform becomes relevant to an active SongChart use case, evaluate its official MCP/agent integration before designing a custom MCP bridge.",
+    "evaluation_order": [
+      "confirm the MCP/integration is officially owned or documented by the provider",
+      "compare it with already connected native tools, CLI, SDK and API access",
+      "identify unique value and overlap",
+      "prefer remote OAuth or provider-recommended authentication when it reduces secret handling",
+      "scope tools and permissions to the smallest useful read/development surface",
+      "record adoption, deferral or rejection in external-systems-registry.json"
+    ],
+    "adoption_threshold": "Official availability alone is insufficient; adoption must reduce guessing, manual work or maintenance without creating duplicate authority or unnecessary runtime weight.",
+    "default_installation": "not-automatic",
+    "application_dependency": "forbidden-unless-product-runtime-use-case-is-explicitly-accepted"
+  },
+  "upgrade_and_recheck_policy": {
+    "authority": "docs/project/engineering/recheck-policy.json",
+    "rule": "MCP upgrades are compatibility/capability changes, not routine latest-version churn. Recheck official documentation, auth, permissions, tool/resource surface and overlap before accepting changed behavior.",
+    "local_or_package_managed": [
+      "pin a deterministic version when supported",
+      "upgrade through a reviewed change rather than dev-ready auto-update",
+      "compare breaking/deprecation/auth/tool-surface changes before adoption"
+    ],
+    "remote_managed": [
+      "do not invent a version pin that the provider does not expose",
+      "track last review plus expected auth/permission/capability assumptions",
+      "treat observed tool/resource/auth drift as a recheck trigger"
+    ],
+    "permission_invariant": "A provider update never expands SongChart mutation authority automatically.",
+    "new_capability_default": "deny-until-explicitly-admitted",
+    "major_or_breaking_change": "explicit compatibility review plus impacted development verification is required before continued governed use",
+    "security_or_auth_change": "review immediately when it affects configured SongChart access; rotate/re-scope credentials outside source when required"
+  },
+  "planes": {
+    "development": {
+      "rule": "Developer AI/MCP integrations may inspect and, when explicitly permitted, mutate development resources. Their installation must not create a production runtime dependency.",
+      "default_mutation_policy": "read-first-explicit-write"
+    },
+    "production": {
+      "rule": "Production mutations require the explicit release/operations workflow, least privilege and human-authorized intent. Development agents must not gain production mutation authority by being connected to an account.",
+      "default_mutation_policy": "deny-unless-explicit-release-operation"
+    },
+    "product_ai": {
+      "rule": "Visitor-facing AI is a separate application capability. It must use governed SongChart read models/APIs, be retrieval-grounded and start read-only; development MCP connections are never exposed to visitors.",
+      "status": "deferred-until-product-evidence"
+    }
+  },
+  "invariants": [
+    "Git/GitHub plus repository contracts remain the source and delivery authority.",
+    "Laravel migrations remain the application schema-evolution authority.",
+    "Canonical music identity, reconciliation and provenance remain SongChart domain authorities.",
+    "External provider payloads, MCP responses and skills are evidence or product-specific operational state, not canonical schema authority.",
+    "MCP/agent credentials and provider secrets must never be committed to source or generated authority.",
+    "Live project IDs, branch IDs, account IDs, URLs and quotas are runtime facts unless a dedicated repository contract explicitly owns a stable identifier.",
+    "An MCP tool must not bypass the supported ./songchart lifecycle merely because a lower-level provider API is available.",
+    "No agent may silently fall back to a different development database, storage authority or environment after a configured external authority fails.",
+    "Generated repository authority is updated only through SongChart generation/reconciliation tooling.",
+    "Agent-local persistent memory is convenience state only and must yield to current repository and live-state evidence.",
+    "Earlier successful verification never authorizes skipping re-verification after the verified tree or relevant external capability changes."
+  ],
+  "capability_classes": {
+    "observer": ["read repository state", "read documented external state", "inspect diagnostics and metrics"],
+    "developer": ["edit the active synchronized development branch", "run governed development/test commands", "mutate explicitly declared development resources"],
+    "operator": ["perform explicit development/staging infrastructure operations within declared provider scope"],
+    "release": ["perform production mutations only through the release/operations workflow with explicit authorization"]
+  },
+  "default_agent_class": "developer",
+  "forbidden_shortcuts": [
+    "direct production SQL as a replacement for Laravel migrations",
+    "direct canonical-data mutation from an external MCP without SongChart application/domain enforcement",
+    "committing generated provider credentials or connection strings",
+    "granting broad account mutation permissions only for convenience",
+    "installing optional AI routers/agents into production before a product or workflow requirement exists",
+    "installing both an official provider MCP and an overlapping custom/native bridge without documented unique responsibilities",
+    "auto-updating MCP packages to latest during ./songchart dev ready",
+    "automatically accepting newly exposed MCP mutation tools or broader scopes after a provider update"
+  ]
+}

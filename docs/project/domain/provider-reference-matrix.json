@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "owner": "provider-reference-matrix",
+  "reviewed_at": "2026-09-07",
+  "authority_rule": "Provider data is reference/evidence only. Product journeys and canonical domain invariants own schema decisions.",
+  "providers": {
+    "musicbrainz": {
+      "registry_status": "approved",
+      "role": "data",
+      "official_source": "https://musicbrainz.org/doc/MusicBrainz_API",
+      "reference_capabilities": [
+        "artist/group identity and aliases",
+        "work and recording identity",
+        "release-group and release/edition identity",
+        "relationships/credits",
+        "stable external MBIDs"
+      ],
+      "operational_constraints": [
+        "Meaningful User-Agent is required.",
+        "Default public API usage must remain at or below one request per second unless separately agreed.",
+        "Commercial usage terms must be reviewed separately from non-commercial access."
+      ],
+      "canonical_use": "Strong identity/relationship evidence; MBID remains an external identifier and never canonical primary identity."
+    },
+    "cover-art-archive": {
+      "registry_status": "approved",
+      "role": "data",
+      "official_source": "https://musicbrainz.org/doc/Cover_Art_Archive/API",
+      "reference_capabilities": [
+        "release artwork",
+        "release-group artwork",
+        "front/back/type metadata",
+        "thumbnail variants"
+      ],
+      "operational_constraints": [
+        "Artwork is indexed by MusicBrainz identity.",
+        "Image usage rights remain the consumer's responsibility.",
+        "Artwork availability is optional and must not define canonical release identity."
+      ],
+      "canonical_use": "Presentation/media evidence associated with canonical release or release-group identities through governed external identifiers."
+    },
+    "wikidata": {
+      "registry_status": "approved",
+      "role": "data",
+      "official_source": "https://www.wikidata.org/wiki/Wikidata:Data_access",
+      "reference_capabilities": [
+        "cross-domain identifiers",
+        "knowledge-graph statements",
+        "relationships and enrichment",
+        "links to external authority identifiers"
+      ],
+      "operational_constraints": [
+        "WDQS is suited to graph queries, not fuzzy/text search.",
+        "Large-scale extraction should not be modeled as interactive WDQS reads.",
+        "Statement provenance/rank may vary and must remain evidence rather than overwrite authority."
+      ],
+      "canonical_use": "Optional enrichment and cross-identifier evidence; Wikidata QIDs remain external identifiers."
+    },
+    "youtube": {
+      "registry_status": "approved",
+      "role": "destination",
+      "official_source": "https://developers.google.com/youtube/v3/docs",
+      "reference_capabilities": [
+        "video search",
+        "video inspection",
+        "embeddability status",
+        "outbound watch destination",
+        "channel/video identifiers"
+      ],
+      "operational_constraints": [
+        "API requests are quota-governed.",
+        "Embeddability is mutable and must be revalidated for playback surfaces.",
+        "Video/channel identifiers are destination identity, not canonical music identity."
+      ],
+      "canonical_use": "Listening/watching destination evidence attached to canonical entities through provider-destination records."
+    }
+  },
+  "cross_provider_concepts": {
+    "canonical_identity": {
+      "songchart_owner": true,
+      "provider_fields": ["MusicBrainz MBID", "Wikidata QID", "YouTube video/channel id"],
+      "rule": "External identifiers bridge evidence to canonical entities but never replace SongChart ULID/slug identity."
+    },
+    "credits_relationships": {
+      "primary_reference": ["musicbrainz", "wikidata"],
+      "rule": "Normalize into provider-neutral relationship/credit semantics with source/provenance retained."
+    },
+    "artwork_media": {
+      "primary_reference": ["cover-art-archive", "youtube"],
+      "rule": "Media/artwork/destinations are projectable evidence with availability/status, not required canonical core fields."
+    },
+    "release_hierarchy": {
+      "primary_reference": ["musicbrainz"],
+      "rule": "Keep logical release-group identity distinct from concrete release/edition identity."
+    }
+  },
+  "compliance_gate": {
+    "source": "docs/providers/PROVIDER_DECISION_MATRIX.md",
+    "required_known_before_new_provider_approval": [
+      "commercial permission",
+      "credential eligibility",
+      "retention/cache rules",
+      "attribution",
+      "deletion/revocation",
+      "media handling",
+      "current API reference"
+    ]
+  }
+}

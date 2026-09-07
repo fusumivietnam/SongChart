@@ -5,6 +5,7 @@
 !/.env.docker.example
 !/.env.demo.example
 /.songchart-backups/*
+/.songchart-db-backups/*
 /vendor/
 /node_modules/
 

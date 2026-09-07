@@ -12,10 +12,28 @@ $policy = $read('app/Support/Testing/TestDatabaseSafetyPolicy.php');
 $middleware = $read('app/Http/Middleware/EnsureConfirmedTwoFactorAuthentication.php');
 $ensureAdmin = $read('app/Console/Commands/EnsureLocalAdminCommand.php');
 $setup = $read('app/Console/Commands/SetupLocalCommand.php');
+$developmentAuthority = $read('app/Support/Development/DevelopmentDatabaseAuthority.php');
+$developmentStatus = $read('app/Console/Commands/DevelopmentDatabaseStatusCommand.php');
+$storageAuthority = $read('app/Support/Development/DevelopmentStorageAuthority.php');
+$storageStatus = $read('app/Console/Commands/DevelopmentStorageStatusCommand.php');
+$filesystems = $read('config/filesystems.php');
+$songchart = $read('songchart');
+$compose = $read('compose.dev.yml');
 $composer = json_decode($read('composer.json'), true);
 $envExample = $read('.env.example');
+$envDockerExample = $read('.env.docker.example');
 
-foreach (['app/Support/Testing/TestDatabaseSafetyPolicy.php', 'database/migrations/2026_08_09_000100_create_songchart_environment_guard_table.php', '.env.testing.example'] as $relative) {
+foreach ([
+    'app/Support/Testing/TestDatabaseSafetyPolicy.php',
+    'database/migrations/2026_08_09_000100_create_songchart_environment_guard_table.php',
+    '.env.testing.example',
+    'app/Support/Development/DevelopmentDatabaseAuthority.php',
+    'app/Console/Commands/DevelopmentDatabaseStatusCommand.php',
+    'docs/project/engineering/development-database-contract.json',
+    'app/Support/Development/DevelopmentStorageAuthority.php',
+    'app/Console/Commands/DevelopmentStorageStatusCommand.php',
+    'docs/project/engineering/development-storage-contract.json',
+] as $relative) {
     if (! is_file($root.'/'.$relative)) {
         $errors[] = "Missing local data-safety authority: {$relative}";
     }
@@ -32,9 +50,93 @@ foreach (['must end with _test', 'same as the development database'] as $needle)
         $errors[] = "Test database safety policy is missing invariant: {$needle}";
     }
 }
-if (! str_contains($safety, 'database_role')) {
-    $errors[] = 'Test database safety verifier must validate the database marker role.';
+foreach (['database_role', "sqlState !== '3D000'", 'TEST_PGSQL_MAINTENANCE_DATABASE', 'select exists(select 1 from pg_database where datname = :database)', 'CREATE DATABASE {$quotedDatabase}', 'creating the isolated test database after name-safety validation'] as $needle) {
+    if (! str_contains($safety, $needle)) {
+        $errors[] = "Test database safety verifier is missing bootstrap/safety invariant: {$needle}";
+    }
 }
+if (str_contains($safety, 'DROP DATABASE')) {
+    $errors[] = 'Test database safety verifier must never drop a database while bootstrapping the test lane.';
+}
+
+foreach ([
+    'Development database mode must explicitly be local or remote.',
+    'Remote development database mode requires DB_URL.',
+    'must not resolve to a local PostgreSQL host',
+    'requires PostgreSQL TLS',
+] as $needle) {
+    if (! str_contains($developmentAuthority, $needle)) {
+        $errors[] = "Development database authority is missing fail-closed invariant: {$needle}";
+    }
+}
+foreach ([
+    'current_database() as database_name',
+    'current_user as database_user',
+    'inet_server_addr()',
+    'Development database identity mismatch',
+] as $needle) {
+    if (! str_contains($developmentStatus, $needle)) {
+        $errors[] = "Development database runtime diagnostics are missing identity invariant: {$needle}";
+    }
+}
+if (! str_contains($songchart, '.songchart-db-backups') || str_contains($songchart, 'BACKUP_DIR="$ROOT/.songchart-backups"')) {
+    $errors[] = 'Development database backups must use their own artifact directory and must not reuse .songchart-backups source/file recovery authority.';
+}
+if (! str_contains($songchart, 'Using durable remote PostgreSQL authority; local postgres service will not be started.')) {
+    $errors[] = 'Remote development mode must explicitly avoid starting local PostgreSQL through the songchart facade.';
+}
+if (str_contains($compose, 'DB_HOST: postgres') || str_contains($compose, 'DB_DATABASE: songchart_docker')) {
+    $errors[] = 'Compose app/queue services must not override .env.docker development database authority.';
+}
+foreach (['SONGCHART_DEV_DATABASE_MODE=local', 'SONGCHART_DEV_DATABASE_EXPECTED_NAME=songchart_docker', 'DB_URL=', 'DB_SSLMODE=prefer'] as $needle) {
+    if (! str_contains($envDockerExample, $needle)) {
+        $errors[] = ".env.docker.example is missing development database authority signal: {$needle}";
+    }
+}
+
+foreach ([
+    'Development storage mode must explicitly be local or remote.',
+    'requires the governed Laravel S3 filesystem adapter',
+    'must use the governed [r2] Laravel filesystem disk',
+    'requires an HTTPS object-storage endpoint',
+    'must not resolve to local filesystem/object-storage authority',
+] as $needle) {
+    if (! str_contains($storageAuthority, $needle)) {
+        $errors[] = "Development storage authority is missing fail-closed invariant: {$needle}";
+    }
+}
+foreach ([
+    'development:storage-status',
+    '__songchart_diagnostics__/read-only-probe',
+    "'secrets_exposed' => false",
+] as $needle) {
+    if (! str_contains($storageStatus, $needle)) {
+        $errors[] = "Development storage diagnostics are missing invariant: {$needle}";
+    }
+}
+foreach ([
+    "'r2' => [",
+    "'driver' => 's3'",
+    "'throw' => true",
+    "'report' => true",
+] as $needle) {
+    if (! str_contains($filesystems, $needle)) {
+        $errors[] = "Laravel filesystem configuration is missing governed R2 signal: {$needle}";
+    }
+}
+foreach ([
+    'SONGCHART_DEV_STORAGE_MODE=local',
+    'SONGCHART_DEV_STORAGE_DISK=local',
+    'R2_ACCESS_KEY_ID=',
+    'R2_SECRET_ACCESS_KEY=',
+    'R2_BUCKET=',
+    'R2_ENDPOINT=',
+] as $needle) {
+    if (! str_contains($envDockerExample, $needle)) {
+        $errors[] = ".env.docker.example is missing development storage authority signal: {$needle}";
+    }
+}
+
 if (
     ! str_contains($middleware, "app()->environment(['local', 'demo', 'testing'])")
     || ! str_contains($middleware, 'admin_2fa_mode')
@@ -51,9 +153,13 @@ foreach (['password and two-factor state were preserved', "app()->environment('l
 if (! str_contains($setup, 'admin:ensure-local')) {
     $errors[] = 'Local setup --admin must use the idempotent local administrator command.';
 }
-if (! str_contains($envExample, 'TEST_PGSQL_DATABASE=songchart_test') || ! str_contains($envExample, 'SONGCHART_ADMIN_2FA_MODE=disabled')) {
-    $errors[] = '.env.example must declare the isolated test database and local 2FA ergonomics defaults.';
+if (! preg_match('/^TEST_PGSQL_DATABASE=.+$/m', $envExample)
+    || ! str_contains($envExample, 'SONGCHART_ADMIN_2FA_MODE=disabled')
+    || ! str_contains($envExample, 'SONGCHART_DEV_DATABASE_MODE=local')
+    || ! str_contains($envExample, 'SONGCHART_DEV_STORAGE_MODE=local')) {
+    $errors[] = '.env.example must declare isolated test database, local 2FA ergonomics and explicit development database/storage authority defaults.';
 }
+
 if (! is_array($composer) || ! isset($composer['scripts']['test-database:safety'], $composer['scripts']['local-data-safety:verify'])) {
     $errors[] = 'Composer is missing local data-safety gates.';
 } else {

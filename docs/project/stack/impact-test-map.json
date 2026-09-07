@@ -278,16 +278,13 @@
         "database/migrations/*activity_log*",
         "resources/views/admin/audit/**",
         "scripts/verify-privileged-audit.php",
-        "composer.json",
-        "scripts/verify-stage-16.5-focused.ps1",
-        "scripts/verify-stage-16.5-focused-lane.php"
+        "composer.json"
       ],
       "required_tests": [
         "tests/Architecture/PrivilegedAuditGovernanceTest.php",
         "tests/Feature/PrivilegedAuditTest.php",
         "composer privileged-audit:verify",
-        "composer schema-ownership:verify",
-        "composer stage-16.5-focused-lane:verify"
+        "composer schema-ownership:verify"
       ]
     },
     {

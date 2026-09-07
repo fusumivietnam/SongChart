@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "owner": "stage-20-domain-gap-map",
+  "inputs": [
+    "docs/project/domain/product-user-journeys.json",
+    "docs/project/domain/provider-reference-matrix.json",
+    "docs/project/domain/domain-contracts.json",
+    "docs/project/domain/operational-contracts.json",
+    "docs/project/domain/use-case-contracts.json",
+    "Laravel migrations"
+  ],
+  "gaps": {
+    "relationship-credit-read-semantics": {
+      "priority": "required",
+      "journeys": ["visitor.discover", "editor.ingest_and_admit"],
+      "current_foundation": [
+        "entity_relationships stores provider-neutral cross-entity relationships with provenance, verification_state and metadata JSON",
+        "relationship vocabulary already includes performed_by, written_by, has_member/member_of and recording_of",
+        "artist_recording retains credited_name/join_phrase as an older specialized representation"
+      ],
+      "gap": "Public/application code lacks one explicit provider-neutral credit/relationship projection contract covering role/type, credited display text, ordering/join phrase where present, provenance and verification.",
+      "resolution_class": "contract-and-read-model",
+      "schema_change_required": false,
+      "migration_change": "none",
+      "rule": "entity_relationships is the durable generic relationship authority; do not create a second credits table solely for Stage 20."
+    },
+    "destination-media-read-semantics": {
+      "priority": "required",
+      "journeys": ["visitor.follow_destination"],
+      "current_foundation": [
+        "provider_destinations already associates provider resources with canonical entities",
+        "destination records include review/verification evidence and provider-specific media state",
+        "external identifiers and destinations never replace SongChart canonical identity"
+      ],
+      "gap": "Application/public detail composition lacks one explicit destination projection contract defining approved-only visibility, mutable embeddability/availability and provider-neutral output shape.",
+      "resolution_class": "contract-and-read-model",
+      "schema_change_required": false,
+      "migration_change": "none"
+    },
+    "relationship-public-query-index": {
+      "priority": "required",
+      "journeys": ["visitor.discover"],
+      "current_foundation": [
+        "entity_relationships indexes subject identity and object identity separately",
+        "public projections must filter relationship verification state"
+      ],
+      "gap": "The durable relationship store has no composite verified-read index aligned with subject/object public projection access patterns.",
+      "resolution_class": "forward-only-index-migration",
+      "schema_change_required": true,
+      "migration_change": "Add composite subject/object + verification_state + relationship_type indexes without changing historical migrations."
+    },
+    "account-use-case-registry-drift": {
+      "priority": "governance",
+      "journeys": ["member.manage_account"],
+      "current_foundation": [
+        "account overview/profile/security routes and controllers exist"
+      ],
+      "gap": "Account route surfaces are not represented in the executable use-case registry.",
+      "resolution_class": "authority-registration",
+      "schema_change_required": false,
+      "migration_change": "none",
+      "rule": "Register existing account reads without inventing follow/social/recommendation persistence."
+    },
+    "domain-model-human-companion-drift": {
+      "priority": "governance",
+      "journeys": ["visitor.discover", "editor.ingest_and_admit"],
+      "current_foundation": [
+        "domain-contracts.json contains release_group and expanded relationship vocabulary",
+        "migrations/models implement release groups and provider destinations"
+      ],
+      "gap": "DOMAIN_MODEL.md is behind the machine authority and can mislead humans/AI into proposing duplicate entities.",
+      "resolution_class": "documentation-reconciliation",
+      "schema_change_required": false,
+      "migration_change": "none"
+    },
+    "collection-ownership": {
+      "priority": "deferred",
+      "journeys": [],
+      "current_foundation": [
+        "canonical collections and collection_items already exist"
+      ],
+      "gap": "No accepted Stage 20 journey requires member-owned collections or social collection behavior.",
+      "resolution_class": "no-change",
+      "schema_change_required": false,
+      "migration_change": "none",
+      "rule": "Defer ownership/social semantics until a product journey explicitly accepts them."
+    }
+  },
+  "stage_20_schema_decision": {
+    "new_domain_tables": [],
+    "new_canonical_entities": [],
+    "forward_only_migrations": ["relationship public-read composite indexes"],
+    "reuse": ["entity_relationships", "provider_destinations", "external_identifiers", "metadata_sources", "metadata_assertions", "collections", "collection_items"]
+  }
+}

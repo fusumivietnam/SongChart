@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "primary_local_runtime": "docker-development",
   "remote_development_adapters": [
     "github-codespaces"
@@ -38,6 +38,8 @@
     "caddy_image": "caddy:2.11.3-alpine",
     "database": "songchart_docker",
     "database_role": "development",
+    "database_authority_mode": "local-compose-currently; durable-remote-mode-planned-in-stage-20.0B",
+    "cross_codespace_database_durability": "not-guaranteed-by-local-docker-volume",
     "https_url": "https://docker.songchart.test:8443",
     "http_url": "http://docker.songchart.test:8080",
     "persistent_volumes": [
@@ -53,16 +55,29 @@
     "postgres_pgdata": "/var/lib/postgresql/18/docker",
     "data_backup_entrypoint": "songchart dev db backup",
     "data_restore_entrypoint": "songchart dev db restore",
+    "runtime_recovery_entrypoint": "bash scripts/recover-docker-dev-runtime.sh",
+    "runtime_recovery": {
+      "scope": "non-running containers in the configured SongChart development Compose project",
+      "container_objects_are_disposable": true,
+      "named_volumes_must_be_preserved": true,
+      "automatic_before_setup_bootstrap_or_delegation": true,
+      "daemon_restart_when_container_runtime_cannot_remove_stale_object": true,
+      "forbidden_recovery_operations": [
+        "docker compose down -v",
+        "docker volume prune",
+        "docker system prune --volumes"
+      ]
+    },
     "local_admin_bootstrap": "SONGCHART_LOCAL_ADMIN_EMAIL + admin:ensure-local; existing local administrator credentials are preserved",
     "lifecycle": {
       "ready_entrypoint": "songchart dev ready",
       "setup_entrypoint": "songchart dev setup",
       "ready_when_unconfigured": "delegate-to-setup",
-      "setup_when_configured": "delegate-to-ready",
+      "setup_when_configured": "recover-disposable-container-state-then-delegate-to-ready",
       "setup_semantics": "bootstrap-only",
       "ready_semantics": "convergent-idempotent",
       "persistent_state_must_survive_normal_lifecycle": [
-        "development PostgreSQL data",
+        "development PostgreSQL data within the lifetime of the active Docker host until Stage 20 durable remote mode is enabled",
         "local administrator identity and credentials",
         "Redis development state",
         "locked Composer dependencies when fingerprint matches",
@@ -118,7 +133,8 @@
     ],
     "development_url_entrypoint": "songchart dev url",
     "demo_url_entrypoint": "songchart demo url",
-    "cost_model": "Codespace compute is consumed only while the Codespace is running; repository services do not keep a stopped Codespace alive. Use the GitHub Codespaces idle timeout for automatic shutdown."
+    "cost_model": "Codespace compute is consumed only while the Codespace is running; repository services do not keep a stopped Codespace alive. Use the GitHub Codespaces idle timeout for automatic shutdown.",
+    "durability_note": "Local named volumes are scoped to the Codespace/Docker host and are not a cross-Codespace data authority; Stage 20.0B introduces explicit durable remote development PostgreSQL mode."
   },
   "verification": {
     "compose_file": "compose.verify.yml",

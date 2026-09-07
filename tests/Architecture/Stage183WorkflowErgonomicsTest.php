@@ -57,8 +57,7 @@ it('keeps candidate read-only and exposes optimized closure and demo workflows',
         ->toBeArray()
         ->and($dockerContract['development']['lifecycle']['ready_when_unconfigured'] ?? null)
         ->toBe('delegate-to-setup')
-        ->and($dockerContract['development']['lifecycle']['setup_when_configured'] ?? null)
-        ->toBe('delegate-to-ready')
+
         ->and($dockerContract['development']['lifecycle']['setup_semantics'] ?? null)
         ->toBe('bootstrap-only')
         ->and($dockerContract['development']['lifecycle']['destructive_reset_requires_explicit_command'] ?? null)

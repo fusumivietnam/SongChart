@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace App\Support\Search;
 
 use App\Application\Catalog\Queries\EntityPassportReadModel;
+use App\Application\Catalog\Queries\PublicProviderDestinationReadModel;
+use App\Application\Catalog\Queries\PublicRelationshipReadModel;
 use App\Contracts\Search\SearchCatalog;
 use App\Domain\Catalog\Enums\EntityType;
 use App\Domain\Catalog\Enums\VerificationState;
 use App\Models\Catalog\Collection;
-use App\Models\Catalog\EntityRelationship;
 use App\Models\Catalog\ExternalIdentifier;
 use App\Models\Catalog\MetadataAssertion;
 use App\Models\Catalog\MetadataSource;
-use App\Models\Provider;
-use App\Models\ProviderDestination;
 use App\Support\Catalog\PublicEntityUrl;
 use App\Support\DomainContracts\DomainContractRegistry;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,6 +26,8 @@ final class EloquentSearchCatalog implements SearchCatalog
     public function __construct(
         private readonly DomainContractRegistry $contracts,
         private readonly EntityPassportReadModel $passports,
+        private readonly PublicRelationshipReadModel $relationships,
+        private readonly PublicProviderDestinationReadModel $destinations,
     ) {}
 
     public function search(string $query, string $type = 'all', string $sort = 'relevance', int $page = 1): array
@@ -247,89 +248,15 @@ final class EloquentSearchCatalog implements SearchCatalog
             ];
         }
 
-        $relationships = $this->relationships($type, $model);
-        $providerDestinations = ProviderDestination::query()
-            ->where('entity_type', $type->value)
-            ->where('entity_id', $model->getKey())
-            ->where('review_state', 'approved')
-            ->with('provider')
-            ->latest('verified_at')
-            ->get();
-
-        $providers = [];
-        foreach ($providerDestinations as $destination) {
-            $providerRelation = $destination->getRelation('provider');
-            $provider = $providerRelation instanceof Provider ? $providerRelation : null;
-            $lastCheckedAt = $destination->getAttribute('last_checked_at');
-            $fresh = $lastCheckedAt instanceof \DateTimeInterface
-                && $lastCheckedAt >= now()->subDays(30);
-            $url = $destination->getAttribute('url');
-            $embeddable = $destination->getAttribute('is_embeddable');
-
-            $providers[] = [
-                'key' => $provider !== null ? $provider->slug : '',
-                'name' => $provider !== null ? $provider->name : 'Provider',
-                'status' => $fresh ? 'available' : 'stale',
-                'status_label' => $fresh ? 'Có sẵn' : 'Cần kiểm tra lại',
-                'availability_reason' => $fresh ? 'Destination đã được người quản trị xác minh từ metadata provider.' : 'Destination đã quá thời hạn freshness 30 ngày.',
-                'compliance_state' => 'approved',
-                'url' => is_string($url) ? $url : null,
-                'market' => 'Theo khả dụng của provider',
-                'checked_at' => $lastCheckedAt instanceof \DateTimeInterface ? $lastCheckedAt->format('Y-m-d') : null,
-                'capability_label' => $embeddable === true ? 'Video embeddable' : 'Liên kết ngoài',
-                'attribution' => $provider !== null ? $provider->name : 'Provider',
-                'action_label' => 'Mở '.($provider !== null ? $provider->name : 'provider'),
-            ];
-        }
-
         return array_merge($summary, [
             'eyebrow' => 'Canonical '.$type->value.' identity',
             'facts' => [['label' => 'Loại', 'value' => $type->label()], ['label' => 'Identity', 'value' => (string) $model->getKey()]],
             'identifiers' => $identifiers,
-            'relationships' => $relationships,
+            'relationships' => $this->relationships->for($type, $model),
             'relationship_title' => 'Quan hệ canonical',
             'sources' => $sources,
-            'providers' => $providers,
+            'providers' => $this->destinations->for($type, $model),
             'passport' => $this->passports->for($type, $model),
         ]);
-    }
-
-    /** @return list<array<string, mixed>> */
-    private function relationships(EntityType $type, Model $model): array
-    {
-        $rows = EntityRelationship::query()
-            ->where(function (Builder $query) use ($type, $model): void {
-                $query->where([
-                    'subject_type' => $type->value,
-                    'subject_id' => $model->getKey(),
-                ])->orWhere(function (Builder $inverse) use ($type, $model): void {
-                    $inverse->where([
-                        'object_type' => $type->value,
-                        'object_id' => $model->getKey(),
-                    ]);
-                });
-            })
-            ->latest('updated_at')
-            ->limit(20)
-            ->get();
-
-        $items = [];
-        foreach ($rows as $row) {
-            $subjectType = EntityType::from((string) $row->getRawOriginal('subject_type'));
-            $objectType = EntityType::from((string) $row->getRawOriginal('object_type'));
-            $isSubject = $subjectType === $type && (string) $row->subject_id === (string) $model->getKey();
-            $targetType = $isSubject ? $objectType : $subjectType;
-            $targetId = $isSubject ? (string) $row->object_id : (string) $row->subject_id;
-            $target = $targetType->modelClass()::query()->find($targetId);
-            if (! $target instanceof Model) {
-                continue;
-            }
-            $item = $this->summary($targetType, $target);
-            $relationshipType = (string) $row->getRawOriginal('relationship_type');
-            $item['context'] = str_replace('_', ' ', $relationshipType).' · '.$item['context'];
-            $items[] = $item;
-        }
-
-        return $items;
     }
 }

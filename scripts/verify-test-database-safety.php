@@ -59,10 +59,41 @@ $port = (int) $get('TEST_PGSQL_PORT', 'DB_PORT', '5432');
 $username = $get('TEST_PGSQL_USERNAME', 'DB_USERNAME', 'postgres');
 $password = $get('TEST_PGSQL_PASSWORD', 'DB_PASSWORD', '');
 
+$connect = static function (string $database) use ($host, $port, $username, $password): PDO {
+    $pdo = new PDO(
+        "pgsql:host={$host};port={$port};dbname={$database}",
+        $username,
+        $password,
+        [PDO::ATTR_TIMEOUT => 2],
+    );
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    return $pdo;
+};
+
 if ($errors === []) {
     try {
-        $pdo = new PDO("pgsql:host={$host};port={$port};dbname={$testDatabase}", $username, $password, [PDO::ATTR_TIMEOUT => 2]);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $pdo = $connect($testDatabase);
+        } catch (PDOException $exception) {
+            $sqlState = (string) ($exception->errorInfo[0] ?? $exception->getCode());
+            if ($sqlState !== '3D000') {
+                throw $exception;
+            }
+
+            $maintenanceDatabase = $get('TEST_PGSQL_MAINTENANCE_DATABASE', '', 'postgres');
+            $maintenance = $connect($maintenanceDatabase);
+            $exists = $maintenance->prepare('select exists(select 1 from pg_database where datname = :database)');
+            $exists->execute(['database' => $testDatabase]);
+
+            if (! in_array($exists->fetchColumn(), [true, 1, '1', 't', 'true'], true)) {
+                $quotedDatabase = '"'.str_replace('"', '""', $testDatabase).'"';
+                fwrite(STDOUT, "PostgreSQL test database {$testDatabase} is absent; creating the isolated test database after name-safety validation.\n");
+                $maintenance->exec("CREATE DATABASE {$quotedDatabase}");
+            }
+
+            $pdo = $connect($testDatabase);
+        }
 
         $markerExists = (int) $pdo->query("select count(*) from information_schema.tables where table_schema = current_schema() and table_name = 'songchart_environment_guard'")->fetchColumn() > 0;
         if ($markerExists) {
@@ -82,7 +113,7 @@ if ($errors === []) {
             }
         }
     } catch (Throwable $exception) {
-        $errors[] = 'Unable to verify PostgreSQL test database marker: '.$exception->getMessage();
+        $errors[] = 'Unable to verify or bootstrap PostgreSQL test database marker: '.$exception->getMessage();
     }
 }
 

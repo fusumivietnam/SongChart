@@ -8,7 +8,7 @@ VERIFY_COMPOSE="$ROOT/compose.verify.yml"
 DEV_PROJECT="${SONGCHART_DEV_PROJECT:-songchart-dev}"
 DEMO_PROJECT="${SONGCHART_DEMO_PROJECT:-songchart-demo}"
 VERIFY_PROJECT="${SONGCHART_VERIFY_PROJECT:-songchart-verify}"
-BACKUP_DIR="$ROOT/.songchart-backups"
+DEV_DB_BACKUP_DIR="${SONGCHART_DEV_DB_BACKUP_DIR:-$ROOT/.songchart-db-backups}"
 export SONGCHART_HOST_UID="${SONGCHART_HOST_UID:-$(id -u)}"
 export SONGCHART_HOST_GID="${SONGCHART_HOST_GID:-$(id -g)}"
 die(){ printf 'SongChart: %s\n' "$*" >&2; exit 1; }
@@ -36,10 +36,21 @@ demo(){ docker compose -p "$DEMO_PROJECT" -f "$DEMO_COMPOSE" "$@"; }
 verify_compose(){ docker compose -p "$VERIFY_PROJECT" -f "$VERIFY_COMPOSE" "$@"; }
 dev_app_running(){ [[ "$(dev ps --status running --services 2>/dev/null | grep -x 'app' || true)" == 'app' ]]; }
 dev_up(){
-  if codespaces_mode; then
-    dev up -d postgres redis app queue
+  local mode
+  mode="$(dev_db_mode)"
+  if [[ "$mode" == 'local' ]]; then
+    if codespaces_mode; then
+      dev up -d postgres redis app queue
+    else
+      dev up -d postgres redis app queue caddy
+    fi
   else
-    dev up -d postgres redis app queue caddy
+    printf '[SongChart dev] Using durable remote PostgreSQL authority; local postgres service will not be started.\n'
+    if codespaces_mode; then
+      dev up -d redis app queue
+    else
+      dev up -d redis app queue caddy
+    fi
   fi
 }
 dev_url(){
@@ -60,6 +71,19 @@ dev_exec_or_run(){
 env_value(){
   local file="$1" key="$2"
   grep -m1 -E "^${key}=" "$file" 2>/dev/null | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true
+}
+dev_db_mode(){
+  local mode
+  mode="$(env_value "$ROOT/.env.docker" SONGCHART_DEV_DATABASE_MODE)"
+  [[ -n "$mode" ]] || mode='local'
+  case "$mode" in
+    local|remote) printf '%s\n' "$mode" ;;
+    *) die 'SONGCHART_DEV_DATABASE_MODE must be local or remote.' ;;
+  esac
+}
+dev_db_assert_identity(){
+  dev_exec_or_run php artisan development:database-status --json >/dev/null \
+    || die 'Development database identity/connectivity verification failed.'
 }
 lock_fingerprint(){ cat "$@" | sha256sum | awk '{print $1}'; }
 ensure_local_admin(){
@@ -111,29 +135,62 @@ repair_dev_runtime_ownership(){
 }
 dev_db_backup(){
   ensure_dev_config
-  mkdir -p "$BACKUP_DIR"
-  dev up -d postgres >/dev/null
-  local stamp target
+  local mode stamp target db_url
+  mode="$(dev_db_mode)"
+  mkdir -p "$DEV_DB_BACKUP_DIR"
   stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-  target="$BACKUP_DIR/songchart-dev-$stamp.dump"
-  printf '[SongChart dev db] Backing up development PostgreSQL to %s.\n' "$target"
-  dev exec -T postgres pg_dump -U songchart_docker -d songchart_docker -Fc > "$target"
-  cp "$target" "$BACKUP_DIR/songchart-dev-latest.dump"
+  target="$DEV_DB_BACKUP_DIR/songchart-dev-$stamp.dump"
+
+  if [[ "$mode" == 'local' ]]; then
+    dev up -d postgres >/dev/null
+    dev_db_assert_identity
+    printf '[SongChart dev db] Backing up local development PostgreSQL to %s.\n' "$target"
+    dev exec -T postgres pg_dump -U songchart_docker -d songchart_docker -Fc > "$target"
+  else
+    db_url="$(env_value "$ROOT/.env.docker" DB_URL)"
+    [[ -n "$db_url" ]] || die 'Remote development database backup requires DB_URL in .env.docker.'
+    dev_db_assert_identity
+    printf '[SongChart dev db] Backing up durable remote PostgreSQL to %s.\n' "$target"
+    docker run --rm --env-file "$ROOT/.env.docker" postgres:18.4-bookworm \
+      sh -lc 'export PGSSLMODE="${DB_SSLMODE:-require}"; exec pg_dump "$DB_URL" --format=custom --no-owner --no-privileges' \
+      > "$target"
+  fi
+
+  cp "$target" "$DEV_DB_BACKUP_DIR/songchart-dev-latest.dump"
   printf '[SongChart dev db] Backup complete.\n'
 }
 dev_db_restore(){
   ensure_dev_config
-  local source="${1:-$BACKUP_DIR/songchart-dev-latest.dump}"
-  [[ -f "$source" ]] || die "Development backup not found: $source"
+  local mode source db_url
+  mode="$(dev_db_mode)"
+  source="${1:-$DEV_DB_BACKUP_DIR/songchart-dev-latest.dump}"
+  [[ -f "$source" ]] || die "Development database backup not found: $source"
   printf 'Restore development database from %s? Existing development data will be replaced. [y/N] ' "$source"
   local answer
   read -r answer
   [[ "$answer" =~ ^[Yy]$ ]] || { printf '[SongChart dev db] Restore cancelled.\n'; return 0; }
-  printf '[SongChart dev db] Creating pre-restore backup.\n'
+
+  if [[ "$mode" == 'local' ]]; then
+    dev up -d postgres >/dev/null
+  else
+    db_url="$(env_value "$ROOT/.env.docker" DB_URL)"
+    [[ -n "$db_url" ]] || die 'Remote development database restore requires DB_URL in .env.docker.'
+  fi
+  dev_db_assert_identity
+
+  printf '[SongChart dev db] Creating pre-restore database backup.\n'
   dev_db_backup
-  dev up -d postgres >/dev/null
-  dev exec -T postgres pg_restore --clean --if-exists --no-owner --no-privileges -U songchart_docker -d songchart_docker < "$source"
+
+  if [[ "$mode" == 'local' ]]; then
+    dev exec -T postgres pg_restore --clean --if-exists --no-owner --no-privileges -U songchart_docker -d songchart_docker < "$source"
+  else
+    docker run --rm -i --env-file "$ROOT/.env.docker" postgres:18.4-bookworm \
+      sh -lc 'export PGSSLMODE="${DB_SSLMODE:-require}"; exec pg_restore --clean --if-exists --no-owner --no-privileges --dbname="$DB_URL"' \
+      < "$source"
+  fi
+
   printf '[SongChart dev db] Restore complete.\n'
+  dev_db_assert_identity
   ensure_local_admin
 }
 setup_demo(){
@@ -266,7 +323,7 @@ SongChart Linux-first development and operations CLI
   ./songchart dev setup|ready|up|down|status|logs|shell|url
   ./songchart dev url
   ./songchart dev test [--no-build] [test-path]
-  ./songchart dev db backup|restore [dump-path]
+  ./songchart dev db status|backup|restore [dump-path]
   ./songchart demo setup|up|down|status|logs|url
   ./songchart demo url
   ./songchart prod configure|install|doctor|build|up|down|status
@@ -313,8 +370,10 @@ Closure:
   ./songchart close                 refresh/commit generated authority, then run canonical closure; canonical owns stage verification exactly once
 
 Data resilience:
+  ./songchart dev db status
   ./songchart dev db backup
   ./songchart dev db restore [dump-path]
+  Database dumps are stored under .songchart-db-backups by default; .songchart-backups remains reserved for source/file overwrite recovery artifacts.
 
 Stable projects: songchart-dev / songchart-demo / songchart-verify / configurable production instance
 EOF
@@ -354,6 +413,7 @@ case "$cmd" in
     ensure_dev_dependencies
     dev_up
     repair_dev_runtime_ownership
+    dev_db_assert_identity
     printf '[SongChart dev] Clearing stale compiled views.\n'
     dev_exec_or_run php artisan view:clear
     printf '[SongChart dev] Applying pending development migrations.\n'
@@ -362,9 +422,9 @@ case "$cmd" in
     printf '[SongChart dev] Development environment is ready.\n'
     dev ps
     printf '\nLive development: '; dev_url ;;
-   up) ensure_dev_config; dev_up; dev ps; printf '\nLive development: '; dev_url ;;
+   up) ensure_dev_config; dev_up; dev_db_assert_identity; dev ps; printf '\nLive development: '; dev_url ;;
    down) dev down --remove-orphans ;;
-   status) dev ps ;;
+   status) ensure_dev_config; dev ps; printf '\n'; dev_exec_or_run php artisan development:database-status ;;
    logs) ensure_dev_config; dev logs --follow --tail 200 "$@" ;;
    shell) ensure_dev_config; if dev_app_running; then exec docker compose -p "$DEV_PROJECT" -f "$DEV_COMPOSE" ${CODESPACES:+-f "$CODESPACES_COMPOSE"} exec app bash; else dev run --rm app bash; fi ;;
    url) ensure_dev_config; dev_url ;;
@@ -372,9 +432,10 @@ case "$cmd" in
    db)
     action="${1:-}"; shift || true
     case "$action" in
+     status) ensure_dev_config; dev_exec_or_run php artisan development:database-status "$@" ;;
      backup) dev_db_backup ;;
      restore) dev_db_restore "${1:-}" ;;
-     *) die 'Usage: ./songchart dev db [backup|restore [dump-path]]' ;;
+     *) die 'Usage: ./songchart dev db [status|backup|restore [dump-path]]' ;;
     esac ;;
    *) die 'Usage: ./songchart dev [setup|ready|up|down|status|logs|shell|url|test|db]' ;;
   esac ;;
