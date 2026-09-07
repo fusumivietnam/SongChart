@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "owner": "development-database-authority",
+  "application_connection": "pgsql",
+  "modes": {
+    "remote": {
+      "preferred_provider": "neon",
+      "requires_database_url": true,
+      "requires_tls": true,
+      "allows_local_host_fallback": false,
+      "durability": "provider-owned"
+    },
+    "local": {
+      "explicit_fallback_only": true,
+      "default_container_host": "postgres",
+      "durability": "developer-owned"
+    }
+  },
+  "testing": {
+    "authority": "isolated-postgresql-test-lane",
+    "must_not_reuse_development_database": true,
+    "disposable": true
+  },
+  "fail_closed": [
+    "remote mode without DB_URL",
+    "remote mode resolving to a local PostgreSQL host",
+    "remote mode without TLS",
+    "unexpected development database identity",
+    "configured durable database becoming unreachable"
+  ],
+  "secrets": {
+    "committed": false,
+    "app_key_must_remain_stable": true
+  }
+}

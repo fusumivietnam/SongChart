@@ -12,6 +12,11 @@ $productionEnvironmentGuardEnabled = (bool) env(
     env('APP_ENV') === 'production',
 );
 
+$developmentDatabaseMode = (string) env(
+    'SONGCHART_DEV_DATABASE_MODE',
+    'local',
+);
+
 return [
     'search' => [
         'demo_enabled' => (bool) env('SONGCHART_DEMO_SEARCH', false),
@@ -30,6 +35,15 @@ return [
         'queue_monitor_max' => (int) env('SONGCHART_QUEUE_MONITOR_MAX', 100),
     ],
 
+    'development' => [
+        'database' => [
+            'mode' => $developmentDatabaseMode,
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'expected_database' => env('SONGCHART_DEV_DATABASE_EXPECTED_NAME'),
+        ],
+    ],
     'security' => [
         'admin_2fa_mode' => $adminTwoFactorMode,
     ],

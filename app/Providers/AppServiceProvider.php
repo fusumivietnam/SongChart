@@ -24,6 +24,7 @@ use App\Support\Catalog\Enrichment\GovernedEnrichmentEvidenceAdmissionPolicy;
 use App\Support\Catalog\Enrichment\GovernedEnrichmentExecutor;
 use App\Support\Catalog\Fusion\CanonicalFieldResolver;
 use App\Support\Catalog\Fusion\ConfigFieldAuthorityPolicy;
+use App\Support\Development\DevelopmentDatabaseAuthority;
 use App\Support\Production\ProductionEnvironmentGuard;
 use App\Support\Providers\Normalization\DefaultNormalizedProviderEntityValidator;
 use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
@@ -62,6 +63,12 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::shouldBeStrict(! $this->app->isProduction());
+
+        if ($this->app->environment('local')) {
+            DevelopmentDatabaseAuthority::assertSafe(
+                (array) config('songchart.development.database', []),
+            );
+        }
 
         if ((bool) config('songchart.production.environment_guard_enabled', false)) {
             ProductionEnvironmentGuard::assertSafe([
