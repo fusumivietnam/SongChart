@@ -2,12 +2,6 @@
 
 Trạng thái: định hướng active/future. `docs/project/engineering/stage-plan.json` sở hữu stage đang triển khai; generated state + Git/GitHub sở hữu projection/runtime facts; `docs/project/DEVELOPMENT_HISTORY.md` sở hữu chronology đã accepted.
 
-## Stage 20 — Product Foundation & Development Continuity
-
-20.0 hoàn thiện development continuity, AI/MCP governance, durable development PostgreSQL, durable object storage và documentation consolidation. Sau đó Stage 20 đi theo chuỗi user journeys → provider reference → domain gap map → canonical model → schema/migrations → read models → closure.
-
-Không thêm provider, MCP, agent hay infrastructure chỉ vì có sẵn. Official provider MCP được đánh giá trước custom bridge khi use case thật sự cần, nhưng adoption phải chứng minh non-overlap và net benefit.
-
 ## Stage 21 — Editorial Admin UX
 
 Chuyển Admin từ technical-console-first sang task-oriented editorial operations: Nội dung, Cần xử lý, Nguồn dữ liệu và Hệ thống. Technical diagnostics vẫn tồn tại nhưng không chi phối information architecture.
