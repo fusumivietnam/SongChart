@@ -6,6 +6,7 @@ This index lists active documentation ownership. Legacy stage records are migrat
 
 - `PROJECT_AUTHORITY.md` — repository engineering authority.
 - `docs/START_HERE.md` — reading/routing entry point.
+- `docs/ATLAS.md` — private human-readable system map linking product, source, database, runtime, AI/MCP and delivery; orientation aid, not semantic authority.
 - `docs/DOCUMENTATION_GOVERNANCE.md` — documentation lifecycle and ownership.
 - `docs/project/engineering/stage-plan.json` — authored current-stage semantics.
 - `docs/project/generated/development-state.json` — generated current-state machine projection.
