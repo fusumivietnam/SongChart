@@ -44,9 +44,10 @@
     "must_revalidate_pr_head_before_close": true,
     "must_prove_tracked_tree_clean_after_close": true,
     "may_reimplement_verification_logic": false,
-    "auto_ready_after_closure": true,
+    "auto_ready_after_closure": false,
+    "promotion_handoff_read_only": true,
     "auto_merge": false,
-    "human_gate": "Merge the exact ready PR head in GitHub. Any new commit invalidates closure evidence and reruns automation.",
+    "human_gate": "Promote/merge the exact verified PR head in GitHub or through an authorized connector. Any new commit invalidates closure evidence and reruns automation.",
     "fork_write_execution_allowed": false
   },
   "github_mobile_control_plane": {
