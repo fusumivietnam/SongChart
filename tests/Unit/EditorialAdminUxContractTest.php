@@ -6,6 +6,7 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
     $root = dirname(__DIR__, 2);
     $index = (string) file_get_contents($root.'/resources/views/admin/canonical-admissions/index.blade.php');
     $show = (string) file_get_contents($root.'/resources/views/admin/canonical-admissions/show.blade.php');
+    $value = (string) file_get_contents($root.'/resources/views/admin/canonical-admissions/partials/value.blade.php');
     $sidebar = (string) file_get_contents($root.'/resources/views/components/admin/sidebar.blade.php');
     $topbar = (string) file_get_contents($root.'/resources/views/components/admin/topbar.blade.php');
     $layout = (string) file_get_contents($root.'/resources/views/layouts/admin.blade.php');
@@ -24,6 +25,7 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
         ->toContain('Đề xuất mới từ các nguồn dữ liệu')
         ->toContain('route(\'admin.canonical-admissions.show\', $decision)')
         ->toContain('route(\'admin.canonical-admissions.stage\', $assertion)')
+        ->toContain("@include('admin.canonical-admissions.partials.value'")
         ->toContain('aria-current="page"')
         ->toContain('aria-labelledby="admission-decisions-heading"')
         ->toContain('md:hidden')
@@ -42,6 +44,7 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
         ->toContain('Đề xuất và lý do từ chối vẫn được giữ lại trong lịch sử duyệt')
         ->toContain('Chấp nhận và cập nhật dữ liệu')
         ->toContain('Từ chối đề xuất')
+        ->toContain("@include('admin.canonical-admissions.partials.value'")
         ->toContain('route(\'admin.canonical-admissions.decide\', $admission)')
         ->toContain('name="action" value="apply"')
         ->toContain('name="action" value="reject"')
@@ -52,6 +55,10 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
         ->toContain('@error(\'rationale\')')
         ->toContain('role="alert"')
         ->toContain('min-h-11')
+        ->and($value)
+        ->toContain("array_key_exists('value', \$displayValue)")
+        ->toContain("\$displayValue = \$displayValue['value'];")
+        ->toContain('Không có giá trị')
         ->and($sidebar)
         ->toContain('id="admin-sidebar"')
         ->toContain('aria-label="Khu vực quản trị"')
