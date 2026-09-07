@@ -25,20 +25,25 @@ final class PublicProviderDestinationReadModel
         $items = [];
         foreach ($destinations as $destination) {
             $providerRelation = $destination->getRelation('provider');
-            $provider = $providerRelation instanceof Provider ? $providerRelation : null;
-            $lastCheckedAt = $destination->last_checked_at;
+            if (! $providerRelation instanceof Provider) {
+                continue;
+            }
+
+            $lastCheckedAt = $destination->getAttribute('last_checked_at');
+            $verifiedAt = $destination->getAttribute('verified_at');
             $fresh = $lastCheckedAt instanceof \DateTimeInterface
                 && $lastCheckedAt >= now()->subDays(30);
-            $url = $destination->url;
+            $url = $destination->getAttribute('url');
+            $embeddable = $destination->getAttribute('is_embeddable') === true;
 
             $items[] = [
-                'key' => $provider?->slug ?? '',
-                'name' => $provider?->name ?? 'Provider',
-                'provider_resource_id' => (string) $destination->provider_resource_id,
-                'title' => (string) ($destination->title ?? ''),
-                'channel_id' => $destination->channel_id,
-                'channel_title' => $destination->channel_title,
-                'duration_ms' => $destination->duration_ms,
+                'key' => $providerRelation->slug,
+                'name' => $providerRelation->name,
+                'provider_resource_id' => (string) $destination->getAttribute('provider_resource_id'),
+                'title' => (string) ($destination->getAttribute('title') ?? ''),
+                'channel_id' => $destination->getAttribute('channel_id'),
+                'channel_title' => $destination->getAttribute('channel_title'),
+                'duration_ms' => $destination->getAttribute('duration_ms'),
                 'status' => $fresh ? 'available' : 'stale',
                 'status_label' => $fresh ? 'Có sẵn' : 'Cần kiểm tra lại',
                 'availability_reason' => $fresh
@@ -48,12 +53,12 @@ final class PublicProviderDestinationReadModel
                 'url' => is_string($url) ? $url : null,
                 'market' => 'Theo khả dụng của provider',
                 'checked_at' => $lastCheckedAt instanceof \DateTimeInterface ? $lastCheckedAt->format('Y-m-d') : null,
-                'verified_at' => $destination->verified_at?->format('Y-m-d'),
-                'embeddable' => $destination->is_embeddable === true,
-                'privacy_status' => $destination->privacy_status,
-                'capability_label' => $destination->is_embeddable === true ? 'Video embeddable' : 'Liên kết ngoài',
-                'attribution' => $provider?->name ?? 'Provider',
-                'action_label' => 'Mở '.($provider?->name ?? 'provider'),
+                'verified_at' => $verifiedAt instanceof \DateTimeInterface ? $verifiedAt->format('Y-m-d') : null,
+                'embeddable' => $embeddable,
+                'privacy_status' => $destination->getAttribute('privacy_status'),
+                'capability_label' => $embeddable ? 'Video embeddable' : 'Liên kết ngoài',
+                'attribution' => $providerRelation->name,
+                'action_label' => 'Mở '.$providerRelation->name,
             ];
         }
 
