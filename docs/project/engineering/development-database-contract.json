@@ -21,6 +21,13 @@
     "must_not_reuse_development_database": true,
     "disposable": true
   },
+  "backup_artifacts": {
+    "development_database_directory": ".songchart-db-backups",
+    "source_overwrite_backup_directory": ".songchart-backups",
+    "must_not_share_source_overwrite_directory": true,
+    "tracked": false,
+    "restore_requires_explicit_confirmation": true
+  },
   "fail_closed": [
     "remote mode without DB_URL",
     "remote mode resolving to a local PostgreSQL host",
