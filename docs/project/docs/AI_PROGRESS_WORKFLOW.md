@@ -12,12 +12,15 @@ GitHub is the live progress surface. Repository authority remains the source of 
 flowchart LR
     OWNER[Owner / ChatGPT] --> PR[Umbrella PR]
     PR --> PREP[PREPARE + QUALITY]
-    PREP --> DASH[Sticky PR progress]
     PREP --> VERIFY[PostgreSQL + Browser + Frontend]
-    VERIFY --> DASH
     VERIFY --> CLOSE[Canonical CLOSE]
-    CLOSE --> DASH
-    DASH --> NOTICE[GitHub web/mobile/email notification]
+    PREP --> ACTIONS[Actions summaries / machine evidence]
+    VERIFY --> ACTIONS
+    CLOSE --> ACTIONS
+    ACTIONS --> TASK[ChatGPT progress watcher]
+    TASK --> DASH[Sticky PR progress via GitHub connector]
+    TASK --> NOTICE[ChatGPT notification on meaningful change]
+    DASH --> OWNER
     NOTICE --> OWNER
 ```
 
@@ -31,15 +34,15 @@ flowchart LR
 
 ## Sticky PR dashboard
 
-Auto Closure maintains exactly one top-level PR comment containing:
+An authorized ChatGPT/GitHub connector task maintains exactly one top-level PR comment containing:
 
 ```text
 <!-- songchart-ai-progress -->
 ```
 
-The same comment is updated instead of adding one comment per event.
+The same comment is updated instead of adding one comment per event. GitHub Actions does **not** mutate the PR comment because the repository's Actions integration can be denied that UI mutation even when a job requests issue-write permission. Actions therefore stays verification-focused and publishes step summaries/machine evidence; the connector owns the dashboard projection.
 
-It reports:
+The dashboard reports:
 
 - current stage and active tranche;
 - exact SHA;
@@ -79,11 +82,11 @@ Do not notify for:
 
 ### Follow progress quickly
 
-Open the current Stage PR and read the first `SongChart AI progress` comment. The latest table is the current live status; old progress comments should not accumulate.
+Open the current Stage PR and read the `SongChart AI progress` comment. It is the human dashboard projection; the Actions tab remains the exact raw verification source.
 
 ### GitHub notification setup
 
-Use the PR `Subscribe` control (or watch the repository with custom Pull request / Actions preferences) and configure GitHub web/mobile/email notification delivery to your preference. The workflow updates the existing PR Conversation comment at important milestones.
+Use the PR `Subscribe` control (or watch the repository with custom Pull request / Actions preferences) and configure GitHub web/mobile/email notification delivery to your preference. GitHub can also notify for workflow completion/failure independently of the sticky dashboard.
 
 ### When to send ChatGPT a message
 
@@ -102,17 +105,17 @@ For longer execution sessions, prefer ChatGPT Work with the GitHub connector whe
 
 > Continue Stage 21 on the existing umbrella PR. Follow repository authority, repair self-correctable CI failures, keep the sticky progress dashboard current, and stop only for a genuine owner decision or consequential merge gate.
 
-A GitHub-triggered ChatGPT task may be added when the product/account exposes an authorized GitHub event trigger. It should react only to meaningful PR/CI transitions and must read the live PR/source before acting. Do not replace this with high-frequency polling.
+Eligible ChatGPT Work accounts can create event-triggered GitHub tasks for supported PR activity. When available, prefer that webhook trigger over polling. Until the event trigger is configured, the SongChart progress watcher may use a low-frequency condition watch and only notify on meaningful state transitions.
 
 ## Failure behavior
 
-Progress publishing is observability, not verification authority. Comment update failures are best-effort and must not turn a green source/verification run red.
+Progress publishing is observability, not verification authority. Dashboard update failures must not turn a green source/verification run red.
 
-A verification failure, however, must update the sticky dashboard to `blocked` when GitHub permits the comment mutation and must remain a real workflow failure.
+A verification failure remains a real workflow failure. The connector/task should project that failure into the sticky dashboard as `blocked` on its next meaningful check.
 
 ## Security
 
 - Progress comments never contain secrets, database URLs, credentials or raw exception payloads.
-- The progress jobs receive `issues: write` only to update the PR Conversation comment.
-- They do not receive `contents: write` or `pull-requests: write` unless another independently governed job requires it.
-- Progress automation must never auto-merge, auto-approve, mark PR ready, or mutate privileged product state.
+- GitHub Actions remains read-only toward PR UI state; it does not receive issue-write or pull-request-write permission for progress publishing.
+- The authorized GitHub connector may update the single progress comment but must not auto-merge, auto-approve, mark PR ready, or mutate privileged product state unless the owner explicitly requests the consequential action.
+- Progress state is always re-read from the live PR and exact-head workflow before notification or continuation.
