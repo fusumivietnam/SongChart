@@ -14,6 +14,9 @@ $ensureAdmin = $read('app/Console/Commands/EnsureLocalAdminCommand.php');
 $setup = $read('app/Console/Commands/SetupLocalCommand.php');
 $developmentAuthority = $read('app/Support/Development/DevelopmentDatabaseAuthority.php');
 $developmentStatus = $read('app/Console/Commands/DevelopmentDatabaseStatusCommand.php');
+$storageAuthority = $read('app/Support/Development/DevelopmentStorageAuthority.php');
+$storageStatus = $read('app/Console/Commands/DevelopmentStorageStatusCommand.php');
+$filesystems = $read('config/filesystems.php');
 $songchart = $read('songchart');
 $compose = $read('compose.dev.yml');
 $composer = json_decode($read('composer.json'), true);
@@ -27,6 +30,9 @@ foreach ([
     'app/Support/Development/DevelopmentDatabaseAuthority.php',
     'app/Console/Commands/DevelopmentDatabaseStatusCommand.php',
     'docs/project/engineering/development-database-contract.json',
+    'app/Support/Development/DevelopmentStorageAuthority.php',
+    'app/Console/Commands/DevelopmentStorageStatusCommand.php',
+    'docs/project/engineering/development-storage-contract.json',
 ] as $relative) {
     if (! is_file($root.'/'.$relative)) {
         $errors[] = "Missing local data-safety authority: {$relative}";
@@ -88,6 +94,49 @@ foreach (['SONGCHART_DEV_DATABASE_MODE=local', 'SONGCHART_DEV_DATABASE_EXPECTED_
     }
 }
 
+foreach ([
+    'Development storage mode must explicitly be local or remote.',
+    'requires the governed Laravel S3 filesystem adapter',
+    'must use the governed [r2] Laravel filesystem disk',
+    'requires an HTTPS object-storage endpoint',
+    'must not resolve to local filesystem/object-storage authority',
+] as $needle) {
+    if (! str_contains($storageAuthority, $needle)) {
+        $errors[] = "Development storage authority is missing fail-closed invariant: {$needle}";
+    }
+}
+foreach ([
+    'development:storage-status',
+    '__songchart_diagnostics__/read-only-probe',
+    "'secrets_exposed' => false",
+] as $needle) {
+    if (! str_contains($storageStatus, $needle)) {
+        $errors[] = "Development storage diagnostics are missing invariant: {$needle}";
+    }
+}
+foreach ([
+    "'r2' => [",
+    "'driver' => 's3'",
+    "'throw' => true",
+    "'report' => true",
+] as $needle) {
+    if (! str_contains($filesystems, $needle)) {
+        $errors[] = "Laravel filesystem configuration is missing governed R2 signal: {$needle}";
+    }
+}
+foreach ([
+    'SONGCHART_DEV_STORAGE_MODE=local',
+    'SONGCHART_DEV_STORAGE_DISK=local',
+    'R2_ACCESS_KEY_ID=',
+    'R2_SECRET_ACCESS_KEY=',
+    'R2_BUCKET=',
+    'R2_ENDPOINT=',
+] as $needle) {
+    if (! str_contains($envDockerExample, $needle)) {
+        $errors[] = ".env.docker.example is missing development storage authority signal: {$needle}";
+    }
+}
+
 if (
     ! str_contains($middleware, "app()->environment(['local', 'demo', 'testing'])")
     || ! str_contains($middleware, 'admin_2fa_mode')
@@ -106,8 +155,9 @@ if (! str_contains($setup, 'admin:ensure-local')) {
 }
 if (! preg_match('/^TEST_PGSQL_DATABASE=.+$/m', $envExample)
     || ! str_contains($envExample, 'SONGCHART_ADMIN_2FA_MODE=disabled')
-    || ! str_contains($envExample, 'SONGCHART_DEV_DATABASE_MODE=local')) {
-    $errors[] = '.env.example must declare isolated test database, local 2FA ergonomics and explicit development database authority defaults.';
+    || ! str_contains($envExample, 'SONGCHART_DEV_DATABASE_MODE=local')
+    || ! str_contains($envExample, 'SONGCHART_DEV_STORAGE_MODE=local')) {
+    $errors[] = '.env.example must declare isolated test database, local 2FA ergonomics and explicit development database/storage authority defaults.';
 }
 
 if (! is_array($composer) || ! isset($composer['scripts']['test-database:safety'], $composer['scripts']['local-data-safety:verify'])) {
