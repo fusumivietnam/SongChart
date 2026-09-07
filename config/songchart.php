@@ -17,6 +17,11 @@ $developmentDatabaseMode = (string) env(
     'local',
 );
 
+$developmentStorageMode = (string) env(
+    'SONGCHART_DEV_STORAGE_MODE',
+    'local',
+);
+
 return [
     'search' => [
         'demo_enabled' => (bool) env('SONGCHART_DEMO_SEARCH', false),
@@ -42,6 +47,14 @@ return [
             'host' => env('DB_HOST', '127.0.0.1'),
             'sslmode' => env('DB_SSLMODE', 'prefer'),
             'expected_database' => env('SONGCHART_DEV_DATABASE_EXPECTED_NAME'),
+        ],
+        'storage' => [
+            'mode' => $developmentStorageMode,
+            'disk' => env('SONGCHART_DEV_STORAGE_DISK', $developmentStorageMode === 'remote' ? 'r2' : 'local'),
+            'bucket' => env('R2_BUCKET'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
         ],
     ],
     'security' => [
