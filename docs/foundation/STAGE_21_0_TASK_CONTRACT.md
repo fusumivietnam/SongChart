@@ -92,7 +92,7 @@ Custom Stage 21 changes are bounded to SongChart-specific gaps that native compo
 
 ### 21.0A — Admission queue information hierarchy
 
-Status: implementing
+Status: accepted
 
 Goals:
 - Make pending/applied/rejected state immediately legible.
@@ -115,7 +115,7 @@ Acceptance:
 
 ### 21.0B — Decision safety and review context
 
-Status: planned
+Status: implementing
 
 Goals:
 - Improve review context and decision consequences.
