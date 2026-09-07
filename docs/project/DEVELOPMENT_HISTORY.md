@@ -6,6 +6,12 @@ Status: authoritative chronological repository history from Stage 16.1 onward.
 
 Keep stage and hotfix chronology separate from the operational current-stage pointer in `docs/project/DEVELOPMENT_STATE.md`. Historical Stage 11 and Stage 12 delivery details remain in their original manifests and foundation records.
 
+## Stage 20 chronology
+
+| Stage | Outcome | Governance evidence |
+|---|---|---|
+| 20.0 | Product Foundation & Development Continuity | Established AI-safe development continuity, explicit durable PostgreSQL and object-storage authorities, product/user-journey and provider-reference authorities, an evidence-based domain gap map and minimal canonical-model proposal, forward-only relationship-read indexes, and verified public relationship/provider-destination read models. Tranches 20.0A–20.7 were accepted only after exact-head Quality, PostgreSQL, frontend, browser-smoke and governed canonical verification passed through PR #25 Auto Closure. Evidence: `docs/foundation/STAGE_20_0_TASK_CONTRACT.md`, `docs/project/engineering/stage-plan.json`, and Git/PR history. |
+
 ## Stage 16 chronology
 
 | Stage | Outcome | Governance evidence |
