@@ -45,6 +45,17 @@ if grep -Eq '^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$' .env.docker; then
   sed -i -E 's|^SONGCHART_LOCAL_ADMIN_EMAIL=[[:space:]]*$|SONGCHART_LOCAL_ADMIN_EMAIL=admin@songchart.local|' .env.docker
 fi
 
+DEV_DB_MODE="$(grep -m1 '^SONGCHART_DEV_DATABASE_MODE=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+[[ -n "$DEV_DB_MODE" ]] || DEV_DB_MODE='local'
+case "$DEV_DB_MODE" in
+  local) ;;
+  remote)
+    DB_URL_VALUE="$(grep -m1 '^DB_URL=' .env.docker | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/' || true)"
+    [[ -n "$DB_URL_VALUE" ]] || { echo 'Remote development database mode requires DB_URL in .env.docker.' >&2; exit 1; }
+    ;;
+  *) echo 'SONGCHART_DEV_DATABASE_MODE must be local or remote.' >&2; exit 1 ;;
+esac
+
 mkdir -p bootstrap/cache storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
 if [[ "$IS_CODESPACES" == false ]]; then
   mkdir -p .certs
@@ -66,7 +77,12 @@ printf '[SongChart Linux Setup] Preparing writable Docker development paths for 
 "${COMPOSE[@]}" run --rm --user root app sh -lc \
   "mkdir -p /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage/framework/cache/data /workspace/storage/framework/sessions /workspace/storage/framework/views /workspace/storage/logs /tmp/composer-cache /tmp/npm-cache && chown -R $HOST_UID:$HOST_GID /workspace/vendor /workspace/node_modules /ms-playwright /workspace/public/build /workspace/bootstrap/cache /workspace/storage /tmp/composer-cache /tmp/npm-cache"
 
-"${COMPOSE[@]}" up -d postgres redis
+if [[ "$DEV_DB_MODE" == 'local' ]]; then
+  "${COMPOSE[@]}" up -d postgres redis
+else
+  printf '[SongChart Linux Setup] Using durable remote PostgreSQL authority; local postgres service remains stopped.\n'
+  "${COMPOSE[@]}" up -d redis
+fi
 
 COMPOSER_FINGERPRINT="$(cat composer.json composer.lock | sha256sum | awk '{print $1}')"
 CURRENT_COMPOSER_FINGERPRINT="$("${COMPOSE[@]}" run --rm -T app sh -lc 'cat /workspace/vendor/.songchart-composer-fingerprint 2>/dev/null || true')"
@@ -98,6 +114,7 @@ else
 fi
 
 "${COMPOSE[@]}" run --rm app npm run build
+"${COMPOSE[@]}" run --rm app php artisan development:database-status --json >/dev/null
 "${COMPOSE[@]}" run --rm app php artisan migrate --force
 "${COMPOSE[@]}" run --rm app php artisan db:seed '--class=Database\Seeders\ProviderRegistrySeeder' --force
 
@@ -119,8 +136,8 @@ fi
 "${COMPOSE[@]}" ps
 if [[ "$IS_CODESPACES" == true ]]; then
   printf '\nReady: %s (private Codespaces forwarded port 8000, project %s)\n' "$SONGCHART_CODESPACES_APP_URL" "$PROJECT"
-  printf 'Local Docker PostgreSQL persists only for the life of this Docker/Codespaces environment; Stage 20 durable remote development DB mode removes that host-lifetime limitation.\n'
 else
   printf '\nReady: https://%s:8443 (project %s)\n' "$DOMAIN" "$PROJECT"
   printf 'If Windows browser cannot resolve the host, add once to Windows hosts: 127.0.0.1 %s\n' "$DOMAIN"
 fi
+printf 'Development PostgreSQL mode: %s\n' "$DEV_DB_MODE"
