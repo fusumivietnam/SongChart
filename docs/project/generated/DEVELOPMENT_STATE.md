@@ -5,8 +5,8 @@
 ## Current stage
 
 - Stage `21.0 — Editorial Admin UX`
-- Status: `implementing`
-- Accepted through: `20.0`
+- Status: `accepted`
+- Accepted through: `21.0`
 - Task contract: `docs/foundation/STAGE_21_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -14,7 +14,7 @@
 - `21.0A` — `ACCEPTED` — Admission queue information hierarchy
 - `21.0B` — `ACCEPTED` — Decision safety and review context
 - `21.0C` — `ACCEPTED` — Editorial navigation and accessibility
-- `21.0D` — `IMPLEMENTING` — Stage acceptance and closure
+- `21.0D` — `ACCEPTED` — Stage acceptance and closure
 
 ## Next bounded tranche
 
