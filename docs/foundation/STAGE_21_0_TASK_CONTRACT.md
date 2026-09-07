@@ -122,6 +122,14 @@ Goals:
 - Make apply/reject actions unambiguous.
 - Preserve rationale requirement and audit semantics.
 
+Acceptance:
+- The review page explains the consequence of accepting and rejecting before either action is submitted.
+- Accept remains `action=apply` through `admin.canonical-admissions.decide` and only updates the proposal through the existing governed service.
+- Reject remains `action=reject`, leaves SongChart data unchanged, and preserves the proposal/decision history for audit.
+- Rationale remains required with the existing minimum length and surfaces validation errors next to the field.
+- Technical IDs and system state stay behind progressive disclosure instead of becoming primary operator content.
+- Regression coverage guards route ownership, action values, rationale constraints, consequence copy and accessible action descriptions.
+
 ### 21.0C — Editorial navigation and accessibility
 
 Status: planned
