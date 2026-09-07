@@ -17,7 +17,7 @@ final class DevelopmentDatabaseStatusCommand extends Command
     public function handle(): int
     {
         if (! app()->environment('local')) {
-            return $this->fail('Development database diagnostics are available only in the local environment.');
+            return $this->failCommand('Development database diagnostics are available only in the local environment.');
         }
 
         $configuration = (array) config('songchart.development.database', []);
@@ -35,7 +35,7 @@ select
 SQL
             );
         } catch (Throwable $exception) {
-            return $this->fail(
+            return $this->failCommand(
                 'Configured development PostgreSQL is unreachable: '.$exception->getMessage(),
                 [
                     'mode' => $mode,
@@ -47,7 +47,7 @@ SQL
         $actualDatabase = (string) ($row->database_name ?? '');
 
         if ($expectedDatabase !== '' && $actualDatabase !== $expectedDatabase) {
-            return $this->fail(
+            return $this->failCommand(
                 sprintf(
                     'Development database identity mismatch: expected [%s], connected [%s].',
                     $expectedDatabase,
@@ -102,7 +102,7 @@ SQL
     }
 
     /** @param array<string, mixed> $payload */
-    private function fail(string $message, array $payload = []): int
+    private function failCommand(string $message, array $payload = []): int
     {
         if ($this->option('json')) {
             $this->line((string) json_encode(
