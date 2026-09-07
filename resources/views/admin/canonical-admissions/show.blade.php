@@ -25,7 +25,7 @@
             </div>
             <div class="md:col-span-2">
                 <dt class="text-sm font-semibold">Giá trị đề xuất</dt>
-                <dd class="mt-2 rounded border bg-slate-50 p-3 text-sm break-words">{{ is_scalar($admission->assertion?->value) || $admission->assertion?->value === null ? (string) ($admission->assertion?->value ?? 'Không có giá trị') : json_encode($admission->assertion?->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</dd>
+                <dd class="mt-2 rounded border bg-slate-50 p-3 text-sm break-words">@include('admin.canonical-admissions.partials.value', ['value' => $admission->assertion?->value])</dd>
             </div>
             @if($admission->decision_reason)
                 <div class="md:col-span-2">
