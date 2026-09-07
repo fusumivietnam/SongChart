@@ -52,6 +52,13 @@ final class DevelopmentDatabaseAuthority
             );
         }
 
+        $expectedDatabase = trim((string) ($configuration['expected_database'] ?? ''));
+        if ($expectedDatabase === '') {
+            throw new RuntimeException(
+                'Remote development database mode requires an expected database identity.',
+            );
+        }
+
         $sslmode = strtolower((string) ($configuration['sslmode'] ?? ''));
 
         if (! in_array($sslmode, ['require', 'verify-ca', 'verify-full'], true)) {
