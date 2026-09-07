@@ -25,6 +25,7 @@ use App\Support\Catalog\Enrichment\GovernedEnrichmentExecutor;
 use App\Support\Catalog\Fusion\CanonicalFieldResolver;
 use App\Support\Catalog\Fusion\ConfigFieldAuthorityPolicy;
 use App\Support\Development\DevelopmentDatabaseAuthority;
+use App\Support\Development\DevelopmentStorageAuthority;
 use App\Support\Production\ProductionEnvironmentGuard;
 use App\Support\Providers\Normalization\DefaultNormalizedProviderEntityValidator;
 use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -67,6 +69,10 @@ final class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('local')) {
             DevelopmentDatabaseAuthority::assertSafe(
                 (array) config('songchart.development.database', []),
+            );
+            DevelopmentStorageAuthority::assertSafe(
+                (array) config('songchart.development.storage', []),
+                class_exists(AwsS3V3Adapter::class),
             );
         }
 
