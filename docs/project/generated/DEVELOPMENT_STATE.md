@@ -11,8 +11,8 @@
 
 ## Stage progress
 
-- `20.0A` — `IMPLEMENTING` — Development continuity + AI/MCP governance
-- `20.0B` — `PLANNED` — Durable remote development PostgreSQL authority
+- `20.0A` — `ACCEPTED` — Development continuity + AI/MCP governance
+- `20.0B` — `IMPLEMENTING` — Durable remote development PostgreSQL authority
 - `20.0C` — `PLANNED` — Durable object storage + development diagnostics
 - `20.1` — `PLANNED` — Product/User Journey Authority
 - `20.2` — `PLANNED` — Provider Reference Matrix
@@ -24,7 +24,7 @@
 
 ## Next bounded tranche
 
-- `20.0B` — Durable remote development PostgreSQL authority
+- `20.0C` — Durable object storage + development diagnostics
 
 ## Live work lease
 
