@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "owner": "stage-20-canonical-model-proposal",
+  "decision": "extend-contracts-without-new-canonical-entities",
+  "inputs": [
+    "docs/project/domain/product-user-journeys.json",
+    "docs/project/domain/provider-reference-matrix.json",
+    "docs/project/domain/domain-gap-map.json"
+  ],
+  "canonical_entities": {
+    "reuse_existing": [
+      "artist",
+      "work",
+      "recording",
+      "version",
+      "release_group",
+      "release",
+      "collection"
+    ],
+    "add": []
+  },
+  "relationship_model": {
+    "storage": "entity_relationships",
+    "identity": ["subject_type", "subject_id", "relationship_type", "object_type", "object_id"],
+    "public_visibility": "verified-only",
+    "credit_projection": {
+      "relationship_type": "provider-neutral role vocabulary",
+      "credited_as": "metadata.credited_as when admitted; otherwise related canonical display name",
+      "join_phrase": "metadata.join_phrase when admitted",
+      "position": "metadata.position when admitted",
+      "provenance": "metadata_source_id plus verification_state"
+    },
+    "legacy_specialized_storage": {
+      "artist_recording": "compatibility/read shortcut only; it must not become a second canonical relationship authority"
+    }
+  },
+  "destination_model": {
+    "storage": "provider_destinations",
+    "canonical_identity": false,
+    "public_visibility": "approved/reviewed destination records only",
+    "projection_fields": [
+      "provider",
+      "provider_resource_id",
+      "public_url",
+      "title",
+      "channel metadata",
+      "duration",
+      "embeddability/privacy state",
+      "verification timestamps"
+    ],
+    "mutability_rule": "Availability and embeddability are provider state and may change independently of the canonical entity."
+  },
+  "schema_plan": {
+    "new_tables": [],
+    "new_entity_fields": [],
+    "forward_only_migration": {
+      "table": "entity_relationships",
+      "purpose": "verified public relationship projection",
+      "indexes": [
+        ["subject_type", "subject_id", "verification_state", "relationship_type"],
+        ["object_type", "object_id", "verification_state", "relationship_type"]
+      ]
+    }
+  },
+  "application_plan": {
+    "read_models": [
+      "canonical relationship/credit projection",
+      "approved provider destination projection"
+    ],
+    "use_case_registry": [
+      "register existing account overview/profile/security route surfaces"
+    ],
+    "controller_rule": "Controllers remain transport adapters and consume Query/Read Model surfaces rather than direct persistence reads."
+  },
+  "documentation_plan": [
+    "Reconcile DOMAIN_MODEL.md to machine authority including release_group, relationship metadata and provider destinations.",
+    "Keep provider reference evidence outside canonical schema authority."
+  ],
+  "rejected_alternatives": [
+    "new credits table",
+    "new media table duplicating provider_destinations",
+    "provider IDs as canonical primary keys",
+    "member follow/social schema without an accepted journey",
+    "schema fields copied directly from one provider response"
+  ]
+}
