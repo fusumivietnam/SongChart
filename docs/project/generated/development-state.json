@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "e3e229be3836aac057d43620ae678e5067fd84c014079bacf66a6d059f6e39b6",
+    "source_fingerprint": "b8d9809a5f116bc27de86599299ac6a7b3da07071136fdf04c88bd762b4fbc6e",
     "current_stage": {
         "id": "20.0",
         "title": "Product Foundation & Development Continuity",
@@ -17,54 +17,51 @@
         },
         {
             "id": "20.0B",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Durable remote development PostgreSQL authority"
         },
         {
             "id": "20.0C",
-            "status": "planned",
+            "status": "accepted",
             "title": "Durable object storage + development diagnostics"
         },
         {
             "id": "20.1",
-            "status": "planned",
+            "status": "accepted",
             "title": "Product/User Journey Authority"
         },
         {
             "id": "20.2",
-            "status": "planned",
+            "status": "accepted",
             "title": "Provider Reference Matrix"
         },
         {
             "id": "20.3",
-            "status": "planned",
+            "status": "accepted",
             "title": "Domain Gap Map"
         },
         {
             "id": "20.4",
-            "status": "planned",
+            "status": "accepted",
             "title": "Canonical Model Proposal"
         },
         {
             "id": "20.5",
-            "status": "planned",
+            "status": "accepted",
             "title": "Schema & Migration Implementation"
         },
         {
             "id": "20.6",
-            "status": "planned",
+            "status": "accepted",
             "title": "Read Models / Application Contracts"
         },
         {
             "id": "20.7",
-            "status": "planned",
+            "status": "implementing",
             "title": "Stage 20 Acceptance & Closure"
         }
     ],
-    "next_tranche": {
-        "id": "20.0C",
-        "title": "Durable object storage + development diagnostics"
-    },
+    "next_tranche": null,
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage 20 uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -73,6 +70,6 @@
         "candidate-verification.json": "504438c28d8fdabf3017267312898747b5d64c5b798892388827d7ea588bbf56",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "178c489547ab2e65f6fe8638850b9cafe80b56a241a24c72ab4484fd2f6f061e"
+        "docs/project/engineering/stage-plan.json": "50d78cf1d411cdeaebc3102d5f3bc53deb3e00a934da3837158acf01a7e82110"
     }
 }

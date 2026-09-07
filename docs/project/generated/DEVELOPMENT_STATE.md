@@ -12,19 +12,19 @@
 ## Stage progress
 
 - `20.0A` — `ACCEPTED` — Development continuity + AI/MCP governance
-- `20.0B` — `IMPLEMENTING` — Durable remote development PostgreSQL authority
-- `20.0C` — `PLANNED` — Durable object storage + development diagnostics
-- `20.1` — `PLANNED` — Product/User Journey Authority
-- `20.2` — `PLANNED` — Provider Reference Matrix
-- `20.3` — `PLANNED` — Domain Gap Map
-- `20.4` — `PLANNED` — Canonical Model Proposal
-- `20.5` — `PLANNED` — Schema & Migration Implementation
-- `20.6` — `PLANNED` — Read Models / Application Contracts
-- `20.7` — `PLANNED` — Stage 20 Acceptance & Closure
+- `20.0B` — `ACCEPTED` — Durable remote development PostgreSQL authority
+- `20.0C` — `ACCEPTED` — Durable object storage + development diagnostics
+- `20.1` — `ACCEPTED` — Product/User Journey Authority
+- `20.2` — `ACCEPTED` — Provider Reference Matrix
+- `20.3` — `ACCEPTED` — Domain Gap Map
+- `20.4` — `ACCEPTED` — Canonical Model Proposal
+- `20.5` — `ACCEPTED` — Schema & Migration Implementation
+- `20.6` — `ACCEPTED` — Read Models / Application Contracts
+- `20.7` — `IMPLEMENTING` — Stage 20 Acceptance & Closure
 
 ## Next bounded tranche
 
-- `20.0C` — Durable object storage + development diagnostics
+- `unknown` — unknown
 
 ## Live work lease
 
