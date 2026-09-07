@@ -1,20 +1,44 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "owner": "development-database-authority",
   "application_connection": "pgsql",
+  "configuration_authority": ".env.docker",
   "modes": {
     "remote": {
       "preferred_provider": "neon",
       "requires_database_url": true,
       "requires_tls": true,
       "allows_local_host_fallback": false,
+      "starts_local_postgres_service": false,
       "durability": "provider-owned"
     },
     "local": {
       "explicit_fallback_only": true,
       "default_container_host": "postgres",
+      "starts_local_postgres_service": true,
       "durability": "developer-owned"
     }
+  },
+  "runtime_identity": {
+    "entrypoint": "songchart dev db status",
+    "artisan_command": "development:database-status",
+    "checks": [
+      "connectivity",
+      "current_database",
+      "current_user",
+      "server_address",
+      "server_version",
+      "expected_database_when_configured"
+    ],
+    "ai_diagnostics": "songchart ai doctor",
+    "must_not_expose_secrets": true
+  },
+  "operations": {
+    "backup_entrypoint": "songchart dev db backup",
+    "restore_entrypoint": "songchart dev db restore",
+    "remote_client_image": "postgres:18.4-bookworm",
+    "must_verify_runtime_identity_before_mutation": true,
+    "must_not_silently_start_local_postgres_in_remote_mode": true
   },
   "testing": {
     "authority": "isolated-postgresql-test-lane",
