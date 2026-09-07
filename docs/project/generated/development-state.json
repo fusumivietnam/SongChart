@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "ff9e35f4b88300369afb039df0257e97ba8de1424b19dda8193f3f5c9b7749e6",
+    "source_fingerprint": "a38d81658636b85c959f2eb3ed6887a3b134ea05ec2d73d70b07a4a54b82708a",
     "current_stage": {
         "id": "21.0",
         "title": "Editorial Admin UX",
@@ -17,12 +17,12 @@
         },
         {
             "id": "21.0B",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Decision safety and review context"
         },
         {
             "id": "21.0C",
-            "status": "planned",
+            "status": "implementing",
             "title": "Editorial navigation and accessibility"
         },
         {
@@ -32,8 +32,8 @@
         }
     ],
     "next_tranche": {
-        "id": "21.0C",
-        "title": "Editorial navigation and accessibility"
+        "id": "21.0D",
+        "title": "Stage acceptance and closure"
     },
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
@@ -43,6 +43,6 @@
         "candidate-verification.json": "1aeda9916b4427ef177a018453d9acf2dfa6de0b36b1ca12a4844e75b822bd9c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "22350c47a4796aa8b6dc28a6cb2dafc0d407ef52957e2654f59a48437237ef71"
+        "docs/project/engineering/stage-plan.json": "2cf6323c727b7d779c48f0cc7d61a20e3f72945a387d6ee8e551a0aed7894c4d"
     }
 }
