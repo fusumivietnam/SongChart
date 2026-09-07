@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "20.0",
-  "active_tranche": "21.0B",
+  "active_tranche": "21.0C",
   "stage_progress": [
     {
       "id": "21.0A",
@@ -16,12 +16,12 @@
     },
     {
       "id": "21.0B",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Decision safety and review context"
     },
     {
       "id": "21.0C",
-      "status": "planned",
+      "status": "implementing",
       "title": "Editorial navigation and accessibility"
     },
     {
@@ -31,8 +31,8 @@
     }
   ],
   "next_tranche": {
-    "id": "21.0C",
-    "title": "Editorial navigation and accessibility"
+    "id": "21.0D",
+    "title": "Stage acceptance and closure"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
