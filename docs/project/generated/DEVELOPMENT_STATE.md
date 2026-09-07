@@ -5,8 +5,8 @@
 ## Current stage
 
 - Stage `20.0 — Product Foundation & Development Continuity`
-- Status: `implementing`
-- Accepted through: `19.0`
+- Status: `accepted`
+- Accepted through: `20.0`
 - Task contract: `docs/foundation/STAGE_20_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -20,11 +20,11 @@
 - `20.4` — `ACCEPTED` — Canonical Model Proposal
 - `20.5` — `ACCEPTED` — Schema & Migration Implementation
 - `20.6` — `ACCEPTED` — Read Models / Application Contracts
-- `20.7` — `IMPLEMENTING` — Stage 20 Acceptance & Closure
+- `20.7` — `ACCEPTED` — Stage 20 Acceptance & Closure
 
 ## Next bounded tranche
 
-- `unknown` — unknown
+- `21.0` — Editorial Admin UX
 
 ## Live work lease
 
