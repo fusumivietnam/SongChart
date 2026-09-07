@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "7b46d0ad43ab4381caf0f2530c6649b0d313d784ddaf5c6b25ce3beaaf06ef6f",
+    "source_fingerprint": "11cb8e22a96aa2f12d02fa579b314cb866b5289b3087075c55401f1f301ac651",
     "candidate": {
         "stage": "20.0",
         "candidate": "v1",
@@ -1016,7 +1016,7 @@
     },
     "source_hashes": {
         "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
-        "compose.dev.yml": "b78a4b8c5bd93fbf27c38c31a2774626b5aac4ef1456f2c7da37ff0b088b88fd",
+        "compose.dev.yml": "693b9c94517ceac6c9e257d44f444fa045a5a1e806247704a5c8761970eab3af",
         "compose.verify.yml": "c7c159febd2de52e39399a2741bf2da49432a1a1c5c7c39a3fc34842dfdd81fc",
         "composer.json": "746d53779bb79341621aba94abed1f5a3107a3b322a6db1a62a8f2c6c3c7ec7c",
         "composer.lock": "b63317f16db0f9c19dbc241ad4bf964f552048ebde15a73d9e28c1c366e938af",
@@ -1067,6 +1067,6 @@
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "0f8cc3a7a64a57a7f795a73e254810e538c52586b26dcd1c14a1b4f3e85a147c",
         "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
-        "songchart": "6bea4bba64ee06dcf1aa2416c205f03166d39034df9c46d7f4da3bbac297a368"
+        "songchart": "6aae071b0acb257c7a573f3c75664dd185155ea550b1903be0cf14d1e3345e3a"
     }
 }
