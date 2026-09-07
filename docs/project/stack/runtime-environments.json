@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "release_authority": {
     "php_major_minor": "8.5",
     "postgres_major": 18,
@@ -19,8 +19,21 @@
     "docker-development": {
       "app_env": "local",
       "db_connection": "pgsql",
-      "db_host": "postgres",
-      "db_database": "songchart_docker",
+      "database_authority_source": ".env.docker",
+      "database_mode_variable": "SONGCHART_DEV_DATABASE_MODE",
+      "database_modes": ["local", "remote"],
+      "compose_must_not_override_database_identity": true,
+      "local_database_fallback": {
+        "db_host": "postgres",
+        "db_database": "songchart_docker",
+        "db_sslmode": "prefer"
+      },
+      "remote_database": {
+        "requires_db_url": true,
+        "requires_tls": true,
+        "allows_local_host_fallback": false,
+        "preferred_provider": "neon"
+      },
       "redis_host": "redis",
       "destructive_database_role": "development",
       "authority": "primary-development",
