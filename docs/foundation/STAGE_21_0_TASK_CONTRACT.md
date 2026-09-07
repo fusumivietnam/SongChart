@@ -115,7 +115,7 @@ Acceptance:
 
 ### 21.0B — Decision safety and review context
 
-Status: implementing
+Status: accepted
 
 Goals:
 - Improve review context and decision consequences.
@@ -132,12 +132,21 @@ Acceptance:
 
 ### 21.0C — Editorial navigation and accessibility
 
-Status: planned
+Status: implementing
 
 Goals:
 - Normalize editorial navigation vocabulary.
 - Improve keyboard/focus/semantic labeling on high-frequency admin flows.
 - Keep responsive layouts usable on constrained/mobile operator sessions.
+
+Acceptance:
+- The active admin navigation item exposes `aria-current=page` while preserving existing authorization and route ownership.
+- The mobile menu trigger exposes expanded state and controls the labeled sidebar.
+- Keyboard users can skip repeated navigation directly to the main admin content.
+- Overlay/decorative UI is removed from the accessibility tree where appropriate.
+- Non-functional search/notification controls are not presented as usable product actions.
+- Operator vocabulary remains task-oriented and does not reintroduce stage/version/developer-console language.
+- Regression coverage guards navigation semantics and the absence of dead controls.
 
 ### 21.0D — Stage acceptance and closure
 
