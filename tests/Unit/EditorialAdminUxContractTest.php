@@ -21,6 +21,9 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
         ->toContain('route(\'admin.canonical-admissions.stage\', $assertion)')
         ->toContain('aria-current="page"')
         ->toContain('aria-labelledby="admission-decisions-heading"')
+        ->toContain('md:hidden')
+        ->toContain('hidden overflow-x-auto md:block')
+        ->toContain('min-h-11')
         ->not->toContain('./songchart dev ready')
         ->not->toContain('route(\'admin.canonical-admissions.decide\'')
         ->and($show)
@@ -29,5 +32,6 @@ it('keeps Stage 21 editorial admission flow bounded and operator-first', functio
         ->toContain('Lý do quyết định')
         ->toContain('Chấp nhận và cập nhật dữ liệu')
         ->toContain('Từ chối đề xuất')
-        ->toContain('aria-describedby="decision-rationale-help"');
+        ->toContain('aria-describedby="decision-rationale-help"')
+        ->toContain('min-h-11');
 });
