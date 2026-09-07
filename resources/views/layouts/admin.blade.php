@@ -9,7 +9,7 @@
 </head>
 <body class="admin-body" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen=false">
 @if (isset($viteReady) && ! $viteReady && app()->environment('local', 'testing'))
-    <div class="vite-build-warning" role="status">Vite assets chưa được build. Chạy <code>scripts\build-assets-laragon.bat</code>.</div>
+    <div class="vite-build-warning" role="status">Giao diện phát triển chưa được đồng bộ đầy đủ. Hãy chạy lại quy trình chuẩn bị môi trường trước khi đánh giá UI.</div>
 @endif
 <div class="admin-shell">
     <div x-show="sidebarOpen" x-cloak class="admin-sidebar-overlay lg:hidden" @click="sidebarOpen=false"></div>
