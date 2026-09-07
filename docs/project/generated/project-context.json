@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "f8dec873d871ecfc32adee26993c0c4b50f1b0f9fc0828207bcceee24f8d85a6",
+    "source_fingerprint": "7b46d0ad43ab4381caf0f2530c6649b0d313d784ddaf5c6b25ce3beaaf06ef6f",
     "candidate": {
         "stage": "20.0",
         "candidate": "v1",
@@ -1018,7 +1018,7 @@
         "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
         "compose.dev.yml": "b78a4b8c5bd93fbf27c38c31a2774626b5aac4ef1456f2c7da37ff0b088b88fd",
         "compose.verify.yml": "c7c159febd2de52e39399a2741bf2da49432a1a1c5c7c39a3fc34842dfdd81fc",
-        "composer.json": "51083c318f1f043e83ba2b6f88be6b6f76e13b540341ce4d5d124d710458a058",
+        "composer.json": "746d53779bb79341621aba94abed1f5a3107a3b322a6db1a62a8f2c6c3c7ec7c",
         "composer.lock": "b63317f16db0f9c19dbc241ad4bf964f552048ebde15a73d9e28c1c366e938af",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
         "database/migrations/0001_01_01_000001_create_cache_table.php": "2c938a40dd1bdd0f99455359a1369df0b46352276e1549bddb8cdcd483bcdfe7",
