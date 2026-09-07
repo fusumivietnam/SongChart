@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "owner": "development-storage-authority",
+  "application_abstraction": "laravel-filesystem",
+  "modes": {
+    "remote": {
+      "preferred_provider": "cloudflare-r2",
+      "disk": "r2",
+      "requires_s3_adapter": true,
+      "requires_https_endpoint": true,
+      "allows_local_fallback": false,
+      "diagnostic_probe": "read-only"
+    },
+    "local": {
+      "explicit_fallback_only": true,
+      "disk": "local",
+      "durability": "environment-owned"
+    }
+  },
+  "disposable_runtime": {
+    "redis": true,
+    "cache": true,
+    "horizon_state": true
+  },
+  "diagnostics": {
+    "must_report": ["mode", "disk", "adapter availability", "reachability", "endpoint host", "bucket"],
+    "must_not_report": ["access key", "secret access key", "full credential-bearing URL"]
+  },
+  "fail_closed": [
+    "remote mode without governed S3 adapter",
+    "remote mode without required R2 configuration",
+    "remote mode with non-HTTPS endpoint",
+    "remote mode resolving to local object-storage authority",
+    "configured durable object storage becoming unreachable"
+  ],
+  "secrets": {
+    "committed": false
+  }
+}
