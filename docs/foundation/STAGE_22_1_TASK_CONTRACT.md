@@ -25,7 +25,9 @@ Operator outcome: a governed editorial correction propagates to dependent projec
 9. Existing impact, quality, PostgreSQL, browser, frontend, candidate and canonical verification remain owners; Stage 22.1 must not invent a duplicate verifier when an existing lane can own the assertion.
 10. Generated project/development state remains projection-only and is regenerated through existing Auto Closure authority.
 
-## Repository authorities
+## Authority and official sources
+
+### Repository authorities
 
 - `PROJECT_AUTHORITY.md` — repository workflow and closure precedence.
 - `docs/project/engineering/stage-plan.json` — authored stage/tranche progress authority.
@@ -38,6 +40,36 @@ Operator outcome: a governed editorial correction propagates to dependent projec
 - `docs/project/engineering/verification-consumer-graph.json` — verifier ownership/routing.
 - `docs/project/engineering/verification-topology.json` and `verification-command-surface.json` — canonical verification orchestration.
 - `docs/project/RELEASE_BASELINE_STATUS.md` — accepted source-to-release closure.
+
+### Installed versions
+
+Stage 22.1 reuses the accepted runtime and package baseline. It introduces no dependency or runtime-version change:
+
+- PHP major `8.5`.
+- Laravel major `13`.
+- PostgreSQL major `18`.
+- Node.js major `24`.
+- Livewire major `4`.
+
+Exact package patch versions remain owned by `composer.lock` and `package-lock.json`.
+
+### Official external sources
+
+No new package, framework, provider adapter or external platform is adopted by Stage 22.1. This tranche audits and binds existing SongChart intersections, so repository authority and installed lockfiles are sufficient official-source evidence. If a later bounded implementation requires an external capability, that tranche must record the applicable official source before adoption.
+
+### Native capability assessment
+
+Stage 22.1 reuses existing native/project owners:
+
+- Existing provider observation, provenance, identity-resolution and canonical-admission services remain the provider-to-canonical owners.
+- Existing chart, public read-model, search, SEO, cache and editorial surfaces remain their respective implementation owners.
+- `docs/project/stack/impact-test-map.json` and the verification consumer graph select existing verification lanes.
+- Auto Closure PREPARE, QUALITY, PostgreSQL, browser, frontend and canonical CLOSE remain the verification owners.
+- Generated development/project context remains derived authority and is never hand edited.
+
+### Custom implementation justification
+
+The new intersection map and golden-flow contract are justified because existing architecture graphs describe components but do not state whether cross-subsystem product flows are actually closed. They add machine-readable audit authority only; they do not create a second runtime abstraction or verification engine. Future code changes are permitted only for bounded missing/partial edges proven by the audit.
 
 ## Tranches
 
@@ -100,6 +132,17 @@ Acceptance:
 - Quality/runtime/browser/frontend lanes required by impact pass on exact head.
 - Canonical verification passes without tracked-tree mutation.
 - Next tranche is bounded to the smallest remaining production vertical gap.
+
+## Tests and verification
+
+Stage 22.1 uses the existing governed verification topology:
+
+- Auto Closure PREPARE regenerates derived authority and rejects mutations outside `docs/project/generated`.
+- `composer validate --strict` and `composer quality:verify` own repository-contract, candidate, official-source and static-quality checks.
+- The impact resolver and consumer graph determine whether PostgreSQL, browser and frontend lanes apply to each exact prepared head.
+- Existing feature/unit coverage cited by `system-intersection-map.json` remains evidence for verified edges; prose or component existence alone is insufficient.
+- `./songchart verify` remains canonical CLOSE owner and must preserve the tracked tree.
+- Any new commit invalidates prior evidence; exact-current-head verification is required before stage acceptance.
 
 ## Explicit non-goals
 
