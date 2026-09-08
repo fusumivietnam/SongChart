@@ -11,8 +11,8 @@
 
 ## Stage progress
 
-- `22.1A` — `ACTIVE` — Intersection audit and ownership binding
-- `22.1B` — `PLANNED` — Golden provider/canonical fixtures
+- `22.1A` — `ACCEPTED` — Intersection audit and ownership binding
+- `22.1B` — `ACTIVE` — Golden provider/canonical fixtures
 - `22.1C` — `PLANNED` — Chart/public provenance contract closure
 - `22.1D` — `PLANNED` — Stage closure and next vertical tranche
 

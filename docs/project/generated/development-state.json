@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "a99c64e8b8ddaea1989d6865434cd4da8aabeac548aa495e5582ac8388ef71a1",
+    "source_fingerprint": "3629ce73bda4123dcf80f7c3af18d61151254f31b61e6bd95181cb126a7cf201",
     "current_stage": {
         "id": "22.1",
         "title": "System Intersection Map + Golden Vertical Contract",
@@ -12,12 +12,12 @@
     "stage_progress": [
         {
             "id": "22.1A",
-            "status": "active",
+            "status": "accepted",
             "title": "Intersection audit and ownership binding"
         },
         {
             "id": "22.1B",
-            "status": "planned",
+            "status": "active",
             "title": "Golden provider/canonical fixtures"
         },
         {
@@ -31,7 +31,7 @@
             "title": "Stage closure and next vertical tranche"
         }
     ],
-    "next_tranche": "22.1B",
+    "next_tranche": "22.1C",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -40,6 +40,6 @@
         "candidate-verification.json": "a96c2cbbd3e32ac06e102acdb8029530c1130134f202dd8bfe99df170ef9dc1c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "dc996e7903dc1f34d2212f2c825d46dd62ee3d2f77359316dcf37155965cce7a"
+        "docs/project/engineering/stage-plan.json": "0adfe6087569c31711d59d8511759ccaa4e6596a23b1ddf3293709c848e1e409"
     }
 }
