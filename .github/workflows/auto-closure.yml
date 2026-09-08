@@ -81,17 +81,6 @@ jobs:
           git commit -m 'chore: refresh generated repository authority'
           echo 'changed=true' >> "$GITHUB_OUTPUT"
 
-      - name: PINT DIAGNOSTIC — render exact normalization patch
-        run: |
-          vendor/bin/pint
-          git diff --color=never -- \
-            app/Console/Commands/SongChartDoctorCommand.php \
-            app/Support/DomainContracts/PolymorphicReferenceIntegrity.php \
-            scripts/project-state.php \
-            scripts/system-knowledge.php \
-            scripts/verify-database-authority.php
-          exit 1
-
       - name: QUALITY — fail fast on effective prepared tree
         run: |
           composer validate --strict
