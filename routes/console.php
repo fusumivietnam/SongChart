@@ -23,6 +23,13 @@ if ((bool) config('songchart.discovery.schedule_enabled', true)) {
         ->onOneServer();
 }
 
+if ((bool) config('songchart.charts.youtube_view_count_schedule_enabled', false)) {
+    Schedule::command('charts:refresh-youtube-views')
+        ->hourly()
+        ->withoutOverlapping(30)
+        ->onOneServer();
+}
+
 $queueMonitorMax = max(1, (int) config('songchart.production.queue_monitor_max', 100));
 Schedule::command(
     'queue:monitor redis:critical,redis:discovery-projections,redis:provider-health,redis:provider-imports,redis:provider-normalization,redis:notifications,redis:default --max='.$queueMonitorMax,
