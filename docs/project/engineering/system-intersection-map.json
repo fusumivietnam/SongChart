@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "purpose": "Machine-readable authority for critical end-to-end SongChart product-flow intersections. It records whether adjacent subsystems are actually connected and how that connection is verified.",
+  "status_values": ["verified", "partial", "missing", "unknown"],
+  "policy": {
+    "component_existence_is_not_flow_closure": true,
+    "critical_edges_require_verification": true,
+    "missing_edges_block_vertical-closure_acceptance": true,
+    "unknown_edges_must_be_resolved_before_stage_22_1_closure": true,
+    "product_flows_are_first_class_impact_consumers": true
+  },
+  "flows": {
+    "provider_to_canonical": {
+      "product_outcome": "A provider observation can become a governed canonical music entity without bypassing provenance or admission rules.",
+      "critical": true,
+      "edges": [
+        {"id": "provider.fetch_to_raw_observation", "status": "partial", "source": "provider adapter/runtime", "consumer": "provider observation persistence", "verification": "to_be_bound_in_22_1B"},
+        {"id": "raw_observation_to_normalization", "status": "partial", "source": "provider observation", "consumer": "normalized provider evidence", "verification": "to_be_bound_in_22_1B"},
+        {"id": "normalization_to_identity_resolution", "status": "partial", "source": "normalized evidence", "consumer": "identity/canonical candidate resolution", "verification": "to_be_bound_in_22_1B"},
+        {"id": "identity_resolution_to_admission", "status": "verified", "source": "identity/canonical proposal", "consumer": "governed canonical admission", "verification": "existing canonical admission architecture/feature coverage"},
+        {"id": "admission_to_canonical_graph", "status": "verified", "source": "accepted admission decision", "consumer": "canonical entities and relationships", "verification": "existing canonical admission service and audit coverage"}
+      ]
+    },
+    "canonical_to_chart": {
+      "product_outcome": "Canonical songs receive reproducible chart positions derived from traceable provider/time-series inputs.",
+      "critical": true,
+      "edges": [
+        {"id": "canonical_entity_to_chart_input", "status": "unknown", "source": "canonical song", "consumer": "chart metric input", "verification": "resolve_in_22_1A"},
+        {"id": "provider_signal_to_metric_normalization", "status": "unknown", "source": "provider/time-series signal", "consumer": "normalized chart metric", "verification": "resolve_in_22_1A"},
+        {"id": "metric_normalization_to_ranking", "status": "unknown", "source": "normalized metric", "consumer": "ranking calculation", "verification": "resolve_in_22_1A"},
+        {"id": "ranking_to_chart_snapshot", "status": "unknown", "source": "ranking result", "consumer": "immutable/reproducible chart snapshot", "verification": "resolve_in_22_1A"},
+        {"id": "chart_snapshot_to_provenance", "status": "missing", "source": "chart row", "consumer": "input/calculation provenance", "verification": "required_22_1C_contract"}
+      ]
+    },
+    "canonical_chart_to_public": {
+      "product_outcome": "A newly governed entity and its chart state become consistently discoverable across public SongChart surfaces.",
+      "critical": true,
+      "edges": [
+        {"id": "canonical_to_public_read_model", "status": "partial", "source": "canonical graph", "consumer": "public read model", "verification": "resolve_in_22_1A"},
+        {"id": "chart_to_public_read_model", "status": "partial", "source": "chart snapshot", "consumer": "public chart/read model", "verification": "resolve_in_22_1A"},
+        {"id": "public_read_model_to_routes_views", "status": "partial", "source": "public read model", "consumer": "web/API surface", "verification": "resolve_in_22_1A"},
+        {"id": "canonical_to_search", "status": "unknown", "source": "canonical graph", "consumer": "search/discovery", "verification": "resolve_in_22_1A"},
+        {"id": "public_entity_to_seo", "status": "partial", "source": "public entity route", "consumer": "canonical URL/metadata/indexability", "verification": "resolve_in_22_1A"},
+        {"id": "canonical_change_to_cache_invalidation", "status": "unknown", "source": "canonical mutation", "consumer": "public cache", "verification": "resolve_in_22_1A"}
+      ]
+    },
+    "editorial_correction_propagation": {
+      "product_outcome": "A governed editorial correction converges all dependent projections without manual database repair.",
+      "critical": true,
+      "edges": [
+        {"id": "admin_decision_to_canonical_mutation", "status": "verified", "source": "editorial decision", "consumer": "canonical admission service", "verification": "Stage 20/21 governed admission coverage"},
+        {"id": "canonical_mutation_to_audit", "status": "verified", "source": "canonical mutation", "consumer": "audit/provenance record", "verification": "existing privileged/editorial audit coverage"},
+        {"id": "canonical_mutation_to_reprojection", "status": "unknown", "source": "canonical mutation", "consumer": "derived read models", "verification": "resolve_in_22_1A"},
+        {"id": "canonical_mutation_to_chart_recompute", "status": "unknown", "source": "canonical mutation", "consumer": "affected chart results", "verification": "resolve_in_22_1A"},
+        {"id": "canonical_mutation_to_search_reindex", "status": "unknown", "source": "canonical mutation", "consumer": "search index", "verification": "resolve_in_22_1A"},
+        {"id": "canonical_mutation_to_cache_invalidation", "status": "unknown", "source": "canonical mutation", "consumer": "public cache", "verification": "resolve_in_22_1A"}
+      ]
+    },
+    "source_to_release": {
+      "product_outcome": "Only an exact, governed and verified source tree can become a distributable release artifact.",
+      "critical": true,
+      "edges": [
+        {"id": "source_to_candidate", "status": "verified", "source": "Git exact tree", "consumer": "candidate verification", "verification": "existing candidate/release authority"},
+        {"id": "candidate_to_canonical_verification", "status": "verified", "source": "prepared exact tree", "consumer": "canonical verification", "verification": "existing canonical verification authority"},
+        {"id": "canonical_verification_to_package", "status": "verified", "source": "verified provenance", "consumer": "release package", "verification": "existing release baseline/provenance gates"}
+      ]
+    },
+    "production_feedback_loop": {
+      "product_outcome": "Production reality and user evidence can influence operations and future product work.",
+      "critical": false,
+      "edges": [
+        {"id": "production_runtime_to_health_authority", "status": "missing", "source": "production runtime", "consumer": "operator health/status", "verification": "future_stage_22_production_control_plane"},
+        {"id": "user_behavior_to_product_analytics", "status": "missing", "source": "public usage", "consumer": "product telemetry", "verification": "future_stage_22_telemetry"},
+        {"id": "user_feedback_to_editorial_queue", "status": "missing", "source": "user correction report", "consumer": "editorial review", "verification": "future_stage"}
+      ]
+    }
+  }
+}
