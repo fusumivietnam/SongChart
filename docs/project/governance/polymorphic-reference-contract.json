@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "active-integrity-contract",
+  "entity_type_authority": "App\\Domain\\Catalog\\Enums\\EntityType",
+  "entity_table_authority": "docs/project/domain/domain-contracts.json",
+  "rule": "a canonical polymorphic reference must resolve both a registered EntityType and an existing canonical row; provider-specific entity types that do not reference canonical identity are outside this contract",
+  "surfaces": [
+    {"table":"external_identifiers","type_column":"entity_type","id_column":"entity_id"},
+    {"table":"metadata_assertions","type_column":"entity_type","id_column":"entity_id"},
+    {"table":"entity_matches","type_column":"entity_type","id_column":"entity_id"},
+    {"table":"collection_items","type_column":"entity_type","id_column":"entity_id"},
+    {"table":"provider_destinations","type_column":"entity_type","id_column":"entity_id"},
+    {"table":"canonical_admission_decisions","type_column":"entity_type","id_column":"entity_id"},
+    {"table":"entity_relationships","type_column":"subject_type","id_column":"subject_id"},
+    {"table":"entity_relationships","type_column":"object_type","id_column":"object_id"}
+  ],
+  "scan_policy": {
+    "missing_table": "fail",
+    "unknown_entity_type": "fail",
+    "missing_entity_row": "fail",
+    "null_reference": "skip_only_when_schema_allows_null",
+    "soft_deleted_entity": "valid_reference_until_explicit_retention_policy_says_otherwise"
+  }
+}
