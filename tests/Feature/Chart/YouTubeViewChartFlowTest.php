@@ -11,6 +11,7 @@ use App\Models\ProviderDestination;
 use App\Support\Chart\DatabaseChartSnapshotStore;
 use App\Support\Chart\YouTubeViewCountObservationSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
@@ -67,8 +68,7 @@ it('fetches approved YouTube viewCount evidence and publishes a persisted canoni
         ->and($snapshot?->rows[0]['observations'][0]['metric_semantics_version'])->toBe(YouTubeViewCountObservationSource::SEMANTICS_VERSION)
         ->and($snapshot?->rows[0]['observations'][0]['source_reference'])->toBe('youtube:videos.list:abcdefghijk:statistics');
 
-    Http::assertSent(fn (Request $request): bool =>
-        str_contains($request->url(), '/youtube/v3/videos')
+    Http::assertSent(fn (Request $request): bool => str_contains($request->url(), '/youtube/v3/videos')
         && $request['part'] === 'statistics,status'
         && $request['id'] === 'abcdefghijk'
         && $request['key'] === 'test-key'
