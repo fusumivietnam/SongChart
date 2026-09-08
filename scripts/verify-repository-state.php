@@ -71,6 +71,13 @@ try {
         'docs/project/engineering/stage-plan.json',
         'docs/project/engineering/project-knowledge.json',
         'docs/project/engineering/consolidation-plan.json',
+        'docs/project/engineering/roadmap.json',
+        'docs/project/governance/project-control-plane.json',
+        'docs/project/governance/technology-lifecycle.json',
+        'docs/project/governance/pre-data-freeze.json',
+        'docs/project/governance/resilience-matrix.json',
+        'docs/project/governance/database-risk-register.json',
+        'docs/project/governance/deletion-retention-matrix.json',
         'candidate-verification.json',
     ];
     foreach ($requiredStateSources as $relative) {
