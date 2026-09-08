@@ -13,6 +13,7 @@ Status: active blocker authority for Stage 22.1 closure.
 - `chart_snapshots` provides idempotent persisted snapshot ownership; identical version/input replay resolves to one stored snapshot.
 - `PublicChartProjection` resolves rows back to canonical Recording identity.
 - Read-only `/charts/{chart}` publishes only an existing persisted snapshot and returns 404 when no snapshot exists. No chart data is fabricated.
+- Roadmap naming is reconciled: Stage 22 is Production Vertical Closure; design-system authority remains owned by existing `docs/ui/` contracts and Stage 23 consumes the Stage 22 chart read contract for richer public UX.
 
 ## Remaining production blocker — No real provider metric source
 
@@ -53,15 +54,11 @@ Do not sum values across providers unless the metric contract explicitly declare
 
 ## Verification blocker — Exact-head Auto Closure
 
-Earlier PR heads reached GitHub Actions `action_required` or remained pending without executable jobs. Any new commit invalidates previous verification evidence.
+Earlier PR heads reached GitHub Actions `action_required` or remained pending without executable jobs; the workflow later started executing normally. Any new commit still invalidates previous verification evidence, so only the exact final head may close the stage.
 
 ### Remediation
 
-Approve/enable the pending `SongChart Auto Closure` workflow if GitHub requests repository-side approval. The exact current head must then complete PREPARE, QUALITY, impacted PostgreSQL/browser/frontend lanes and canonical CLOSE. If jobs start and fail, their logs become the next concrete implementation owner; Stage 22 must not be marked accepted manually.
-
-## Authority conflict to reconcile
-
-`docs/project/docs/ROADMAP.md` labels Stage 22 as Design System Authority while active `stage-plan.json` owns Stage 22.1 as production vertical closure. The roadmap itself delegates the active stage to `stage-plan.json`, so implementation follows the stage plan. Before final Stage 22 acceptance, reconcile the roadmap label so future sessions do not interpret Stage 22 differently.
+Require the exact current head to complete PREPARE, QUALITY, impacted PostgreSQL/browser/frontend lanes and canonical CLOSE. If a job fails, its log becomes the next concrete implementation owner; Stage 22 must not be marked accepted manually.
 
 ## Closure rule
 
