@@ -32,6 +32,7 @@ final readonly class PolymorphicReferenceIntegrity
                     'id_column' => $idColumn,
                     'reason' => 'missing_table',
                 ];
+
                 continue;
             }
 
@@ -55,6 +56,7 @@ final readonly class PolymorphicReferenceIntegrity
                         'entity_id' => (string) $rawId,
                         'reason' => 'unknown_entity_type',
                     ];
+
                     continue;
                 }
 
