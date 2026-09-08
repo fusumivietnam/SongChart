@@ -236,6 +236,7 @@ try {
                     'entrypoint' => $useCaseId,
                     'reason' => 'Declared use-case ID has no executable use-case contract.',
                 ];
+
                 continue;
             }
 
