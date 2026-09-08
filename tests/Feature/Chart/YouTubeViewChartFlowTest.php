@@ -11,7 +11,6 @@ use App\Models\ProviderDestination;
 use App\Support\Chart\DatabaseChartSnapshotStore;
 use App\Support\Chart\YouTubeViewCountObservationSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
