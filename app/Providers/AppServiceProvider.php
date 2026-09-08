@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Application\Chart\Listeners\RefreshChartAfterCanonicalChange;
 use App\Application\Discovery\Listeners\RebuildDiscoveryAfterCanonicalChange;
 use App\Contracts\Analytics\ProductAnalytics;
 use App\Contracts\Catalog\EnrichmentAttemptStore;
@@ -68,6 +69,7 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(CanonicalEntityChanged::class, RebuildDiscoveryAfterCanonicalChange::class);
+        Event::listen(CanonicalEntityChanged::class, RefreshChartAfterCanonicalChange::class);
 
         Model::shouldBeStrict(! $this->app->isProduction());
 
