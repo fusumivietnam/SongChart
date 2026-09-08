@@ -15,7 +15,7 @@
         "frontend_build": "not_run",
         "release_verify": "not_run",
         "canonical_environment": "not_run",
-        "postgresql_major_18": "not_run",
+        "postgresql_major_target": "not_run",
         "repository_contracts": "not_run",
         "lockfile_authority": "not_run",
         "database_test_isolation": "not_run",
