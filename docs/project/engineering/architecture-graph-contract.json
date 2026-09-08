@@ -1,14 +1,28 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "active",
-  "purpose": "Canonical contract for derived architecture/use-case/source-evolution graphs consumed by AI, developers and Admin Development Intelligence.",
-  "node_types": ["use_case", "route", "controller", "action", "service", "job", "event", "listener", "model", "table", "interface", "class", "provider", "package", "test"],
-  "edge_types": ["route_to", "calls", "depends_on", "dispatches", "listens_to", "extends", "implements", "uses_trait", "reads", "writes", "outbound_to", "covered_by", "belongs_to_use_case"],
+  "purpose": "Canonical contract for derived product/journey/capability/use-case/source/data/evolution graphs consumed by AI, developers, generated guides and Admin Development Intelligence.",
+  "semantic_companion": "docs/project/engineering/system-knowledge-contract.json",
+  "node_types": [
+    "product", "audience", "journey", "capability", "use_case", "route", "controller", "action", "service", "job", "event", "listener", "model", "table", "data_owner", "domain_entity", "interface", "class", "provider", "package", "test", "authority", "verification", "stage", "decision", "gap", "document"
+  ],
+  "edge_types": [
+    "serves", "contains", "requires", "route_to", "implemented_by", "exposed_by", "calls", "depends_on", "dispatches", "listens_to", "extends", "implements", "uses_trait", "reads", "writes", "owned_by", "outbound_to", "covered_by", "verified_by", "documented_by", "belongs_to_use_case", "planned_in", "blocked_by", "supersedes", "related_to"
+  ],
   "views": {
-    "business": "Use-case/journey graph with implementation details hidden.",
-    "developer": "Route -> controller/action -> async/domain/persistence/provider graph.",
-    "deep": "Class/interface/inheritance/dependency graph for AI and debugging."
+    "orientation": "Product -> audience -> journey -> capability -> implementation state -> roadmap. Default for a new developer/product owner.",
+    "business": "Journey/capability/use-case graph with implementation details hidden.",
+    "developer": "Journey/use case -> route -> implementation -> domain/data owner -> verification graph.",
+    "ai": "Semantic ID/source-authority graph first, then developer/deep graph; filenames are evidence, not inferred ownership.",
+    "deep": "Class/interface/inheritance/dependency graph for debugging and low-level analysis."
   },
+  "mapping_rules": [
+    "Authored journey/use-case/domain/schema/stage authorities supply semantic nodes before source scanning.",
+    "Source scanning may enrich implementation/dependency edges but must not invent product ownership.",
+    "Missing mappings remain explicit gap nodes; they must not be silently inferred from similarly named files/classes/functions.",
+    "Every derived semantic record retains its source authority path or source-code path.",
+    "Generated audience guides are projections of the same graph and may hide implementation details, never redefine semantics."
+  ],
   "snapshot_policy": {
     "consistency": "eventual",
     "canonical_key": "accepted Git SHA when available; otherwise exact candidate SHA for non-release analysis",
@@ -21,10 +35,17 @@
   },
   "storage": {
     "tracked_contracts": "docs/project/engineering",
+    "generated_orientation": "docs/project/generated/system-knowledge.json",
     "runtime_snapshots": "storage/project-intelligence/{sha}/",
     "current_pointer": "cache/redis may point to latest completed snapshot; it is not authority"
   },
   "incremental_scope_hints": {
+    "docs/project/domain/product-user-journeys.json": ["journey", "capability", "gap"],
+    "docs/project/domain/use-case-contracts.json": ["use_case", "route", "data_owner"],
+    "docs/project/domain/domain-contracts.json": ["domain_entity", "capability"],
+    "docs/project/domain/schema-ownership.json": ["data_owner", "table"],
+    "docs/project/engineering/stage-plan.json": ["stage", "gap"],
+    "docs/project/engineering/roadmap.json": ["stage", "capability"],
     "routes/**": ["route", "controller", "use_case"],
     "app/Http/**": ["route", "controller", "action", "authorization"],
     "app/Jobs/**": ["job", "queue"],
@@ -38,8 +59,8 @@
   },
   "admin_policy": {
     "audience": ["SA", "developer", "technical operator"],
-    "default_behavior": "Serve latest completed snapshot immediately; show staleness and offer refresh when needed.",
+    "default_behavior": "Serve latest completed semantic snapshot immediately; show staleness, mapping gaps and offer refresh when needed.",
     "polling": "Do not poll when idle. If a rebuild is active, use sparse status refresh or a lightweight event.",
-    "panels": ["Now", "Architecture", "Evolution", "Technology"]
+    "panels": ["Now", "Capabilities", "Architecture", "Data", "Gaps", "Evolution", "Technology"]
   }
 }
