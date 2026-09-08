@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "status": "implementing",
+  "purpose": "single lifecycle and risk projection over existing SongChart authorities",
+  "source_authorities": [
+    "PROJECT_AUTHORITY.md",
+    "docs/project/domain/product-user-journeys.json",
+    "docs/project/domain/domain-contracts.json",
+    "docs/project/domain/schema-ownership.json",
+    "docs/project/domain/IDENTIFIERS.md",
+    "docs/project/domain/DATA_CONTRACT.md",
+    "docs/project/stack/stack-manifest.json",
+    "docs/project/engineering/stage-plan.json"
+  ],
+  "lifecycle_states": ["proposed", "experimental", "adopted", "compatibility", "deprecated", "retired"],
+  "actions": ["keep", "harden", "upgrade", "migrate", "replace", "retire", "investigate"],
+  "stability_classes": ["locked", "durable", "extensible", "replaceable", "experimental"],
+  "risk_classes": ["R0", "R1", "R2", "R3", "R4"],
+  "change_classes": ["additive", "compatible", "migration_required", "breaking", "destructive"],
+  "components": {
+    "canonical_identity": {
+      "area": "domain",
+      "authority": "docs/project/domain/IDENTIFIERS.md",
+      "implementation": "ulid",
+      "lifecycle": "adopted",
+      "action": "harden",
+      "stability": "locked",
+      "risk": "R4",
+      "notes": "provider identifiers never replace SongChart identity"
+    },
+    "canonical_relationships": {
+      "area": "domain",
+      "authority": "docs/project/domain/DOMAIN_MODEL.md",
+      "implementation": "entity_relationships",
+      "lifecycle": "adopted",
+      "action": "harden",
+      "stability": "locked",
+      "risk": "R4"
+    },
+    "artist_recording_shortcut": {
+      "area": "domain",
+      "authority": "docs/project/domain/DOMAIN_MODEL.md",
+      "implementation": "artist_recording",
+      "lifecycle": "compatibility",
+      "action": "investigate",
+      "stability": "durable",
+      "risk": "R2",
+      "new_feature_target": false
+    },
+    "canonical_mutation": {
+      "area": "application",
+      "authority": "docs/project/domain/application-data-boundary.json",
+      "implementation": "governed application mutation services",
+      "lifecycle": "adopted",
+      "action": "harden",
+      "stability": "locked",
+      "risk": "R4"
+    },
+    "postgresql": {
+      "area": "persistence",
+      "authority": "docs/project/stack/stack-manifest.json",
+      "implementation": "postgresql-18",
+      "lifecycle": "adopted",
+      "action": "keep",
+      "stability": "replaceable",
+      "risk": "R3",
+      "semantic_role": "release source of truth"
+    },
+    "laravel": {
+      "area": "framework",
+      "authority": "docs/project/stack/FRAMEWORK_BASELINE.md",
+      "implementation": "laravel-13",
+      "lifecycle": "adopted",
+      "action": "keep",
+      "stability": "replaceable",
+      "risk": "R2"
+    },
+    "php_runtime": {
+      "area": "runtime",
+      "authority": "composer.json",
+      "implementation": "php-8.5",
+      "lifecycle": "adopted",
+      "action": "keep",
+      "stability": "replaceable",
+      "risk": "R2"
+    },
+    "node_runtime": {
+      "area": "runtime",
+      "authority": "docs/project/stack/stack-manifest.json",
+      "implementation": "node-24-lts",
+      "lifecycle": "adopted",
+      "action": "keep",
+      "stability": "replaceable",
+      "risk": "R1",
+      "notes": "version is current target, not permanent architecture invariant"
+    },
+    "livewire": {
+      "area": "frontend",
+      "authority": "docs/project/stack/FRAMEWORK_BASELINE.md",
+      "implementation": "livewire-4",
+      "lifecycle": "adopted",
+      "action": "keep",
+      "stability": "replaceable",
+      "risk": "R1",
+      "semantic_role": "bounded interaction layer"
+    },
+    "search_projection": {
+      "area": "application",
+      "authority": "PROJECT_AUTHORITY.md",
+      "implementation": "read projections",
+      "lifecycle": "adopted",
+      "action": "harden",
+      "stability": "extensible",
+      "risk": "R2",
+      "semantic_role": "never source of truth"
+    },
+    "github_codespaces": {
+      "area": "development",
+      "authority": "docs/project/governance/resilience-matrix.json",
+      "implementation": "remote development adapter",
+      "lifecycle": "adopted",
+      "action": "keep",
+      "stability": "replaceable",
+      "risk": "R1",
+      "required": false
+    },
+    "github_hosted_actions": {
+      "area": "delivery",
+      "authority": "docs/project/governance/resilience-matrix.json",
+      "implementation": "primary CI runner",
+      "lifecycle": "adopted",
+      "action": "keep",
+      "stability": "replaceable",
+      "risk": "R2",
+      "fallback": ["self_hosted_runner", "trusted_local_exact_sha_evidence"]
+    }
+  },
+  "decision_debt": {
+    "public_slug_durability": {
+      "risk": "R3",
+      "action": "investigate",
+      "before_data": true
+    },
+    "deletion_retention_matrix": {
+      "risk": "R4",
+      "action": "investigate",
+      "before_data": true
+    },
+    "polymorphic_referential_integrity": {
+      "risk": "R4",
+      "action": "harden",
+      "before_data": true
+    },
+    "compatibility_shortcut_lifecycle": {
+      "risk": "R2",
+      "action": "investigate",
+      "before_data": true
+    },
+    "production_deployment_target": {
+      "risk": "R2",
+      "action": "investigate",
+      "before_data": false
+    }
+  },
+  "views": {
+    "architecture_health": ["area", "lifecycle", "action", "risk"],
+    "upgrade_radar": ["implementation", "action", "risk"],
+    "deprecation_queue": ["lifecycle", "new_feature_target"],
+    "pre_data_freeze": "docs/project/governance/pre-data-freeze.json",
+    "resilience": "docs/project/governance/resilience-matrix.json"
+  }
+}
