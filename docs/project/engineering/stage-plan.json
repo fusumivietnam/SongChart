@@ -1,13 +1,13 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "current_stage": {
     "id": "22.1",
     "title": "System Intersection Map + Golden Vertical Contract",
     "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
-    "status": "active"
+    "status": "blocked"
   },
   "accepted_through": "21.0",
-  "active_tranche": "22.1B",
+  "active_tranche": "22.1C",
   "stage_progress": [
     {
       "id": "22.1A",
@@ -16,21 +16,38 @@
     },
     {
       "id": "22.1B",
-      "status": "active",
+      "status": "accepted",
       "title": "Golden provider/canonical fixtures"
     },
     {
       "id": "22.1C",
-      "status": "planned",
-      "title": "Chart/public provenance contract closure"
+      "status": "blocked",
+      "title": "Chart/public provenance contract closure",
+      "implemented": [
+        "provenance-first chart observation DTO",
+        "versioned deterministic chart snapshot calculator",
+        "canonical public chart projection",
+        "canonical-change semantic event",
+        "bounded active-channel discovery reprojection"
+      ],
+      "blockers": [
+        "provider_metric_source",
+        "persisted_chart_snapshot_owner",
+        "public_chart_route_owner"
+      ]
     },
     {
       "id": "22.1D",
-      "status": "planned",
-      "title": "Stage closure and next vertical tranche"
+      "status": "blocked",
+      "title": "Stage closure and next vertical tranche",
+      "blockers": [
+        "22.1C production vertical is not closed",
+        "exact-head Auto Closure must complete successfully"
+      ]
     }
   ],
-  "next_tranche": "22.1C",
+  "next_tranche": "22.2-provider-metric-chart-persistence",
+  "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md",
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
     "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
