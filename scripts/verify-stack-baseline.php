@@ -20,13 +20,35 @@ foreach ($requiredAuthorities as $authority) {
     }
 }
 
+$controlPlaneAuthorities = [
+    'CONTROL_PLANE.md',
+    'COMPATIBILITY_POLICY.md',
+    'project-control-plane.json',
+    'pre-data-freeze.json',
+    'resilience-matrix.json',
+];
+
+foreach ($controlPlaneAuthorities as $authority) {
+    if (! is_file($root.'/docs/project/governance/'.$authority)) {
+        $failures[] = 'Missing control-plane authority: '.$authority;
+    }
+}
+
+if (! is_file($root.'/docs/project/engineering/roadmap.json')) {
+    $failures[] = 'Missing repository-native roadmap authority.';
+}
+
 try {
     $manifest = json_decode((string) file_get_contents($root.'/docs/project/stack/stack-manifest.json'), true, 512, JSON_THROW_ON_ERROR);
     $composer = json_decode((string) file_get_contents($root.'/composer.json'), true, 512, JSON_THROW_ON_ERROR);
     $package = json_decode((string) file_get_contents($root.'/package.json'), true, 512, JSON_THROW_ON_ERROR);
+    $controlPlane = json_decode((string) file_get_contents($root.'/docs/project/governance/project-control-plane.json'), true, 512, JSON_THROW_ON_ERROR);
+    $preData = json_decode((string) file_get_contents($root.'/docs/project/governance/pre-data-freeze.json'), true, 512, JSON_THROW_ON_ERROR);
+    $resilience = json_decode((string) file_get_contents($root.'/docs/project/governance/resilience-matrix.json'), true, 512, JSON_THROW_ON_ERROR);
+    $roadmap = json_decode((string) file_get_contents($root.'/docs/project/engineering/roadmap.json'), true, 512, JSON_THROW_ON_ERROR);
 } catch (JsonException $exception) {
     $failures[] = 'Invalid JSON: '.$exception->getMessage();
-    $manifest = $composer = $package = [];
+    $manifest = $composer = $package = $controlPlane = $preData = $resilience = $roadmap = [];
 }
 
 $phpPackages = array_merge($composer['require'] ?? [], $composer['require-dev'] ?? []);
@@ -55,7 +77,7 @@ if (count($capabilities) !== count(array_unique(array_keys($capabilities)))) {
 }
 
 $policies = $manifest['policies'] ?? [];
-foreach (['laravel_native_first', 'new_packages_require_review', 'provider_ids_may_be_primary_keys', 'node_runtime_major'] as $policy) {
+foreach (['laravel_native_first', 'new_packages_require_review', 'provider_ids_may_be_primary_keys', 'node_runtime_major', 'release_database_major'] as $policy) {
     if (! array_key_exists($policy, $policies)) {
         $failures[] = 'Missing stack policy: '.$policy;
     }
@@ -63,20 +85,77 @@ foreach (['laravel_native_first', 'new_packages_require_review', 'provider_ids_m
 if (($policies['provider_ids_may_be_primary_keys'] ?? true) !== false) {
     $failures[] = 'Provider identifiers must not be canonical primary keys.';
 }
-if (($policies['node_runtime_major'] ?? null) !== 24) {
-    $failures[] = 'Node runtime authority must remain on Node 24 LTS for Stage 18.1.';
+
+$nodeMajor = $policies['node_runtime_major'] ?? null;
+if (! is_int($nodeMajor) || $nodeMajor < 20) {
+    $failures[] = 'Node runtime authority must declare a supported current major target.';
+}
+
+$postgresMajor = $policies['release_database_major'] ?? null;
+if (! is_int($postgresMajor) || $postgresMajor < 14) {
+    $failures[] = 'Release PostgreSQL authority must declare a supported current major target.';
+}
+
+if (($manifest['version_semantics'] ?? null) !== 'runtime and framework versions are current approved targets, not permanent architecture invariants') {
+    $failures[] = 'Stack manifest must declare version targets as lifecycle-managed implementation state.';
 }
 
 $dockerfile = is_file($root.'/docker/verify/Dockerfile') ? (string) file_get_contents($root.'/docker/verify/Dockerfile') : '';
 $workflow = is_file($root.'/.github/workflows/tests.yml') ? (string) file_get_contents($root.'/.github/workflows/tests.yml') : '';
-if (! str_contains($dockerfile, 'FROM node:24-bookworm-slim@sha256:')) {
-    $failures[] = 'Docker verification/development runtime must use digest-pinned Node 24 LTS.';
+if (is_int($nodeMajor)) {
+    if (! str_contains($dockerfile, 'FROM node:'.$nodeMajor.'-bookworm-slim@sha256:')) {
+        $failures[] = "Docker verification/development runtime must use digest-pinned approved Node {$nodeMajor}.";
+    }
+    if (substr_count($workflow, "node-version: '{$nodeMajor}'") < 2) {
+        $failures[] = "GitHub browser and frontend-build jobs must use approved Node {$nodeMajor}.";
+    }
 }
-if (substr_count($workflow, "node-version: '24'") < 2) {
-    $failures[] = 'GitHub browser and frontend-build jobs must use Node 24.';
+
+$lifecycleStates = ['proposed', 'experimental', 'adopted', 'compatibility', 'deprecated', 'retired'];
+$actions = ['keep', 'harden', 'upgrade', 'migrate', 'replace', 'retire', 'investigate'];
+$stabilityClasses = ['locked', 'durable', 'extensible', 'replaceable', 'experimental'];
+$riskClasses = ['R0', 'R1', 'R2', 'R3', 'R4'];
+
+foreach ($controlPlane['components'] ?? [] as $id => $component) {
+    if (! in_array($component['lifecycle'] ?? null, $lifecycleStates, true)) {
+        $failures[] = "Control-plane component [{$id}] has invalid lifecycle.";
+    }
+    if (! in_array($component['action'] ?? null, $actions, true)) {
+        $failures[] = "Control-plane component [{$id}] has invalid action.";
+    }
+    if (! in_array($component['stability'] ?? null, $stabilityClasses, true)) {
+        $failures[] = "Control-plane component [{$id}] has invalid stability class.";
+    }
+    if (! in_array($component['risk'] ?? null, $riskClasses, true)) {
+        $failures[] = "Control-plane component [{$id}] has invalid risk class.";
+    }
+    if (($component['lifecycle'] ?? null) === 'compatibility' && ($component['new_feature_target'] ?? false) !== false) {
+        $failures[] = "Compatibility component [{$id}] must not be a new-feature target.";
+    }
 }
-if (str_contains($workflow, "node-version: '22'") || str_contains($dockerfile, 'FROM node:22')) {
-    $failures[] = 'Node 22 runtime drift is not allowed after Node 24 alignment.';
+
+if (($preData['state'] ?? null) === 'data-bearing' && ! in_array('schema-baseline-approved', $preData['states'] ?? [], true)) {
+    $failures[] = 'Data-bearing lifecycle must retain schema-baseline-approved predecessor state.';
+}
+
+foreach (['light', 'standard', 'full'] as $profile) {
+    if (! isset($resilience['execution_profiles'][$profile])) {
+        $failures[] = "Missing resilience execution profile [{$profile}].";
+    }
+}
+if (($resilience['capabilities']['development_environment']['codespaces_required'] ?? true) !== false) {
+    $failures[] = 'Codespaces must remain an optional development adapter, not continuity authority.';
+}
+if (($resilience['quota_policy']['never_skip_required_semantic_verification_due_to_quota'] ?? false) !== true) {
+    $failures[] = 'Quota fallback must not weaken required semantic verification.';
+}
+
+$stage22 = array_values(array_filter(
+    $roadmap['stages'] ?? [],
+    static fn (mixed $stage): bool => is_array($stage) && ($stage['id'] ?? null) === '22.0',
+));
+if (count($stage22) !== 1 || ($stage22[0]['status'] ?? null) !== 'committed') {
+    $failures[] = 'Roadmap must contain exactly one committed Stage 22.0 entry.';
 }
 
 $scripts = $composer['scripts'] ?? [];
@@ -126,4 +205,4 @@ if ($failures !== []) {
     exit(1);
 }
 
-echo 'Technology stack authority verification passed.'.PHP_EOL;
+echo 'Technology stack and system control-plane authority verification passed.'.PHP_EOL;
