@@ -242,7 +242,7 @@ function controlPlaneMarkdown(array $status): string
         if (! is_array($roadmapStage)) {
             continue;
         }
-        $lines[] = '| `'.($roadmapStage['id'] ?? '?').'` | `'.($roadmapStage['status'] ?? 'unknown').'` | '.($roadmapStage['title'] ?? '') .' |';
+        $lines[] = '| `'.($roadmapStage['id'] ?? '?').'` | `'.($roadmapStage['status'] ?? 'unknown').'` | '.($roadmapStage['title'] ?? '').' |';
     }
 
     $lines[] = '';
