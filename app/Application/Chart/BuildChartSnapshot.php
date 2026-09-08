@@ -23,6 +23,7 @@ final readonly class BuildChartSnapshot
         }
 
         $grouped = [];
+        $fingerprintRows = [];
         foreach ($observations as $observation) {
             if (! $observation instanceof ChartMetricObservation) {
                 throw new InvalidArgumentException('Chart observations must use the provenance DTO contract.');
@@ -40,20 +41,44 @@ final readonly class BuildChartSnapshot
                 throw new InvalidArgumentException('Chart observations cannot occur after the snapshot time.');
             }
 
+            $input = [
+                'observation_id' => $observation->observationId,
+                'canonical_recording_id' => $observation->canonicalRecordingId,
+                'provider' => $observation->provider,
+                'provider_item_id' => $observation->providerItemId,
+                'metric' => $observation->metric,
+                'value' => (float) $observation->value,
+                'observed_at' => $observation->observedAt->format(DATE_ATOM),
+            ];
+            $fingerprintRows[] = $input;
+
             $id = $observation->canonicalRecordingId;
-            $grouped[$id] ??= ['score' => 0.0, 'observation_ids' => []];
+            $grouped[$id] ??= ['score' => 0.0, 'observation_ids' => [], 'observations' => []];
             $grouped[$id]['score'] += (float) $observation->value;
             $grouped[$id]['observation_ids'][] = $observation->observationId;
+            $grouped[$id]['observations'][] = [
+                'observation_id' => $observation->observationId,
+                'provider' => $observation->provider,
+                'provider_item_id' => $observation->providerItemId,
+                'metric' => $observation->metric,
+                'value' => (float) $observation->value,
+                'observed_at' => $observation->observedAt->format(DATE_ATOM),
+            ];
         }
+
+        usort($fingerprintRows, static fn (array $left, array $right): int => strcmp($left['observation_id'], $right['observation_id']));
+        $inputFingerprint = hash('sha256', json_encode($fingerprintRows, JSON_THROW_ON_ERROR));
 
         $rows = [];
         foreach ($grouped as $recordingId => $data) {
             sort($data['observation_ids']);
+            usort($data['observations'], static fn (array $left, array $right): int => strcmp($left['observation_id'], $right['observation_id']));
             $rows[] = [
                 'rank' => 0,
                 'canonical_recording_id' => (string) $recordingId,
                 'score' => (float) $data['score'],
                 'observation_ids' => $data['observation_ids'],
+                'observations' => $data['observations'],
             ];
         }
 
@@ -72,6 +97,7 @@ final readonly class BuildChartSnapshot
             $chartId,
             $metric,
             self::CALCULATION_VERSION,
+            $inputFingerprint,
             $snapshotAt,
             $rows,
         );
