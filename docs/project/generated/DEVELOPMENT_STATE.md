@@ -5,16 +5,16 @@
 ## Current stage
 
 - Stage `22.1 — System Intersection Map + Golden Vertical Contract`
-- Status: `active`
+- Status: `verification_pending`
 - Accepted through: `21.0`
 - Task contract: `docs/foundation/STAGE_22_1_TASK_CONTRACT.md`
 
 ## Stage progress
 
 - `22.1A` — `ACCEPTED` — Intersection audit and ownership binding
-- `22.1B` — `ACTIVE` — Golden provider/canonical fixtures
-- `22.1C` — `PLANNED` — Chart/public provenance contract closure
-- `22.1D` — `PLANNED` — Stage closure and next vertical tranche
+- `22.1B` — `ACCEPTED` — Golden provider/canonical fixtures
+- `22.1C` — `IMPLEMENTATION_COMPLETE` — Chart/public provenance contract closure
+- `22.1D` — `VERIFICATION_PENDING` — Stage closure and next vertical tranche
 
 ## Next bounded tranche
 

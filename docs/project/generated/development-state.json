@@ -1,12 +1,12 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "3629ce73bda4123dcf80f7c3af18d61151254f31b61e6bd95181cb126a7cf201",
+    "source_fingerprint": "3461e490108407c0ae546c0d7f6d05a35560aac97c7a2ed03c228fe265953b93",
     "current_stage": {
         "id": "22.1",
         "title": "System Intersection Map + Golden Vertical Contract",
         "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
-        "status": "active"
+        "status": "verification_pending"
     },
     "accepted_through": "21.0",
     "stage_progress": [
@@ -17,21 +17,39 @@
         },
         {
             "id": "22.1B",
-            "status": "active",
+            "status": "accepted",
             "title": "Golden provider/canonical fixtures"
         },
         {
             "id": "22.1C",
-            "status": "planned",
-            "title": "Chart/public provenance contract closure"
+            "status": "implementation_complete",
+            "title": "Chart/public provenance contract closure",
+            "implemented": [
+                "provider-neutral provenance-first chart observation DTO",
+                "YouTube approved-destination viewCount production observation source",
+                "YouTube viewCount 2026-08-24 semantics version boundary",
+                "provider media.statistics capability authority",
+                "versioned deterministic chart snapshot calculator with semantic compatibility guard",
+                "self-contained input fingerprint and observation provenance",
+                "immutable/idempotent chart snapshot persistence",
+                "canonical public chart projection and read-only route",
+                "manual and opt-in hourly chart refresh",
+                "canonical-change semantic event",
+                "bounded active-channel Discovery reprojection",
+                "bounded queued chart refresh for canonical Recording changes"
+            ]
         },
         {
             "id": "22.1D",
-            "status": "planned",
-            "title": "Stage closure and next vertical tranche"
+            "status": "verification_pending",
+            "title": "Stage closure and next vertical tranche",
+            "blockers": [
+                "exact-head Auto Closure must complete successfully",
+                "live production activation requires YouTube policy/quota acceptance, credential and at least one approved public canonical destination"
+            ]
         }
     ],
-    "next_tranche": "22.1C",
+    "next_tranche": "23.0-public-product-ux-after-stage-22-acceptance",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -40,6 +58,6 @@
         "candidate-verification.json": "a96c2cbbd3e32ac06e102acdb8029530c1130134f202dd8bfe99df170ef9dc1c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "0adfe6087569c31711d59d8511759ccaa4e6596a23b1ddf3293709c848e1e409"
+        "docs/project/engineering/stage-plan.json": "aa17cd6a336f6236804577b32abe049309ba48c958c4f09652caaba9dfa98bd3"
     }
 }
