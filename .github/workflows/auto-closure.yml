@@ -85,7 +85,7 @@ jobs:
         run: |
           composer validate --strict
           composer quality:verify
-          php scripts/verify-system-knowledge.php
+          php scripts/check-system-knowledge.php
 
       - name: Push generated authority only after quality passes
         if: steps.generated_commit.outputs.changed == 'true'
@@ -110,14 +110,14 @@ jobs:
           stage="$(jq -r '.current_stage.id' docs/project/engineering/stage-plan.json)"
           stage_title="$(jq -r '.current_stage.title' docs/project/engineering/stage-plan.json)"
           tranche="$(jq -r '.active_tranche // "none"' docs/project/engineering/stage-plan.json)"
-          unmapped="$(jq -r '.coverage.unmapped_entrypoints' docs/project/generated/system-knowledge.json)"
+          unmapped="$(jq -r '.coverage.contract_gaps // .coverage.unmapped_entrypoints // 0' docs/project/generated/system-knowledge.json)"
           {
             echo '## SongChart progress — runtime verification'
             echo
             echo "- Stage: ${stage} — ${stage_title}"
             echo "- Active tranche: ${tranche}"
             echo "- Exact SHA: ${EXACT_SHA}"
-            echo "- System knowledge unmapped entrypoints: ${unmapped}"
+            echo "- System knowledge contract gaps: ${unmapped}"
             echo '- PREPARE / QUALITY: passed'
             echo '- PostgreSQL / browser / frontend: running next'
             echo '- Canonical CLOSE: waiting'
