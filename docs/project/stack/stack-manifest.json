@@ -1,12 +1,16 @@
 {
-  "schema_version": 1,
-  "stage": "18.1",
+  "schema_version": 2,
+  "baseline_origin": "18.1",
+  "version_semantics": "runtime and framework versions are current approved targets, not permanent architecture invariants",
   "sources": {
     "php": "composer.json",
     "php_lock": "composer.lock",
     "javascript": "package.json",
     "javascript_lock": "package-lock.json"
   },
+  "lifecycle_authority": "docs/project/governance/project-control-plane.json",
+  "compatibility_authority": "docs/project/governance/COMPATIBILITY_POLICY.md",
+  "resilience_authority": "docs/project/governance/resilience-matrix.json",
   "policies": {
     "laravel_native_first": true,
     "new_packages_require_review": true,
@@ -33,9 +37,7 @@
     "@tailwindcss/vite",
     "alpinejs"
   ],
-  "restricted_packages": [
-    "axios"
-  ],
+  "restricted_packages": ["axios"],
   "forbidden_packages": [
     "guzzlehttp/guzzle-direct-provider-client",
     "symfony/http-client-parallel-owner"
