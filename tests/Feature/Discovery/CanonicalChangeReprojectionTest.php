@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Catalog\Enums\EntityType;
 use App\Domain\Catalog\Events\CanonicalEntityChanged;
+use App\Jobs\Chart\RefreshYouTubeViewChartJob;
 use App\Jobs\Discovery\BuildDiscoveryProjection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
 uses(RefreshDatabase::class);
 
 it('queues only active discovery channels for the changed canonical entity type', function (): void {
-    Bus::fake([BuildDiscoveryProjection::class]);
+    Bus::fake();
 
     $artistChannel = (string) Str::ulid();
     $recordingChannel = (string) Str::ulid();
@@ -46,4 +47,14 @@ it('queues only active discovery channels for the changed canonical entity type'
 
     Bus::assertDispatched(BuildDiscoveryProjection::class, fn (BuildDiscoveryProjection $job): bool => $job->channelId === $artistChannel);
     Bus::assertNotDispatched(BuildDiscoveryProjection::class, fn (BuildDiscoveryProjection $job): bool => in_array($job->channelId, [$recordingChannel, $draftArtistChannel], true));
+    Bus::assertNotDispatched(RefreshYouTubeViewChartJob::class);
+});
+
+it('queues one deduplicated chart refresh for canonical Recording changes when YouTube is enabled', function (): void {
+    config()->set('songchart.providers.youtube.enabled', true);
+    Bus::fake();
+
+    event(new CanonicalEntityChanged(EntityType::Recording, (string) Str::ulid(), 'title'));
+
+    Bus::assertDispatched(RefreshYouTubeViewChartJob::class, 1);
 });
