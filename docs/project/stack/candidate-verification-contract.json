@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "required_gates": [
     "composer_validate",
     "package_governance",
@@ -11,7 +11,7 @@
     "frontend_build",
     "release_verify",
     "canonical_environment",
-    "postgresql_major_18",
+    "postgresql_major_target",
     "repository_contracts",
     "lockfile_authority",
     "database_test_isolation",
@@ -29,11 +29,8 @@
     "authorization_consolidation",
     "application_data_boundary"
   ],
-  "allowed_status": [
-    "passed",
-    "failed",
-    "not_run"
-  ],
+  "allowed_status": ["passed", "failed", "not_run"],
   "closure_rule": "all required gates must be passed in the canonical verification environment",
-  "packaging_rule": "candidate manifest must describe only gates actually executed"
+  "packaging_rule": "candidate manifest must describe only gates actually executed",
+  "version_rule": "gate names describe semantic evidence classes and must not embed current runtime major versions"
 }
