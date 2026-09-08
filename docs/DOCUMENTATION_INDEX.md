@@ -47,6 +47,8 @@ This index lists active documentation ownership. Legacy stage records are migrat
 - `docs/project/engineering/project-knowledge.json`
 - `docs/project/engineering/project-kernel-contract.json`
 - `docs/project/engineering/architecture-graph-contract.json`
+- `docs/project/engineering/system-intersection-map.json`
+- `docs/project/engineering/golden-flow-contract.json`
 - `docs/project/engineering/documentation-consolidation-contract.json`
 - `docs/project/engineering/recheck-policy.json`
 - `docs/project/engineering/verification-topology.json`
