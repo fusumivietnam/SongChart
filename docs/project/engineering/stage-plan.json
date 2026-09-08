@@ -30,7 +30,10 @@
       "title": "Closure & Generated Views"
     }
   ],
-  "next_tranche": "22.0B",
+  "next_tranche": {
+    "id": "22.0B",
+    "title": "Pre-Data Architecture/Data Stabilization"
+  },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
     "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
