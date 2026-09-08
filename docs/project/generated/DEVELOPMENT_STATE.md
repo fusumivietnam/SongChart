@@ -4,17 +4,17 @@
 
 ## Current stage
 
-- Stage `21.0 — Editorial Admin UX`
-- Status: `accepted`
+- Stage `22.1 — System Intersection Map + Golden Vertical Contract`
+- Status: `active`
 - Accepted through: `21.0`
-- Task contract: `docs/foundation/STAGE_21_0_TASK_CONTRACT.md`
+- Task contract: `docs/foundation/STAGE_22_1_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `21.0A` — `ACCEPTED` — Admission queue information hierarchy
-- `21.0B` — `ACCEPTED` — Decision safety and review context
-- `21.0C` — `ACCEPTED` — Editorial navigation and accessibility
-- `21.0D` — `ACCEPTED` — Stage acceptance and closure
+- `22.1A` — `ACTIVE` — Intersection audit and ownership binding
+- `22.1B` — `PLANNED` — Golden provider/canonical fixtures
+- `22.1C` — `PLANNED` — Chart/public provenance contract closure
+- `22.1D` — `PLANNED` — Stage closure and next vertical tranche
 
 ## Next bounded tranche
 
