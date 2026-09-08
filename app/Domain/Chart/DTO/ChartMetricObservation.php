@@ -16,5 +16,9 @@ final readonly class ChartMetricObservation
         public string $metric,
         public int|float $value,
         public DateTimeImmutable $observedAt,
+        public string $metricUnit = 'count',
+        public string $metricSemanticsVersion = 'v1',
+        public ?DateTimeImmutable $fetchedAt = null,
+        public ?string $sourceReference = null,
     ) {}
 }
