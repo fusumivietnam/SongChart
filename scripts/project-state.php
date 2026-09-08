@@ -108,6 +108,150 @@ function stateMarkdown(array $state): string
     return implode(PHP_EOL, $lines);
 }
 
+/** @return array<string,mixed> */
+function controlPlaneState(string $root, array $developmentState): array
+{
+    $controlPlane = readJsonFile($root.'/docs/project/governance/project-control-plane.json');
+    $technology = readJsonFile($root.'/docs/project/governance/technology-lifecycle.json');
+    $preData = readJsonFile($root.'/docs/project/governance/pre-data-freeze.json');
+    $resilience = readJsonFile($root.'/docs/project/governance/resilience-matrix.json');
+    $databaseRisk = readJsonFile($root.'/docs/project/governance/database-risk-register.json');
+    $retention = readJsonFile($root.'/docs/project/governance/deletion-retention-matrix.json');
+    $roadmap = readJsonFile($root.'/docs/project/engineering/roadmap.json');
+
+    $components = is_array($controlPlane['components'] ?? null) ? $controlPlane['components'] : [];
+    $decisionDebt = is_array($controlPlane['decision_debt'] ?? null) ? $controlPlane['decision_debt'] : [];
+    $counts = ['components' => count($components), 'decision_debt' => count($decisionDebt), 'R3_R4' => 0];
+
+    foreach ($components as $component) {
+        if (is_array($component) && in_array($component['risk'] ?? null, ['R3', 'R4'], true)) {
+            $counts['R3_R4']++;
+        }
+    }
+    foreach ($decisionDebt as $debt) {
+        if (is_array($debt) && in_array($debt['risk'] ?? null, ['R3', 'R4'], true)) {
+            $counts['R3_R4']++;
+        }
+    }
+
+    return [
+        'schema_version' => 1,
+        'generated_from_repository' => true,
+        'current_stage' => $developmentState['current_stage'] ?? null,
+        'pre_data_state' => $preData['state'] ?? 'unknown',
+        'counts' => $counts,
+        'components' => $components,
+        'decision_debt' => $decisionDebt,
+        'technology' => $technology['technologies'] ?? [],
+        'execution_profiles' => $resilience['execution_profiles'] ?? [],
+        'database_risk' => $databaseRisk['items'] ?? [],
+        'retention_unresolved' => $retention['unresolved_owner_decisions'] ?? [],
+        'roadmap' => $roadmap['stages'] ?? [],
+    ];
+}
+
+/** @param array<string,mixed> $status */
+function controlPlaneMarkdown(array $status): string
+{
+    $stage = is_array($status['current_stage'] ?? null) ? $status['current_stage'] : [];
+    $counts = is_array($status['counts'] ?? null) ? $status['counts'] : [];
+    $lines = [
+        '# Generated SongChart System Status',
+        '',
+        '> Generated from repository control-plane authorities. Do not edit manually.',
+        '',
+        '## Executive status',
+        '',
+        '- Current stage: `'.($stage['id'] ?? 'unknown').' — '.($stage['status'] ?? 'unknown').'`',
+        '- Pre-data lifecycle: `'.($status['pre_data_state'] ?? 'unknown').'`',
+        '- Registered components: `'.($counts['components'] ?? 0).'`',
+        '- Decision-debt items: `'.($counts['decision_debt'] ?? 0).'`',
+        '- R3/R4 component + decision items: `'.($counts['R3_R4'] ?? 0).'`',
+        '',
+        '## Architecture / lifecycle',
+        '',
+        '| Component | Area | Lifecycle | Action | Risk | Stability |',
+        '| --- | --- | --- | --- | --- | --- |',
+    ];
+
+    foreach (($status['components'] ?? []) as $id => $component) {
+        if (! is_array($component)) {
+            continue;
+        }
+        $lines[] = '| `'.$id.'` | '.($component['area'] ?? 'unknown').' | `'.($component['lifecycle'] ?? 'unknown').'` | `'.($component['action'] ?? 'unknown').'` | `'.($component['risk'] ?? 'unknown').'` | `'.($component['stability'] ?? 'unknown').'` |';
+    }
+
+    $lines = array_merge($lines, [
+        '',
+        '## Upgrade radar',
+        '',
+        '| Technology | Current target | Lifecycle | Upgrade action |',
+        '| --- | --- | --- | --- |',
+    ]);
+
+    foreach (($status['technology'] ?? []) as $id => $technology) {
+        if (! is_array($technology)) {
+            continue;
+        }
+        $target = $technology['current_target'] ?? 'unknown';
+        if (is_array($target)) {
+            $target = json_encode($target, JSON_UNESCAPED_SLASHES);
+        }
+        $lines[] = '| `'.$id.'` | `'.(string) $target.'` | `'.($technology['lifecycle'] ?? 'unknown').'` | `'.($technology['upgrade_action'] ?? 'unknown').'` |';
+    }
+
+    $lines = array_merge($lines, [
+        '',
+        '## Decision debt',
+        '',
+        '| Decision | Risk | Action | Before data |',
+        '| --- | --- | --- | --- |',
+    ]);
+
+    foreach (($status['decision_debt'] ?? []) as $id => $debt) {
+        if (! is_array($debt)) {
+            continue;
+        }
+        $lines[] = '| `'.$id.'` | `'.($debt['risk'] ?? 'unknown').'` | `'.($debt['action'] ?? 'unknown').'` | '.(($debt['before_data'] ?? false) ? 'yes' : 'no').' |';
+    }
+
+    $lines = array_merge($lines, [
+        '',
+        '## Execution profiles',
+        '',
+        '| Profile | Purpose |',
+        '| --- | --- |',
+    ]);
+
+    foreach (($status['execution_profiles'] ?? []) as $id => $profile) {
+        if (! is_array($profile)) {
+            continue;
+        }
+        $lines[] = '| `'.$id.'` | '.($profile['purpose'] ?? 'unknown').' |';
+    }
+
+    $lines = array_merge($lines, [
+        '',
+        '## Roadmap',
+        '',
+        '| Stage | Status | Title |',
+        '| --- | --- | --- |',
+    ]);
+
+    foreach (($status['roadmap'] ?? []) as $roadmapStage) {
+        if (! is_array($roadmapStage)) {
+            continue;
+        }
+        $lines[] = '| `'.($roadmapStage['id'] ?? '?').'` | `'.($roadmapStage['status'] ?? 'unknown').'` | '.($roadmapStage['title'] ?? '') .' |';
+    }
+
+    $lines[] = '';
+    $lines[] = 'Detailed domain, persistence, compatibility and resilience semantics remain owned by their referenced repository authorities; this file is a generated consolidated view.';
+    $lines[] = '';
+
+    return implode(PHP_EOL, $lines);
+}
+
 try {
     $planPath = $root.'/docs/project/engineering/stage-plan.json';
     $plan = readJsonFile($planPath);
@@ -119,6 +263,13 @@ try {
         'docs/project/engineering/stage-plan.json',
         'docs/project/engineering/project-knowledge.json',
         'docs/project/engineering/consolidation-plan.json',
+        'docs/project/engineering/roadmap.json',
+        'docs/project/governance/project-control-plane.json',
+        'docs/project/governance/technology-lifecycle.json',
+        'docs/project/governance/pre-data-freeze.json',
+        'docs/project/governance/resilience-matrix.json',
+        'docs/project/governance/database-risk-register.json',
+        'docs/project/governance/deletion-retention-matrix.json',
         'candidate-verification.json',
     ];
     $hashes = [];
@@ -146,6 +297,8 @@ try {
         $state['live_work_lease'] = liveWorkLease($root);
     }
 
+    $systemStatus = controlPlaneState($root, $state);
+
     if ($writeSource) {
         $directory = $root.'/docs/project/generated';
         if (! is_dir($directory)) {
@@ -153,12 +306,15 @@ try {
         }
         file_put_contents($directory.'/development-state.json', json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
         file_put_contents($directory.'/DEVELOPMENT_STATE.md', stateMarkdown($state));
+        file_put_contents($directory.'/system-status.json', json_encode($systemStatus, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
+        file_put_contents($directory.'/SYSTEM_STATUS.md', controlPlaneMarkdown($systemStatus));
     } elseif ($writeRuntime) {
         $directory = $root.'/storage/project-state';
         if (! is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
         file_put_contents($directory.'/development-state.json', json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
+        file_put_contents($directory.'/system-status.json', json_encode($systemStatus, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
     }
 
     if ($jsonOnly) {
@@ -172,6 +328,7 @@ try {
     fwrite(STDOUT, 'Stage: '.($stage['id'] ?? 'unknown').' — '.($stage['status'] ?? 'unknown').PHP_EOL);
     fwrite(STDOUT, 'Accepted through: '.($state['accepted_through'] ?? 'unknown').PHP_EOL);
     fwrite(STDOUT, 'Next tranche: '.($next['id'] ?? 'unknown').' — '.($next['title'] ?? 'unknown').PHP_EOL);
+    fwrite(STDOUT, 'Control plane: components='.($systemStatus['counts']['components'] ?? 0).' decision-debt='.($systemStatus['counts']['decision_debt'] ?? 0).' pre-data='.($systemStatus['pre_data_state'] ?? 'unknown').PHP_EOL);
     if (isset($state['live_work_lease']) && is_array($state['live_work_lease'])) {
         $lease = $state['live_work_lease'];
         fwrite(STDOUT, 'Work lease: branch='.($lease['branch'] ?? 'unknown').' head='.substr((string) ($lease['head_sha'] ?? 'unknown'), 0, 12).' pr='.($lease['pr_number'] ?? 'n/a').' dirty='.(($lease['dirty'] ?? true) ? 'yes' : 'no').PHP_EOL);
