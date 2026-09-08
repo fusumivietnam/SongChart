@@ -64,8 +64,7 @@ it('applies an approved scalar assertion atomically and emits one semantic canon
         ->and($artist->refresh()->name)->toBe('After')
         ->and($assertion->refresh()->verification_state)->toBe(VerificationState::Verified);
 
-    Event::assertDispatched(CanonicalEntityChanged::class, fn (CanonicalEntityChanged $event): bool =>
-        $event->entityType === EntityType::Artist
+    Event::assertDispatched(CanonicalEntityChanged::class, fn (CanonicalEntityChanged $event): bool => $event->entityType === EntityType::Artist
         && $event->entityId === (string) $artist->getKey()
         && $event->fieldName === 'name'
     );
