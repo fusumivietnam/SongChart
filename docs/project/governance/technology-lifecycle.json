@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "versions_are_current_targets_not_invariants": true,
+    "major_upgrades_require_compatibility_review": true,
+    "adopt_before_security_eol": true,
+    "upgrade_only_for_newer_version": false
+  },
+  "technologies": {
+    "php": {
+      "source": "composer.json",
+      "current_target": "^8.5",
+      "role": "application_runtime",
+      "lifecycle": "adopted",
+      "replacement_boundary": "runtime_contract",
+      "upgrade_action": "review_major"
+    },
+    "laravel": {
+      "source": "composer.json",
+      "current_target": "^13.0",
+      "role": "application_framework",
+      "lifecycle": "adopted",
+      "replacement_boundary": "capability_boundaries",
+      "upgrade_action": "review_major"
+    },
+    "livewire": {
+      "source": "composer.json",
+      "current_target": "^4.0",
+      "role": "bounded_interaction_layer",
+      "lifecycle": "adopted",
+      "replacement_boundary": "presentation_interaction",
+      "upgrade_action": "review_major"
+    },
+    "postgresql": {
+      "source": "docs/project/stack/stack-manifest.json#policies.release_database_major",
+      "current_target": 18,
+      "role": "release_source_of_truth",
+      "lifecycle": "adopted",
+      "replacement_boundary": "persistence_contract",
+      "upgrade_action": "migration_and_query_plan_review"
+    },
+    "node": {
+      "source": "docs/project/stack/stack-manifest.json#policies.node_runtime_major",
+      "current_target": 24,
+      "role": "frontend_build_runtime",
+      "lifecycle": "adopted",
+      "replacement_boundary": "asset_build_contract",
+      "upgrade_action": "approved_lts_alignment"
+    },
+    "vite": {
+      "source": "package.json",
+      "current_target": "^7.0.0",
+      "role": "frontend_build_tool",
+      "lifecycle": "adopted",
+      "replacement_boundary": "asset_build_contract",
+      "upgrade_action": "review_major"
+    },
+    "tailwindcss": {
+      "source": "package.json",
+      "current_target": "^4.2.0",
+      "role": "styling_tooling",
+      "lifecycle": "adopted",
+      "replacement_boundary": "presentation_styles",
+      "upgrade_action": "review_major"
+    },
+    "playwright": {
+      "source": "package.json",
+      "current_target": "1.62.1",
+      "role": "browser_evidence_tool",
+      "lifecycle": "adopted",
+      "replacement_boundary": "browser_evidence_class",
+      "upgrade_action": "review_with_browser_evidence"
+    }
+  }
+}
