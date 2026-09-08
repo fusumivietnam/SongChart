@@ -55,6 +55,7 @@ jobs:
         run: |
           php scripts/project-context.php --write-source
           php scripts/project-state.php --write-source
+          php scripts/system-knowledge.php --write-source
           php scripts/compile-repository-contracts.php --refresh-check
           git diff --check
 
@@ -84,6 +85,7 @@ jobs:
         run: |
           composer validate --strict
           composer quality:verify
+          php scripts/verify-system-knowledge.php
 
       - name: Push generated authority only after quality passes
         if: steps.generated_commit.outputs.changed == 'true'
@@ -108,12 +110,14 @@ jobs:
           stage="$(jq -r '.current_stage.id' docs/project/engineering/stage-plan.json)"
           stage_title="$(jq -r '.current_stage.title' docs/project/engineering/stage-plan.json)"
           tranche="$(jq -r '.active_tranche // "none"' docs/project/engineering/stage-plan.json)"
+          unmapped="$(jq -r '.coverage.unmapped_entrypoints' docs/project/generated/system-knowledge.json)"
           {
             echo '## SongChart progress — runtime verification'
             echo
             echo "- Stage: ${stage} — ${stage_title}"
             echo "- Active tranche: ${tranche}"
             echo "- Exact SHA: ${EXACT_SHA}"
+            echo "- System knowledge unmapped entrypoints: ${unmapped}"
             echo '- PREPARE / QUALITY: passed'
             echo '- PostgreSQL / browser / frontend: running next'
             echo '- Canonical CLOSE: waiting'
@@ -200,7 +204,7 @@ jobs:
             echo '## Ready to promote'
             echo
             echo "- Exact SHA: $SONGCHART_PROMOTION_SHA"
-            echo '- PREPARE: generated project context + derived development state reconciled'
+            echo '- PREPARE: generated project context + derived development state + semantic system knowledge reconciled'
             echo '- QUALITY: governance/static verification passed before runtime lanes started'
             echo '- CHECK: PostgreSQL + browser + frontend passed'
             echo '- CLOSE: canonical verification passed without tracked-tree mutation'
