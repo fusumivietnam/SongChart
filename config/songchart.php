@@ -12,15 +12,8 @@ $productionEnvironmentGuardEnabled = (bool) env(
     env('APP_ENV') === 'production',
 );
 
-$developmentDatabaseMode = (string) env(
-    'SONGCHART_DEV_DATABASE_MODE',
-    'local',
-);
-
-$developmentStorageMode = (string) env(
-    'SONGCHART_DEV_STORAGE_MODE',
-    'local',
-);
+$developmentDatabaseMode = (string) env('SONGCHART_DEV_DATABASE_MODE', 'local');
+$developmentStorageMode = (string) env('SONGCHART_DEV_STORAGE_MODE', 'local');
 
 return [
     'search' => [
@@ -31,6 +24,9 @@ return [
         'schedule_enabled' => (bool) env('SONGCHART_DISCOVERY_SCHEDULE_ENABLED', true),
         'projection_batch_size' => (int) env('SONGCHART_DISCOVERY_PROJECTION_BATCH_SIZE', 250),
         'projection_ttl_minutes' => (int) env('SONGCHART_DISCOVERY_PROJECTION_TTL_MINUTES', 15),
+    ],
+    'charts' => [
+        'youtube_view_count_schedule_enabled' => (bool) env('SONGCHART_YOUTUBE_VIEW_CHART_SCHEDULE_ENABLED', false),
     ],
 
     'core_version' => env('SONGCHART_CORE_VERSION', env('APP_VERSION', 'unreleased')),
