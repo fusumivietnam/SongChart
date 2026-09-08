@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Define one semantic knowledge layer that lets humans and AI understand what SongChart is, what exists, what is missing, how capabilities relate, where authority lives, and what may be changed without guessing file or function names.",
+  "principles": [
+    "Repository authority is the source; generated guides are projections.",
+    "Missing, partial, planned and explicitly deferred work are first-class knowledge states.",
+    "Semantic IDs are preferred over inferred file/function names.",
+    "Every generated statement must retain source authority references.",
+    "Audience guides are projections of one shared knowledge graph, not separately maintained documents."
+  ],
+  "node_types": [
+    "product",
+    "audience",
+    "journey",
+    "capability",
+    "use_case",
+    "route",
+    "implementation",
+    "domain_entity",
+    "data_owner",
+    "table",
+    "provider",
+    "authority",
+    "verification",
+    "stage",
+    "decision",
+    "gap",
+    "document"
+  ],
+  "edge_types": [
+    "serves",
+    "contains",
+    "requires",
+    "implemented_by",
+    "exposed_by",
+    "reads",
+    "writes",
+    "owned_by",
+    "verified_by",
+    "documented_by",
+    "planned_in",
+    "blocked_by",
+    "supersedes",
+    "related_to"
+  ],
+  "knowledge_states": ["implemented", "partial", "planned", "explicit_gap", "deprecated", "unknown"],
+  "source_authorities": {
+    "project": "docs/project/engineering/project-knowledge.json",
+    "journeys": "docs/project/domain/product-user-journeys.json",
+    "use_cases": "docs/project/domain/use-case-contracts.json",
+    "domain": "docs/project/domain/domain-contracts.json",
+    "schema_ownership": "docs/project/domain/schema-ownership.json",
+    "stage": "docs/project/engineering/stage-plan.json",
+    "roadmap": "docs/project/engineering/roadmap.json",
+    "control_plane": "docs/project/governance/project-control-plane.json",
+    "architecture_graph": "docs/project/engineering/architecture-graph-contract.json"
+  },
+  "audience_projections": {
+    "new_developer": {
+      "goal": "Understand the system enough to navigate and make a bounded change without reading the entire repository.",
+      "default_depth": "overview_then_feature_trace"
+    },
+    "ai": {
+      "goal": "Resolve semantic owners, existing capabilities, gaps, relations and verification before editing; never infer ownership from filenames alone.",
+      "default_depth": "machine_index_then_authority_sources"
+    },
+    "product_owner": {
+      "goal": "See capabilities, completeness, decision debt and roadmap without implementation noise.",
+      "default_depth": "journey_and_roadmap"
+    },
+    "operator": {
+      "goal": "Understand operational capabilities, failure ownership and recovery entrypoints.",
+      "default_depth": "operations_and_verification"
+    },
+    "end_user": {
+      "goal": "Understand available product capabilities and how to use them without exposing internal architecture vocabulary.",
+      "default_depth": "implemented_public_capabilities_only"
+    }
+  },
+  "generated_outputs": {
+    "machine_index": "docs/project/generated/system-knowledge.json",
+    "human_overview": "docs/project/generated/SYSTEM_GUIDE.md",
+    "feature_matrix": "docs/project/generated/FEATURE_MATRIX.md"
+  }
+}
