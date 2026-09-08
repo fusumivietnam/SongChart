@@ -28,28 +28,83 @@ function stateFromJourney(string $status): string
     };
 }
 
+/** @return array<string,array<string,mixed>> */
+function laravelRoutes(string $root): array
+{
+    $command = 'cd '.escapeshellarg($root).' && php artisan route:list --json 2>/dev/null';
+    $raw = shell_exec($command);
+    if (! is_string($raw) || trim($raw) === '') {
+        return [];
+    }
+
+    try {
+        $rows = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+    } catch (Throwable) {
+        return [];
+    }
+
+    if (! is_array($rows)) {
+        return [];
+    }
+
+    $routes = [];
+    foreach ($rows as $row) {
+        if (! is_array($row)) {
+            continue;
+        }
+        $name = $row['name'] ?? null;
+        if (! is_string($name) || $name === '') {
+            continue;
+        }
+        $routes[$name] = [
+            'name' => $name,
+            'method' => $row['method'] ?? null,
+            'uri' => isset($row['uri']) ? '/'.ltrim((string) $row['uri'], '/') : null,
+            'action' => $row['action'] ?? null,
+            'middleware' => $row['middleware'] ?? [],
+            'source' => 'Laravel route registry (php artisan route:list --json)',
+        ];
+    }
+
+    ksort($routes);
+
+    return $routes;
+}
+
 function featureMatrixMarkdown(array $index): string
 {
     $lines = [
         '# Generated Feature Matrix',
         '',
-        '> Generated from repository authorities. Do not edit manually.',
+        '> Generated from repository authorities and Laravel route registry. Do not edit manually.',
         '',
-        '| Journey | State | Goal | Mapped use cases | Explicit gaps |',
-        '| --- | --- | --- | ---: | ---: |',
+        '| Journey | Journey state | Implemented route surfaces | Contract-mapped use cases | Contract gaps | Explicit product/domain gaps |',
+        '| --- | --- | ---: | ---: | ---: | ---: |',
     ];
 
     foreach ($index['journeys'] as $journey) {
-        $lines[] = '| `'.$journey['id'].'` | `'.$journey['state'].'` | '.str_replace('|', '\\|', $journey['goal']).' | '.count($journey['mapped_use_cases']).' | '.count($journey['gaps']).' |';
+        $lines[] = '| `'.$journey['id'].'` | `'.$journey['state'].'` | '.count($journey['implemented_route_surfaces']).' | '.count($journey['mapped_use_cases']).' | '.count($journey['contract_gaps']).' | '.count($journey['gaps']).' |';
     }
 
     $lines[] = '';
-    $lines[] = '## Unmapped declared entrypoints';
+    $lines[] = '## Implemented surfaces with missing executable use-case mapping';
     $lines[] = '';
-    if ($index['unmapped_entrypoints'] === []) {
+    if ($index['contract_gaps'] === []) {
         $lines[] = '- None.';
     } else {
-        foreach ($index['unmapped_entrypoints'] as $gap) {
+        foreach ($index['contract_gaps'] as $gap) {
+            $route = $gap['route'];
+            $lines[] = '- `'.$gap['journey'].'` -> `'.$gap['entrypoint'].'` — surface `'.$route['method'].' '.$route['uri'].'` exists, but executable use-case mapping is missing.';
+        }
+    }
+
+    $lines[] = '';
+    $lines[] = '## Unknown declared entrypoints';
+    $lines[] = '';
+    if ($index['unknown_entrypoints'] === []) {
+        $lines[] = '- None.';
+    } else {
+        foreach ($index['unknown_entrypoints'] as $gap) {
             $lines[] = '- `'.$gap['journey'].'` -> `'.$gap['entrypoint'].'` — '.$gap['reason'];
         }
     }
@@ -72,12 +127,14 @@ function systemGuideMarkdown(array $index): string
         '',
         'The short mental model is: **user journey -> capability/use case -> route/implementation -> domain/data owner -> verification -> roadmap**.',
         '',
+        'A route or UI surface may already exist even when its executable use-case contract is not mapped yet. This guide reports those as **implemented surface / contract gap**, never as “feature missing”.',
+        '',
         '## 2. What exists now',
         '',
     ];
 
     foreach ($index['journeys'] as $journey) {
-        $lines[] = '- **'.$journey['id'].'** — `'.$journey['state'].'` — '.$journey['goal'];
+        $lines[] = '- **'.$journey['id'].'** — `'.$journey['state'].'` — '.$journey['goal'].' (routes '.count($journey['implemented_route_surfaces']).', mapped use cases '.count($journey['mapped_use_cases']).', contract gaps '.count($journey['contract_gaps']).')';
     }
 
     $lines = array_merge($lines, [
@@ -85,28 +142,40 @@ function systemGuideMarkdown(array $index): string
         '## 3. Coverage at a glance',
         '',
         '- Journeys: `'.$coverage['journeys'].'`',
-        '- Use-case contracts: `'.$coverage['use_cases'].'`',
-        '- Journey-declared use cases mapped: `'.$coverage['mapped_use_cases'].'`',
-        '- Explicitly unmapped route/use-case entrypoints: `'.$coverage['unmapped_entrypoints'].'`',
+        '- Executable use-case contracts: `'.$coverage['use_cases'].'`',
+        '- Journey-linked use-case contracts: `'.$coverage['mapped_use_cases'].'`',
+        '- Implemented journey route surfaces: `'.$coverage['implemented_route_surfaces'].'`',
+        '- Implemented surfaces missing executable use-case mapping: `'.$coverage['contract_gaps'].'`',
+        '- Unknown declared entrypoints: `'.$coverage['unknown_entrypoints'].'`',
         '- Current stage: `'.$index['stage']['id'].'` — '.$index['stage']['title'].' (`'.$index['stage']['status'].'`)',
         '',
         '## 4. How to trace one feature',
         '',
         '1. Start from a journey ID in `system-knowledge.json`.',
-        '2. Follow its mapped use-case IDs; each record carries route, URI, implementation and data surfaces when known.',
-        '3. Follow data-surface owners into schema/domain authority instead of searching table names blindly.',
-        '4. Check the journey/use-case state to distinguish implemented, partial, planned and explicit gaps.',
-        '5. Check current stage/roadmap before adding a new capability.',
+        '2. Check `implemented_route_surfaces` to prove the HTTP surface actually exists in Laravel.',
+        '3. Follow `mapped_use_cases`; each mapped contract carries route, implementation and data surfaces when known.',
+        '4. If the surface exists in `contract_gaps`, do not infer its application owner from controller/function names. Close the contract mapping first.',
+        '5. Follow data-surface owners into schema/domain authority instead of searching table names blindly.',
+        '6. Check current stage/roadmap before adding a new capability.',
         '',
-        '## 5. Known gaps that should not be guessed around',
+        '## 5. Mapping debt that should not be guessed around',
         '',
     ]);
 
-    if ($index['unmapped_entrypoints'] === []) {
-        $lines[] = '- No declared journey entrypoint is currently unmapped.';
+    if ($index['contract_gaps'] === []) {
+        $lines[] = '- No implemented journey surface currently lacks an executable use-case mapping.';
     } else {
-        foreach ($index['unmapped_entrypoints'] as $gap) {
-            $lines[] = '- `'.$gap['journey'].'` declares `'.$gap['entrypoint'].'`, but no matching executable use-case contract is mapped yet. '.$gap['reason'];
+        foreach ($index['contract_gaps'] as $gap) {
+            $route = $gap['route'];
+            $lines[] = '- `'.$gap['journey'].'` -> `'.$gap['entrypoint'].'`: Laravel proves `'.$route['method'].' '.$route['uri'].'` exists; executable use-case contract is still missing.';
+        }
+    }
+
+    if ($index['unknown_entrypoints'] !== []) {
+        $lines[] = '';
+        $lines[] = 'Unknown declarations:';
+        foreach ($index['unknown_entrypoints'] as $gap) {
+            $lines[] = '- `'.$gap['journey'].'` -> `'.$gap['entrypoint'].'`: '.$gap['reason'];
         }
     }
 
@@ -114,15 +183,15 @@ function systemGuideMarkdown(array $index): string
         '',
         '## 6. Audience projections',
         '',
-        '- **New developer:** read this guide, then `FEATURE_MATRIX.md`, then open only the authorities referenced by the feature being changed.',
-        '- **AI:** load `system-knowledge.json` first; resolve semantic IDs and source authorities before inspecting implementation files.',
-        '- **Product owner:** focus on journey state, gaps, decision debt and roadmap; implementation paths are secondary.',
+        '- **New developer:** read this guide, then `FEATURE_MATRIX.md`, then open only authorities referenced by the feature being changed.',
+        '- **AI:** load `system-knowledge.json` first; resolve semantic IDs, mapping state and source authorities before inspecting implementation files.',
+        '- **Product owner:** focus on journey state, product/domain gaps, decision debt and roadmap; contract mapping debt is engineering detail.',
         '- **Operator:** follow operational journeys and verification/recovery authorities.',
-        '- **End user:** future user guides should be generated only from implemented public capabilities and must hide internal IDs, contracts and infrastructure.',
+        '- **End user:** future guides should be generated only from implemented public capabilities and must hide internal IDs, contracts and infrastructure.',
         '',
         '## 7. Rule for future documentation',
         '',
-        'Do not create an independently maintained user/dev/AI guide that copies system facts. Add or correct the owning authority/mapping, then regenerate the appropriate audience projection from this knowledge layer.',
+        'Do not create an independently maintained user/dev/AI guide that copies system facts. Correct the owning authority or mapping, then regenerate the appropriate audience projection from this knowledge layer.',
         '',
     ]);
 
@@ -141,10 +210,13 @@ try {
         throw new RuntimeException('Required system knowledge authorities are missing or invalid.');
     }
 
+    $routeRegistry = laravelRoutes($root);
     $useCaseMap = is_array($useCases['use_cases'] ?? null) ? $useCases['use_cases'] : [];
     $journeyIndex = [];
-    $unmapped = [];
+    $contractGaps = [];
+    $unknownEntrypoints = [];
     $mappedCount = 0;
+    $implementedSurfaceCount = 0;
 
     foreach (($journeys['journeys'] ?? []) as $journeyId => $journey) {
         if (! is_array($journey)) {
@@ -154,45 +226,83 @@ try {
         $declaredUseCases = array_values(array_filter(array_map('strval', $journey['use_cases'] ?? [])));
         $routeNames = array_values(array_filter(array_map('strval', $journey['route_names'] ?? [])));
         $mapped = [];
+        $implementedRoutes = [];
+        $journeyContractGaps = [];
+
         foreach ($declaredUseCases as $useCaseId) {
-            if (isset($useCaseMap[$useCaseId]) && is_array($useCaseMap[$useCaseId])) {
-                $uc = $useCaseMap[$useCaseId];
-                $mapped[$useCaseId] = [
-                    'id' => $useCaseId,
-                    'route_name' => $uc['route_name'] ?? null,
-                    'uri' => $uc['uri'] ?? null,
-                    'method' => $uc['method'] ?? null,
-                    'implementation' => $uc['implementation'] ?? null,
-                    'read_only' => $uc['read_only'] ?? null,
-                    'data_surfaces' => array_keys(array_merge(
-                        is_array($uc['data_surfaces'] ?? null) ? $uc['data_surfaces'] : [],
-                        is_array($uc['support_surfaces'] ?? null) ? $uc['support_surfaces'] : [],
-                    )),
-                    'source' => 'docs/project/domain/use-case-contracts.json#use_cases.'.$useCaseId,
-                ];
-                $mappedCount++;
-            } else {
-                $unmapped[] = [
+            if (! isset($useCaseMap[$useCaseId]) || ! is_array($useCaseMap[$useCaseId])) {
+                $unknownEntrypoints[] = [
                     'journey' => (string) $journeyId,
                     'entrypoint' => $useCaseId,
                     'reason' => 'Declared use-case ID has no executable use-case contract.',
                 ];
+                continue;
             }
+
+            $uc = $useCaseMap[$useCaseId];
+            $routeName = is_string($uc['route_name'] ?? null) ? $uc['route_name'] : null;
+            $route = $routeName !== null && isset($routeRegistry[$routeName]) ? $routeRegistry[$routeName] : null;
+            $mapped[$useCaseId] = [
+                'id' => $useCaseId,
+                'state' => 'implemented',
+                'route_name' => $routeName,
+                'route_registry' => $route,
+                'uri' => $uc['uri'] ?? ($route['uri'] ?? null),
+                'method' => $uc['method'] ?? ($route['method'] ?? null),
+                'implementation' => $uc['implementation'] ?? null,
+                'read_only' => $uc['read_only'] ?? null,
+                'data_surfaces' => array_keys(array_merge(
+                    is_array($uc['data_surfaces'] ?? null) ? $uc['data_surfaces'] : [],
+                    is_array($uc['support_surfaces'] ?? null) ? $uc['support_surfaces'] : [],
+                )),
+                'source' => 'docs/project/domain/use-case-contracts.json#use_cases.'.$useCaseId,
+            ];
+            $mappedCount++;
         }
 
         foreach ($routeNames as $routeName) {
-            $found = false;
-            foreach ($useCaseMap as $uc) {
+            $route = $routeRegistry[$routeName] ?? null;
+            $mappedContractId = null;
+            foreach ($useCaseMap as $candidateId => $uc) {
                 if (is_array($uc) && ($uc['route_name'] ?? null) === $routeName) {
-                    $found = true;
+                    $mappedContractId = (string) $candidateId;
                     break;
                 }
             }
-            if (! $found) {
-                $unmapped[] = [
+
+            if (is_array($route)) {
+                $implementedRoutes[] = [
+                    'route_name' => $routeName,
+                    'state' => 'implemented',
+                    'contract_state' => $mappedContractId !== null ? 'mapped' : 'gap',
+                    'use_case_id' => $mappedContractId,
+                    'method' => $route['method'],
+                    'uri' => $route['uri'],
+                    'action' => $route['action'],
+                    'middleware' => $route['middleware'],
+                    'source' => $route['source'],
+                ];
+                $implementedSurfaceCount++;
+
+                if ($mappedContractId === null) {
+                    $gap = [
+                        'journey' => (string) $journeyId,
+                        'entrypoint' => $routeName,
+                        'surface_state' => 'implemented',
+                        'contract_state' => 'missing',
+                        'knowledge_state' => 'partial',
+                        'route' => $route,
+                        'reason' => 'Laravel route exists but no executable use-case contract maps to it.',
+                        'source' => 'docs/project/domain/product-user-journeys.json#journeys.'.$journeyId,
+                    ];
+                    $journeyContractGaps[] = $gap;
+                    $contractGaps[] = $gap;
+                }
+            } else {
+                $unknownEntrypoints[] = [
                     'journey' => (string) $journeyId,
                     'entrypoint' => $routeName,
-                    'reason' => 'Journey declares this route explicitly but no use-case contract maps to it.',
+                    'reason' => 'Journey declares this route but Laravel route registry does not expose it.',
                 ];
             }
         }
@@ -204,7 +314,9 @@ try {
             'state' => stateFromJourney((string) ($journey['status'] ?? 'unknown')),
             'goal' => (string) ($journey['goal'] ?? ''),
             'required_capabilities' => array_values(array_map('strval', $journey['required_domain_capabilities'] ?? [])),
+            'implemented_route_surfaces' => $implementedRoutes,
             'mapped_use_cases' => array_values($mapped),
+            'contract_gaps' => $journeyContractGaps,
             'gaps' => array_values(array_map('strval', $journey['stage_20_gaps'] ?? [])),
             'source' => 'docs/project/domain/product-user-journeys.json#journeys.'.$journeyId,
         ];
@@ -212,7 +324,7 @@ try {
 
     $stage = is_array($stagePlan['current_stage'] ?? null) ? $stagePlan['current_stage'] : [];
     $index = [
-        'schema_version' => 1,
+        'schema_version' => 2,
         'generated_from_repository' => true,
         'contract' => 'docs/project/engineering/system-knowledge-contract.json',
         'product' => [
@@ -230,16 +342,20 @@ try {
         'roadmap' => $roadmap,
         'journeys' => $journeyIndex,
         'use_cases' => $useCaseMap,
-        'unmapped_entrypoints' => $unmapped,
+        'route_registry' => $routeRegistry,
+        'contract_gaps' => $contractGaps,
+        'unknown_entrypoints' => $unknownEntrypoints,
         'coverage' => [
             'journeys' => count($journeyIndex),
             'use_cases' => count($useCaseMap),
             'mapped_use_cases' => $mappedCount,
-            'unmapped_entrypoints' => count($unmapped),
+            'implemented_route_surfaces' => $implementedSurfaceCount,
+            'contract_gaps' => count($contractGaps),
+            'unknown_entrypoints' => count($unknownEntrypoints),
         ],
         'source_authorities' => $contract['source_authorities'] ?? [],
         'audience_projections' => $contract['audience_projections'] ?? [],
-        'navigation_rule' => 'Resolve semantic journey/use-case/capability IDs and their source authorities before searching implementation names.',
+        'navigation_rule' => 'Resolve semantic journey/use-case/capability IDs and mapping state before searching implementation names. Existing route surface does not imply mapped application ownership.',
     ];
 
     if ($write) {
@@ -258,7 +374,7 @@ try {
     }
 
     fwrite(STDOUT, 'SongChart System Knowledge'.PHP_EOL);
-    fwrite(STDOUT, 'Journeys: '.$index['coverage']['journeys'].' Use cases: '.$index['coverage']['use_cases'].' Unmapped: '.$index['coverage']['unmapped_entrypoints'].PHP_EOL);
+    fwrite(STDOUT, 'Journeys: '.$index['coverage']['journeys'].' Use cases: '.$index['coverage']['use_cases'].' Routes: '.$index['coverage']['implemented_route_surfaces'].' Contract gaps: '.$index['coverage']['contract_gaps'].' Unknown: '.$index['coverage']['unknown_entrypoints'].PHP_EOL);
     fwrite(STDOUT, 'Machine JSON: php scripts/system-knowledge.php --json'.PHP_EOL);
 } catch (Throwable $exception) {
     fwrite(STDERR, 'Unable to compile system knowledge: '.$exception->getMessage().PHP_EOL);
