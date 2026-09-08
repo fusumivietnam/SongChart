@@ -4,7 +4,7 @@
     "id": "22.1",
     "title": "System Intersection Map + Golden Vertical Contract",
     "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
-    "status": "verification_pending"
+    "status": "active"
   },
   "accepted_through": "21.0",
   "active_tranche": "22.1D",
@@ -13,7 +13,7 @@
     {"id":"22.1B","status":"accepted","title":"Golden provider/canonical fixtures"},
     {
       "id":"22.1C",
-      "status":"implementation_complete",
+      "status":"accepted",
       "title":"Chart/public provenance contract closure",
       "implemented":[
         "provider-neutral provenance-first chart observation DTO",
@@ -27,20 +27,34 @@
         "manual and opt-in hourly chart refresh",
         "canonical-change semantic event",
         "bounded active-channel Discovery reprojection",
-        "bounded queued chart refresh for canonical Recording changes"
-      ]
+        "bounded queued chart refresh for canonical Recording changes",
+        "polymorphic canonical-reference contract and runtime scanner",
+        "raw-persistence corruption verification for unknown canonical entity types"
+      ],
+      "verification_evidence":"Auto Closure run 293 passed on exact head 9940aeda6b4e198aa02045ad5553b97de072c594"
     },
     {
       "id":"22.1D",
-      "status":"verification_pending",
-      "title":"Stage closure and next vertical tranche",
+      "status":"active",
+      "title":"Runtime integrity surface",
+      "goals":[
+        "Expose canonical polymorphic-reference integrity as a read-only songchart:doctor check",
+        "Make --strict fail when persisted canonical polymorphic references are corrupt",
+        "Preserve repository/domain contract ownership; doctor remains a consumer",
+        "Verify the exact current head after runtime-diagnostic integration"
+      ]
+    },
+    {
+      "id":"22.1E",
+      "status":"planned",
+      "title":"Stage closure and next control-plane tranche",
       "blockers":[
-        "exact-head Auto Closure must complete successfully",
-        "live production activation requires YouTube policy/quota acceptance, credential and at least one approved public canonical destination"
+        "exact-head Auto Closure must pass after Runtime Integrity Surface changes",
+        "live production activation of YouTube chart observations still requires accepted policy/quota, credential and at least one approved public canonical destination"
       ]
     }
   ],
-  "next_tranche":"23.0-public-product-ux-after-stage-22-acceptance",
+  "next_tranche":"22.2-runtime-control-plane-consolidation",
   "blocker_report":"docs/foundation/STAGE_22_BLOCKER_REPORT.md",
   "work_lease":{
     "authority":"live Git branch + GitHub pull request",
