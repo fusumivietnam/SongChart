@@ -6,13 +6,13 @@ Trạng thái: định hướng active/future. `docs/project/engineering/stage-p
 
 Chuyển Admin từ technical-console-first sang task-oriented editorial operations: Nội dung, Cần xử lý, Nguồn dữ liệu và Hệ thống. Technical diagnostics vẫn tồn tại nhưng không chi phối information architecture.
 
-## Stage 22 — Design System Authority
+## Stage 22 — Production Vertical Closure
 
-Figma/tokens/components/Code Connect → production components → browser screenshot/visual regression. Không đổi frontend stack chỉ để đạt fidelity.
+Đóng các giao điểm subsystem thành product flow có bằng chứng: provider evidence → canonical identity/admission → deterministic chart contract/snapshot provenance → canonical public read path, đồng thời bảo đảm correction propagation và exact-tree verification. Không tạo chart/listener/popularity giả để đạt closure. Design-system authority vẫn được duy trì bởi `docs/ui/` và các production component/browser contracts hiện có; Stage 22 không đổi frontend stack chỉ để đạt fidelity.
 
 ## Stage 23 — Public Product UX
 
-Hoàn thiện discovery/search/artist/recording/work/release/charts/collections/credits/mobile experience. Đánh giá Cloudflare Pages/Workers và search-engine integration chỉ ở nơi public UX/traffic chứng minh nhu cầu.
+Hoàn thiện discovery/search/artist/recording/work/release/charts/collections/credits/mobile experience. Chart UX Stage 23 tiêu thụ persisted chart read contract từ Stage 22 thay vì tự tạo ranking semantics. Đánh giá Cloudflare Pages/Workers và search-engine integration chỉ ở nơi public UX/traffic chứng minh nhu cầu.
 
 ## Stage 24 — Operational Intelligence
 
