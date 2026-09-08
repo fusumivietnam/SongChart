@@ -110,6 +110,7 @@ if (! is_array($surfaces) || $surfaces === []) {
     foreach ($surfaces as $surface) {
         if (! is_array($surface)) {
             $errors[] = 'Polymorphic reference surface must be an object.';
+
             continue;
         }
         $table = $surface['table'] ?? null;
@@ -117,6 +118,7 @@ if (! is_array($surfaces) || $surfaces === []) {
         $id = $surface['id_column'] ?? null;
         if (! is_string($table) || $table === '' || ! is_string($type) || $type === '' || ! is_string($id) || $id === '') {
             $errors[] = 'Polymorphic reference surface is incomplete.';
+
             continue;
         }
         $key = $table.':'.$type.':'.$id;
