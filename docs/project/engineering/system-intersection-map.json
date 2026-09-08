@@ -1,263 +1,175 @@
 {
-  "schema_version": 2,
-  "purpose": "Machine-readable authority for critical end-to-end SongChart product-flow intersections. It records whether adjacent subsystems are actually connected and how that connection is verified.",
+  "schema_version": 3,
+  "purpose": "Machine-readable authority for critical end-to-end SongChart product-flow intersections.",
   "status_values": ["verified", "partial", "missing", "unknown"],
   "policy": {
     "component_existence_is_not_flow_closure": true,
     "critical_edges_require_verification": true,
-    "missing_edges_block_vertical-closure_acceptance": true,
-    "unknown_edges_must_be_resolved_before_stage_22_1_closure": true,
-    "product_flows_are_first_class_impact_consumers": true,
-    "verified_requires_concrete_implementation_and_verification_route": true,
-    "direct_read_paths_do_not_require_artificial_reindex_or_cache_layers": true
+    "missing_edges_block_vertical_closure_acceptance": true,
+    "unknown_edges_must_be_zero_before_stage_22_1_closure": true,
+    "fabricated_chart_data_is_forbidden": true
   },
   "audit": {
-    "stage": "22.1A",
-    "result": "critical_unknowns_resolved",
-    "rule": "Statuses describe current repository behavior, not roadmap intent. Missing chart-intelligence edges are recorded as missing because existing Discovery authority explicitly excludes Stage 17 chart-intelligence metrics until read models and metric contracts exist."
+    "stage": "22.1C",
+    "result": "no_unknown_critical_edges_but_production_chart_vertical_blocked",
+    "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md"
   },
   "flows": {
     "provider_to_canonical": {
-      "product_outcome": "A provider observation can become governed canonical music evidence without bypassing provenance or admission rules.",
       "critical": true,
       "edges": [
         {
           "id": "provider.fetch_to_raw_observation",
           "status": "partial",
-          "source": "provider adapter/runtime",
-          "consumer": "provider import/evidence persistence",
-          "implementation": ["app/Support/Providers", "app/Enums/QueueName.php"],
-          "verification": "Provider-specific import/runtime coverage exists, but Stage 22.1B must bind deterministic golden evidence to one representative provider path.",
-          "next_action": "Bind one real provider adapter/import path and its existing tests to the golden fixture contract."
+          "implementation": ["app/Support/Providers"],
+          "verification": "Existing provider import/runtime coverage exists; Stage 22 golden fixtures do not yet traverse one real provider metric source."
         },
         {
           "id": "raw_observation_to_normalization",
           "status": "partial",
-          "source": "provider import evidence",
-          "consumer": "normalized provider evidence",
-          "implementation": ["app/Support/Providers", "app/Enums/QueueName.php"],
-          "verification": "Provider normalization has an owned queue/runtime surface, but deterministic replay/provenance is not yet proven by the Stage 22 golden cases.",
-          "next_action": "Prove normalization replay and retained source provenance in 22.1B."
+          "implementation": ["app/Support/Providers/Normalization"],
+          "verification": "Normalization infrastructure exists, but production chart-metric normalization is not emitted by a real time-series source."
         },
         {
           "id": "normalization_to_identity_resolution",
           "status": "partial",
-          "source": "normalized provider evidence",
-          "consumer": "canonical admission evidence",
-          "implementation": ["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php", "app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],
-          "tests": ["tests/Feature/Catalog/ProviderAdmissionIntegrationTest.php"],
-          "verification": "Provider evidence is materialized into governed admission, but multi-provider identity conflict/idempotency needs explicit golden-case proof.",
-          "next_action": "Cover same-song multi-provider, same-name artist and provider-conflict fixtures in 22.1B."
+          "implementation": ["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php"],
+          "tests": ["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php"],
+          "verification": "Golden cases prove ambiguity/conflict remains governed and same input replays idempotently."
         },
         {
           "id": "identity_resolution_to_admission",
           "status": "verified",
-          "source": "provider/canonical assertion",
-          "consumer": "governed canonical admission",
           "implementation": ["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php", "app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],
-          "tests": ["tests/Feature/Catalog/ProviderAdmissionIntegrationTest.php", "tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"],
-          "verification": "Existing feature coverage owns staging and governed apply/reject behavior."
+          "tests": ["tests/Feature/Catalog/ProviderAdmissionIntegrationTest.php", "tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]
         },
         {
           "id": "admission_to_canonical_graph",
-          "status": "partial",
-          "source": "accepted admission decision",
-          "consumer": "canonical entity state and relationships",
-          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],
-          "tests": ["tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"],
-          "verification": "Scalar canonical-field mutation is implemented transactionally and verified; Stage 22 golden flow has not yet proven relationship-level graph convergence for representative provider cases.",
-          "next_action": "Prove artist/release/provider relationship projection on golden song cases in 22.1B."
+          "status": "verified",
+          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php", "app/Models/Catalog/RecordingVersion.php"],
+          "tests": ["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php", "tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]
         }
       ]
     },
     "canonical_to_chart": {
-      "product_outcome": "Canonical songs receive reproducible chart positions derived from traceable provider/time-series inputs.",
       "critical": true,
       "edges": [
         {
           "id": "canonical_entity_to_chart_input",
-          "status": "missing",
-          "source": "canonical song",
-          "consumer": "chart metric input",
-          "evidence": ["docs/discovery/rule-engine.md"],
-          "verification": "Discovery field authority explicitly excludes Stage 17 chart-intelligence metrics until their read models and metric contracts exist.",
-          "next_action": "Define the smallest canonical-song chart-input read model in the next bounded vertical implementation tranche."
+          "status": "partial",
+          "implementation": ["app/Domain/Chart/DTO/ChartMetricObservation.php"],
+          "verification": "Chart input requires canonical recording identity, but no production provider metric emitter currently creates these observations."
         },
         {
           "id": "provider_signal_to_metric_normalization",
           "status": "missing",
-          "source": "provider/time-series signal",
-          "consumer": "normalized chart metric",
-          "evidence": ["docs/discovery/rule-engine.md"],
-          "verification": "No current chart metric normalization contract is exposed to Discovery/product projection authority.",
-          "next_action": "Introduce provider-neutral metric input/provenance contract before ranking logic."
+          "implementation": ["app/Domain/Chart/DTO/ChartMetricObservation.php"],
+          "verification": "Provider-neutral observation contract exists; real provider time-series normalization source is absent.",
+          "next_action": "Stage 22.2 provider metric ingestion."
         },
         {
           "id": "metric_normalization_to_ranking",
-          "status": "missing",
-          "source": "normalized chart metric",
-          "consumer": "chart ranking calculation",
-          "evidence": ["docs/discovery/rule-engine.md"],
-          "verification": "Current Discovery ranking orders bounded canonical projections; it is not a provider-signal chart ranking engine.",
-          "next_action": "Implement versioned chart ranking separately from Discovery projection rank semantics."
+          "status": "verified",
+          "implementation": ["app/Application/Chart/BuildChartSnapshot.php"],
+          "tests": ["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],
+          "verification": "For one explicit comparable metric, ranking is deterministic, calculation-versioned and tie-broken by canonical id."
         },
         {
           "id": "ranking_to_chart_snapshot",
-          "status": "missing",
-          "source": "chart ranking result",
-          "consumer": "immutable/reproducible chart snapshot",
-          "verification": "No verified chart-snapshot owner was found in the current production path.",
-          "next_action": "Persist versioned chart snapshots only after metric/ranking ownership is defined."
+          "status": "partial",
+          "implementation": ["app/Domain/Chart/DTO/ChartSnapshot.php", "app/Application/Chart/BuildChartSnapshot.php"],
+          "tests": ["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],
+          "verification": "Reproducible snapshot DTO exists, but immutable production persistence/revision ownership is missing."
         },
         {
           "id": "chart_snapshot_to_provenance",
-          "status": "missing",
-          "source": "chart row",
-          "consumer": "input/calculation provenance",
-          "verification": "Required by golden-flow contract; no current reproducible chart-row provenance owner exists.",
-          "next_action": "Snapshot must retain calculation version, canonical song identity, input observation identities/timestamps and ranking basis."
+          "status": "partial",
+          "implementation": ["app/Domain/Chart/DTO/ChartMetricObservation.php", "app/Domain/Chart/DTO/ChartSnapshot.php"],
+          "tests": ["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],
+          "verification": "Calculation version and input observation ids are retained; persisted observation/snapshot audit history is missing."
         }
       ]
     },
     "canonical_chart_to_public": {
-      "product_outcome": "A newly governed entity and its chart state become consistently discoverable across public SongChart surfaces.",
       "critical": true,
       "edges": [
         {
           "id": "canonical_to_public_read_model",
           "status": "verified",
-          "source": "canonical graph/models",
-          "consumer": "public search/entity read model",
-          "implementation": ["app/Support/Search/EloquentSearchCatalog.php", "app/Application/Catalog/Queries/EntityPassportReadModel.php", "app/Application/Catalog/Queries/PublicRelationshipReadModel.php", "app/Application/Catalog/Queries/PublicProviderDestinationReadModel.php"],
-          "verification": "EloquentSearchCatalog reads canonical entity types and emits canonical_id, slug, canonical URLs, relationships, provider destinations and provenance-backed source details."
+          "implementation": ["app/Support/Search/EloquentSearchCatalog.php"]
         },
         {
           "id": "chart_to_public_read_model",
-          "status": "missing",
-          "source": "chart snapshot",
-          "consumer": "public chart/read model",
-          "verification": "Blocked by missing chart metric/ranking/snapshot capability; DiscoveryProjection rank is discovery ordering and must not be misclassified as a SongChart chart position.",
-          "next_action": "Bind a real chart snapshot to a public read model after canonical-to-chart closure."
+          "status": "partial",
+          "implementation": ["app/Application/Chart/Queries/PublicChartProjection.php"],
+          "tests": ["tests/Feature/Chart/PublicChartProjectionTest.php"],
+          "verification": "Chart rows resolve to the same canonical recording id/title/slug/URL; persisted latest-snapshot owner and public route are missing."
         },
         {
           "id": "public_read_model_to_routes_views",
           "status": "verified",
-          "source": "SearchCatalog/public catalog read model",
-          "consumer": "web routes/views",
-          "implementation": ["app/Actions/Search/BuildSearchPage.php", "app/Http/Controllers/Search/SearchController.php", "app/Support/Search/EloquentSearchCatalog.php", "routes/web.php"],
-          "verification": "Existing implemented public search flow consumes SearchCatalog through action/controller boundaries."
+          "implementation": ["app/Support/Search/EloquentSearchCatalog.php", "routes/web.php"],
+          "verification": "Canonical public entity/search routes already exist; chart route remains separate missing work."
         },
         {
           "id": "canonical_to_search",
           "status": "verified",
-          "source": "canonical models",
-          "consumer": "bounded canonical database search",
-          "implementation": ["app/Contracts/Search/SearchCatalog.php", "app/Support/Search/EloquentSearchCatalog.php"],
-          "verification": "Search queries canonical entity model classes directly and emits canonical_id plus PublicEntityUrl; there is currently no separate search index requiring reindex propagation."
-        },
-        {
-          "id": "canonical_to_discovery_projection",
-          "status": "verified",
-          "source": "canonical DiscoveryEntitySource snapshots",
-          "consumer": "versioned bounded DiscoveryProjection",
-          "implementation": ["app/Application/Discovery/Projections/DefaultDiscoveryProjectionPipeline.php", "app/Domain/Discovery/Contracts/DiscoveryProjectionReader.php", "app/Domain/Discovery/Contracts/DiscoveryProjectionWriter.php", "app/Support/Discovery/DatabaseDiscoveryProjectionStore.php"],
-          "tests": ["scripts/verify-discovery-projection-pipeline.php"],
-          "verification": "Discovery projection rebuilds are versioned/bounded, have source version and generated/expiry timestamps, and are separately verified."
+          "implementation": ["app/Support/Search/EloquentSearchCatalog.php"]
         },
         {
           "id": "public_entity_to_seo",
           "status": "partial",
-          "source": "canonical public entity route",
-          "consumer": "canonical URL/metadata/indexability",
-          "implementation": ["app/Support/Catalog/PublicEntityUrl.php", "app/Support/Search/EloquentSearchCatalog.php", "docs/project/docs/URL_SEO.md"],
-          "verification": "Canonical public URLs are emitted from one helper; the Stage 22 golden flow still needs a browser-level assertion that song/artist/search/SEO identity agrees for a real admitted fixture.",
-          "next_action": "Add golden browser/HTTP assertions in 22.1C."
-        },
-        {
-          "id": "canonical_change_to_public_freshness",
-          "status": "partial",
-          "source": "canonical mutation",
-          "consumer": "public direct reads and materialized Discovery projections",
-          "implementation": ["app/Support/Search/EloquentSearchCatalog.php", "app/Application/Discovery/Projections/DefaultDiscoveryProjectionPipeline.php"],
-          "verification": "Direct canonical search/entity reads observe database mutation immediately; materialized Discovery projections have TTL/versioning but canonical mutation does not currently trigger rebuild/invalidation.",
-          "next_action": "Add governed stale-projection invalidation/rebuild propagation for affected discovery channels rather than adding cache invalidation where no cache exists."
+          "implementation": ["app/Support/Catalog/PublicEntityUrl.php", "docs/project/docs/URL_SEO.md"],
+          "verification": "Canonical entity URLs are governed; chart-page SEO cannot close until the public chart route exists."
         }
       ]
     },
     "editorial_correction_propagation": {
-      "product_outcome": "A governed editorial correction converges all dependent projections without manual database repair.",
       "critical": true,
       "edges": [
         {
           "id": "admin_decision_to_canonical_mutation",
           "status": "verified",
-          "source": "editorial decision",
-          "consumer": "canonical admission service",
-          "implementation": ["app/Http/Controllers/Admin/CanonicalAdmissionController.php", "app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],
-          "tests": ["tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php", "tests/Browser/EditorialAdminReviewEvidenceTest.php"],
-          "verification": "Stage 20/21 governed admission application and browser review coverage."
+          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]
         },
         {
           "id": "canonical_mutation_to_decision_provenance",
           "status": "verified",
-          "source": "canonical mutation",
-          "consumer": "metadata assertion + admission decision record",
-          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php", "app/Models/Catalog/MetadataAssertion.php", "app/Models/Catalog/CanonicalAdmissionDecision.php"],
-          "tests": ["tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"],
-          "verification": "Apply/reject is transactional and persists reviewer, reason, reviewed/applied timestamps, canonical value and assertion verification state."
+          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]
+        },
+        {
+          "id": "canonical_mutation_to_semantic_change",
+          "status": "verified",
+          "implementation": ["app/Domain/Catalog/Events/CanonicalEntityChanged.php", "app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],
+          "tests": ["tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]
         },
         {
           "id": "canonical_mutation_to_reprojection",
-          "status": "missing",
-          "source": "canonical mutation",
-          "consumer": "materialized Discovery/read projections",
-          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php", "app/Application/Discovery/Projections/DefaultDiscoveryProjectionPipeline.php", "app/Jobs/Discovery/BuildDiscoveryProjection.php"],
-          "verification": "Admission apply updates canonical state but does not dispatch or invoke Discovery projection rebuild/invalidation.",
-          "next_action": "Publish/dispatch a bounded semantic post-admission change signal that targets affected derived projections."
+          "status": "verified",
+          "implementation": ["app/Application/Discovery/Listeners/RebuildDiscoveryAfterCanonicalChange.php", "app/Jobs/Discovery/BuildDiscoveryProjection.php", "app/Providers/AppServiceProvider.php"],
+          "tests": ["tests/Feature/Discovery/CanonicalChangeReprojectionTest.php"],
+          "verification": "Only active Discovery channels matching the changed canonical entity type are queued."
         },
         {
           "id": "canonical_mutation_to_chart_recompute",
           "status": "missing",
-          "source": "canonical mutation",
-          "consumer": "affected chart results",
-          "verification": "No chart recomputation path exists because chart-intelligence closure itself is missing.",
-          "next_action": "Connect after chart snapshot/ranking ownership exists."
+          "verification": "Cannot recompute a production chart until provider observations and persisted snapshot ownership exist.",
+          "next_action": "Stage 22.2 chart persistence/recompute listener."
         },
         {
           "id": "canonical_mutation_to_search_refresh",
           "status": "verified",
-          "source": "canonical mutation",
-          "consumer": "public canonical search",
-          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php", "app/Support/Search/EloquentSearchCatalog.php"],
-          "verification": "Current search is a direct bounded canonical database read, not an asynchronous search index; committed canonical mutations are therefore visible without a reindex job."
-        },
-        {
-          "id": "canonical_mutation_to_public_projection_freshness",
-          "status": "missing",
-          "source": "canonical mutation",
-          "consumer": "materialized public Discovery projections",
-          "implementation": ["app/Application/Discovery/Projections/DefaultDiscoveryProjectionPipeline.php"],
-          "verification": "Discovery projections expire by TTL but canonical mutation does not actively invalidate or rebuild affected projections.",
-          "next_action": "Introduce semantic invalidation/rebuild propagation; do not couple admission service directly to persistence or HTTP caches."
+          "implementation": ["app/Support/Search/EloquentSearchCatalog.php"],
+          "verification": "Search is a bounded direct canonical database read; no artificial reindex layer is required."
         }
       ]
     },
     "source_to_release": {
-      "product_outcome": "Only an exact, governed and verified source tree can become a distributable release artifact.",
       "critical": true,
       "edges": [
-        {"id": "source_to_candidate", "status": "verified", "source": "Git exact tree", "consumer": "candidate verification", "verification": "existing candidate/release authority"},
-        {"id": "candidate_to_canonical_verification", "status": "verified", "source": "prepared exact tree", "consumer": "canonical verification", "verification": "existing canonical verification authority"},
-        {"id": "canonical_verification_to_package", "status": "verified", "source": "verified provenance", "consumer": "release package", "verification": "existing release baseline/provenance gates"}
-      ]
-    },
-    "production_feedback_loop": {
-      "product_outcome": "Production reality and user evidence can influence operations and future product work.",
-      "critical": false,
-      "edges": [
-        {"id": "production_runtime_to_health_authority", "status": "missing", "source": "production runtime", "consumer": "operator health/status", "verification": "future_stage_22_production_control_plane"},
-        {"id": "user_behavior_to_product_analytics", "status": "missing", "source": "public usage", "consumer": "product telemetry", "verification": "future_stage_22_telemetry"},
-        {"id": "user_feedback_to_editorial_queue", "status": "missing", "source": "user correction report", "consumer": "editorial review", "verification": "future_stage"}
+        {"id": "source_to_candidate", "status": "verified", "verification": "existing candidate/release authority"},
+        {"id": "candidate_to_canonical_verification", "status": "verified", "verification": "existing canonical verification authority"},
+        {"id": "canonical_verification_to_package", "status": "verified", "verification": "existing release baseline/provenance gates"}
       ]
     }
   }
