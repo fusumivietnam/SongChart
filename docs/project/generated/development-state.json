@@ -1,12 +1,12 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "3461e490108407c0ae546c0d7f6d05a35560aac97c7a2ed03c228fe265953b93",
+    "source_fingerprint": "23af75203d0ed6031822f297894b9ff07f28f85defa3dc945315ea4edd445837",
     "current_stage": {
         "id": "22.1",
         "title": "System Intersection Map + Golden Vertical Contract",
         "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
-        "status": "verification_pending"
+        "status": "active"
     },
     "accepted_through": "21.0",
     "stage_progress": [
@@ -22,7 +22,7 @@
         },
         {
             "id": "22.1C",
-            "status": "implementation_complete",
+            "status": "accepted",
             "title": "Chart/public provenance contract closure",
             "implemented": [
                 "provider-neutral provenance-first chart observation DTO",
@@ -36,20 +36,34 @@
                 "manual and opt-in hourly chart refresh",
                 "canonical-change semantic event",
                 "bounded active-channel Discovery reprojection",
-                "bounded queued chart refresh for canonical Recording changes"
-            ]
+                "bounded queued chart refresh for canonical Recording changes",
+                "polymorphic canonical-reference contract and runtime scanner",
+                "raw-persistence corruption verification for unknown canonical entity types"
+            ],
+            "verification_evidence": "Auto Closure run 293 passed on exact head 9940aeda6b4e198aa02045ad5553b97de072c594"
         },
         {
             "id": "22.1D",
-            "status": "verification_pending",
-            "title": "Stage closure and next vertical tranche",
+            "status": "active",
+            "title": "Runtime integrity surface",
+            "goals": [
+                "Expose canonical polymorphic-reference integrity as a read-only songchart:doctor check",
+                "Make --strict fail when persisted canonical polymorphic references are corrupt",
+                "Preserve repository/domain contract ownership; doctor remains a consumer",
+                "Verify the exact current head after runtime-diagnostic integration"
+            ]
+        },
+        {
+            "id": "22.1E",
+            "status": "planned",
+            "title": "Stage closure and next control-plane tranche",
             "blockers": [
-                "exact-head Auto Closure must complete successfully",
-                "live production activation requires YouTube policy/quota acceptance, credential and at least one approved public canonical destination"
+                "exact-head Auto Closure must pass after Runtime Integrity Surface changes",
+                "live production activation of YouTube chart observations still requires accepted policy/quota, credential and at least one approved public canonical destination"
             ]
         }
     ],
-    "next_tranche": "23.0-public-product-ux-after-stage-22-acceptance",
+    "next_tranche": "22.2-runtime-control-plane-consolidation",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -58,6 +72,6 @@
         "candidate-verification.json": "a96c2cbbd3e32ac06e102acdb8029530c1130134f202dd8bfe99df170ef9dc1c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "aa17cd6a336f6236804577b32abe049309ba48c958c4f09652caaba9dfa98bd3"
+        "docs/project/engineering/stage-plan.json": "cd9f7e9f31da5dd6ffa4db9c6dd24039281a2c40adaa6827d40e920f17b556c3"
     }
 }
