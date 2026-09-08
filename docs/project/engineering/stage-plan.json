@@ -1,46 +1,46 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "current_stage": {
     "id": "22.1",
     "title": "System Intersection Map + Golden Vertical Contract",
     "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
-    "status": "blocked"
+    "status": "verification_pending"
   },
   "accepted_through": "21.0",
-  "active_tranche": "22.1C",
+  "active_tranche": "22.1D",
   "stage_progress": [
     {"id":"22.1A","status":"accepted","title":"Intersection audit and ownership binding"},
     {"id":"22.1B","status":"accepted","title":"Golden provider/canonical fixtures"},
     {
       "id":"22.1C",
-      "status":"blocked",
+      "status":"implementation_complete",
       "title":"Chart/public provenance contract closure",
       "implemented":[
-        "provenance-first chart observation DTO",
-        "versioned deterministic chart snapshot calculator",
+        "provider-neutral provenance-first chart observation DTO",
+        "YouTube approved-destination viewCount production observation source",
+        "YouTube viewCount 2026-08-24 semantics version boundary",
+        "provider media.statistics capability authority",
+        "versioned deterministic chart snapshot calculator with semantic compatibility guard",
         "self-contained input fingerprint and observation provenance",
         "immutable/idempotent chart snapshot persistence",
-        "canonical public chart projection",
-        "minimal read-only persisted public chart route",
+        "canonical public chart projection and read-only route",
+        "manual and opt-in hourly chart refresh",
         "canonical-change semantic event",
-        "bounded active-channel discovery reprojection"
-      ],
-      "blockers":[
-        "production_provider_metric_source",
-        "production_chart_recompute_from_real_observations"
+        "bounded active-channel Discovery reprojection",
+        "bounded queued chart refresh for canonical Recording changes"
       ]
     },
     {
       "id":"22.1D",
-      "status":"blocked",
+      "status":"verification_pending",
       "title":"Stage closure and next vertical tranche",
       "blockers":[
-        "22.1C requires a real provider metric source; deterministic fixtures are not production evidence",
-        "exact-head Auto Closure must complete successfully"
+        "exact-head Auto Closure must complete successfully",
+        "live production activation requires YouTube policy/quota acceptance, credential and at least one approved public canonical destination"
       ]
     }
   ],
-  "next_tranche":"22.2-provider-metric-ingestion",
+  "next_tranche":"23.0-public-product-ux-after-stage-22-acceptance",
   "blocker_report":"docs/foundation/STAGE_22_BLOCKER_REPORT.md",
   "work_lease":{
     "authority":"live Git branch + GitHub pull request",
