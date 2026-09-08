@@ -18,7 +18,7 @@
 
 ## Next bounded tranche
 
-- `unknown` — unknown
+- `22.0B` — Pre-Data Architecture/Data Stabilization
 
 ## Live work lease
 

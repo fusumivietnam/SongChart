@@ -1,7 +1,7 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "c3b0261e110a3b603aaa02efcada58db2a52b1b52f57f58fcdacae0e6d69673c",
+    "source_fingerprint": "02ccb0dca8ec116dad33117cad6ebcb91dcd1226e6a31a7bc4b5de1cdca18d0b",
     "current_stage": {
         "id": "22.0",
         "title": "System Control Plane & Pre-Data Stabilization",
@@ -31,7 +31,10 @@
             "title": "Closure & Generated Views"
         }
     ],
-    "next_tranche": "22.0B",
+    "next_tranche": {
+        "id": "22.0B",
+        "title": "Pre-Data Architecture/Data Stabilization"
+    },
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -40,6 +43,13 @@
         "candidate-verification.json": "8e7c9e8e86282caa26d24b79440293d026026fb136be1fabc896f81a2235b358",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "c6b93a9b5dd3ed5ac0ed6cd67ede6bcdcb7371523090c8b7fd202b7fd5e99ba6"
+        "docs/project/engineering/roadmap.json": "352be677a2431ba52bb967d3908361e61075db4c70c9a224c6e700f0d6d29cd3",
+        "docs/project/engineering/stage-plan.json": "327348c21d1532fb5132ff8a064a6ca9cd0b741d53ca25f03e6966f7a544cf6b",
+        "docs/project/governance/database-risk-register.json": "efc10c82acc391c539c7cb037a691716204b02728b608bb9bb1bd04ecf4fb99c",
+        "docs/project/governance/deletion-retention-matrix.json": "e2c9c05182084b05b38e85915970554aeb908f9cf55b587765ef9594c09c8c88",
+        "docs/project/governance/pre-data-freeze.json": "cb96697f6a87f65272f9008cb7e825854fe507909e1962bd707f5acd62d2c767",
+        "docs/project/governance/project-control-plane.json": "926f732bfa0956a6727cd57d6149e1e5c10b9df734b574124f7eefcaab0496a3",
+        "docs/project/governance/resilience-matrix.json": "6a485f0aba7f3627e23df0ca52c587692e4f8db5ec9b8eac3841ae0448644eaf",
+        "docs/project/governance/technology-lifecycle.json": "05567ca840b6b946fdfad0ecf4f2c4d5157ee6259c6a99f46b5b311f526443ef"
     }
 }

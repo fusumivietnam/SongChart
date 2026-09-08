@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "74dc9b3653cea969fc51f62addf8fdbe47b9b5ca5d2425b2bd7f760dd59a6841",
+    "source_fingerprint": "aec4331d7e6f5e86594fb87556152646e31f6141256177d4fe8125dfd0531b08",
     "candidate": {
         "stage": "22.0",
         "candidate": "v1",
@@ -1053,7 +1053,7 @@
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "b0278efd3ac42af6e2ef1952d384f743a830ea6b478a0e7ec37f5744ea2b8792",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
         "docs/project/engineering/ai-development-contract.json": "ce79b069eaada91dafe01db5fff59c6b07fcc419bd5af3a8c21a07c1c9fb1a14",
-        "docs/project/engineering/architecture-graph-contract.json": "72d81b7cf074ae8bc85e18832785568de4f4e1dd9d88d5b6d7f11067b4bdec22",
+        "docs/project/engineering/architecture-graph-contract.json": "df559785eeb6dd89cff4e74314b40dbd7abee9ff3e130ae38acae778c1725acb",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/development-intelligence-contract.json": "bcfd44e3094bee60e660903ff3a1ceb334146e0125a769be9cb22f3c077ab560",
         "docs/project/engineering/mcp-contract.json": "d80f6a8c316e6744b89d2ba4e7f4f23d43d8fb2e2f8d5bd2d09b62cbd4065ea8",
@@ -1067,7 +1067,7 @@
         "docs/project/release/versioning-policy.json": "c4ebec8bf9a9dfb791a46f9532b428e15e647a045588d3bca004c85c59971ffe",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "fc5fe4c02cfb7a03157d64e395dd16e4807fcd7fc53155bdf634a8b49123a449",
-        "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
+        "scripts/project-intelligence.php": "2d5d043b390677b85de0340dd9bcee5a2c550808c7f360f1a6690bd5bef1258e",
         "songchart": "6aae071b0acb257c7a573f3c75664dd185155ea550b1903be0cf14d1e3345e3a"
     }
 }

@@ -1,0 +1,4430 @@
+{
+    "schema_version": 2,
+    "generated_from_repository": true,
+    "contract": "docs/project/engineering/system-knowledge-contract.json",
+    "product": {
+        "name": "SongChart",
+        "summary": "Music discovery, canonical metadata, provenance, provider evidence and legal listening or viewing destinations.",
+        "source": "docs/project/engineering/project-knowledge.json"
+    },
+    "stage": {
+        "id": "22.0",
+        "title": "System Control Plane & Pre-Data Stabilization",
+        "status": "implementing",
+        "accepted_through": "21.0",
+        "source": "docs/project/engineering/stage-plan.json"
+    },
+    "roadmap": {
+        "schema_version": 1,
+        "owner": "roadmap-authority",
+        "rule": "roadmap expresses direction; stage-plan activates exactly one stage; candidate stages are not execution authority",
+        "status_model": [
+            "accepted",
+            "committed",
+            "candidate",
+            "deferred",
+            "retired"
+        ],
+        "stages": [
+            {
+                "id": "21.0",
+                "status": "accepted",
+                "title": "Editorial Admin UX",
+                "capability_outcomes": [
+                    "editorial review safety",
+                    "operator-oriented canonical admission UX"
+                ]
+            },
+            {
+                "id": "22.0",
+                "status": "committed",
+                "title": "System Control Plane & Pre-Data Stabilization",
+                "drivers": [
+                    "authority consolidation",
+                    "pre-data risk reduction",
+                    "compatibility lifecycle",
+                    "resilience and quota fallback"
+                ],
+                "task_contract": "docs/foundation/STAGE_22_0_TASK_CONTRACT.md"
+            },
+            {
+                "id": "23.0",
+                "status": "candidate",
+                "title": "Public Product UX",
+                "drivers": [
+                    "visitor.discover",
+                    "visitor.follow_destination"
+                ]
+            },
+            {
+                "id": "24.0",
+                "status": "candidate",
+                "title": "Provider Expansion & Data Quality",
+                "drivers": [
+                    "editor.ingest_and_admit",
+                    "identity and provenance quality"
+                ]
+            },
+            {
+                "id": "25.0",
+                "status": "candidate",
+                "title": "Observability & Operations",
+                "drivers": [
+                    "operator.observe_and_recover",
+                    "scale and reliability evidence"
+                ]
+            },
+            {
+                "id": "26.0",
+                "status": "candidate",
+                "title": "Release & Package Pipeline",
+                "drivers": [
+                    "immutable artifact promotion",
+                    "versioned release lifecycle",
+                    "deployment provenance"
+                ]
+            }
+        ],
+        "activation_requires": [
+            "accepted_use_case_or_operational_driver",
+            "capability_gap",
+            "authority_ownership",
+            "compatibility_class",
+            "risk_class",
+            "task_contract",
+            "stage_plan_activation"
+        ]
+    },
+    "journeys": [
+        {
+            "id": "visitor.discover",
+            "actor": "guest_or_authenticated_user",
+            "status": "implemented-foundation",
+            "state": "implemented",
+            "goal": "Find canonical music entities and navigate trustworthy public detail pages.",
+            "required_capabilities": [
+                "stable canonical public identity",
+                "searchable display metadata",
+                "canonical relationships",
+                "verification/provenance state"
+            ],
+            "implemented_route_surfaces": [],
+            "mapped_use_cases": [
+                {
+                    "id": "public.search",
+                    "state": "implemented",
+                    "route_name": "search",
+                    "route_registry": {
+                        "name": "search",
+                        "method": "GET|HEAD",
+                        "uri": "/search",
+                        "action": "App\\Http\\Controllers\\Search\\SearchController",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/search",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/SearchController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "artist",
+                        "work",
+                        "recording",
+                        "version",
+                        "release",
+                        "collection"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.search"
+                },
+                {
+                    "id": "public.artists.index",
+                    "state": "implemented",
+                    "route_name": "artists.index",
+                    "route_registry": {
+                        "name": "artists.index",
+                        "method": "GET|HEAD",
+                        "uri": "/artists",
+                        "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@artists",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/artists",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "artist"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.artists.index"
+                },
+                {
+                    "id": "public.groups.index",
+                    "state": "implemented",
+                    "route_name": "groups.index",
+                    "route_registry": {
+                        "name": "groups.index",
+                        "method": "GET|HEAD",
+                        "uri": "/groups",
+                        "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@groups",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/groups",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "artist"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.groups.index"
+                },
+                {
+                    "id": "public.releases.index",
+                    "state": "implemented",
+                    "route_name": "releases.index",
+                    "route_registry": {
+                        "name": "releases.index",
+                        "method": "GET|HEAD",
+                        "uri": "/releases",
+                        "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@releases",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/releases",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "release"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.releases.index"
+                },
+                {
+                    "id": "public.recordings.index",
+                    "state": "implemented",
+                    "route_name": "recordings.index",
+                    "route_registry": {
+                        "name": "recordings.index",
+                        "method": "GET|HEAD",
+                        "uri": "/recordings",
+                        "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@recordings",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/recordings",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "recording"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.recordings.index"
+                },
+                {
+                    "id": "public.works.index",
+                    "state": "implemented",
+                    "route_name": "works.index",
+                    "route_registry": {
+                        "name": "works.index",
+                        "method": "GET|HEAD",
+                        "uri": "/works",
+                        "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@works",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/works",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "work"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.works.index"
+                },
+                {
+                    "id": "public.collections.index",
+                    "state": "implemented",
+                    "route_name": "collections.index",
+                    "route_registry": {
+                        "name": "collections.index",
+                        "method": "GET|HEAD",
+                        "uri": "/collections",
+                        "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@collections",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/collections",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "collection"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.collections.index"
+                },
+                {
+                    "id": "public.artists.show",
+                    "state": "implemented",
+                    "route_name": "artists.show",
+                    "route_registry": {
+                        "name": "artists.show",
+                        "method": "GET|HEAD",
+                        "uri": "/artists/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@artist",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/artists/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "artist"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.artists.show"
+                },
+                {
+                    "id": "public.groups.show",
+                    "state": "implemented",
+                    "route_name": "groups.show",
+                    "route_registry": {
+                        "name": "groups.show",
+                        "method": "GET|HEAD",
+                        "uri": "/groups/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@group",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/groups/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "artist"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.groups.show"
+                },
+                {
+                    "id": "public.release-groups.show",
+                    "state": "implemented",
+                    "route_name": "release-groups.show",
+                    "route_registry": {
+                        "name": "release-groups.show",
+                        "method": "GET|HEAD",
+                        "uri": "/release-groups/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@releaseGroup",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/release-groups/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "release_group"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.release-groups.show"
+                },
+                {
+                    "id": "public.releases.show",
+                    "state": "implemented",
+                    "route_name": "releases.show",
+                    "route_registry": {
+                        "name": "releases.show",
+                        "method": "GET|HEAD",
+                        "uri": "/releases/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@release",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/releases/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "release"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.releases.show"
+                },
+                {
+                    "id": "public.recordings.show",
+                    "state": "implemented",
+                    "route_name": "recordings.show",
+                    "route_registry": {
+                        "name": "recordings.show",
+                        "method": "GET|HEAD",
+                        "uri": "/recordings/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@recording",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/recordings/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "recording"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.recordings.show"
+                },
+                {
+                    "id": "public.works.show",
+                    "state": "implemented",
+                    "route_name": "works.show",
+                    "route_registry": {
+                        "name": "works.show",
+                        "method": "GET|HEAD",
+                        "uri": "/works/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@work",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/works/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "work"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.works.show"
+                },
+                {
+                    "id": "public.versions.show",
+                    "state": "implemented",
+                    "route_name": "versions.show",
+                    "route_registry": {
+                        "name": "versions.show",
+                        "method": "GET|HEAD",
+                        "uri": "/versions/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@version",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/versions/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "version"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.versions.show"
+                },
+                {
+                    "id": "public.collections.show",
+                    "state": "implemented",
+                    "route_name": "collections.show",
+                    "route_registry": {
+                        "name": "collections.show",
+                        "method": "GET|HEAD",
+                        "uri": "/collections/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@collection",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/collections/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "collection"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.collections.show"
+                }
+            ],
+            "contract_gaps": [],
+            "gaps": [
+                "Make relationship/credit semantics explicit enough for read models without provider-specific branching.",
+                "Make destination/media evidence explicitly projectable from canonical entities without becoming canonical identity."
+            ],
+            "source": "docs/project/domain/product-user-journeys.json#journeys.visitor.discover"
+        },
+        {
+            "id": "visitor.follow_destination",
+            "actor": "guest_or_authenticated_user",
+            "status": "foundation-partial",
+            "state": "partial",
+            "goal": "Move from a canonical SongChart entity to an approved listening/watching destination while retaining canonical context.",
+            "required_capabilities": [
+                "provider-neutral canonical entity",
+                "provider destination association",
+                "destination verification/status",
+                "market/provider context when applicable"
+            ],
+            "implemented_route_surfaces": [],
+            "mapped_use_cases": [
+                {
+                    "id": "public.artists.show",
+                    "state": "implemented",
+                    "route_name": "artists.show",
+                    "route_registry": {
+                        "name": "artists.show",
+                        "method": "GET|HEAD",
+                        "uri": "/artists/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@artist",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/artists/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "artist"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.artists.show"
+                },
+                {
+                    "id": "public.groups.show",
+                    "state": "implemented",
+                    "route_name": "groups.show",
+                    "route_registry": {
+                        "name": "groups.show",
+                        "method": "GET|HEAD",
+                        "uri": "/groups/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@group",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/groups/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "artist"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.groups.show"
+                },
+                {
+                    "id": "public.release-groups.show",
+                    "state": "implemented",
+                    "route_name": "release-groups.show",
+                    "route_registry": {
+                        "name": "release-groups.show",
+                        "method": "GET|HEAD",
+                        "uri": "/release-groups/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@releaseGroup",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/release-groups/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "release_group"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.release-groups.show"
+                },
+                {
+                    "id": "public.releases.show",
+                    "state": "implemented",
+                    "route_name": "releases.show",
+                    "route_registry": {
+                        "name": "releases.show",
+                        "method": "GET|HEAD",
+                        "uri": "/releases/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@release",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/releases/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "release"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.releases.show"
+                },
+                {
+                    "id": "public.recordings.show",
+                    "state": "implemented",
+                    "route_name": "recordings.show",
+                    "route_registry": {
+                        "name": "recordings.show",
+                        "method": "GET|HEAD",
+                        "uri": "/recordings/{slug}",
+                        "action": "App\\Http\\Controllers\\Search\\EntityController@recording",
+                        "middleware": [
+                            "web"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "uri": "/recordings/{slug}",
+                    "method": "GET",
+                    "implementation": "app/Http/Controllers/Search/EntityController.php",
+                    "read_only": true,
+                    "data_surfaces": [
+                        "recording"
+                    ],
+                    "source": "docs/project/domain/use-case-contracts.json#use_cases.public.recordings.show"
+                }
+            ],
+            "contract_gaps": [],
+            "gaps": [
+                "Define a canonical read contract for provider destinations and media evidence.",
+                "Keep destination availability/provider identifiers outside canonical primary identity."
+            ],
+            "source": "docs/project/domain/product-user-journeys.json#journeys.visitor.follow_destination"
+        },
+        {
+            "id": "member.manage_account",
+            "actor": "authenticated_active_verified_user",
+            "status": "surface-implemented-contract-gap",
+            "state": "partial",
+            "goal": "Manage account identity and security without coupling account data to provider identities.",
+            "required_capabilities": [
+                "user identity",
+                "account profile",
+                "security state"
+            ],
+            "implemented_route_surfaces": [
+                {
+                    "route_name": "account.overview",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "GET|HEAD",
+                    "uri": "/account",
+                    "action": "App\\Http\\Controllers\\Account\\AccountController@overview",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                },
+                {
+                    "route_name": "account.profile",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "GET|HEAD",
+                    "uri": "/account/profile",
+                    "action": "App\\Http\\Controllers\\Account\\AccountController@profile",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                },
+                {
+                    "route_name": "account.security",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "GET|HEAD",
+                    "uri": "/account/security",
+                    "action": "App\\Http\\Controllers\\Account\\AccountController@security",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                }
+            ],
+            "mapped_use_cases": [],
+            "contract_gaps": [
+                {
+                    "journey": "member.manage_account",
+                    "entrypoint": "account.overview",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "account.overview",
+                        "method": "GET|HEAD",
+                        "uri": "/account",
+                        "action": "App\\Http\\Controllers\\Account\\AccountController@overview",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.member.manage_account"
+                },
+                {
+                    "journey": "member.manage_account",
+                    "entrypoint": "account.profile",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "account.profile",
+                        "method": "GET|HEAD",
+                        "uri": "/account/profile",
+                        "action": "App\\Http\\Controllers\\Account\\AccountController@profile",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.member.manage_account"
+                },
+                {
+                    "journey": "member.manage_account",
+                    "entrypoint": "account.security",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "account.security",
+                        "method": "GET|HEAD",
+                        "uri": "/account/security",
+                        "action": "App\\Http\\Controllers\\Account\\AccountController@security",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.member.manage_account"
+                }
+            ],
+            "gaps": [
+                "Account routes exist but are not yet represented in the executable use-case contract registry.",
+                "Do not invent social/follow/recommendation persistence until a separately accepted journey owns it."
+            ],
+            "source": "docs/project/domain/product-user-journeys.json#journeys.member.manage_account"
+        },
+        {
+            "id": "editor.ingest_and_admit",
+            "actor": "authorized_editor_or_admin",
+            "status": "implemented-foundation",
+            "state": "implemented",
+            "goal": "Discover/import provider evidence, resolve identity, review conflicts, and admit provider-neutral canonical data.",
+            "required_capabilities": [
+                "normalized provider evidence",
+                "provider entity identity",
+                "identity conflict review",
+                "metadata assertions/conflicts",
+                "canonical admission decisions",
+                "privileged audit"
+            ],
+            "implemented_route_surfaces": [
+                {
+                    "route_name": "admin.canonical-admissions.index",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "GET|HEAD",
+                    "uri": "/admin/canonical-admissions",
+                    "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@index",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                        "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                        "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                },
+                {
+                    "route_name": "admin.canonical-admissions.show",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "GET|HEAD",
+                    "uri": "/admin/canonical-admissions/{admission}",
+                    "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@show",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                        "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                        "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                },
+                {
+                    "route_name": "admin.canonical-admissions.stage",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "POST",
+                    "uri": "/admin/canonical-admissions/assertions/{assertion}",
+                    "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@stage",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                        "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                        "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                        "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                        "Illuminate\\Auth\\Middleware\\RequirePassword"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                },
+                {
+                    "route_name": "admin.canonical-admissions.decide",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "POST",
+                    "uri": "/admin/canonical-admissions/{admission}/decisions",
+                    "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@decide",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                        "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                        "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                        "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                        "Illuminate\\Auth\\Middleware\\RequirePassword"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                }
+            ],
+            "mapped_use_cases": [],
+            "contract_gaps": [
+                {
+                    "journey": "editor.ingest_and_admit",
+                    "entrypoint": "admin.canonical-admissions.index",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "admin.canonical-admissions.index",
+                        "method": "GET|HEAD",
+                        "uri": "/admin/canonical-admissions",
+                        "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@index",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                            "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                            "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+                },
+                {
+                    "journey": "editor.ingest_and_admit",
+                    "entrypoint": "admin.canonical-admissions.show",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "admin.canonical-admissions.show",
+                        "method": "GET|HEAD",
+                        "uri": "/admin/canonical-admissions/{admission}",
+                        "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@show",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                            "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                            "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+                },
+                {
+                    "journey": "editor.ingest_and_admit",
+                    "entrypoint": "admin.canonical-admissions.stage",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "admin.canonical-admissions.stage",
+                        "method": "POST",
+                        "uri": "/admin/canonical-admissions/assertions/{assertion}",
+                        "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@stage",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                            "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                            "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                            "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                            "Illuminate\\Auth\\Middleware\\RequirePassword"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+                },
+                {
+                    "journey": "editor.ingest_and_admit",
+                    "entrypoint": "admin.canonical-admissions.decide",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "admin.canonical-admissions.decide",
+                        "method": "POST",
+                        "uri": "/admin/canonical-admissions/{admission}/decisions",
+                        "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@decide",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                            "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                            "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                            "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                            "Illuminate\\Auth\\Middleware\\RequirePassword"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+                }
+            ],
+            "gaps": [
+                "Canonical-admission routes exist but are not yet represented in the executable use-case contract registry.",
+                "Provider reference evidence must be mapped to canonical concepts before schema changes.",
+                "Canonical mutation must preserve field authority and provenance."
+            ],
+            "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+        },
+        {
+            "id": "operator.observe_and_recover",
+            "actor": "authorized_admin_or_operator",
+            "status": "implemented-foundation",
+            "state": "implemented",
+            "goal": "Observe provider/import/runtime state and recover bounded failures without bypassing canonical admission rules.",
+            "required_capabilities": [
+                "provider health/status",
+                "import run/item/failure ledger",
+                "quarantine/retry state",
+                "privileged audit"
+            ],
+            "implemented_route_surfaces": [
+                {
+                    "route_name": "admin.audit.index",
+                    "state": "implemented",
+                    "contract_state": "gap",
+                    "use_case_id": null,
+                    "method": "GET|HEAD",
+                    "uri": "/admin/audit",
+                    "action": "App\\Http\\Controllers\\Admin\\PrivilegedAuditController",
+                    "middleware": [
+                        "web",
+                        "Illuminate\\Auth\\Middleware\\Authenticate",
+                        "App\\Http\\Middleware\\EnsureUserIsActive",
+                        "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                        "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                        "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                        "Illuminate\\Auth\\Middleware\\Authorize:view-audit"
+                    ],
+                    "source": "Laravel route registry (php artisan route:list --json)"
+                }
+            ],
+            "mapped_use_cases": [],
+            "contract_gaps": [
+                {
+                    "journey": "operator.observe_and_recover",
+                    "entrypoint": "admin.audit.index",
+                    "surface_state": "implemented",
+                    "contract_state": "missing",
+                    "knowledge_state": "partial",
+                    "route": {
+                        "name": "admin.audit.index",
+                        "method": "GET|HEAD",
+                        "uri": "/admin/audit",
+                        "action": "App\\Http\\Controllers\\Admin\\PrivilegedAuditController",
+                        "middleware": [
+                            "web",
+                            "Illuminate\\Auth\\Middleware\\Authenticate",
+                            "App\\Http\\Middleware\\EnsureUserIsActive",
+                            "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                            "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                            "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                            "Illuminate\\Auth\\Middleware\\Authorize:view-audit"
+                        ],
+                        "source": "Laravel route registry (php artisan route:list --json)"
+                    },
+                    "reason": "Laravel route exists but no executable use-case contract maps to it.",
+                    "source": "docs/project/domain/product-user-journeys.json#journeys.operator.observe_and_recover"
+                }
+            ],
+            "gaps": [
+                "Audit route exists but is not yet represented in the executable use-case contract registry.",
+                "Operational state stays separate from canonical music-domain identity."
+            ],
+            "source": "docs/project/domain/product-user-journeys.json#journeys.operator.observe_and_recover"
+        }
+    ],
+    "use_cases": {
+        "public.search": {
+            "method": "GET",
+            "route_name": "search",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array{query:string,type:string,sort:string,page:int,result:array<string,mixed>}",
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "work": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "recording": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "version": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "release": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "released_on",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "collection": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "description",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/search",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/SearchController.php"
+        },
+        "admin.catalog.index": {
+            "method": "GET",
+            "route_name": "admin.catalog.entities.index",
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "verification_state",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                },
+                "work": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                },
+                "recording": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                },
+                "version": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "verification_state",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                },
+                "release": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                },
+                "collection": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/admin/catalog/{type}",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "implementation": "app/Http/Controllers/Admin/CatalogController.php",
+            "route_parameters": {
+                "type": "entity_type"
+            }
+        },
+        "admin.catalog.show": {
+            "method": "GET",
+            "route_name": "admin.catalog.entities.show",
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "sort_name",
+                        "slug",
+                        "artist_type",
+                        "country_code",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                },
+                "work": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "work_type",
+                        "language_code",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                },
+                "recording": {
+                    "read_fields": [
+                        "id",
+                        "work_id",
+                        "title",
+                        "slug",
+                        "duration_ms",
+                        "is_explicit",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                },
+                "version": {
+                    "read_fields": [
+                        "id",
+                        "recording_id",
+                        "name",
+                        "slug",
+                        "version_type",
+                        "duration_ms",
+                        "verification_state",
+                        "created_at",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                },
+                "release": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "release_type",
+                        "released_on",
+                        "country_code",
+                        "barcode",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                },
+                "collection": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "description",
+                        "visibility",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/admin/catalog/{type}/{id}",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "implementation": "app/Http/Controllers/Admin/CatalogController.php",
+            "route_parameters": {
+                "type": "entity_type",
+                "id": "ulid"
+            },
+            "support_surfaces": {
+                "catalog.external_identifiers": [
+                    "entity_type",
+                    "entity_id",
+                    "namespace",
+                    "value",
+                    "is_primary",
+                    "verification_state"
+                ],
+                "catalog.entity_relationships": [
+                    "subject_type",
+                    "subject_id",
+                    "relationship_type",
+                    "object_type",
+                    "object_id",
+                    "verification_state"
+                ],
+                "catalog.metadata_conflicts": [
+                    "entity_type",
+                    "entity_id",
+                    "field_name",
+                    "status",
+                    "resolution_note",
+                    "resolved_at"
+                ]
+            }
+        },
+        "admin.providers.index": {
+            "method": "GET",
+            "route_name": "admin.providers.index",
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": [],
+            "uri": "/admin/providers",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "slug",
+                    "name",
+                    "category",
+                    "status",
+                    "is_enabled",
+                    "policy_reviewed_at"
+                ],
+                "provider.provider_capabilities": [
+                    "provider_id",
+                    "capability"
+                ],
+                "provider.provider_entities": [
+                    "provider_id"
+                ],
+                "provider.provider_sync_runs": [
+                    "provider_id",
+                    "status"
+                ]
+            }
+        },
+        "admin.imports.index": {
+            "method": "GET",
+            "route_name": "admin.imports.index",
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": [],
+            "uri": "/admin/imports",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+            "support_surfaces": {
+                "ingestion.provider_import_runs": [
+                    "id",
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "attempts",
+                    "started_at",
+                    "error_summary",
+                    "created_at"
+                ],
+                "provider.providers": [
+                    "id",
+                    "name",
+                    "slug"
+                ]
+            }
+        },
+        "admin.quarantine.index": {
+            "method": "GET",
+            "route_name": "admin.quarantine.index",
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": [],
+            "uri": "/admin/quarantine",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+            "support_surfaces": {
+                "ingestion.provider_import_items": [
+                    "id",
+                    "provider_import_run_id",
+                    "provider_entity_type",
+                    "provider_entity_id",
+                    "status",
+                    "attempts",
+                    "processed_at"
+                ],
+                "ingestion.provider_import_runs": [
+                    "id",
+                    "provider_id"
+                ],
+                "provider.providers": [
+                    "id",
+                    "name",
+                    "slug"
+                ],
+                "ingestion.provider_import_failures": [
+                    "retryable"
+                ]
+            }
+        },
+        "admin.identity-conflicts.index": {
+            "method": "GET",
+            "route_name": "admin.identity-conflicts.index",
+            "uri": "/admin/identity-conflicts",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "implementation": "app/Http/Controllers/Admin/IdentityConflictReviewController.php",
+            "data_surfaces": [],
+            "support_surfaces": {
+                "identity.identity_conflict_reviews": [
+                    "id",
+                    "provider_entity_id",
+                    "entity_type",
+                    "status",
+                    "candidate_entity_ids",
+                    "opened_at"
+                ],
+                "identity.identity_conflict_decisions": [
+                    "identity_conflict_review_id"
+                ],
+                "provider.provider_entities": [
+                    "id",
+                    "provider_id",
+                    "external_id"
+                ],
+                "provider.providers": [
+                    "id",
+                    "name",
+                    "slug"
+                ]
+            }
+        },
+        "admin.users.index": {
+            "method": "GET",
+            "route_name": "admin.users.index",
+            "uri": "/admin/users",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+            "data_surfaces": [],
+            "support_surfaces": {
+                "auth.users": [
+                    "id",
+                    "name",
+                    "email",
+                    "role",
+                    "is_active",
+                    "email_verified_at",
+                    "created_at"
+                ]
+            }
+        },
+        "admin.providers.show": {
+            "method": "GET",
+            "route_name": "admin.providers.show",
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": [],
+            "uri": "/admin/providers/{provider}",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "slug",
+                    "name",
+                    "category",
+                    "status",
+                    "is_enabled",
+                    "feature_flag",
+                    "official_docs_url",
+                    "policy_reviewed_at",
+                    "configuration"
+                ],
+                "provider.provider_capabilities": [
+                    "provider_id",
+                    "capability",
+                    "status",
+                    "requires_user_consent",
+                    "market_dependent",
+                    "cache_ttl_seconds"
+                ],
+                "provider.provider_entities": [
+                    "provider_id"
+                ],
+                "provider.provider_sync_runs": [
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "processed_count",
+                    "failed_count",
+                    "error_summary",
+                    "created_at"
+                ],
+                "ingestion.provider_import_runs": [
+                    "id",
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "created_at"
+                ]
+            },
+            "route_parameters": {
+                "provider": "ulid"
+            }
+        },
+        "admin.imports.show": {
+            "method": "GET",
+            "route_name": "admin.imports.show",
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": [],
+            "uri": "/admin/imports/{run}",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "implementation": "app/Http/Controllers/Admin/OperationsController.php",
+            "support_surfaces": {
+                "ingestion.provider_import_runs": [
+                    "id",
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "attempts",
+                    "heartbeat_at",
+                    "resume_after",
+                    "started_at",
+                    "finished_at",
+                    "error_summary"
+                ],
+                "provider.providers": [
+                    "id",
+                    "name",
+                    "slug"
+                ],
+                "ingestion.provider_import_items": [
+                    "id",
+                    "provider_import_run_id",
+                    "provider_entity_type",
+                    "provider_entity_id",
+                    "status",
+                    "canonical_entity_type",
+                    "canonical_entity_id",
+                    "attempts"
+                ],
+                "ingestion.provider_import_failures": [
+                    "provider_import_run_id",
+                    "stage",
+                    "kind",
+                    "error_code",
+                    "message",
+                    "retryable",
+                    "occurred_at"
+                ],
+                "ingestion.provider_import_checkpoints": [
+                    "provider_import_run_id",
+                    "checkpoint_key",
+                    "cursor",
+                    "committed_at"
+                ],
+                "ingestion.provider_import_requests": [
+                    "provider_import_run_id",
+                    "sequence",
+                    "method",
+                    "endpoint",
+                    "response_status",
+                    "duration_ms"
+                ]
+            },
+            "route_parameters": {
+                "run": "ulid"
+            }
+        },
+        "admin.identity-conflicts.show": {
+            "method": "GET",
+            "route_name": "admin.identity-conflicts.show",
+            "uri": "/admin/identity-conflicts/{review}",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed"
+            ],
+            "actors": [
+                "active_verified_admin_with_confirmed_2fa"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "implementation": "app/Http/Controllers/Admin/IdentityConflictReviewController.php",
+            "route_parameters": {
+                "review": "ulid"
+            },
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "work": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "recording": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "version": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "release": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                },
+                "collection": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "support_surfaces": {
+                "identity.identity_conflict_reviews": [
+                    "id",
+                    "provider_entity_id",
+                    "entity_type",
+                    "status",
+                    "candidate_entity_ids",
+                    "evidence",
+                    "opened_at",
+                    "resolved_at"
+                ],
+                "identity.identity_conflict_decisions": [
+                    "id",
+                    "identity_conflict_review_id",
+                    "actor_id",
+                    "action",
+                    "selected_entity_id",
+                    "rationale",
+                    "created_at"
+                ],
+                "provider.provider_entities": [
+                    "id",
+                    "provider_id",
+                    "external_id"
+                ],
+                "provider.providers": [
+                    "id",
+                    "name",
+                    "slug"
+                ],
+                "auth.users": [
+                    "id",
+                    "name",
+                    "email"
+                ],
+                "catalog.entity_matches": [
+                    "provider_entity_id",
+                    "entity_type",
+                    "entity_id",
+                    "status",
+                    "match_method",
+                    "confidence",
+                    "evidence"
+                ]
+            }
+        },
+        "admin.identity-conflicts.decide": {
+            "method": "POST",
+            "route_name": "admin.identity-conflicts.decide",
+            "uri": "/admin/identity-conflicts/{review}/decisions",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-identity-conflicts",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_identity_reviewer_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/IdentityConflictReviewController.php",
+            "route_parameters": {
+                "review": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "identity.identity_conflict_reviews": [
+                    "id",
+                    "provider_entity_id",
+                    "entity_type",
+                    "status",
+                    "candidate_entity_ids",
+                    "opened_at",
+                    "resolved_at"
+                ],
+                "catalog.entity_matches": [
+                    "provider_entity_id",
+                    "entity_type",
+                    "entity_id",
+                    "status",
+                    "match_method",
+                    "confidence",
+                    "active_match_key"
+                ]
+            },
+            "support_surface_writes": {
+                "identity.identity_conflict_reviews": [
+                    "status",
+                    "resolved_at",
+                    "updated_at"
+                ],
+                "identity.identity_conflict_decisions": [
+                    "identity_conflict_review_id",
+                    "actor_id",
+                    "action",
+                    "selected_entity_id",
+                    "rationale",
+                    "before_snapshot",
+                    "after_snapshot",
+                    "created_at"
+                ],
+                "catalog.entity_matches": [
+                    "status",
+                    "match_method",
+                    "confidence",
+                    "active_match_key",
+                    "updated_at"
+                ]
+            }
+        },
+        "admin.providers.mutate": {
+            "method": "POST",
+            "route_name": "admin.providers.mutate",
+            "uri": "/admin/providers/{provider}/operations",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-providers",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/ProviderMutationController.php",
+            "route_parameters": {
+                "provider": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "status",
+                    "is_enabled"
+                ]
+            },
+            "support_surface_writes": {
+                "provider.providers": [
+                    "status",
+                    "is_enabled",
+                    "updated_at"
+                ],
+                "provider.provider_operation_audits": [
+                    "provider_id",
+                    "actor_user_id",
+                    "action",
+                    "idempotency_key",
+                    "before_state",
+                    "after_state",
+                    "rationale",
+                    "occurred_at",
+                    "created_at",
+                    "updated_at"
+                ]
+            }
+        },
+        "admin.imports.recover": {
+            "method": "POST",
+            "route_name": "admin.imports.recover",
+            "uri": "/admin/imports/{run}/operations",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-providers",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/ProviderMutationController.php",
+            "route_parameters": {
+                "run": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "ingestion.provider_import_runs": [
+                    "id",
+                    "provider_id",
+                    "status",
+                    "attempts",
+                    "cancellation_requested_at",
+                    "resume_after",
+                    "finished_at",
+                    "error_summary"
+                ],
+                "ingestion.provider_import_checkpoints": [
+                    "provider_import_run_id",
+                    "checkpoint_key",
+                    "cursor"
+                ]
+            },
+            "support_surface_writes": {
+                "ingestion.provider_import_runs": [
+                    "status",
+                    "attempts",
+                    "cancellation_requested_at",
+                    "resume_after",
+                    "finished_at",
+                    "error_summary",
+                    "updated_at"
+                ],
+                "provider.provider_operation_audits": [
+                    "provider_id",
+                    "provider_import_run_id",
+                    "actor_user_id",
+                    "action",
+                    "idempotency_key",
+                    "before_state",
+                    "after_state",
+                    "rationale",
+                    "occurred_at",
+                    "created_at",
+                    "updated_at"
+                ]
+            }
+        },
+        "public.artists.index": {
+            "method": "GET",
+            "route_name": "artists.index",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "artist_type",
+                        "country_code",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/artists",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+        },
+        "public.releases.index": {
+            "method": "GET",
+            "route_name": "releases.index",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "release": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "release_type",
+                        "released_on",
+                        "country_code",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/releases",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+        },
+        "public.collections.index": {
+            "method": "GET",
+            "route_name": "collections.index",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "collection": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "description",
+                        "visibility",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/collections",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+        },
+        "admin.providers.musicbrainz.artists.import": {
+            "method": "POST",
+            "route_name": "admin.providers.musicbrainz.artists.import",
+            "uri": "/admin/providers/{provider}/musicbrainz/artists/import",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-providers",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/MusicBrainzArtistImportController.php",
+            "route_parameters": {
+                "provider": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "slug",
+                    "status",
+                    "is_enabled"
+                ]
+            },
+            "support_surface_writes": {
+                "ingestion.provider_import_runs": [
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "configuration",
+                    "created_at",
+                    "updated_at"
+                ],
+                "ingestion.provider_import_checkpoints": [
+                    "provider_import_run_id",
+                    "checkpoint_key",
+                    "cursor",
+                    "state",
+                    "committed_at",
+                    "created_at",
+                    "updated_at"
+                ]
+            }
+        },
+        "admin.providers.musicbrainz.releases.import": {
+            "method": "POST",
+            "route_name": "admin.providers.musicbrainz.releases.import",
+            "uri": "/admin/providers/{provider}/musicbrainz/releases/import",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-providers",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/MusicBrainzReleaseImportController.php",
+            "route_parameters": {
+                "provider": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "slug",
+                    "status",
+                    "is_enabled"
+                ]
+            },
+            "support_surface_writes": {
+                "ingestion.provider_import_runs": [
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "configuration",
+                    "created_at",
+                    "updated_at"
+                ],
+                "ingestion.provider_import_checkpoints": [
+                    "provider_import_run_id",
+                    "checkpoint_key",
+                    "cursor",
+                    "state",
+                    "committed_at",
+                    "created_at",
+                    "updated_at"
+                ]
+            }
+        },
+        "public.releases.show": {
+            "method": "GET",
+            "route_name": "releases.show",
+            "uri": "/releases/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "release": {
+                    "read_fields": [
+                        "id",
+                        "release_group_id",
+                        "title",
+                        "slug",
+                        "release_type",
+                        "released_on",
+                        "country_code",
+                        "barcode",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            }
+        },
+        "public.recordings.index": {
+            "method": "GET",
+            "route_name": "recordings.index",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "recording": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "duration_ms",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/recordings",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+        },
+        "public.recordings.show": {
+            "method": "GET",
+            "route_name": "recordings.show",
+            "uri": "/recordings/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "recording": {
+                    "read_fields": [
+                        "id",
+                        "work_id",
+                        "title",
+                        "slug",
+                        "duration_ms",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            }
+        },
+        "admin.providers.musicbrainz.recordings.import": {
+            "method": "POST",
+            "route_name": "admin.providers.musicbrainz.recordings.import",
+            "uri": "/admin/providers/{provider}/musicbrainz/recordings/import",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-providers",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/MusicBrainzRecordingImportController.php",
+            "route_parameters": {
+                "provider": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "slug",
+                    "status",
+                    "is_enabled"
+                ]
+            },
+            "support_surface_writes": {
+                "ingestion.provider_import_runs": [
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "configuration",
+                    "created_at",
+                    "updated_at"
+                ],
+                "ingestion.provider_import_checkpoints": [
+                    "provider_import_run_id",
+                    "checkpoint_key",
+                    "cursor",
+                    "state",
+                    "committed_at",
+                    "created_at",
+                    "updated_at"
+                ]
+            }
+        },
+        "admin.providers.musicbrainz.works.import": {
+            "method": "POST",
+            "route_name": "admin.providers.musicbrainz.works.import",
+            "uri": "/admin/providers/{provider}/musicbrainz/works/import",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-providers",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/MusicBrainzWorkImportController.php",
+            "route_parameters": {
+                "provider": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "slug",
+                    "status",
+                    "is_enabled"
+                ]
+            },
+            "support_surface_writes": {
+                "ingestion.provider_import_runs": [
+                    "provider_id",
+                    "operation",
+                    "status",
+                    "configuration",
+                    "created_at",
+                    "updated_at"
+                ],
+                "ingestion.provider_import_checkpoints": [
+                    "provider_import_run_id",
+                    "checkpoint_key",
+                    "cursor",
+                    "state",
+                    "committed_at",
+                    "created_at",
+                    "updated_at"
+                ]
+            }
+        },
+        "public.works.index": {
+            "method": "GET",
+            "route_name": "works.index",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "work": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "work_type",
+                        "language_code",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/works",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+        },
+        "admin.providers.youtube.destinations.approve": {
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/youtube/destinations/approve",
+            "route_name": "admin.providers.youtube.destinations.approve",
+            "middleware": [
+                "web",
+                "auth",
+                "active",
+                "verified",
+                "can:access-admin",
+                "two-factor.confirmed",
+                "can:manage-providers",
+                "password.confirm"
+            ],
+            "actors": [
+                "active_verified_provider_manager_with_confirmed_2fa_and_recent_password_confirmation"
+            ],
+            "read_only": false,
+            "output_type": "redirect",
+            "implementation": "app/Http/Controllers/Admin/YouTubeDestinationController.php",
+            "route_parameters": {
+                "provider": "ulid"
+            },
+            "data_surfaces": [],
+            "support_surfaces": {
+                "provider.providers": [
+                    "id",
+                    "slug",
+                    "status",
+                    "is_enabled"
+                ],
+                "provider.provider_destinations": [
+                    "id",
+                    "provider_id",
+                    "entity_type",
+                    "entity_id",
+                    "provider_resource_id",
+                    "url",
+                    "review_state",
+                    "verified_at"
+                ]
+            },
+            "support_surface_writes": {
+                "provider.provider_destinations": [
+                    "provider_id",
+                    "entity_type",
+                    "entity_id",
+                    "provider_resource_id",
+                    "url",
+                    "title",
+                    "channel_id",
+                    "channel_title",
+                    "duration_ms",
+                    "is_embeddable",
+                    "privacy_status",
+                    "match_score",
+                    "review_state",
+                    "evidence",
+                    "verified_at",
+                    "last_checked_at",
+                    "created_at",
+                    "updated_at"
+                ]
+            }
+        },
+        "public.artists.show": {
+            "method": "GET",
+            "route_name": "artists.show",
+            "uri": "/artists/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "sort_name",
+                        "slug",
+                        "artist_type",
+                        "country_code",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                }
+            }
+        },
+        "public.release-groups.show": {
+            "method": "GET",
+            "route_name": "release-groups.show",
+            "uri": "/release-groups/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "release_group": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "primary_type",
+                        "secondary_types",
+                        "first_release_date",
+                        "disambiguation",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                }
+            }
+        },
+        "public.works.show": {
+            "method": "GET",
+            "route_name": "works.show",
+            "uri": "/works/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "work": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "work_type",
+                        "language_code",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                }
+            }
+        },
+        "public.versions.show": {
+            "method": "GET",
+            "route_name": "versions.show",
+            "uri": "/versions/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "version": {
+                    "read_fields": [
+                        "id",
+                        "recording_id",
+                        "name",
+                        "slug",
+                        "version_type",
+                        "duration_ms",
+                        "verification_state",
+                        "created_at",
+                        "updated_at"
+                    ],
+                    "write_fields": []
+                }
+            }
+        },
+        "public.collections.show": {
+            "method": "GET",
+            "route_name": "collections.show",
+            "uri": "/collections/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "collection": {
+                    "read_fields": [
+                        "id",
+                        "title",
+                        "slug",
+                        "description",
+                        "visibility",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                }
+            }
+        },
+        "public.groups.index": {
+            "method": "GET",
+            "route_name": "groups.index",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "slug",
+                        "artist_type",
+                        "country_code",
+                        "verification_state"
+                    ],
+                    "write_fields": []
+                }
+            },
+            "uri": "/groups",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/PublicCatalog/BrowseController.php"
+        },
+        "public.groups.show": {
+            "method": "GET",
+            "route_name": "groups.show",
+            "uri": "/groups/{slug}",
+            "middleware": [
+                "web"
+            ],
+            "implementation": "app/Http/Controllers/Search/EntityController.php",
+            "actors": [
+                "guest",
+                "authenticated_user"
+            ],
+            "read_only": true,
+            "output_type": "array<string,mixed>",
+            "route_parameters": {
+                "slug": "slug"
+            },
+            "data_surfaces": {
+                "artist": {
+                    "read_fields": [
+                        "id",
+                        "name",
+                        "sort_name",
+                        "slug",
+                        "artist_type",
+                        "country_code",
+                        "verification_state",
+                        "created_at",
+                        "updated_at",
+                        "deleted_at"
+                    ],
+                    "write_fields": []
+                }
+            }
+        }
+    },
+    "route_registry": {
+        "account.overview": {
+            "name": "account.overview",
+            "method": "GET|HEAD",
+            "uri": "/account",
+            "action": "App\\Http\\Controllers\\Account\\AccountController@overview",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "account.profile": {
+            "name": "account.profile",
+            "method": "GET|HEAD",
+            "uri": "/account/profile",
+            "action": "App\\Http\\Controllers\\Account\\AccountController@profile",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "account.security": {
+            "name": "account.security",
+            "method": "GET|HEAD",
+            "uri": "/account/security",
+            "action": "App\\Http\\Controllers\\Account\\AccountController@security",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.audit.index": {
+            "name": "admin.audit.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/audit",
+            "action": "App\\Http\\Controllers\\Admin\\PrivilegedAuditController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:view-audit"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.canonical-admissions.decide": {
+            "name": "admin.canonical-admissions.decide",
+            "method": "POST",
+            "uri": "/admin/canonical-admissions/{admission}/decisions",
+            "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@decide",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.canonical-admissions.index": {
+            "name": "admin.canonical-admissions.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/canonical-admissions",
+            "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@index",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.canonical-admissions.show": {
+            "name": "admin.canonical-admissions.show",
+            "method": "GET|HEAD",
+            "uri": "/admin/canonical-admissions/{admission}",
+            "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.canonical-admissions.stage": {
+            "name": "admin.canonical-admissions.stage",
+            "method": "POST",
+            "uri": "/admin/canonical-admissions/assertions/{assertion}",
+            "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@stage",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.catalog.artists.update": {
+            "name": "admin.catalog.artists.update",
+            "method": "PATCH",
+            "uri": "/admin/catalog/artist/{id}",
+            "action": "App\\Http\\Controllers\\Admin\\CatalogController@updateArtist",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.catalog.entities.index": {
+            "name": "admin.catalog.entities.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/catalog/{type}",
+            "action": "App\\Http\\Controllers\\Admin\\CatalogController@index",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.catalog.entities.show": {
+            "name": "admin.catalog.entities.show",
+            "method": "GET|HEAD",
+            "uri": "/admin/catalog/{type}/{id}",
+            "action": "App\\Http\\Controllers\\Admin\\CatalogController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.catalog.index": {
+            "name": "admin.catalog.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/catalog",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@catalog",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.dashboard": {
+            "name": "admin.dashboard",
+            "method": "GET|HEAD",
+            "uri": "/admin",
+            "action": "App\\Http\\Controllers\\Admin\\DashboardController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.activate": {
+            "name": "admin.extensions.activate",
+            "method": "POST",
+            "uri": "/admin/extensions/{extension}/activate",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@activate",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-extensions",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.cleanup": {
+            "name": "admin.extensions.cleanup",
+            "method": "POST",
+            "uri": "/admin/extensions/{extension}/cleanup",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@cleanup",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-extensions",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.index": {
+            "name": "admin.extensions.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/extensions",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@index",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.install": {
+            "name": "admin.extensions.install",
+            "method": "POST",
+            "uri": "/admin/extensions/install",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@install",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-extensions",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.rollback": {
+            "name": "admin.extensions.rollback",
+            "method": "POST",
+            "uri": "/admin/extensions/{extension}/rollback",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@rollback",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-extensions",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.show": {
+            "name": "admin.extensions.show",
+            "method": "GET|HEAD",
+            "uri": "/admin/extensions/{extension}",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.toggle": {
+            "name": "admin.extensions.toggle",
+            "method": "POST",
+            "uri": "/admin/extensions/{extension}/toggle",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@toggle",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-extensions",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.upgrade": {
+            "name": "admin.extensions.upgrade",
+            "method": "POST",
+            "uri": "/admin/extensions/{extension}/upgrade",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@upgrade",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-extensions",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.extensions.upload": {
+            "name": "admin.extensions.upload",
+            "method": "POST",
+            "uri": "/admin/extensions/upload",
+            "action": "App\\Http\\Controllers\\Admin\\ExtensionController@upload",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-extensions",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.identity-conflicts.decide": {
+            "name": "admin.identity-conflicts.decide",
+            "method": "POST",
+            "uri": "/admin/identity-conflicts/{review}/decisions",
+            "action": "App\\Http\\Controllers\\Admin\\IdentityConflictReviewController@decide",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-identity-conflicts",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.identity-conflicts.index": {
+            "name": "admin.identity-conflicts.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/identity-conflicts",
+            "action": "App\\Http\\Controllers\\Admin\\IdentityConflictReviewController@index",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.identity-conflicts.show": {
+            "name": "admin.identity-conflicts.show",
+            "method": "GET|HEAD",
+            "uri": "/admin/identity-conflicts/{review}",
+            "action": "App\\Http\\Controllers\\Admin\\IdentityConflictReviewController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.index": {
+            "name": "admin.imports.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/imports",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@imports",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.preview": {
+            "name": "admin.imports.preview",
+            "method": "GET|HEAD",
+            "uri": "/admin/imports/preview",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderImportPreviewController@index",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.preview.build": {
+            "name": "admin.imports.preview.build",
+            "method": "POST",
+            "uri": "/admin/imports/preview",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderImportPreviewController@preview",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.preview.execute": {
+            "name": "admin.imports.preview.execute",
+            "method": "POST",
+            "uri": "/admin/imports/preview/execute",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderImportPlanController@execute",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.recover": {
+            "name": "admin.imports.recover",
+            "method": "POST",
+            "uri": "/admin/imports/{run}/operations",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderMutationController@import",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.search": {
+            "name": "admin.imports.search",
+            "method": "GET|HEAD",
+            "uri": "/admin/imports/search",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderImportDiscoveryController@search",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.select": {
+            "name": "admin.imports.select",
+            "method": "POST",
+            "uri": "/admin/imports/select",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderImportDiscoveryController@select",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.imports.show": {
+            "name": "admin.imports.show",
+            "method": "GET|HEAD",
+            "uri": "/admin/imports/{run}",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@importRun",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.configuration.update": {
+            "name": "admin.providers.configuration.update",
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/configuration",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderConfigurationController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.index": {
+            "name": "admin.providers.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/providers",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@providers",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.musicbrainz.artists.import": {
+            "name": "admin.providers.musicbrainz.artists.import",
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/musicbrainz/artists/import",
+            "action": "App\\Http\\Controllers\\Admin\\MusicBrainzArtistImportController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.musicbrainz.recordings.import": {
+            "name": "admin.providers.musicbrainz.recordings.import",
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/musicbrainz/recordings/import",
+            "action": "App\\Http\\Controllers\\Admin\\MusicBrainzRecordingImportController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.musicbrainz.releases.import": {
+            "name": "admin.providers.musicbrainz.releases.import",
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/musicbrainz/releases/import",
+            "action": "App\\Http\\Controllers\\Admin\\MusicBrainzReleaseImportController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.musicbrainz.works.import": {
+            "name": "admin.providers.musicbrainz.works.import",
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/musicbrainz/works/import",
+            "action": "App\\Http\\Controllers\\Admin\\MusicBrainzWorkImportController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.mutate": {
+            "name": "admin.providers.mutate",
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/operations",
+            "action": "App\\Http\\Controllers\\Admin\\ProviderMutationController@provider",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.show": {
+            "name": "admin.providers.show",
+            "method": "GET|HEAD",
+            "uri": "/admin/providers/{provider}",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@provider",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.providers.youtube.destinations.approve": {
+            "name": "admin.providers.youtube.destinations.approve",
+            "method": "POST",
+            "uri": "/admin/providers/{provider}/youtube/destinations/approve",
+            "action": "App\\Http\\Controllers\\Admin\\YouTubeDestinationController",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-providers",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.quarantine.index": {
+            "name": "admin.quarantine.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/quarantine",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@quarantine",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.system.index": {
+            "name": "admin.system.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/system",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@system",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.users.active.update": {
+            "name": "admin.users.active.update",
+            "method": "PATCH",
+            "uri": "/admin/users/{user}/active",
+            "action": "App\\Http\\Controllers\\Admin\\UserAdministrationController@active",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-user-activation",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.users.index": {
+            "name": "admin.users.index",
+            "method": "GET|HEAD",
+            "uri": "/admin/users",
+            "action": "App\\Http\\Controllers\\Admin\\OperationsController@users",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "admin.users.role.update": {
+            "name": "admin.users.role.update",
+            "method": "PATCH",
+            "uri": "/admin/users/{user}/role",
+            "action": "App\\Http\\Controllers\\Admin\\UserAdministrationController@role",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate",
+                "App\\Http\\Middleware\\EnsureUserIsActive",
+                "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                "Illuminate\\Auth\\Middleware\\Authorize:manage-user-roles",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "artists.index": {
+            "name": "artists.index",
+            "method": "GET|HEAD",
+            "uri": "/artists",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@artists",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "artists.show": {
+            "name": "artists.show",
+            "method": "GET|HEAD",
+            "uri": "/artists/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@artist",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "collections.index": {
+            "name": "collections.index",
+            "method": "GET|HEAD",
+            "uri": "/collections",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@collections",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "collections.show": {
+            "name": "collections.show",
+            "method": "GET|HEAD",
+            "uri": "/collections/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@collection",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "default-livewire.update": {
+            "name": "default-livewire.update",
+            "method": "POST",
+            "uri": "/livewire-4aeeedbb/update",
+            "action": "Livewire\\Mechanisms\\HandleRequests\\HandleRequests@handleUpdate",
+            "middleware": [
+                "web",
+                "Livewire\\Mechanisms\\HandleRequests\\RequireLivewireHeaders"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "groups.index": {
+            "name": "groups.index",
+            "method": "GET|HEAD",
+            "uri": "/groups",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@groups",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "groups.show": {
+            "name": "groups.show",
+            "method": "GET|HEAD",
+            "uri": "/groups/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@group",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "home": {
+            "name": "home",
+            "method": "GET|HEAD",
+            "uri": "/",
+            "action": "App\\Http\\Controllers\\HomeController",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.completed-jobs.index": {
+            "name": "horizon.completed-jobs.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/jobs/completed",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\CompletedJobsController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.failed-jobs.index": {
+            "name": "horizon.failed-jobs.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/jobs/failed",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\FailedJobsController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.failed-jobs.show": {
+            "name": "horizon.failed-jobs.show",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/jobs/failed/{id}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\FailedJobsController@show",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.index": {
+            "name": "horizon.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/{view?}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\HomeController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.jobs-batches.index": {
+            "name": "horizon.jobs-batches.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/batches",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\BatchesController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.jobs-batches.retry": {
+            "name": "horizon.jobs-batches.retry",
+            "method": "POST",
+            "uri": "/horizon/api/batches/retry/{id}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\BatchesController@retry",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.jobs-batches.show": {
+            "name": "horizon.jobs-batches.show",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/batches/{id}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\BatchesController@show",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.jobs-metrics.index": {
+            "name": "horizon.jobs-metrics.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/metrics/jobs",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\JobMetricsController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.jobs-metrics.show": {
+            "name": "horizon.jobs-metrics.show",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/metrics/jobs/{id}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\JobMetricsController@show",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.jobs.show": {
+            "name": "horizon.jobs.show",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/jobs/{id}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\JobsController@show",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.masters.index": {
+            "name": "horizon.masters.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/masters",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\MasterSupervisorController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.monitoring-tag.destroy": {
+            "name": "horizon.monitoring-tag.destroy",
+            "method": "DELETE",
+            "uri": "/horizon/api/monitoring/{tag}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\MonitoringController@destroy",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.monitoring-tag.paginate": {
+            "name": "horizon.monitoring-tag.paginate",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/monitoring/{tag}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\MonitoringController@paginate",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.monitoring.index": {
+            "name": "horizon.monitoring.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/monitoring",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\MonitoringController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.monitoring.store": {
+            "name": "horizon.monitoring.store",
+            "method": "POST",
+            "uri": "/horizon/api/monitoring",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\MonitoringController@store",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.pending-jobs.index": {
+            "name": "horizon.pending-jobs.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/jobs/pending",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\PendingJobsController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.queues-metrics.index": {
+            "name": "horizon.queues-metrics.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/metrics/queues",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\QueueMetricsController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.queues-metrics.show": {
+            "name": "horizon.queues-metrics.show",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/metrics/queues/{id}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\QueueMetricsController@show",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.retry-jobs.show": {
+            "name": "horizon.retry-jobs.show",
+            "method": "POST",
+            "uri": "/horizon/api/jobs/retry/{id}",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\RetryController@store",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.silenced-jobs.index": {
+            "name": "horizon.silenced-jobs.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/jobs/silenced",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\SilencedJobsController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.stats.index": {
+            "name": "horizon.stats.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/stats",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\DashboardStatsController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "horizon.workload.index": {
+            "name": "horizon.workload.index",
+            "method": "GET|HEAD",
+            "uri": "/horizon/api/workload",
+            "action": "Laravel\\Horizon\\Http\\Controllers\\WorkloadController@index",
+            "middleware": [
+                "horizon",
+                "Laravel\\Horizon\\Http\\Middleware\\Authenticate"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "livewire.preview-file": {
+            "name": "livewire.preview-file",
+            "method": "GET|HEAD",
+            "uri": "/livewire-4aeeedbb/preview-file/{filename}",
+            "action": "Livewire\\Features\\SupportFileUploads\\FilePreviewController@handle",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "livewire.upload-file": {
+            "name": "livewire.upload-file",
+            "method": "POST",
+            "uri": "/livewire-4aeeedbb/upload-file",
+            "action": "Livewire\\Features\\SupportFileUploads\\FileUploadController@handle",
+            "middleware": [
+                "web",
+                "Illuminate\\Routing\\Middleware\\ThrottleRequests:60,1"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "login": {
+            "name": "login",
+            "method": "GET|HEAD",
+            "uri": "/login",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\AuthenticatedSessionController@create",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "login.store": {
+            "name": "login.store",
+            "method": "POST",
+            "uri": "/login",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\AuthenticatedSessionController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web",
+                "Illuminate\\Routing\\Middleware\\ThrottleRequests:login"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "logout": {
+            "name": "logout",
+            "method": "POST",
+            "uri": "/logout",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\AuthenticatedSessionController@destroy",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "password.confirm": {
+            "name": "password.confirm",
+            "method": "GET|HEAD",
+            "uri": "/user/confirm-password",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmablePasswordController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "password.confirm.store": {
+            "name": "password.confirm.store",
+            "method": "POST",
+            "uri": "/user/confirm-password",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmablePasswordController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "password.confirmation": {
+            "name": "password.confirmation",
+            "method": "GET|HEAD",
+            "uri": "/user/confirmed-password-status",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmedPasswordStatusController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "password.email": {
+            "name": "password.email",
+            "method": "POST",
+            "uri": "/forgot-password",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\PasswordResetLinkController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "password.request": {
+            "name": "password.request",
+            "method": "GET|HEAD",
+            "uri": "/forgot-password",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\PasswordResetLinkController@create",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "password.reset": {
+            "name": "password.reset",
+            "method": "GET|HEAD",
+            "uri": "/reset-password/{token}",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\NewPasswordController@create",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "password.update": {
+            "name": "password.update",
+            "method": "POST",
+            "uri": "/reset-password",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\NewPasswordController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "pulse": {
+            "name": "pulse",
+            "method": "GET|HEAD",
+            "uri": "/pulse",
+            "action": "Closure",
+            "middleware": [
+                "pulse"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "recordings.index": {
+            "name": "recordings.index",
+            "method": "GET|HEAD",
+            "uri": "/recordings",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@recordings",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "recordings.show": {
+            "name": "recordings.show",
+            "method": "GET|HEAD",
+            "uri": "/recordings/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@recording",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "register": {
+            "name": "register",
+            "method": "GET|HEAD",
+            "uri": "/register",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\RegisteredUserController@create",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "register.store": {
+            "name": "register.store",
+            "method": "POST",
+            "uri": "/register",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\RegisteredUserController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "release-groups.show": {
+            "name": "release-groups.show",
+            "method": "GET|HEAD",
+            "uri": "/release-groups/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@releaseGroup",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "releases.index": {
+            "name": "releases.index",
+            "method": "GET|HEAD",
+            "uri": "/releases",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@releases",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "releases.show": {
+            "name": "releases.show",
+            "method": "GET|HEAD",
+            "uri": "/releases/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@release",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "robots": {
+            "name": "robots",
+            "method": "GET|HEAD",
+            "uri": "/robots.txt",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\RobotsController",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "search": {
+            "name": "search",
+            "method": "GET|HEAD",
+            "uri": "/search",
+            "action": "App\\Http\\Controllers\\Search\\SearchController",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "sitemap": {
+            "name": "sitemap",
+            "method": "GET|HEAD",
+            "uri": "/sitemap.xml",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\SitemapController",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "storage.local": {
+            "name": "storage.local",
+            "method": "GET|HEAD",
+            "uri": "/storage/{path}",
+            "action": "Closure",
+            "middleware": [],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "storage.local.upload": {
+            "name": "storage.local.upload",
+            "method": "PUT",
+            "uri": "/storage/{path}",
+            "action": "Closure",
+            "middleware": [],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.confirm": {
+            "name": "two-factor.confirm",
+            "method": "POST",
+            "uri": "/user/confirmed-two-factor-authentication",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmedTwoFactorAuthenticationController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.disable": {
+            "name": "two-factor.disable",
+            "method": "DELETE",
+            "uri": "/user/two-factor-authentication",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticationController@destroy",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.enable": {
+            "name": "two-factor.enable",
+            "method": "POST",
+            "uri": "/user/two-factor-authentication",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticationController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.login": {
+            "name": "two-factor.login",
+            "method": "GET|HEAD",
+            "uri": "/two-factor-challenge",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticatedSessionController@create",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.login.store": {
+            "name": "two-factor.login.store",
+            "method": "POST",
+            "uri": "/two-factor-challenge",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticatedSessionController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\RedirectIfAuthenticated:web",
+                "Illuminate\\Routing\\Middleware\\ThrottleRequests:two-factor"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.qr-code": {
+            "name": "two-factor.qr-code",
+            "method": "GET|HEAD",
+            "uri": "/user/two-factor-qr-code",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorQrCodeController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.recovery-codes": {
+            "name": "two-factor.recovery-codes",
+            "method": "GET|HEAD",
+            "uri": "/user/two-factor-recovery-codes",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\RecoveryCodeController@index",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.regenerate-recovery-codes": {
+            "name": "two-factor.regenerate-recovery-codes",
+            "method": "POST",
+            "uri": "/user/two-factor-recovery-codes",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\RecoveryCodeController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "two-factor.secret-key": {
+            "name": "two-factor.secret-key",
+            "method": "GET|HEAD",
+            "uri": "/user/two-factor-secret-key",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorSecretKeyController@show",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Auth\\Middleware\\RequirePassword"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "user-password.update": {
+            "name": "user-password.update",
+            "method": "PUT",
+            "uri": "/user/password",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\PasswordController@update",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "user-profile-information.update": {
+            "name": "user-profile-information.update",
+            "method": "PUT",
+            "uri": "/user/profile-information",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\ProfileInformationController@update",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "verification.notice": {
+            "name": "verification.notice",
+            "method": "GET|HEAD",
+            "uri": "/email/verify",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\EmailVerificationPromptController@__invoke",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "verification.send": {
+            "name": "verification.send",
+            "method": "POST",
+            "uri": "/email/verification-notification",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\EmailVerificationNotificationController@store",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Routing\\Middleware\\ThrottleRequests:6,1"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "verification.verify": {
+            "name": "verification.verify",
+            "method": "GET|HEAD",
+            "uri": "/email/verify/{id}/{hash}",
+            "action": "Laravel\\Fortify\\Http\\Controllers\\VerifyEmailController@__invoke",
+            "middleware": [
+                "web",
+                "Illuminate\\Auth\\Middleware\\Authenticate:web",
+                "Illuminate\\Routing\\Middleware\\ValidateSignature",
+                "Illuminate\\Routing\\Middleware\\ThrottleRequests:6,1"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "versions.show": {
+            "name": "versions.show",
+            "method": "GET|HEAD",
+            "uri": "/versions/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@version",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "works.index": {
+            "name": "works.index",
+            "method": "GET|HEAD",
+            "uri": "/works",
+            "action": "App\\Http\\Controllers\\PublicCatalog\\BrowseController@works",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        },
+        "works.show": {
+            "name": "works.show",
+            "method": "GET|HEAD",
+            "uri": "/works/{slug}",
+            "action": "App\\Http\\Controllers\\Search\\EntityController@work",
+            "middleware": [
+                "web"
+            ],
+            "source": "Laravel route registry (php artisan route:list --json)"
+        }
+    },
+    "contract_gaps": [
+        {
+            "journey": "member.manage_account",
+            "entrypoint": "account.overview",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "account.overview",
+                "method": "GET|HEAD",
+                "uri": "/account",
+                "action": "App\\Http\\Controllers\\Account\\AccountController@overview",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.member.manage_account"
+        },
+        {
+            "journey": "member.manage_account",
+            "entrypoint": "account.profile",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "account.profile",
+                "method": "GET|HEAD",
+                "uri": "/account/profile",
+                "action": "App\\Http\\Controllers\\Account\\AccountController@profile",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.member.manage_account"
+        },
+        {
+            "journey": "member.manage_account",
+            "entrypoint": "account.security",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "account.security",
+                "method": "GET|HEAD",
+                "uri": "/account/security",
+                "action": "App\\Http\\Controllers\\Account\\AccountController@security",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.member.manage_account"
+        },
+        {
+            "journey": "editor.ingest_and_admit",
+            "entrypoint": "admin.canonical-admissions.index",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "admin.canonical-admissions.index",
+                "method": "GET|HEAD",
+                "uri": "/admin/canonical-admissions",
+                "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@index",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                    "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                    "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+        },
+        {
+            "journey": "editor.ingest_and_admit",
+            "entrypoint": "admin.canonical-admissions.show",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "admin.canonical-admissions.show",
+                "method": "GET|HEAD",
+                "uri": "/admin/canonical-admissions/{admission}",
+                "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@show",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                    "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                    "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+        },
+        {
+            "journey": "editor.ingest_and_admit",
+            "entrypoint": "admin.canonical-admissions.stage",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "admin.canonical-admissions.stage",
+                "method": "POST",
+                "uri": "/admin/canonical-admissions/assertions/{assertion}",
+                "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@stage",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                    "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                    "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                    "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                    "Illuminate\\Auth\\Middleware\\RequirePassword"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+        },
+        {
+            "journey": "editor.ingest_and_admit",
+            "entrypoint": "admin.canonical-admissions.decide",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "admin.canonical-admissions.decide",
+                "method": "POST",
+                "uri": "/admin/canonical-admissions/{admission}/decisions",
+                "action": "App\\Http\\Controllers\\Admin\\CanonicalAdmissionController@decide",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                    "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                    "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                    "Illuminate\\Auth\\Middleware\\Authorize:manage-catalog",
+                    "Illuminate\\Auth\\Middleware\\RequirePassword"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.editor.ingest_and_admit"
+        },
+        {
+            "journey": "operator.observe_and_recover",
+            "entrypoint": "admin.audit.index",
+            "surface_state": "implemented",
+            "contract_state": "missing",
+            "knowledge_state": "partial",
+            "route": {
+                "name": "admin.audit.index",
+                "method": "GET|HEAD",
+                "uri": "/admin/audit",
+                "action": "App\\Http\\Controllers\\Admin\\PrivilegedAuditController",
+                "middleware": [
+                    "web",
+                    "Illuminate\\Auth\\Middleware\\Authenticate",
+                    "App\\Http\\Middleware\\EnsureUserIsActive",
+                    "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+                    "Illuminate\\Auth\\Middleware\\Authorize:access-admin",
+                    "App\\Http\\Middleware\\EnsureConfirmedTwoFactorAuthentication",
+                    "Illuminate\\Auth\\Middleware\\Authorize:view-audit"
+                ],
+                "source": "Laravel route registry (php artisan route:list --json)"
+            },
+            "reason": "Laravel route exists but no executable use-case contract maps to it.",
+            "source": "docs/project/domain/product-user-journeys.json#journeys.operator.observe_and_recover"
+        }
+    ],
+    "unknown_entrypoints": [],
+    "coverage": {
+        "journeys": 5,
+        "use_cases": 33,
+        "mapped_use_cases": 20,
+        "implemented_route_surfaces": 8,
+        "contract_gaps": 8,
+        "unknown_entrypoints": 0
+    },
+    "source_authorities": {
+        "project": "docs/project/engineering/project-knowledge.json",
+        "journeys": "docs/project/domain/product-user-journeys.json",
+        "use_cases": "docs/project/domain/use-case-contracts.json",
+        "domain": "docs/project/domain/domain-contracts.json",
+        "schema_ownership": "docs/project/domain/schema-ownership.json",
+        "stage": "docs/project/engineering/stage-plan.json",
+        "roadmap": "docs/project/engineering/roadmap.json",
+        "control_plane": "docs/project/governance/project-control-plane.json",
+        "architecture_graph": "docs/project/engineering/architecture-graph-contract.json"
+    },
+    "audience_projections": {
+        "new_developer": {
+            "goal": "Understand the system enough to navigate and make a bounded change without reading the entire repository.",
+            "default_depth": "overview_then_feature_trace"
+        },
+        "ai": {
+            "goal": "Resolve semantic owners, existing capabilities, gaps, relations and verification before editing; never infer ownership from filenames alone.",
+            "default_depth": "machine_index_then_authority_sources"
+        },
+        "product_owner": {
+            "goal": "See capabilities, completeness, decision debt and roadmap without implementation noise.",
+            "default_depth": "journey_and_roadmap"
+        },
+        "operator": {
+            "goal": "Understand operational capabilities, failure ownership and recovery entrypoints.",
+            "default_depth": "operations_and_verification"
+        },
+        "end_user": {
+            "goal": "Understand available product capabilities and how to use them without exposing internal architecture vocabulary.",
+            "default_depth": "implemented_public_capabilities_only"
+        }
+    },
+    "navigation_rule": "Resolve semantic journey/use-case/capability IDs and mapping state before searching implementation names. Existing route surface does not imply mapped application ownership."
+}
