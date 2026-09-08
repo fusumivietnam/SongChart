@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "owner": "roadmap-authority",
+  "rule": "roadmap expresses direction; stage-plan activates exactly one stage; candidate stages are not execution authority",
+  "status_model": ["accepted", "committed", "candidate", "deferred", "retired"],
+  "stages": [
+    {
+      "id": "21.0",
+      "status": "accepted",
+      "title": "Editorial Admin UX",
+      "capability_outcomes": ["editorial review safety", "operator-oriented canonical admission UX"]
+    },
+    {
+      "id": "22.0",
+      "status": "committed",
+      "title": "System Control Plane & Pre-Data Stabilization",
+      "drivers": ["authority consolidation", "pre-data risk reduction", "compatibility lifecycle", "resilience and quota fallback"],
+      "task_contract": "docs/foundation/STAGE_22_0_TASK_CONTRACT.md"
+    },
+    {
+      "id": "23.0",
+      "status": "candidate",
+      "title": "Public Product UX",
+      "drivers": ["visitor.discover", "visitor.follow_destination"]
+    },
+    {
+      "id": "24.0",
+      "status": "candidate",
+      "title": "Provider Expansion & Data Quality",
+      "drivers": ["editor.ingest_and_admit", "identity and provenance quality"]
+    },
+    {
+      "id": "25.0",
+      "status": "candidate",
+      "title": "Observability & Operations",
+      "drivers": ["operator.observe_and_recover", "scale and reliability evidence"]
+    },
+    {
+      "id": "26.0",
+      "status": "candidate",
+      "title": "Release & Package Pipeline",
+      "drivers": ["immutable artifact promotion", "versioned release lifecycle", "deployment provenance"]
+    }
+  ],
+  "activation_requires": [
+    "accepted_use_case_or_operational_driver",
+    "capability_gap",
+    "authority_ownership",
+    "compatibility_class",
+    "risk_class",
+    "task_contract",
+    "stage_plan_activation"
+  ]
+}
