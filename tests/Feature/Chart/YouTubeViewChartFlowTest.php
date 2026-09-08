@@ -64,7 +64,7 @@ it('fetches approved YouTube viewCount evidence and publishes a persisted canoni
         ->and($snapshot?->metric)->toBe(YouTubeViewCountObservationSource::METRIC)
         ->and($snapshot?->rows)->toHaveCount(1)
         ->and($snapshot?->rows[0]['canonical_recording_id'])->toBe((string) $recording->getKey())
-        ->and($snapshot?->rows[0]['score'])->toBe(123456.0)
+        ->and($snapshot?->rows[0]['score'])->toEqual(123456.0)
         ->and($snapshot?->rows[0]['observations'][0]['metric_semantics_version'])->toBe(YouTubeViewCountObservationSource::SEMANTICS_VERSION)
         ->and($snapshot?->rows[0]['observations'][0]['source_reference'])->toBe('youtube:videos.list:abcdefghijk:statistics');
 
