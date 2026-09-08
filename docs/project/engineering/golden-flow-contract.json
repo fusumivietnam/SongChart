@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "stage": "22.1",
+  "purpose": "Define the first production-oriented vertical contract that must be demonstrably closed from provider evidence through canonical identity, chart projection and public discovery.",
+  "golden_flow": {
+    "id": "provider_to_public_song",
+    "product_outcome": "A real provider song can be ingested, normalized, governed into a canonical song, projected into chart/public/search surfaces, and later corrected without manual cross-system repair.",
+    "steps": [
+      {"order": 1, "id": "provider_fetch", "required": true, "evidence": ["provider identity", "provider item id", "fetched_at", "raw/normalized provenance"]},
+      {"order": 2, "id": "normalize_observation", "required": true, "evidence": ["normalized identity fields", "source provenance retained"]},
+      {"order": 3, "id": "resolve_identity", "required": true, "evidence": ["candidate/canonical decision context", "conflict state when ambiguous"]},
+      {"order": 4, "id": "governed_admission", "required": true, "evidence": ["proposal/decision state", "rationale/audit for human decision when required"]},
+      {"order": 5, "id": "canonical_graph_projection", "required": true, "evidence": ["canonical song id", "artist/release relationships", "provider evidence link"]},
+      {"order": 6, "id": "chart_input_projection", "required": true, "evidence": ["canonical song id", "metric observation ids/timestamps", "calculation version"]},
+      {"order": 7, "id": "chart_snapshot", "required": true, "evidence": ["chart id", "rank", "score or ranking basis", "snapshot_at", "input provenance"]},
+      {"order": 8, "id": "public_projection", "required": true, "evidence": ["stable public route", "song/artist/chart consistency", "cache freshness"]},
+      {"order": 9, "id": "search_discovery", "required": true, "evidence": ["canonical identity searchable", "aliases/provider identity do not create duplicate public entities"]},
+      {"order": 10, "id": "seo_projection", "required": true, "evidence": ["canonical URL", "metadata/indexability follows URL/SEO authority"]},
+      {"order": 11, "id": "editorial_correction", "required": true, "evidence": ["governed correction", "audit trail", "dependent projections invalidated/recomputed"]}
+    ]
+  },
+  "golden_cases": [
+    {"id": "single_provider_song", "required": true, "description": "One artist, one song, one provider identity."},
+    {"id": "multi_provider_same_song", "required": true, "description": "The same canonical song observed from at least two providers without duplicate canonical/public entities."},
+    {"id": "same_name_artist_conflict", "required": true, "description": "Ambiguous artist naming must not auto-merge without sufficient governed evidence."},
+    {"id": "rerelease_or_remaster", "required": true, "description": "A rerelease/remaster case must preserve relationship/provenance semantics without accidental duplicate collapse."},
+    {"id": "provider_metadata_conflict", "required": true, "description": "Conflicting provider metadata must preserve evidence and route unresolved identity through governed review."}
+  ],
+  "invariants": [
+    "No canonical entity without traceable origin.",
+    "No chart row without canonical identity.",
+    "No chart row accepted as golden evidence without reproducible input/calculation provenance.",
+    "No provider evidence may become canonical identity merely because it was fetched successfully.",
+    "No rejected or unresolved admission may leak into canonical public projection.",
+    "Repeating the same provider input must be idempotent at observation/canonical projection boundaries.",
+    "One semantic editorial correction must converge all dependent projections without direct manual database repair.",
+    "Public song, artist, chart, search and SEO surfaces must agree on canonical identity."
+  ],
+  "acceptance": {
+    "required_cases_pass": true,
+    "unknown_critical_intersections": 0,
+    "missing_critical_intersections": 0,
+    "idempotency_proven": true,
+    "provenance_proven": true,
+    "correction_propagation_proven": true,
+    "public_discovery_proven": true
+  },
+  "verification_surface": {
+    "target_command": "./songchart golden verify",
+    "stage_22_1_rule": "Stage 22.1 may define the command contract and bind existing verification owners; it must not add a parallel verification engine when existing test/impact/canonical lanes can own the checks.",
+    "machine_output": "A future implementation should emit bounded JSON containing exact source identity, case results, failed edge ids and owning verification lanes."
+  }
+}
