@@ -26,9 +26,6 @@ final readonly class BuildChartSnapshot
         $semanticsVersion = null;
 
         foreach ($observations as $observation) {
-            if (($observation instanceof ChartMetricObservation) === false) {
-                throw new InvalidArgumentException('Chart observations must use the provenance DTO contract.');
-            }
             if ($observation->metric !== $metric) {
                 throw new InvalidArgumentException('All chart observations must use the requested metric.');
             }
