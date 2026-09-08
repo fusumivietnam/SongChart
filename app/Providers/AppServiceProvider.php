@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Application\Discovery\Listeners\RebuildDiscoveryAfterCanonicalChange;
 use App\Contracts\Analytics\ProductAnalytics;
 use App\Contracts\Catalog\EnrichmentAttemptStore;
 use App\Contracts\Catalog\EnrichmentEvidenceAdmissionPolicy;
@@ -13,6 +14,7 @@ use App\Contracts\Catalog\EntityIdentityBridge;
 use App\Contracts\Catalog\FieldAuthorityPolicy;
 use App\Contracts\HumanVerification\HumanVerification;
 use App\Domain\Audit\Contracts\PrivilegedAuditLogger;
+use App\Domain\Catalog\Events\CanonicalEntityChanged;
 use App\Domain\Providers\Normalization\Validation\Contracts\NormalizedProviderEntityValidator;
 use App\Services\Analytics\NullProductAnalytics;
 use App\Services\HumanVerification\NullHumanVerification;
@@ -32,6 +34,7 @@ use App\Support\Providers\Normalization\MusicBrainzProviderMapper;
 use App\Support\Providers\Normalization\ProviderSpecificMapperRegistry;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -64,6 +67,8 @@ final class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(CanonicalEntityChanged::class, RebuildDiscoveryAfterCanonicalChange::class);
+
         Model::shouldBeStrict(! $this->app->isProduction());
 
         if ($this->app->environment('local')) {
