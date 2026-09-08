@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "status": "pre-data-review",
+  "source_evidence": [
+    "database/migrations",
+    "docs/project/domain/schema-ownership.json",
+    "docs/project/domain/domain-contracts.json",
+    "docs/project/domain/IDENTIFIERS.md",
+    "docs/project/domain/DATA_CONTRACT.md",
+    "docs/project/domain/DOMAIN_MODEL.md"
+  ],
+  "principles": {
+    "canonical_ids": "ulid_and_locked",
+    "provider_ids": "external_only",
+    "historical_migrations": "immutable_when_sealed_or_potentially_applied",
+    "unique_constraints_are_domain_invariants": true,
+    "cascade_delete_requires_explicit_lifecycle_reason": true,
+    "orm_alone_is_not_schema_authority": true
+  },
+  "items": {
+    "canonical_pk_strategy": {
+      "classification": "lock",
+      "risk": "R4",
+      "current": "ULID canonical primary keys",
+      "action": "keep"
+    },
+    "external_identifier_uniqueness": {
+      "classification": "review_then_lock",
+      "risk": "R4",
+      "current": "unique(namespace,value) plus entity-scoped uniqueness",
+      "question": "confirm that one external namespace/value may map to only one canonical entity globally",
+      "action": "investigate"
+    },
+    "polymorphic_entity_references": {
+      "classification": "harden",
+      "risk": "R4",
+      "current": "entity_type + ULID entity_id without database FK on polymorphic tables",
+      "tables": ["external_identifiers", "metadata_assertions", "entity_matches", "entity_relationships", "collection_items"],
+      "action": "harden",
+      "target": "repository verifier plus periodic integrity scan; preserve provider-neutral polymorphism unless evidence supports redesign"
+    },
+    "delete_and_retention": {
+      "classification": "review_before_data",
+      "risk": "R4",
+      "current_examples": {
+        "recordings.work_id": "null_on_delete",
+        "release_tracks.release_id": "cascade",
+        "release_tracks.recording_id": "restrict",
+        "recording_versions.recording_id": "cascade",
+        "metadata_assertions.metadata_source_id": "restrict",
+        "metadata_conflicts.assertions": "cascade",
+        "entity_matches.provider_entity_id": "cascade"
+      },
+      "action": "investigate",
+      "target": "explicit deletion and retention matrix distinguishing soft delete, hard delete, audit/history retention and provider cleanup"
+    },
+    "public_slug_durability": {
+      "classification": "owner_decision_before_public_traffic",
+      "risk": "R3",
+      "current": "unique slug per canonical table used as public identity",
+      "action": "investigate",
+      "options": ["immutable_slug", "mutable_slug_with_history_redirect", "stable_id_plus_decorative_slug"]
+    },
+    "partial_dates": {
+      "classification": "lock",
+      "risk": "R3",
+      "current": "complete dates may enter SQL date columns; partial dates remain provenance assertions and do not invent month/day",
+      "action": "keep"
+    },
+    "relationship_shortcuts": {
+      "classification": "compatibility",
+      "risk": "R2",
+      "current": "entity_relationships authoritative; artist_recording and selected direct FKs may be read/compatibility shortcuts",
+      "action": "investigate",
+      "new_feature_target": false
+    },
+    "datatype_changes": {
+      "classification": "governed",
+      "risk": "R3",
+      "policy": "existing PK/FK identity types are locked; nullable/default/width/numeric/date changes require owning contract and compatibility classification",
+      "action": "harden"
+    }
+  },
+  "required_before_schema_baseline_approved": [
+    "external_identifier_uniqueness_decision",
+    "polymorphic_integrity_verifier",
+    "deletion_retention_matrix",
+    "public_slug_durability_decision",
+    "postgres_schema_snapshot_review"
+  ]
+}
