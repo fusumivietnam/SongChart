@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "purpose": "Machine-readable authority for critical end-to-end SongChart product-flow intersections.",
   "status_values": ["verified", "partial", "missing", "unknown"],
   "policy": {
@@ -11,165 +11,57 @@
   },
   "audit": {
     "stage": "22.1C",
-    "result": "no_unknown_critical_edges_but_production_chart_vertical_blocked",
+    "result": "no_unknown_critical_edges; chart_contract_persistence_and_public_read_closed; real_provider_metric_ingestion_missing",
     "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md"
   },
   "flows": {
     "provider_to_canonical": {
       "critical": true,
       "edges": [
-        {
-          "id": "provider.fetch_to_raw_observation",
-          "status": "partial",
-          "implementation": ["app/Support/Providers"],
-          "verification": "Existing provider import/runtime coverage exists; Stage 22 golden fixtures do not yet traverse one real provider metric source."
-        },
-        {
-          "id": "raw_observation_to_normalization",
-          "status": "partial",
-          "implementation": ["app/Support/Providers/Normalization"],
-          "verification": "Normalization infrastructure exists, but production chart-metric normalization is not emitted by a real time-series source."
-        },
-        {
-          "id": "normalization_to_identity_resolution",
-          "status": "partial",
-          "implementation": ["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php"],
-          "tests": ["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php"],
-          "verification": "Golden cases prove ambiguity/conflict remains governed and same input replays idempotently."
-        },
-        {
-          "id": "identity_resolution_to_admission",
-          "status": "verified",
-          "implementation": ["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php", "app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],
-          "tests": ["tests/Feature/Catalog/ProviderAdmissionIntegrationTest.php", "tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]
-        },
-        {
-          "id": "admission_to_canonical_graph",
-          "status": "verified",
-          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php", "app/Models/Catalog/RecordingVersion.php"],
-          "tests": ["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php", "tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]
-        }
+        {"id":"provider.fetch_to_raw_observation","status":"partial","implementation":["app/Support/Providers"],"verification":"Catalog/import provider paths exist; no production chart metric source is yet bound to the golden vertical."},
+        {"id":"raw_observation_to_normalization","status":"partial","implementation":["app/Support/Providers/Normalization"],"verification":"Provider normalization exists for current provider entities; chart metric unit/meaning normalization from a real time-series source is still absent."},
+        {"id":"normalization_to_identity_resolution","status":"partial","implementation":["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php"],"tests":["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php"],"verification":"Golden cases prove replay, ambiguity and provider conflict behavior, while a real chart-metric adapter remains unbound."},
+        {"id":"identity_resolution_to_admission","status":"verified","implementation":["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php","app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],"tests":["tests/Feature/Catalog/ProviderAdmissionIntegrationTest.php","tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]},
+        {"id":"admission_to_canonical_graph","status":"verified","implementation":["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php","app/Models/Catalog/RecordingVersion.php"],"tests":["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php","tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]}
       ]
     },
     "canonical_to_chart": {
       "critical": true,
       "edges": [
-        {
-          "id": "canonical_entity_to_chart_input",
-          "status": "partial",
-          "implementation": ["app/Domain/Chart/DTO/ChartMetricObservation.php"],
-          "verification": "Chart input requires canonical recording identity, but no production provider metric emitter currently creates these observations."
-        },
-        {
-          "id": "provider_signal_to_metric_normalization",
-          "status": "missing",
-          "implementation": ["app/Domain/Chart/DTO/ChartMetricObservation.php"],
-          "verification": "Provider-neutral observation contract exists; real provider time-series normalization source is absent.",
-          "next_action": "Stage 22.2 provider metric ingestion."
-        },
-        {
-          "id": "metric_normalization_to_ranking",
-          "status": "verified",
-          "implementation": ["app/Application/Chart/BuildChartSnapshot.php"],
-          "tests": ["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],
-          "verification": "For one explicit comparable metric, ranking is deterministic, calculation-versioned and tie-broken by canonical id."
-        },
-        {
-          "id": "ranking_to_chart_snapshot",
-          "status": "partial",
-          "implementation": ["app/Domain/Chart/DTO/ChartSnapshot.php", "app/Application/Chart/BuildChartSnapshot.php"],
-          "tests": ["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],
-          "verification": "Reproducible snapshot DTO exists, but immutable production persistence/revision ownership is missing."
-        },
-        {
-          "id": "chart_snapshot_to_provenance",
-          "status": "partial",
-          "implementation": ["app/Domain/Chart/DTO/ChartMetricObservation.php", "app/Domain/Chart/DTO/ChartSnapshot.php"],
-          "tests": ["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],
-          "verification": "Calculation version and input observation ids are retained; persisted observation/snapshot audit history is missing."
-        }
+        {"id":"canonical_entity_to_chart_input","status":"partial","implementation":["app/Domain/Chart/DTO/ChartMetricObservation.php"],"verification":"Chart observation contract requires canonical Recording identity; production provider metric ingestion does not yet emit it."},
+        {"id":"provider_signal_to_metric_normalization","status":"missing","implementation":["app/Domain/Chart/DTO/ChartMetricObservation.php"],"verification":"Provider-neutral target contract exists, but no real provider time-series adapter supplies a governed comparable metric.","next_action":"Stage 22.2 provider metric ingestion."},
+        {"id":"metric_normalization_to_ranking","status":"verified","implementation":["app/Application/Chart/BuildChartSnapshot.php"],"tests":["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],"verification":"For one explicitly comparable metric, ranking is deterministic, calculation-versioned and canonically tie-broken."},
+        {"id":"ranking_to_chart_snapshot","status":"verified","implementation":["app/Domain/Chart/DTO/ChartSnapshot.php","app/Application/Chart/BuildChartSnapshot.php","app/Support/Chart/DatabaseChartSnapshotStore.php","database/migrations/2026_09_09_000100_create_chart_snapshots_table.php"],"tests":["tests/Unit/Chart/ChartSnapshotProvenanceTest.php","tests/Feature/Chart/ChartSnapshotPersistenceTest.php"],"verification":"Snapshot calculation is persisted idempotently by chart/version/input fingerprint; historical rows are stored as self-contained payload rather than mutated in place."},
+        {"id":"chart_snapshot_to_provenance","status":"verified","implementation":["app/Domain/Chart/DTO/ChartMetricObservation.php","app/Domain/Chart/DTO/ChartSnapshot.php","app/Support/Chart/DatabaseChartSnapshotStore.php"],"tests":["tests/Feature/Chart/ChartSnapshotPersistenceTest.php"],"verification":"Persisted snapshot retains calculation version, input fingerprint, canonical recording ids and provider observation provenance."}
       ]
     },
     "canonical_chart_to_public": {
       "critical": true,
       "edges": [
-        {
-          "id": "canonical_to_public_read_model",
-          "status": "verified",
-          "implementation": ["app/Support/Search/EloquentSearchCatalog.php"]
-        },
-        {
-          "id": "chart_to_public_read_model",
-          "status": "partial",
-          "implementation": ["app/Application/Chart/Queries/PublicChartProjection.php"],
-          "tests": ["tests/Feature/Chart/PublicChartProjectionTest.php"],
-          "verification": "Chart rows resolve to the same canonical recording id/title/slug/URL; persisted latest-snapshot owner and public route are missing."
-        },
-        {
-          "id": "public_read_model_to_routes_views",
-          "status": "verified",
-          "implementation": ["app/Support/Search/EloquentSearchCatalog.php", "routes/web.php"],
-          "verification": "Canonical public entity/search routes already exist; chart route remains separate missing work."
-        },
-        {
-          "id": "canonical_to_search",
-          "status": "verified",
-          "implementation": ["app/Support/Search/EloquentSearchCatalog.php"]
-        },
-        {
-          "id": "public_entity_to_seo",
-          "status": "partial",
-          "implementation": ["app/Support/Catalog/PublicEntityUrl.php", "docs/project/docs/URL_SEO.md"],
-          "verification": "Canonical entity URLs are governed; chart-page SEO cannot close until the public chart route exists."
-        }
+        {"id":"canonical_to_public_read_model","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php"]},
+        {"id":"chart_to_public_read_model","status":"verified","implementation":["app/Support/Chart/DatabaseChartSnapshotStore.php","app/Application/Chart/Queries/PublicChartProjection.php","app/Http/Controllers/PublicCatalog/ChartController.php","resources/views/charts/show.blade.php","routes/web.php"],"tests":["tests/Feature/Chart/PublicChartProjectionTest.php","tests/Feature/Chart/PublicChartRouteTest.php"],"verification":"Latest persisted chart rows resolve to the same canonical Recording identity/URL; a chart without a persisted snapshot returns 404 and does not fabricate data."},
+        {"id":"public_read_model_to_routes_views","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php","app/Http/Controllers/PublicCatalog/ChartController.php","routes/web.php"]},
+        {"id":"canonical_to_search","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php"]},
+        {"id":"public_entity_to_seo","status":"partial","implementation":["app/Support/Catalog/PublicEntityUrl.php","app/Application/Chart/Queries/PublicChartProjection.php","routes/web.php","docs/project/docs/URL_SEO.md"],"verification":"Chart rows use canonical Recording URLs, but chart-page sitemap/metadata authority remains broader Stage 23 UX/SEO work."}
       ]
     },
     "editorial_correction_propagation": {
       "critical": true,
       "edges": [
-        {
-          "id": "admin_decision_to_canonical_mutation",
-          "status": "verified",
-          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]
-        },
-        {
-          "id": "canonical_mutation_to_decision_provenance",
-          "status": "verified",
-          "implementation": ["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]
-        },
-        {
-          "id": "canonical_mutation_to_semantic_change",
-          "status": "verified",
-          "implementation": ["app/Domain/Catalog/Events/CanonicalEntityChanged.php", "app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],
-          "tests": ["tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]
-        },
-        {
-          "id": "canonical_mutation_to_reprojection",
-          "status": "verified",
-          "implementation": ["app/Application/Discovery/Listeners/RebuildDiscoveryAfterCanonicalChange.php", "app/Jobs/Discovery/BuildDiscoveryProjection.php", "app/Providers/AppServiceProvider.php"],
-          "tests": ["tests/Feature/Discovery/CanonicalChangeReprojectionTest.php"],
-          "verification": "Only active Discovery channels matching the changed canonical entity type are queued."
-        },
-        {
-          "id": "canonical_mutation_to_chart_recompute",
-          "status": "missing",
-          "verification": "Cannot recompute a production chart until provider observations and persisted snapshot ownership exist.",
-          "next_action": "Stage 22.2 chart persistence/recompute listener."
-        },
-        {
-          "id": "canonical_mutation_to_search_refresh",
-          "status": "verified",
-          "implementation": ["app/Support/Search/EloquentSearchCatalog.php"],
-          "verification": "Search is a bounded direct canonical database read; no artificial reindex layer is required."
-        }
+        {"id":"admin_decision_to_canonical_mutation","status":"verified","implementation":["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]},
+        {"id":"canonical_mutation_to_decision_provenance","status":"verified","implementation":["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]},
+        {"id":"canonical_mutation_to_semantic_change","status":"verified","implementation":["app/Domain/Catalog/Events/CanonicalEntityChanged.php","app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],"tests":["tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]},
+        {"id":"canonical_mutation_to_reprojection","status":"verified","implementation":["app/Application/Discovery/Listeners/RebuildDiscoveryAfterCanonicalChange.php","app/Jobs/Discovery/BuildDiscoveryProjection.php","app/Providers/AppServiceProvider.php"],"tests":["tests/Feature/Discovery/CanonicalChangeReprojectionTest.php"],"verification":"Only active Discovery channels matching the changed canonical entity type are queued."},
+        {"id":"canonical_mutation_to_chart_recompute","status":"missing","implementation":["app/Domain/Catalog/Events/CanonicalEntityChanged.php","app/Support/Chart/DatabaseChartSnapshotStore.php"],"verification":"Chart persistence exists, but there is no real provider observation source/chart-definition selection from which to recompute affected production charts.","next_action":"After Stage 22.2 metric ingestion, add a bounded recompute listener selecting only affected chart contracts."},
+        {"id":"canonical_mutation_to_search_refresh","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php"],"verification":"Search is a bounded direct canonical database read; no artificial reindex layer is required."}
       ]
     },
     "source_to_release": {
       "critical": true,
       "edges": [
-        {"id": "source_to_candidate", "status": "verified", "verification": "existing candidate/release authority"},
-        {"id": "candidate_to_canonical_verification", "status": "verified", "verification": "existing canonical verification authority"},
-        {"id": "canonical_verification_to_package", "status": "verified", "verification": "existing release baseline/provenance gates"}
+        {"id":"source_to_candidate","status":"verified","verification":"existing candidate/release authority"},
+        {"id":"candidate_to_canonical_verification","status":"verified","verification":"existing canonical verification authority"},
+        {"id":"canonical_verification_to_package","status":"verified","verification":"existing release baseline/provenance gates"}
       ]
     }
   }
