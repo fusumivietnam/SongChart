@@ -62,7 +62,7 @@
         },
         "candidate-verification": {
             "source": "docs/project/stack/candidate-verification-contract.json",
-            "fingerprint": "0415548fbe43a49555328e3cb3e33440894042fd43038249d161a830c0ec3b4e",
+            "fingerprint": "5ced2bb6ea462ae8b3e0369ed2ce17b99d22930ac5fef6797e74f2392275c72b",
             "consumers": [
                 "candidate-verification.json",
                 "scripts/verify-candidate-contract.php",
@@ -216,7 +216,7 @@
         },
         "stack-manifest": {
             "source": "docs/project/stack/stack-manifest.json",
-            "fingerprint": "1d71e6a281e73823abb7546515c9c27c7f60baa9e76e1ee67bec699227b62b18",
+            "fingerprint": "240dedc8ce76f036231d1116aad353c35b6fa9af1f1649e7e4062e452309deff",
             "consumers": []
         },
         "package-registry": {
@@ -1687,5 +1687,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "3e86f5c9658a12744baa5575a1ea8554b24ec07e2e129e0976aaff5a0e58283e"
+    "graph_fingerprint": "d28ac38cf0728195bbedae56b28926c80d71a5541b4cbe220d736ac67841b148"
 }

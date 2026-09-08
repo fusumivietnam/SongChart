@@ -4,17 +4,17 @@
 
 ## Current stage
 
-- Stage `21.0 — Editorial Admin UX`
-- Status: `accepted`
+- Stage `22.0 — System Control Plane & Pre-Data Stabilization`
+- Status: `implementing`
 - Accepted through: `21.0`
-- Task contract: `docs/foundation/STAGE_21_0_TASK_CONTRACT.md`
+- Task contract: `docs/foundation/STAGE_22_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `21.0A` — `ACCEPTED` — Admission queue information hierarchy
-- `21.0B` — `ACCEPTED` — Decision safety and review context
-- `21.0C` — `ACCEPTED` — Editorial navigation and accessibility
-- `21.0D` — `ACCEPTED` — Stage acceptance and closure
+- `22.0A` — `IMPLEMENTING` — Control Plane & Roadmap Authority
+- `22.0B` — `PLANNED` — Pre-Data Architecture/Data Stabilization
+- `22.0C` — `PLANNED` — Framework/Runtime Lifecycle & Resilience
+- `22.0D` — `PLANNED` — Closure & Generated Views
 
 ## Next bounded tranche
 
