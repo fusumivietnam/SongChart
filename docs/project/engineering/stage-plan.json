@@ -1,36 +1,36 @@
 {
   "schema_version": 2,
   "current_stage": {
-    "id": "21.0",
-    "title": "Editorial Admin UX",
-    "task_contract": "docs/foundation/STAGE_21_0_TASK_CONTRACT.md",
-    "status": "accepted"
+    "id": "22.1",
+    "title": "System Intersection Map + Golden Vertical Contract",
+    "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
+    "status": "active"
   },
   "accepted_through": "21.0",
-  "active_tranche": null,
+  "active_tranche": "22.1A",
   "stage_progress": [
     {
-      "id": "21.0A",
-      "status": "accepted",
-      "title": "Admission queue information hierarchy"
+      "id": "22.1A",
+      "status": "active",
+      "title": "Intersection audit and ownership binding"
     },
     {
-      "id": "21.0B",
-      "status": "accepted",
-      "title": "Decision safety and review context"
+      "id": "22.1B",
+      "status": "planned",
+      "title": "Golden provider/canonical fixtures"
     },
     {
-      "id": "21.0C",
-      "status": "accepted",
-      "title": "Editorial navigation and accessibility"
+      "id": "22.1C",
+      "status": "planned",
+      "title": "Chart/public provenance contract closure"
     },
     {
-      "id": "21.0D",
-      "status": "accepted",
-      "title": "Stage acceptance and closure"
+      "id": "22.1D",
+      "status": "planned",
+      "title": "Stage closure and next vertical tranche"
     }
   ],
-  "next_tranche": null,
+  "next_tranche": "22.1B",
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
     "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
