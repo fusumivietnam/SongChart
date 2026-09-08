@@ -19,7 +19,9 @@ use RuntimeException;
 final readonly class YouTubeViewCountObservationSource
 {
     public const METRIC = 'youtube_video_view_count';
+
     public const METRIC_UNIT = 'views';
+
     public const SEMANTICS_VERSION = 'youtube-view-count-2026-08-24';
 
     public function __construct(
