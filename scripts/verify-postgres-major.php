@@ -5,6 +5,24 @@ declare(strict_types=1);
 $dotenv = [];
 $root = dirname(__DIR__);
 
+try {
+    $stack = json_decode(
+        (string) file_get_contents($root.'/docs/project/stack/stack-manifest.json'),
+        true,
+        512,
+        JSON_THROW_ON_ERROR,
+    );
+} catch (Throwable $exception) {
+    fwrite(STDERR, 'Unable to resolve PostgreSQL release authority: '.$exception->getMessage().PHP_EOL);
+    exit(1);
+}
+
+$requiredMajor = $stack['policies']['release_database_major'] ?? null;
+if (! is_int($requiredMajor) || $requiredMajor < 14) {
+    fwrite(STDERR, 'Stack authority does not declare a supported PostgreSQL release major target.'.PHP_EOL);
+    exit(1);
+}
+
 if (is_file($root.'/.env')) {
     foreach (file($root.'/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
         $line = trim($line);
@@ -56,16 +74,14 @@ try {
     $version = (string) $descriptionStatement->fetchColumn();
 } catch (Throwable $exception) {
     fwrite(STDERR, 'Unable to verify PostgreSQL major version: '.$exception->getMessage().PHP_EOL);
-
     exit(1);
 }
 
 $major = intdiv($versionNum, 10000);
 
-if ($major !== 18) {
-    fwrite(STDERR, "PostgreSQL 18 is required for release verification; connected major is {$major} ({$version}).".PHP_EOL);
-
+if ($major !== $requiredMajor) {
+    fwrite(STDERR, "PostgreSQL {$requiredMajor} is the current release target; connected major is {$major} ({$version}).".PHP_EOL);
     exit(1);
 }
 
-fwrite(STDOUT, "PostgreSQL 18 authority verified: {$version}".PHP_EOL);
+fwrite(STDOUT, "PostgreSQL {$requiredMajor} current release target verified: {$version}".PHP_EOL);
