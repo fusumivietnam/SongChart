@@ -19,6 +19,24 @@ function readJsonContract(string $path): array
     return is_array($decoded) ? $decoded : [];
 }
 
+/** @return array<string,mixed> */
+function semanticKnowledge(string $root): array
+{
+    $generated = readJsonContract($root.'/docs/project/generated/system-knowledge.json');
+    if ($generated !== []) {
+        return $generated;
+    }
+
+    $raw = shell_exec('cd '.escapeshellarg($root).' && php scripts/system-knowledge.php --json 2>/dev/null');
+    if (! is_string($raw) || trim($raw) === '') {
+        return [];
+    }
+
+    $decoded = json_decode($raw, true, flags: JSON_THROW_ON_ERROR);
+
+    return is_array($decoded) ? $decoded : [];
+}
+
 /** @return list<string> */
 function phpFiles(string $root, string $relative): array
 {
@@ -191,19 +209,30 @@ try {
         throw new RuntimeException('Project intelligence contracts are missing or invalid.');
     }
 
+    $semantic = semanticKnowledge($root);
+    if ($semantic === []) {
+        throw new RuntimeException('Semantic system knowledge is unavailable; project intelligence must not fall back to source-name inference for product ownership.');
+    }
+
     $headSha = gitValue($root, 'git rev-parse HEAD');
     $branch = gitValue($root, 'git branch --show-current');
     $graph = sourceGraph($root);
     $packages = installedPackages($root);
+    $semanticCoverage = is_array($semantic['coverage'] ?? null) ? $semantic['coverage'] : [];
     $metrics = [
+        'journeys' => (int) ($semanticCoverage['journeys'] ?? 0),
+        'use_cases' => (int) ($semanticCoverage['use_cases'] ?? 0),
+        'implemented_route_surfaces' => (int) ($semanticCoverage['implemented_route_surfaces'] ?? 0),
+        'contract_gaps' => (int) ($semanticCoverage['contract_gaps'] ?? 0),
+        'unknown_entrypoints' => (int) ($semanticCoverage['unknown_entrypoints'] ?? 0),
         'class_nodes' => count(array_filter($graph['nodes'], static fn (array $node): bool => $node['type'] === 'class')),
-        'route_nodes' => count(array_filter($graph['nodes'], static fn (array $node): bool => $node['type'] === 'route')),
-        'edges' => count($graph['edges']),
+        'source_route_nodes' => count(array_filter($graph['nodes'], static fn (array $node): bool => $node['type'] === 'route')),
+        'source_edges' => count($graph['edges']),
         'installed_packages' => count($packages),
     ];
 
     $snapshot = [
-        'schema_version' => 1,
+        'schema_version' => 2,
         'generated_from_repository' => true,
         'snapshot' => [
             'head_sha' => $headSha,
@@ -211,15 +240,27 @@ try {
             'status' => 'fresh',
             'consistency' => $graphContract['snapshot_policy']['consistency'] ?? 'eventual',
         ],
+        'orientation' => [
+            'product' => $semantic['product'] ?? null,
+            'stage' => $semantic['stage'] ?? null,
+            'coverage' => $semanticCoverage,
+            'journeys' => $semantic['journeys'] ?? [],
+            'contract_gaps' => $semantic['contract_gaps'] ?? [],
+            'unknown_entrypoints' => $semantic['unknown_entrypoints'] ?? [],
+            'roadmap' => $semantic['roadmap'] ?? [],
+        ],
+        'semantic' => $semantic,
+        'source_graph' => $graph,
         'metrics' => $metrics,
-        'graph' => $graph,
         'packages' => $packages,
         'contracts' => [
             'kernel' => 'docs/project/engineering/project-kernel-contract.json',
             'graph' => 'docs/project/engineering/architecture-graph-contract.json',
+            'system_knowledge' => 'docs/project/engineering/system-knowledge-contract.json',
             'use_case_schema' => 'docs/project/engineering/use-case-contract.schema.json',
             'versioning' => 'docs/project/release/versioning-policy.json',
         ],
+        'navigation_rule' => 'Use orientation/semantic first. source_graph is enrichment for implementation/debugging and must not invent product, capability or data ownership.',
     ];
 
     if ($write) {
@@ -230,7 +271,7 @@ try {
         }
         file_put_contents($directory.'/architecture-graph.json', json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
         file_put_contents($directory.'/source-metrics.json', json_encode([
-            'schema_version' => 1,
+            'schema_version' => 2,
             'snapshot' => $snapshot['snapshot'],
             'metrics' => $metrics,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
@@ -243,7 +284,8 @@ try {
 
     fwrite(STDOUT, 'SongChart Project Intelligence'.PHP_EOL);
     fwrite(STDOUT, 'Snapshot: '.($headSha ?? 'unknown').' branch='.($branch ?? 'detached').PHP_EOL);
-    fwrite(STDOUT, 'Classes: '.$metrics['class_nodes'].' Routes: '.$metrics['route_nodes'].' Edges: '.$metrics['edges'].' Packages: '.$metrics['installed_packages'].PHP_EOL);
+    fwrite(STDOUT, 'Semantic: journeys='.$metrics['journeys'].' use-cases='.$metrics['use_cases'].' routes='.$metrics['implemented_route_surfaces'].' contract-gaps='.$metrics['contract_gaps'].' unknown='.$metrics['unknown_entrypoints'].PHP_EOL);
+    fwrite(STDOUT, 'Deep source: classes='.$metrics['class_nodes'].' routes='.$metrics['source_route_nodes'].' edges='.$metrics['source_edges'].' packages='.$metrics['installed_packages'].PHP_EOL);
     fwrite(STDOUT, 'Machine JSON: php scripts/project-intelligence.php --json'.PHP_EOL);
 } catch (Throwable $exception) {
     fwrite(STDERR, 'Unable to build SongChart project intelligence: '.$exception->getMessage().PHP_EOL);
