@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "status": "pre-data-review",
+  "policy": {
+    "default_hard_delete": "restrict_until_explicitly_owned",
+    "soft_delete_is_not_fk_delete": true,
+    "cascade_requires_child_lifecycle_dependency": true,
+    "audit_provenance_history_requires_explicit_retention": true,
+    "provider_cleanup_must_not_silently_destroy_canonical_identity": true
+  },
+  "classes": {
+    "dependent_projection": "may cascade when the row has no independent historical meaning",
+    "durable_history": "must survive routine parent lifecycle changes unless an explicit retention policy permits purge",
+    "optional_reference": "may set null when the referenced object is optional and loss of the link preserves meaning",
+    "protected_reference": "restrict hard deletion while dependent meaning exists",
+    "compatibility_shortcut": "lifecycle follows its authoritative source and may not become a second deletion authority"
+  },
+  "reviewed_relationships": {
+    "recordings.work_id": {
+      "current": "null_on_delete",
+      "class": "optional_reference",
+      "action": "keep",
+      "reason": "recording may remain meaningful without the optional single-work shortcut; lossless relationships remain elsewhere"
+    },
+    "release_tracks.release_id": {
+      "current": "cascade",
+      "class": "dependent_projection",
+      "action": "keep",
+      "reason": "track position is owned by its release"
+    },
+    "release_tracks.recording_id": {
+      "current": "restrict",
+      "class": "protected_reference",
+      "action": "keep",
+      "reason": "a release track must not silently lose the referenced canonical recording"
+    },
+    "recording_versions.recording_id": {
+      "current": "cascade",
+      "class": "dependent_projection",
+      "action": "review_before_data",
+      "reason": "current schema treats version lifecycle as dependent; canonical hard-delete policy still needs explicit owner confirmation"
+    },
+    "artist_recording.artist_id": {
+      "current": "cascade",
+      "class": "compatibility_shortcut",
+      "action": "keep_compatibility_only",
+      "new_feature_target": false
+    },
+    "artist_recording.recording_id": {
+      "current": "cascade",
+      "class": "compatibility_shortcut",
+      "action": "keep_compatibility_only",
+      "new_feature_target": false
+    },
+    "artist_release.artist_id": {
+      "current": "cascade",
+      "class": "compatibility_shortcut",
+      "action": "review_before_data",
+      "new_feature_target": false
+    },
+    "artist_release.release_id": {
+      "current": "cascade",
+      "class": "compatibility_shortcut",
+      "action": "review_before_data",
+      "new_feature_target": false
+    },
+    "external_identifiers.metadata_source_id": {
+      "current": "null_on_delete",
+      "class": "optional_reference",
+      "action": "review_before_data",
+      "reason": "identifier provenance degradation on hard source deletion must be deliberate"
+    },
+    "metadata_assertions.metadata_source_id": {
+      "current": "restrict",
+      "class": "durable_history",
+      "action": "keep",
+      "reason": "assertion evidence must retain its source identity"
+    },
+    "metadata_conflicts.left_assertion_id": {
+      "current": "cascade",
+      "class": "durable_history",
+      "action": "review_before_data",
+      "reason": "conflict history currently disappears with assertion hard deletion; retention semantics must be explicit before real editorial history"
+    },
+    "metadata_conflicts.right_assertion_id": {
+      "current": "cascade",
+      "class": "durable_history",
+      "action": "review_before_data",
+      "reason": "same retention concern as left assertion"
+    },
+    "entity_matches.provider_entity_id": {
+      "current": "cascade",
+      "class": "durable_history",
+      "action": "review_before_data",
+      "reason": "identity-match evidence may be needed after provider-entity lifecycle changes"
+    },
+    "canonical_admission_decisions.metadata_assertion_id": {
+      "current": "cascade",
+      "class": "durable_history",
+      "action": "change_before_data_candidate",
+      "reason": "editorial decision/audit history should not be silently removed by assertion hard deletion; requires explicit retention decision before data-bearing transition"
+    },
+    "provider_destinations.provider_id": {
+      "current": "cascade",
+      "class": "dependent_projection",
+      "action": "keep",
+      "reason": "destination evidence is provider-owned and does not define canonical identity"
+    }
+  },
+  "unresolved_owner_decisions": [
+    "canonical hard-delete policy versus soft-delete-only operational practice",
+    "metadata conflict retention after assertion purge",
+    "identity-match retention after provider-entity purge",
+    "canonical admission decision retention after assertion purge",
+    "whether external identifier source deletion may intentionally lose metadata_source_id"
+  ],
+  "rule": "No reviewed delete action may be changed by a future stage without owning lifecycle authority, compatibility classification and migration/recovery evidence."
+}
