@@ -7,6 +7,7 @@ use App\Models\Catalog\CollectionItem;
 use App\Models\Catalog\Recording;
 use App\Support\DomainContracts\PolymorphicReferenceIntegrity;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
@@ -51,17 +52,29 @@ it('fails closed when a canonical polymorphic reference points to a missing enti
     ]);
 });
 
-it('fails closed when a canonical polymorphic reference uses an unknown entity type', function (): void {
+it('fails closed when raw persistence contains an unknown polymorphic entity type', function (): void {
     $collection = Collection::factory()->create();
+    $unknownEntityId = strtolower((string) Str::ulid());
+    $timestamp = now();
 
-    CollectionItem::query()->create([
+    DB::table('collection_items')->insert([
+        'id' => strtolower((string) Str::ulid()),
         'collection_id' => $collection->id,
         'entity_type' => 'provider_song_guess',
-        'entity_id' => strtolower((string) Str::ulid()),
+        'entity_id' => $unknownEntityId,
         'position' => 1,
+        'created_at' => $timestamp,
+        'updated_at' => $timestamp,
     ]);
 
     $result = app(PolymorphicReferenceIntegrity::class)->scan();
 
-    expect(collect($result['failures'])->pluck('reason')->all())->toContain('unknown_entity_type');
+    expect($result['failures'])->toContain([
+        'table' => 'collection_items',
+        'type_column' => 'entity_type',
+        'id_column' => 'entity_id',
+        'entity_type' => 'provider_song_guess',
+        'entity_id' => $unknownEntityId,
+        'reason' => 'unknown_entity_type',
+    ]);
 });
