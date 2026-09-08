@@ -73,6 +73,72 @@ if (str_contains($workflow, 'composer test:sqlite') || str_contains($workflow, '
     $errors[] = 'CI workflow must not treat SQLite as a release test authority.';
 }
 
+foreach ([
+    'docs/project/governance/database-risk-register.json',
+    'docs/project/governance/deletion-retention-matrix.json',
+    'docs/project/governance/polymorphic-reference-contract.json',
+] as $authority) {
+    if (! is_file($root.'/'.$authority)) {
+        $errors[] = 'Missing database lifecycle authority: '.$authority;
+    }
+}
+
+try {
+    $riskRegister = json_decode((string) file_get_contents($root.'/docs/project/governance/database-risk-register.json'), true, 512, JSON_THROW_ON_ERROR);
+    $retention = json_decode((string) file_get_contents($root.'/docs/project/governance/deletion-retention-matrix.json'), true, 512, JSON_THROW_ON_ERROR);
+    $polymorphic = json_decode((string) file_get_contents($root.'/docs/project/governance/polymorphic-reference-contract.json'), true, 512, JSON_THROW_ON_ERROR);
+} catch (Throwable $exception) {
+    $errors[] = 'Database lifecycle authority JSON is invalid: '.$exception->getMessage();
+    $riskRegister = $retention = $polymorphic = [];
+}
+
+if (($riskRegister['principles']['canonical_ids'] ?? null) !== 'ulid_and_locked') {
+    $errors[] = 'Database risk authority must keep canonical identity strategy locked to the accepted ULID contract.';
+}
+if (($retention['policy']['soft_delete_is_not_fk_delete'] ?? false) !== true) {
+    $errors[] = 'Deletion authority must distinguish soft delete from physical FK delete semantics.';
+}
+if (($retention['policy']['cascade_requires_child_lifecycle_dependency'] ?? false) !== true) {
+    $errors[] = 'Deletion authority must require lifecycle justification for cascade behavior.';
+}
+
+$surfaces = $polymorphic['surfaces'] ?? null;
+if (! is_array($surfaces) || $surfaces === []) {
+    $errors[] = 'Polymorphic reference authority must declare canonical reference surfaces.';
+} else {
+    $seen = [];
+    foreach ($surfaces as $surface) {
+        if (! is_array($surface)) {
+            $errors[] = 'Polymorphic reference surface must be an object.';
+            continue;
+        }
+        $table = $surface['table'] ?? null;
+        $type = $surface['type_column'] ?? null;
+        $id = $surface['id_column'] ?? null;
+        if (! is_string($table) || $table === '' || ! is_string($type) || $type === '' || ! is_string($id) || $id === '') {
+            $errors[] = 'Polymorphic reference surface is incomplete.';
+            continue;
+        }
+        $key = $table.':'.$type.':'.$id;
+        if (isset($seen[$key])) {
+            $errors[] = 'Duplicate polymorphic reference surface: '.$key;
+        }
+        $seen[$key] = true;
+    }
+}
+
+$integritySource = (string) file_get_contents($root.'/app/Support/DomainContracts/PolymorphicReferenceIntegrity.php');
+foreach (['EntityType::tryFrom', 'DomainContractRegistry', "where('id'", 'missing_entity_row', 'unknown_entity_type'] as $needle) {
+    if (! str_contains($integritySource, $needle)) {
+        $errors[] = 'Polymorphic integrity scanner is missing fail-closed behavior: '.$needle;
+    }
+}
+
+$commandSource = (string) file_get_contents($root.'/app/Console/Commands/VerifyPolymorphicIntegrityCommand.php');
+if (! str_contains($commandSource, 'songchart:integrity:polymorphic')) {
+    $errors[] = 'Polymorphic integrity command surface is missing.';
+}
+
 if ($errors !== []) {
     foreach ($errors as $error) {
         fwrite(STDERR, '[FAIL] '.$error.PHP_EOL);
@@ -80,4 +146,4 @@ if ($errors !== []) {
     exit(1);
 }
 
-echo 'PostgreSQL-only database test authority verification passed.'.PHP_EOL;
+echo 'PostgreSQL database test and pre-data integrity authority verification passed.'.PHP_EOL;
