@@ -85,6 +85,7 @@ final readonly class BuildChartSnapshot
 
         usort($rows, static function (array $left, array $right): int {
             $score = $right['score'] <=> $left['score'];
+
             return $score !== 0 ? $score : strcmp($left['canonical_recording_id'], $right['canonical_recording_id']);
         });
 
