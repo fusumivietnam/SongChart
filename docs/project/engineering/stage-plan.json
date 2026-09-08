@@ -1,36 +1,36 @@
 {
   "schema_version": 2,
   "current_stage": {
-    "id": "21.0",
-    "title": "Editorial Admin UX",
-    "task_contract": "docs/foundation/STAGE_21_0_TASK_CONTRACT.md",
-    "status": "accepted"
+    "id": "22.0",
+    "title": "System Control Plane & Pre-Data Stabilization",
+    "task_contract": "docs/foundation/STAGE_22_0_TASK_CONTRACT.md",
+    "status": "implementing"
   },
   "accepted_through": "21.0",
-  "active_tranche": null,
+  "active_tranche": "22.0A",
   "stage_progress": [
     {
-      "id": "21.0A",
-      "status": "accepted",
-      "title": "Admission queue information hierarchy"
+      "id": "22.0A",
+      "status": "implementing",
+      "title": "Control Plane & Roadmap Authority"
     },
     {
-      "id": "21.0B",
-      "status": "accepted",
-      "title": "Decision safety and review context"
+      "id": "22.0B",
+      "status": "planned",
+      "title": "Pre-Data Architecture/Data Stabilization"
     },
     {
-      "id": "21.0C",
-      "status": "accepted",
-      "title": "Editorial navigation and accessibility"
+      "id": "22.0C",
+      "status": "planned",
+      "title": "Framework/Runtime Lifecycle & Resilience"
     },
     {
-      "id": "21.0D",
-      "status": "accepted",
-      "title": "Stage acceptance and closure"
+      "id": "22.0D",
+      "status": "planned",
+      "title": "Closure & Generated Views"
     }
   ],
-  "next_tranche": null,
+  "next_tranche": "22.0B",
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
     "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
