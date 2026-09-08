@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Chart;
 
-use App\Domain\Chart\DTO\ChartSnapshot;
 use App\Support\Chart\DatabaseChartSnapshotStore;
 use App\Support\Chart\YouTubeViewCountObservationSource;
 use DateTimeImmutable;
