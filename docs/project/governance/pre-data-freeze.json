@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "state": "development-flexible",
+  "states": ["development-flexible", "schema-baseline-approved", "data-bearing", "backward-compatible-evolution"],
+  "transition": {
+    "to_schema_baseline_approved_requires": [
+      "postgres_schema_inventory",
+      "pk_fk_type_review",
+      "unique_constraint_review",
+      "delete_retention_review",
+      "polymorphic_integrity_review",
+      "public_url_identity_review"
+    ],
+    "to_data_bearing_requires": [
+      "schema_baseline_approved",
+      "durable_backup_recovery_contract",
+      "migration_upgrade_verification",
+      "data_retention_policy"
+    ]
+  },
+  "locked_before_data": [
+    "canonical_entity_taxonomy",
+    "canonical_pk_strategy",
+    "provider_vs_canonical_identity",
+    "external_identifier_uniqueness_semantics",
+    "canonical_relationship_authority",
+    "canonical_mutation_ownership"
+  ],
+  "review_before_data": [
+    "public_slug_and_redirect_durability",
+    "delete_cascade_restrict_null_semantics",
+    "polymorphic_referential_integrity",
+    "nullable_and_default_intent",
+    "unique_constraints_as_domain_invariants",
+    "compatibility_tables_and_shortcuts",
+    "partial_date_representation"
+  ],
+  "breaking_change_policy": {
+    "development-flexible": "allowed_only_with_owner_contract_and_change_before_data_classification",
+    "schema-baseline-approved": "migration_plan_required",
+    "data-bearing": "expand_migrate_contract_required",
+    "backward-compatible-evolution": "expand_migrate_contract_required"
+  },
+  "historical_migrations": "immutable_when_sealed_or_potentially_applied"
+}
