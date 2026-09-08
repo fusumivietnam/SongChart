@@ -236,7 +236,7 @@ final class SongChartDoctorCommand extends Command
     }
 
     /** @param array<string,mixed> $resilience
-     *  @return array{cpu_cores:int,memory_gib:float,disk_free_gib:float,architecture:string,docker_available:bool,recommended_profile:string}
+     * @return array{cpu_cores:int,memory_gib:float,disk_free_gib:float,architecture:string,docker_available:bool,recommended_profile:string}
      */
     private function hardwareProfile(array $resilience): array
     {
