@@ -54,6 +54,7 @@ final class ProviderTaxonomy
                 'capabilities' => [
                     ProviderCapabilityCode::MediaSearch,
                     ProviderCapabilityCode::MediaInspect,
+                    ProviderCapabilityCode::MediaStatistics,
                     ProviderCapabilityCode::MediaEmbed,
                     ProviderCapabilityCode::MediaOutbound,
                 ],
