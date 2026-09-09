@@ -6,6 +6,7 @@ namespace App\Support\ControlPlane;
 
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
+use Throwable;
 
 final class RuntimeProbeRunner
 {
@@ -27,6 +28,14 @@ final class RuntimeProbeRunner
                 'owner' => $owner,
                 'exit_code' => null,
                 'timed_out' => true,
+                'secrets_included' => false,
+            ];
+        } catch (Throwable) {
+            return [
+                'status' => 'blocked',
+                'owner' => $owner,
+                'exit_code' => null,
+                'timed_out' => false,
                 'secrets_included' => false,
             ];
         }
