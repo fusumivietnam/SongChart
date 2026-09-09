@@ -13,7 +13,7 @@ use RuntimeException;
 final class DatabaseChartMetricObservationStore
 {
     /**
-     * @param list<ChartMetricObservation> $observations
+     * @param  list<ChartMetricObservation>  $observations
      * @return list<ChartMetricObservation>
      */
     public function appendMany(array $observations): array
@@ -55,7 +55,7 @@ final class DatabaseChartMetricObservationStore
     }
 
     /**
-     * @param list<string> $observationIds
+     * @param  list<string>  $observationIds
      * @return list<ChartMetricObservation>
      */
     public function findByObservationIds(array $observationIds): array
