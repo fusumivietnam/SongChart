@@ -54,8 +54,9 @@ final class DatabaseChartMetricObservationStore
         ));
     }
 
-    /** @param list<string> $observationIds
-     *  @return list<ChartMetricObservation>
+    /**
+     * @param list<string> $observationIds
+     * @return list<ChartMetricObservation>
      */
     public function findByObservationIds(array $observationIds): array
     {
@@ -94,7 +95,7 @@ final class DatabaseChartMetricObservationStore
             && $rehydrated->fetchedAt?->format(DATE_ATOM) === $observation->fetchedAt?->format(DATE_ATOM)
             && $rehydrated->sourceReference === $observation->sourceReference;
 
-        if (! $same) {
+        if ($same === false) {
             throw new RuntimeException('Metric observation id was reused for different evidence.');
         }
     }
