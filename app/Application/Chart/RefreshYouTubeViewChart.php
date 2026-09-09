@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Chart;
 
+use App\Support\Chart\DatabaseChartMetricObservationStore;
 use App\Support\Chart\DatabaseChartSnapshotStore;
 use App\Support\Chart\YouTubeViewCountObservationSource;
 use DateTimeImmutable;
@@ -15,16 +16,18 @@ final readonly class RefreshYouTubeViewChart
 
     public function __construct(
         private YouTubeViewCountObservationSource $source,
+        private DatabaseChartMetricObservationStore $observations,
         private DatabaseChartSnapshotStore $store,
     ) {}
 
     public function handle(): ?string
     {
-        $observations = $this->source->fetchApproved();
-        if ($observations === []) {
+        $fetched = $this->source->fetchApproved();
+        if ($fetched === []) {
             return null;
         }
 
+        $observations = $this->observations->appendMany($fetched);
         $snapshotAt = new DateTimeImmutable('now', new DateTimeZone('UTC'));
         $snapshot = (new BuildChartSnapshot)->handle(
             self::CHART_ID,
