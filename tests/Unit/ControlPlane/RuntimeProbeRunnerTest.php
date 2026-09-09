@@ -63,7 +63,7 @@ it('fails closed when a runtime probe exceeds its bounded timeout', function () 
         ]);
 });
 
-it('fails closed when a runtime probe cannot start', function () use ($repositoryRoot): void {
+it('fails closed when a runtime probe executable is unavailable', function () use ($repositoryRoot): void {
     $result = (new RuntimeProbeRunner)->run(
         ['/songchart/runtime-probe-does-not-exist'],
         'test:start-failure',
@@ -75,7 +75,7 @@ it('fails closed when a runtime probe cannot start', function () use ($repositor
         ->toMatchArray([
             'status' => 'blocked',
             'owner' => 'test:start-failure',
-            'exit_code' => null,
+            'exit_code' => 127,
             'timed_out' => false,
             'secrets_included' => false,
         ]);
