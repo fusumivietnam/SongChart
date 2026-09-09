@@ -2,9 +2,9 @@
 
 ## Status
 
-Active.
+Verification pending for major-stage closure.
 
-Active tranche: `22.2A — Unified observation and metric time-series contract`.
+All bounded tranches `22.2A` through `22.2D` are implemented on the active Stage 22 branch. Stage acceptance still requires exact-current-head Auto Closure.
 
 ## Purpose
 
@@ -28,96 +28,79 @@ provider evidence
 
 For a canonical Recording, SongChart can deterministically answer:
 
-- which provider evidence supports its identity;
+- which provider destinations/evidence are bound to it;
 - which metric observations exist and when they were observed/fetched;
 - which chart definitions consume those observations;
-- which snapshots/public projections depend on the entity;
-- whether each projection is fresh, stale or unavailable;
-- what must be recomputed after a governed correction.
+- which latest chart snapshot contains the Recording;
+- whether observation/snapshot state is fresh, stale or unknown;
+- which active chart definitions must be recomputed after a governed correction.
 
-No external AI model or MCP runtime is required for these capabilities.
+No external AI model or MCP runtime is required.
 
 ## Invariants
 
 1. Canonical identity remains provider-neutral.
-2. Raw/provider evidence, normalized evidence and derived metrics remain distinguishable and traceable.
+2. Provider evidence, persisted metric observations and derived snapshots remain distinguishable and traceable.
 3. Metric history preserves provider, unit, semantics version, observed time, fetched time and source reference.
-4. Metrics with incompatible semantics are never silently mixed.
-5. Chart definitions own input selection/ranking semantics; snapshots remain immutable historical results.
-6. Freshness is explicit; unknown freshness is not treated as fresh.
-7. A canonical correction selects bounded downstream consumers through declared dependencies rather than global rebuilds.
-8. Public surfaces never fabricate metric/chart data when source evidence is absent/stale/invalid.
-9. AI-ready/MCP-ready interfaces consume application/domain capabilities; they do not become the business owner.
-10. Stage implementation must reuse existing Laravel/Application/Domain owners before creating new abstractions.
+4. Observation identity is idempotent; an id reused for different evidence fails closed.
+5. Metrics with incompatible semantics are never silently mixed.
+6. Chart definitions own chart id, input metric, semantic boundary, aggregation, dependency and freshness policy; snapshots remain immutable historical results.
+7. Freshness is explicit; unknown freshness is not treated as fresh.
+8. A canonical correction selects bounded downstream chart consumers through declared dependencies rather than global rebuilds.
+9. Public surfaces never fabricate metric/chart data when source evidence is absent or invalid.
+10. AI-ready/MCP-ready interfaces remain consumers of application/domain capabilities.
 
-## Tranches
+## 22.2A — Unified observation and metric time-series contract
 
-### 22.2A — Unified observation and metric time-series contract
+Status: implemented; verification pending.
 
-Status: active.
+Implemented:
+- append-only PostgreSQL `chart_metric_observations` history;
+- deterministic observation-id uniqueness and idempotent replay;
+- fail-closed observation-id collision handling;
+- provider/canonical/provider-item/metric/unit/semantics/value/observed/fetched/source persistence;
+- `DatabaseChartMetricObservationStore` rehydration contract;
+- YouTube refresh now persists and reloads metric observations before chart calculation;
+- release-authoritative schema ownership and persistence tests.
 
-Goals:
-- Inventory existing provider evidence and `ChartMetricObservation` semantics.
-- Define the smallest shared observation/time-series contract needed by chart/data-lineage consumers.
-- Persist metric observations/history without mutating historical evidence.
-- Preserve provider, canonical Recording, provider item, metric, unit, semantics version, observed/fetched timestamps, source reference and deterministic identity/fingerprint.
-- Bind the existing YouTube view-count source to the history contract without changing provider/canonical ownership.
+## 22.2B — Chart definition and dependency authority
 
-Acceptance:
-- Repeated identical observation persistence is idempotent.
-- Historical observations are append-only/self-identifying.
-- Incompatible metric semantics fail closed at chart-selection/calculation boundaries.
-- PostgreSQL schema ownership and upgrade safety are explicit.
-- Existing YouTube chart flow reads through the governed observation contract rather than a parallel data path.
+Status: implemented; verification pending.
 
-### 22.2B — Chart definition and dependency authority
+Implemented:
+- `docs/project/domain/chart-definitions.json` as authored chart-definition authority;
+- explicit YouTube metric/unit/semantics/calculation/aggregation/freshness/dependency policy;
+- `ChartDefinitionRegistry` deterministic loader/validator;
+- `PlanChartRecompute` dependency-driven canonical-change selection;
+- provider-specific refresh execution remains outside canonical models.
 
-Status: planned.
+## 22.2C — Freshness and lineage / data trace
 
-Goals:
-- Introduce a deterministic chart-definition owner for chart id, entity type, input metric, semantic constraints, selection policy and calculation version.
-- Make entity/chart dependencies queryable without embedding vendor-specific logic in canonical models.
-- Replace chart-specific recompute selection with dependency-driven bounded selection where justified.
+Status: implemented; verification pending.
 
-Acceptance:
-- A chart snapshot can be traced to one versioned chart definition and input observation set.
-- A canonical Recording change can determine which active chart definitions are affected.
-- Provider-specific details remain adapter concerns.
+Implemented:
+- source-based observation and snapshot freshness states (`fresh`, `stale`, `unknown`);
+- `RecordingDataTrace` read-only application query;
+- provider destination → metric observation → chart definition → snapshot → public URL lineage;
+- `songchart:data:trace {recording} --json` machine-readable CLI surface;
+- no model/API/MCP dependency.
 
-### 22.2C — Freshness and lineage / data-trace surfaces
+## 22.2D — Generalized correction propagation
 
-Status: planned.
+Status: implemented; verification pending.
 
-Goals:
-- Define freshness state for provider observations, metric history, chart snapshots and projections.
-- Expose a read-only application service/CLI JSON surface that traces a canonical entity through evidence, metrics, charts and public projections.
-- Keep the surface deterministic and usable by humans, scripts and future AI/MCP adapters.
-
-Acceptance:
-- `fresh`, `stale`, `unavailable/unknown` semantics are machine-readable and source-based.
-- One Recording can be traced end-to-end without direct ad-hoc database inspection.
-- No external model/API call is required.
-
-### 22.2D — Generalized correction propagation
-
-Status: planned.
-
-Goals:
-- Generalize canonical-change downstream propagation from hard-coded chart-specific behavior to declared bounded consumers where the data spine proves the dependency.
-- Preserve existing Discovery/search behavior when direct canonical reads already provide convergence.
-- Avoid broad invalidation/rebuild when a narrower dependency owner exists.
-
-Acceptance:
-- Governed correction produces deterministic downstream recomputation/invalidation decisions.
-- Tests prove unaffected projections are not unnecessarily rebuilt.
-- Data lineage records enough evidence to diagnose convergence failures.
+Implemented:
+- canonical chart recomputation selection is driven by chart-definition dependencies;
+- Recording changes select only active chart definitions that declare Recording dependency;
+- current YouTube execution remains bounded and opt-in by provider runtime state;
+- non-Recording changes do not trigger chart refresh;
+- existing direct search reads and Discovery reprojection ownership remain unchanged.
 
 ## Authority and official sources
 
-### Repository authorities
-
 - `docs/project/engineering/system-intersection-map.json`
 - `docs/project/engineering/golden-flow-contract.json`
+- `docs/project/domain/chart-definitions.json`
 - `docs/project/domain/domain-contracts.json`
 - `docs/project/domain/schema-ownership.json`
 - `docs/project/domain/application-data-boundary.json`
@@ -126,31 +109,17 @@ Acceptance:
 - `docs/project/stack/impact-test-map.json`
 - `docs/project/engineering/verification-consumer-graph.json`
 
-### Installed versions
-
-- PHP `^8.5` and Laravel `^13.0` are owned by `composer.json` and `composer.lock`.
-- PostgreSQL major 18 is owned by the release/runtime authority and canonical verification.
-- Frontend package versions are owned by `package.json` and `package-lock.json`; this stage does not introduce a new runtime dependency.
-
-### Official external sources
-
-- [Laravel 13 Eloquent](https://laravel.com/docs/13.x/eloquent) for application-owned persistence boundaries.
-- [Laravel 13 database transactions](https://laravel.com/docs/13.x/database#database-transactions) for atomic writes.
-- [Laravel 13 queues](https://laravel.com/docs/13.x/queues) for bounded downstream recomputation.
-- [PostgreSQL 18 documentation](https://www.postgresql.org/docs/18/) for relational constraints, indexing and timestamp storage.
-- [YouTube Data API `videos.list`](https://developers.google.com/youtube/v3/docs/videos/list) for the existing provider metric adapter.
-
-### Native capability assessment
-
-Laravel's existing model, transaction, event/listener and queued-job capabilities cover persistence and bounded recomputation. PostgreSQL 18 provides the required unique constraints, indexes and timestamp semantics. Existing SongChart provider evidence, `ChartMetricObservation`, canonical Recording and chart snapshot owners already define the adjacent boundaries. No new framework, service or provider path is required for 22.2A.
-
-### Custom implementation justification
-
-SongChart still needs a small domain-specific observation-history contract because provider metric identity, semantic compatibility, canonical Recording linkage, provenance and idempotency are product rules that framework primitives do not define. The implementation must compose existing owners and add only the schema/application behavior needed for those rules.
-
 ## Tests and verification
 
-Use the existing governed topology. During implementation use impact-selected focused verification; stage closure remains:
+Focused evidence is owned by:
+
+- `tests/Feature/Chart/ChartMetricObservationPersistenceTest.php`
+- `tests/Feature/Chart/DataSpineContractTest.php`
+- `tests/Feature/Chart/YouTubeViewChartFlowTest.php`
+- existing chart provenance/persistence/public-projection tests;
+- existing canonical-change reprojection tests.
+
+Major-stage closure remains:
 
 ```bash
 ./songchart impact --verify
@@ -158,14 +127,14 @@ Use the existing governed topology. During implementation use impact-selected fo
 ./songchart verify
 ```
 
-Database-backed changes require release-authoritative PostgreSQL evidence and forward migration safety.
+Auto Closure on the exact current source/effective prepared head is required before Stage 22.2 becomes accepted.
 
 ## Explicit non-goals
 
 - MCP server/runtime implementation.
 - OpenAI/Anthropic/other paid model integration.
 - Local LLM/Ollama runtime deployment.
-- New provider adoption unless an existing-source limitation blocks the bounded data-spine contract.
+- New provider adoption.
 - Public Stage 23 redesign/personalization.
 - Data warehouse/lakehouse or separate analytics platform.
 - Microservices/Kubernetes expansion.
@@ -173,4 +142,4 @@ Database-backed changes require release-authoritative PostgreSQL evidence and fo
 
 ## Follow-on
 
-After Stage 22.2 closes, the same deterministic capabilities can be exposed through an AI-ready control plane and later a thin MCP adapter. SongChart must remain fully operable when no AI model is available.
+After Stage 22.2 closes, Stage 22.3 may expose these deterministic capabilities through an AI-ready control plane. MCP remains a future thin adapter rather than a Stage 22.2 runtime requirement.
