@@ -12,11 +12,12 @@ use App\Support\Chart\DatabaseChartSnapshotStore;
 use App\Support\Chart\YouTubeViewCountObservationSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
 
-it('fetches approved YouTube viewCount evidence and publishes a persisted canonical chart', function (): void {
+it('fetches approved YouTube viewCount evidence, persists observation history, and publishes a canonical chart', function (): void {
     config()->set('songchart.providers.youtube.enabled', true);
     config()->set('songchart.providers.youtube.api_key', 'test-key');
 
@@ -58,6 +59,7 @@ it('fetches approved YouTube viewCount evidence and publishes a persisted canoni
 
     $snapshotId = app(RefreshYouTubeViewChart::class)->handle();
     $snapshot = app(DatabaseChartSnapshotStore::class)->latest(RefreshYouTubeViewChart::CHART_ID);
+    $persisted = DB::table('chart_metric_observations')->first();
 
     expect($snapshotId)->not->toBeNull()
         ->and($snapshot)->not->toBeNull()
@@ -66,7 +68,15 @@ it('fetches approved YouTube viewCount evidence and publishes a persisted canoni
         ->and($snapshot?->rows[0]['canonical_recording_id'])->toBe((string) $recording->getKey())
         ->and($snapshot?->rows[0]['score'])->toEqual(123456.0)
         ->and($snapshot?->rows[0]['observations'][0]['metric_semantics_version'])->toBe(YouTubeViewCountObservationSource::SEMANTICS_VERSION)
-        ->and($snapshot?->rows[0]['observations'][0]['source_reference'])->toBe('youtube:videos.list:abcdefghijk:statistics');
+        ->and($snapshot?->rows[0]['observations'][0]['source_reference'])->toBe('youtube:videos.list:abcdefghijk:statistics')
+        ->and($persisted)->not->toBeNull()
+        ->and((string) $persisted?->canonical_recording_id)->toBe((string) $recording->getKey())
+        ->and((string) $persisted?->provider)->toBe('youtube')
+        ->and((string) $persisted?->provider_item_id)->toBe('abcdefghijk')
+        ->and((string) $persisted?->metric)->toBe(YouTubeViewCountObservationSource::METRIC)
+        ->and((string) $persisted?->metric_unit)->toBe(YouTubeViewCountObservationSource::METRIC_UNIT)
+        ->and((string) $persisted?->metric_semantics_version)->toBe(YouTubeViewCountObservationSource::SEMANTICS_VERSION)
+        ->and((int) $persisted?->value)->toBe(123456);
 
     Http::assertSent(fn (Request $request): bool => str_contains($request->url(), '/youtube/v3/videos')
         && $request['part'] === 'statistics,status'
