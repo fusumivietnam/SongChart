@@ -59,7 +59,8 @@ it('traces one recording through provider evidence metric history chart snapshot
         'last_checked_at' => now(),
     ]);
 
-    $now = new DateTimeImmutable('now');
+    $observedAt = new DateTimeImmutable('2026-09-09T00:00:00+00:00');
+    $snapshotAt = $observedAt->modify('+1 second');
     $observation = new ChartMetricObservation(
         observationId: hash('sha256', 'trace-observation'),
         canonicalRecordingId: (string) $recording->getKey(),
@@ -67,17 +68,17 @@ it('traces one recording through provider evidence metric history chart snapshot
         providerItemId: 'abcdefghijk',
         metric: YouTubeViewCountObservationSource::METRIC,
         value: 123456,
-        observedAt: $now,
+        observedAt: $observedAt,
         metricUnit: YouTubeViewCountObservationSource::METRIC_UNIT,
         metricSemanticsVersion: YouTubeViewCountObservationSource::SEMANTICS_VERSION,
-        fetchedAt: $now,
+        fetchedAt: $observedAt,
         sourceReference: 'youtube:videos.list:abcdefghijk:statistics',
     );
     $persisted = app(DatabaseChartMetricObservationStore::class)->appendMany([$observation]);
     $snapshot = (new BuildChartSnapshot)->handle(
         RefreshYouTubeViewChart::CHART_ID,
         YouTubeViewCountObservationSource::METRIC,
-        $now,
+        $snapshotAt,
         $persisted,
     );
     app(DatabaseChartSnapshotStore::class)->append($snapshot);
