@@ -1,88 +1,64 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "current_stage": {
-    "id": "22.1",
-    "title": "System Intersection Map + Golden Vertical Contract",
-    "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
-    "status": "verification_pending"
+    "id": "22.2",
+    "title": "Data Spine Closure",
+    "task_contract": "docs/foundation/STAGE_22_2_TASK_CONTRACT.md",
+    "status": "active"
   },
-  "accepted_through": "21.0",
-  "active_tranche": "22.1E",
+  "accepted_through": "22.1",
+  "active_tranche": "22.2A",
+  "accepted_stage_evidence": {
+    "22.1": {
+      "title": "System Intersection Map + Golden Vertical Contract",
+      "source_head": "fb64fe52e0f4afffff08804e4c0e20951a9d244c",
+      "effective_prepared_head": "4d9d22969caa2dfd4d92f42ccfe27015c4644474",
+      "verification": "Auto Closure run 300 passed PREPARE, PostgreSQL, browser smoke, frontend build, failure classification, canonical CLOSE and ready-to-promote.",
+      "external_runtime_gate": "Live YouTube chart activation still requires accepted policy/quota, governed credentials and at least one approved public canonical destination; this does not reopen Stage 22.1 source closure."
+    }
+  },
   "stage_progress": [
-    {"id":"22.1A","status":"accepted","title":"Intersection audit and ownership binding"},
-    {"id":"22.1B","status":"accepted","title":"Golden provider/canonical fixtures"},
     {
-      "id":"22.1C",
-      "status":"accepted",
-      "title":"Chart/public provenance contract closure",
-      "implemented":[
-        "provider-neutral provenance-first chart observation DTO",
-        "YouTube approved-destination viewCount production observation source",
-        "YouTube viewCount 2026-08-24 semantics version boundary",
-        "provider media.statistics capability authority",
-        "versioned deterministic chart snapshot calculator with semantic compatibility guard",
-        "self-contained input fingerprint and observation provenance",
-        "immutable/idempotent chart snapshot persistence",
-        "canonical public chart projection and read-only route",
-        "manual and opt-in hourly chart refresh",
-        "canonical-change semantic event",
-        "bounded active-channel Discovery reprojection",
-        "bounded queued chart refresh for canonical Recording changes",
-        "polymorphic canonical-reference contract and runtime scanner",
-        "raw-persistence corruption verification for unknown canonical entity types"
-      ],
-      "verification_evidence":"Auto Closure run 293 passed on exact head 9940aeda6b4e198aa02045ad5553b97de072c594"
-    },
-    {
-      "id":"22.1D",
-      "status":"accepted",
-      "title":"Runtime integrity surface",
-      "implemented":[
-        "canonical polymorphic-reference integrity exposed as read-only songchart:doctor check",
-        "songchart:doctor --strict fails on persisted canonical polymorphic corruption",
-        "doctor remains a consumer of repository/domain integrity ownership",
-        "command-level regression coverage for runtime integrity visibility"
-      ],
-      "verification_evidence":"Auto Closure run 296 passed prepare, PostgreSQL, browser, frontend, canonical close and ready-to-promote on the effective prepared PR head generated from source head 9efa7465a114daadb0bae08baa9dec81ac3eaa60"
-    },
-    {
-      "id":"22.1E",
-      "status":"verification_pending",
-      "title":"Authority convergence and Stage 22.1 closure",
-      "implemented":[
-        "system intersection authority reconciled to the production YouTube metric adapter",
-        "canonical-to-chart input and provider metric normalization edges bound to concrete implementation/tests",
-        "canonical Recording correction-to-chart refresh edge bound to the existing listener/job flow",
-        "golden-flow verification bound to existing impact/candidate/canonical owners instead of an unimplemented duplicate command",
-        "remaining partial data-spine edges explicitly carried into Stage 22.2"
-      ],
-      "blockers":[
-        "exact-current-head Auto Closure must pass after authority convergence",
-        "live production activation of YouTube chart observations still requires accepted policy/quota, credential and at least one approved public canonical destination; this is an environment/runtime activation gate, not missing source implementation"
+      "id": "22.2A",
+      "status": "active",
+      "title": "Unified observation and metric time-series contract",
+      "goals": [
+        "inventory existing provider evidence and ChartMetricObservation semantics",
+        "define the smallest shared observation/time-series contract required by chart and lineage consumers",
+        "persist metric observations/history idempotently without mutating historical evidence",
+        "preserve provider, canonical Recording, provider item, metric, unit, semantics version, observed/fetched timestamps and source reference",
+        "bind the existing YouTube view-count source to the governed history contract without creating a parallel provider/canonical path"
       ]
+    },
+    {
+      "id": "22.2B",
+      "status": "planned",
+      "title": "Chart definition and dependency authority"
+    },
+    {
+      "id": "22.2C",
+      "status": "planned",
+      "title": "Freshness and lineage/data-trace surfaces"
+    },
+    {
+      "id": "22.2D",
+      "status": "planned",
+      "title": "Generalized correction propagation across bound projections"
     }
   ],
-  "next_tranche":"22.2-data-spine-closure",
-  "next_stage_outline": {
-    "id":"22.2",
-    "title":"Data Spine Closure",
-    "priority":"product data integrity before additional control-plane or MCP runtime expansion",
-    "planned_tranches":[
-      {"id":"22.2A","title":"Unified observation and metric time-series contract"},
-      {"id":"22.2B","title":"Chart definition and dependency authority"},
-      {"id":"22.2C","title":"Freshness and lineage/data-trace surfaces"},
-      {"id":"22.2D","title":"Generalized correction propagation across bound projections"}
-    ],
-    "follow_on":"AI-ready control-plane and future MCP remain adapters/consumers of these deterministic capabilities; no external model runtime is required."
+  "next_tranche": "22.2A-unified-observation-metric-time-series",
+  "follow_on": {
+    "after_stage_22_2": "AI-ready control plane and future MCP adapters over deterministic SongChart capabilities",
+    "runtime_constraint": "SongChart must remain fully operable without external AI model calls or MCP runtime dependency"
   },
-  "blocker_report":"docs/foundation/STAGE_22_BLOCKER_REPORT.md",
-  "work_lease":{
-    "authority":"live Git branch + GitHub pull request",
-    "rule":"Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
+  "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md",
+  "work_lease": {
+    "authority": "live Git branch + GitHub pull request",
+    "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
   },
-  "projection":{
-    "json":"docs/project/generated/development-state.json",
-    "markdown":"docs/project/generated/DEVELOPMENT_STATE.md",
-    "legacy_pointer":"docs/project/DEVELOPMENT_STATE.md"
+  "projection": {
+    "json": "docs/project/generated/development-state.json",
+    "markdown": "docs/project/generated/DEVELOPMENT_STATE.md",
+    "legacy_pointer": "docs/project/DEVELOPMENT_STATE.md"
   }
 }
