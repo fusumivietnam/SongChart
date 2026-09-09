@@ -57,13 +57,9 @@ Status: planned.
 
 ## Changed authorities
 
-Initial stage activation changes or introduces:
+None in the initial activation correction. The stage plan, current task contract and candidate file are stage-control metadata rather than semantic authorities registered by `authority-dependencies.json`.
 
-- `docs/project/engineering/stage-plan.json`
-- `docs/foundation/STAGE_22_3_TASK_CONTRACT.md`
-- `candidate-verification.json`
-
-Implementation changes must extend this list with every affected registered authority and reconcile all reverse verification consumers before closure.
+Each implementation slice must list every affected registered semantic authority here and reconcile all reverse verification consumers before closure.
 
 ## Affected modules and boundaries
 
