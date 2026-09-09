@@ -36,7 +36,7 @@ if (! is_array($state) || ! is_array($state['control_plane'] ?? null)) {
     exit(1);
 }
 
-$runner = new RuntimeProbeRunner();
+$runner = new RuntimeProbeRunner;
 $probes = [
     'runtime_readiness' => [
         'owner' => 'songchart:doctor',
