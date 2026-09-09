@@ -8,7 +8,7 @@ $repositoryRoot = dirname(__DIR__, 3);
 
 it('reports successful runtime probes without exposing process output', function () use ($repositoryRoot): void {
     $secret = 'runtime-probe-secret-sentinel';
-    $result = (new RuntimeProbeRunner())->run(
+    $result = (new RuntimeProbeRunner)->run(
         [PHP_BINARY, '-r', 'fwrite(STDOUT, '.var_export($secret, true).'); exit(0);'],
         'test:success',
         $repositoryRoot,
@@ -27,7 +27,7 @@ it('reports successful runtime probes without exposing process output', function
 });
 
 it('fails closed when a runtime probe returns a non-zero exit code', function () use ($repositoryRoot): void {
-    $result = (new RuntimeProbeRunner())->run(
+    $result = (new RuntimeProbeRunner)->run(
         [PHP_BINARY, '-r', 'fwrite(STDERR, "sensitive diagnostic"); exit(7);'],
         'test:failure',
         $repositoryRoot,
@@ -46,7 +46,7 @@ it('fails closed when a runtime probe returns a non-zero exit code', function ()
 });
 
 it('fails closed when a runtime probe exceeds its bounded timeout', function () use ($repositoryRoot): void {
-    $result = (new RuntimeProbeRunner())->run(
+    $result = (new RuntimeProbeRunner)->run(
         [PHP_BINARY, '-r', 'sleep(2);'],
         'test:timeout',
         $repositoryRoot,
@@ -64,7 +64,7 @@ it('fails closed when a runtime probe exceeds its bounded timeout', function () 
 });
 
 it('fails closed when a runtime probe cannot start', function () use ($repositoryRoot): void {
-    $result = (new RuntimeProbeRunner())->run(
+    $result = (new RuntimeProbeRunner)->run(
         ['/songchart/runtime-probe-does-not-exist'],
         'test:start-failure',
         $repositoryRoot,
