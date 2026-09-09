@@ -2,9 +2,9 @@
 
 ## Status
 
-Active. Tranche `22.3A` owns the first bounded implementation slice.
+Active. Tranche `22.3A` is accepted on exact head `04b5ebcd1e7ad17de24b8cdef4d931a671c9cf9c` by Auto Closure run 344. Tranche `22.3B` owns the current bounded implementation slice.
 
-Stage 22.2 is accepted through exact-head Auto Closure run 330. Stage 22.3 composes the existing deterministic repository, data, runtime and verification capabilities into machine-readable context. It does not add an external model, MCP server, autonomous production mutation, or a second repository authority.
+Stage 22.2 remains the latest accepted major stage. Stage 22.3 composes the existing deterministic repository, data, runtime and verification capabilities into machine-readable context. It does not add an external model, MCP server, autonomous production mutation, or a second repository authority.
 
 ## Goal
 
@@ -14,20 +14,25 @@ Expose one bounded, deterministic control plane that lets a human or coding agen
 
 ### 22.3A — Unified project and engineering context
 
-Status: active.
+Status: accepted.
 
 - Inventory existing `./songchart ai status --json`, generated project context, project intelligence and repository contract surfaces.
 - Compose authored and generated authority into one bounded machine-readable engineering context.
 - Preserve authored-source ownership and keep generated authority projection-only.
 - Exclude secrets and volatile GitHub claims that must be resolved live.
+- Exact-head evidence: Auto Closure run 344 on `04b5ebcd1e7ad17de24b8cdef4d931a671c9cf9c` passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, canonical CLOSE, exact-tree preservation and ready-to-promote.
 
 ### 22.3B — Data and runtime status composition
 
-Status: planned.
+Status: active.
 
-- Compose existing doctor, provider, chart, storage/database and Recording data-trace capabilities.
-- Emit explicit `ready`, `degraded`, `blocked` and `unknown` evidence from their owning capabilities.
-- Avoid parallel health checks, duplicated provider logic, and inferred AI state.
+- Compose existing runtime owners through opt-in `./songchart ai status --json --runtime`.
+- Keep default `./songchart ai status --json` repository-only and non-probing.
+- Evaluate `songchart:doctor --strict`, development database status and development storage status through their existing command owners.
+- Report a Recording data trace as `requires_subject` until an explicit Recording is supplied; never invent a canonical subject.
+- Runtime probes are read-only, bounded by timeout, output-redacted and fail closed on non-zero exit or timeout.
+- Do not execute deep diagnostics, impact verification, candidate verification or canonical verification as implicit status probes.
+- Emit only bounded status evidence (`ready`/`blocked`/`requires_subject`), owner, exit code/timeout state and secret-exclusion markers; raw stdout/stderr is not part of the control-plane response.
 
 ### 22.3C — Bounded handoff and resume evidence
 
@@ -51,15 +56,23 @@ Status: planned.
 - Every emitted field identifies its source authority or application capability.
 - Missing, stale and blocked evidence remain explicit and fail closed.
 - Output excludes secrets, credentials, raw sensitive provider payloads and unsupported volatile claims.
+- Runtime status is opt-in, read-only and bounded; default orientation does not start environment-specific probes.
 - Commands have declared mutation envelopes and non-interactive JSON behavior.
 - Generated projections remain PREPARE-owned.
 - Stage 22.3 closes only after exact-head PREPARE, QUALITY, PostgreSQL 18, browser, frontend and canonical CLOSE pass.
 
 ## Changed authorities
 
-None in the initial activation correction. The stage plan, current task contract and candidate file are stage-control metadata rather than registered semantic authorities.
+The Stage 22.3 plan and this task contract record tranche ownership. Runtime composition changes the existing AI status command surface but does not create a new business/domain authority.
 
-Each implementation slice must list every affected registered semantic authority here and reconcile all reverse verification consumers before closure.
+Current implementation owners:
+
+- `scripts/ai-status.sh` — command routing for repository-only versus opt-in runtime status;
+- `scripts/ai-runtime-status.php` — thin runtime composition adapter;
+- `app/Support/ControlPlane/RuntimeProbeRunner.php` — bounded subprocess execution without returning process output;
+- existing runtime owners remain authoritative for their own checks.
+
+Each implementation slice must reconcile affected reverse verification consumers before closure. Generated repository authority must only be refreshed through its owning PREPARE/reconciliation flow.
 
 ## Affected modules and boundaries
 
@@ -71,7 +84,7 @@ Expected owners include:
 - `docs/project/engineering/ai-development-contract.json`;
 - `docs/project/engineering/verification-consumer-graph.json`;
 - generated `development-state.json`, `project-context.json` and repository contract manifest projections;
-- focused Feature and Architecture verification.
+- focused Feature, Unit and Architecture verification.
 
 Canonical models, provider adapters and production write services remain unchanged unless a later tranche explicitly records and verifies that scope.
 
@@ -86,7 +99,8 @@ Canonical models, provider adapters and production write services remain unchang
 
 | Command surface | Envelope | Allowed tracked mutation | Interactive output |
 |---|---|---|---|
-| Control-plane context/status commands | read-only | none | no for `--json` |
+| `./songchart ai status --json` | read-only repository orientation | none | no |
+| `./songchart ai status --json --runtime` | read-only bounded runtime probes | none | no |
 | `./songchart reconcile` | generated-only | registered generated authority paths | no |
 | Auto Closure PREPARE | generated-only | registered generated authority paths | no |
 | Canonical CLOSE | closure | none on the verified tree | no |
@@ -127,29 +141,30 @@ Reviewed 2026-09-09:
 - Laravel 13 Console application API: https://api.laravel.com/docs/13.x/Illuminate/Console/Application.html — existing Artisan command composition and non-interactive execution.
 - Laravel 13 Command API: https://api.laravel.com/docs/13.x/Illuminate/Console/Command.html — command input/output boundaries.
 - Laravel 13 Filesystem API: https://api.laravel.com/docs/13.x/Illuminate/Filesystem/Filesystem.html — bounded repository file reads and decoded JSON support where existing repository owners select it.
+- Symfony Process component — existing application dependency used for bounded subprocess execution; Stage 22.3B exposes only exit/timeout state and never process output through the control-plane response.
 
 ### Native capability assessment
 
-Laravel Console, the existing SongChart command router, repository contract resolver, project intelligence, doctor/status commands and JSON authority files already provide the required primitives. Stage 22.3 should compose these owners through application/query boundaries. No external model runtime, MCP server, new framework or parallel control-plane store is required.
+Laravel Console, Symfony Process, the existing SongChart command router, repository contract resolver, project intelligence, doctor/status commands and JSON authority files already provide the required primitives. Stage 22.3 composes these owners through narrow control-plane boundaries. No external model runtime, MCP server, new framework or parallel control-plane store is required.
 
 ### Custom implementation justification
 
-A narrow SongChart-specific composition layer is required because Laravel does not define SongChart stage authority, impact routing, provider/data readiness, exact-tree verification, or handoff semantics. Custom code must only map existing owners into a stable DTO/JSON contract and must not reproduce their business rules or persist a second source of truth.
+A narrow SongChart-specific composition layer is required because Laravel does not define SongChart stage authority, impact routing, provider/data readiness, exact-tree verification, or handoff semantics. Custom code only maps existing owners into a stable JSON contract and must not reproduce their business rules or persist a second source of truth.
 
 ## Domain contract and use-case data surface
 
 - Actor: authenticated development operator or bounded coding agent using local/CI command surfaces.
 - Inputs: repository-owned authority paths and explicit command options.
-- Reads: authored and generated project authority, registered application status/query capabilities, and local Git state where explicitly owned.
+- Reads: authored and generated project authority, registered application status/query capabilities, and local Git/runtime state where explicitly owned.
 - Writes: none for context/status commands.
 - Unknown semantics: unavailable, stale or unverified inputs remain explicit; they are never promoted to ready.
 - Output: versioned, deterministic JSON with source/provenance fields.
 - Route/API contract: no public HTTP or production mutation route is introduced by default.
-- Security: never emit credentials, secrets, private payloads, tokens, or environment values outside approved non-secret status fields.
+- Security: never emit credentials, secrets, private payloads, tokens, raw command output or environment values outside approved non-secret status fields.
 
 ## Security, authorization, and data impact
 
-Control-plane reads remain local/CI operator capabilities. Production mutations, privileged business actions, PR promotion, merge and release remain human-governed. The stage must reuse existing redaction and application data boundaries and must not broaden provider credential access.
+Control-plane reads remain local/CI operator capabilities. Production mutations, privileged business actions, PR promotion, merge and release remain human-governed. The stage reuses existing redaction and application data boundaries and does not broaden provider credential access.
 
 ## Tests and verification
 
@@ -157,8 +172,10 @@ Focused evidence must cover:
 
 - deterministic context schema and ordering;
 - source-authority attribution;
-- explicit unknown/degraded/blocked handling;
-- secret and volatile-state exclusion;
+- default status remains non-probing;
+- runtime success, non-zero failure and timeout handling;
+- explicit `requires_subject` handling for data trace;
+- secret/raw-output exclusion;
 - read-only command mutation boundaries;
 - generated-authority ownership;
 - handoff and verification guidance derived from registered authorities;
