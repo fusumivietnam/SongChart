@@ -114,6 +114,8 @@ Acceptance:
 
 ## Authority and official sources
 
+### Repository authorities
+
 - `docs/project/engineering/system-intersection-map.json`
 - `docs/project/engineering/golden-flow-contract.json`
 - `docs/project/domain/domain-contracts.json`
@@ -123,6 +125,28 @@ Acceptance:
 - `docs/chart/YOUTUBE_VIEW_COUNT_CONTRACT.md`
 - `docs/project/stack/impact-test-map.json`
 - `docs/project/engineering/verification-consumer-graph.json`
+
+### Installed versions
+
+- PHP `^8.5` and Laravel `^13.0` are owned by `composer.json` and `composer.lock`.
+- PostgreSQL major 18 is owned by the release/runtime authority and canonical verification.
+- Frontend package versions are owned by `package.json` and `package-lock.json`; this stage does not introduce a new runtime dependency.
+
+### Official external sources
+
+- [Laravel 13 Eloquent](https://laravel.com/docs/13.x/eloquent) for application-owned persistence boundaries.
+- [Laravel 13 database transactions](https://laravel.com/docs/13.x/database#database-transactions) for atomic writes.
+- [Laravel 13 queues](https://laravel.com/docs/13.x/queues) for bounded downstream recomputation.
+- [PostgreSQL 18 documentation](https://www.postgresql.org/docs/18/) for relational constraints, indexing and timestamp storage.
+- [YouTube Data API `videos.list`](https://developers.google.com/youtube/v3/docs/videos/list) for the existing provider metric adapter.
+
+### Native capability assessment
+
+Laravel's existing model, transaction, event/listener and queued-job capabilities cover persistence and bounded recomputation. PostgreSQL 18 provides the required unique constraints, indexes and timestamp semantics. Existing SongChart provider evidence, `ChartMetricObservation`, canonical Recording and chart snapshot owners already define the adjacent boundaries. No new framework, service or provider path is required for 22.2A.
+
+### Custom implementation justification
+
+SongChart still needs a small domain-specific observation-history contract because provider metric identity, semantic compatibility, canonical Recording linkage, provenance and idempotency are product rules that framework primitives do not define. The implementation must compose existing owners and add only the schema/application behavior needed for those rules.
 
 ## Tests and verification
 
