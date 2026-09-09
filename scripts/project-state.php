@@ -8,7 +8,7 @@ $jsonOnly = in_array('--json', $args, true);
 $writeSource = in_array('--write-source', $args, true);
 $writeRuntime = in_array('--write', $args, true);
 
-/** @return array<string,mixed> */
+/** @return array<string, mixed> */
 function readJsonFile(string $path): array
 {
     if (is_file($path) === false) {
@@ -31,7 +31,7 @@ function normalizedHash(string $path): ?string
     return hash('sha256', $content);
 }
 
-/** @return array<string,mixed> */
+/** @return array<string, mixed> */
 function liveWorkLease(string $root): array
 {
     $run = static function (string $command) use ($root): string {
@@ -62,7 +62,7 @@ function liveWorkLease(string $root): array
 }
 
 /**
- * @param array<string,mixed> $plan
+ * @param  array<string, mixed>  $plan
  * @return list<string>
  */
 function activeGoals(array $plan): array
@@ -83,8 +83,8 @@ function activeGoals(array $plan): array
 }
 
 /**
- * @param array<string,mixed> $plan
- * @return array<string,mixed>
+ * @param  array<string, mixed>  $plan
+ * @return array<string, mixed>
  */
 function projectContextSummary(string $root, array $plan): array
 {
@@ -199,10 +199,10 @@ function controlPlaneCapabilities(): array
 }
 
 /**
- * @param array<string,mixed> $plan
- * @param array<string,mixed> $lease
- * @param array<string,mixed> $context
- * @return array<string,mixed>
+ * @param  array<string, mixed>  $plan
+ * @param  array<string, mixed>  $lease
+ * @param  array<string, mixed>  $context
+ * @return array<string, mixed>
  */
 function controlPlaneState(array $plan, array $lease, array $context): array
 {
