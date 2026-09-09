@@ -84,7 +84,7 @@ Status: accepted.
 
 Verification evidence: Auto Closure run 300 passed on effective prepared head `4d9d22969caa2dfd4d92f42ccfe27015c4644474`.
 
-## Authority
+## Authority and official sources
 
 - `PROJECT_AUTHORITY.md`
 - `docs/project/engineering/stage-plan.json`
@@ -97,7 +97,7 @@ Verification evidence: Auto Closure run 300 passed on effective prepared head `4
 - `docs/project/engineering/verification-topology.json`
 - `docs/project/engineering/verification-command-surface.json`
 
-## Verification
+## Tests and verification
 
 Stage 22.1 remains owned by the existing verification topology:
 

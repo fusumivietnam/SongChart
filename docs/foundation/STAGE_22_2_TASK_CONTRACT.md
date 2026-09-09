@@ -112,7 +112,7 @@ Acceptance:
 - Tests prove unaffected projections are not unnecessarily rebuilt.
 - Data lineage records enough evidence to diagnose convergence failures.
 
-## Existing authorities reused
+## Authority and official sources
 
 - `docs/project/engineering/system-intersection-map.json`
 - `docs/project/engineering/golden-flow-contract.json`
@@ -124,7 +124,7 @@ Acceptance:
 - `docs/project/stack/impact-test-map.json`
 - `docs/project/engineering/verification-consumer-graph.json`
 
-## Verification
+## Tests and verification
 
 Use the existing governed topology. During implementation use impact-selected focused verification; stage closure remains:
 
