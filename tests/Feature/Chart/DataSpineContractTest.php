@@ -61,6 +61,7 @@ it('traces one recording through provider evidence metric history chart snapshot
 
     $observedAt = new DateTimeImmutable('2026-09-09T00:00:00+00:00');
     $snapshotAt = $observedAt->modify('+1 second');
+    $this->travelTo($snapshotAt);
     $observation = new ChartMetricObservation(
         observationId: hash('sha256', 'trace-observation'),
         canonicalRecordingId: (string) $recording->getKey(),
