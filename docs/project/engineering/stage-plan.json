@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "22.2",
-  "active_tranche": "22.3A",
+  "active_tranche": "22.3B",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -27,21 +27,23 @@
   "stage_progress": [
     {
       "id": "22.3A",
-      "status": "active",
+      "status": "accepted",
       "title": "Unified project and engineering context",
       "goals": [
         "inventory existing deterministic project/context/status surfaces before adding new commands",
         "compose authored and generated repository authority into one bounded machine-readable engineering context",
         "keep generated authority projection-only and preserve source ownership"
-      ]
+      ],
+      "verification": "Accepted on exact head 04b5ebcd1e7ad17de24b8cdef4d931a671c9cf9c by Auto Closure run 344 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, canonical CLOSE, exact-tree preservation and ready-to-promote green."
     },
     {
       "id": "22.3B",
-      "status": "planned",
+      "status": "active",
       "title": "Data and runtime status composition",
       "goals": [
         "compose existing doctor, provider, chart, storage/database and data-trace capabilities without duplicating their owners",
-        "expose explicit ready/degraded/blocked evidence rather than inferred AI state"
+        "expose explicit ready/degraded/blocked evidence rather than inferred AI state",
+        "keep runtime probing opt-in, read-only, bounded, secret-safe and fail-closed"
       ]
     },
     {
@@ -64,7 +66,7 @@
       ]
     }
   ],
-  "next_tranche": "22.3A-unified-project-engineering-context",
+  "next_tranche": "22.3B-data-runtime-status-composition",
   "next_stage_outline": {
     "id": "22.4",
     "title": "Vibe Coding Operations",
