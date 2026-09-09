@@ -17,6 +17,7 @@ final class RuntimeProbeRunner
     {
         $process = new Process($command, $workingDirectory);
         $process->setTimeout($timeoutSeconds);
+        $process->disableOutput();
 
         try {
             $process->run();
