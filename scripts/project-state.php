@@ -11,7 +11,7 @@ $writeRuntime = in_array('--write', $args, true);
 /** @return array<string,mixed> */
 function readJsonFile(string $path): array
 {
-    if (! is_file($path)) {
+    if (is_file($path) === false) {
         return [];
     }
 
@@ -22,7 +22,7 @@ function readJsonFile(string $path): array
 
 function normalizedHash(string $path): ?string
 {
-    if (! is_file($path)) {
+    if (is_file($path) === false) {
         return null;
     }
 
@@ -69,7 +69,7 @@ function activeGoals(array $plan): array
 {
     $activeTranche = (string) ($plan['active_tranche'] ?? '');
     foreach (($plan['stage_progress'] ?? []) as $item) {
-        if (! is_array($item) || (string) ($item['id'] ?? '') !== $activeTranche) {
+        if (is_array($item) === false || (string) ($item['id'] ?? '') !== $activeTranche) {
             continue;
         }
 
@@ -292,7 +292,7 @@ function stateMarkdown(array $state): string
     ];
 
     foreach (($state['stage_progress'] ?? []) as $item) {
-        if (! is_array($item)) {
+        if (is_array($item) === false) {
             continue;
         }
         $lines[] = '- `'.($item['id'] ?? '?').'` — `'.strtoupper((string) ($item['status'] ?? 'unknown')).'` — '.($item['title'] ?? '');
@@ -351,7 +351,7 @@ try {
         'source_hashes' => $hashes,
     ];
 
-    if (! $writeSource) {
+    if ($writeSource === false) {
         $lease = liveWorkLease($root);
         $context = projectContextSummary($root, $plan);
         $state['live_work_lease'] = $lease;
@@ -361,14 +361,14 @@ try {
 
     if ($writeSource) {
         $directory = $root.'/docs/project/generated';
-        if (! is_dir($directory)) {
+        if (is_dir($directory) === false) {
             mkdir($directory, 0777, true);
         }
         file_put_contents($directory.'/development-state.json', json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
         file_put_contents($directory.'/DEVELOPMENT_STATE.md', stateMarkdown($state));
     } elseif ($writeRuntime) {
         $directory = $root.'/storage/project-state';
-        if (! is_dir($directory)) {
+        if (is_dir($directory) === false) {
             mkdir($directory, 0777, true);
         }
         file_put_contents($directory.'/development-state.json', json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
