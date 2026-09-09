@@ -23,7 +23,7 @@ if [[ "$runtime_mode" == true ]]; then
 fi
 
 if [[ "$json_mode" == true ]]; then
-  exec php "$ROOT/scripts/project-state.php" --json
+  exec php "$ROOT/scripts/ai-handoff-status.php"
 fi
 
 php "$ROOT/scripts/project-state.php"
