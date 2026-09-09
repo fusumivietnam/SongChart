@@ -4,21 +4,21 @@
 
 ## Current stage
 
-- Stage `22.2 — Data Spine Closure`
-- Status: `verification_pending`
-- Accepted through: `22.1`
-- Task contract: `docs/foundation/STAGE_22_2_TASK_CONTRACT.md`
+- Stage `22.3 — AI-ready Control Plane`
+- Status: `active`
+- Accepted through: `22.2`
+- Task contract: `docs/foundation/STAGE_22_3_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `22.2A` — `VERIFICATION_PENDING` — Unified observation and metric time-series contract
-- `22.2B` — `VERIFICATION_PENDING` — Chart definition and dependency authority
-- `22.2C` — `VERIFICATION_PENDING` — Freshness and lineage/data-trace surfaces
-- `22.2D` — `VERIFICATION_PENDING` — Generalized correction propagation across bound projections
+- `22.3A` — `ACTIVE` — Unified project and engineering context
+- `22.3B` — `PLANNED` — Data and runtime status composition
+- `22.3C` — `PLANNED` — Bounded handoff and resume evidence
+- `22.3D` — `PLANNED` — Machine-readable task and verification guidance
 
 ## Next bounded tranche
 
-- `unknown` — unknown
+- `22.3A-unified-project-engineering-context`
 
 ## Live work lease
 
