@@ -14,9 +14,9 @@ final readonly class PlanChartRecompute
     /** @return list<string> */
     public function forCanonicalChange(EntityType $entityType): array
     {
-        return array_values(array_map(
+        return array_map(
             static fn (array $definition): string => (string) $definition['id'],
             $this->definitions->activeForEntityType($entityType),
-        ));
+        );
     }
 }
