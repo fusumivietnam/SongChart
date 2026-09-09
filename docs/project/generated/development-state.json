@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "7517c976b990b6eed6391f8de3f4ea6511b3e5171a32d2129541d47e560fd16e",
+    "source_fingerprint": "17f49eca9906b617aca9f7b9be5b2213bfb44d37195f1251622f3df4c2cda002",
     "current_stage": {
         "id": "22.3",
         "title": "AI-ready Control Plane",
@@ -12,21 +12,23 @@
     "stage_progress": [
         {
             "id": "22.3A",
-            "status": "active",
+            "status": "accepted",
             "title": "Unified project and engineering context",
             "goals": [
                 "inventory existing deterministic project/context/status surfaces before adding new commands",
                 "compose authored and generated repository authority into one bounded machine-readable engineering context",
                 "keep generated authority projection-only and preserve source ownership"
-            ]
+            ],
+            "verification": "Accepted on exact head 04b5ebcd1e7ad17de24b8cdef4d931a671c9cf9c by Auto Closure run 344 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, canonical CLOSE, exact-tree preservation and ready-to-promote green."
         },
         {
             "id": "22.3B",
-            "status": "planned",
+            "status": "active",
             "title": "Data and runtime status composition",
             "goals": [
                 "compose existing doctor, provider, chart, storage/database and data-trace capabilities without duplicating their owners",
-                "expose explicit ready/degraded/blocked evidence rather than inferred AI state"
+                "expose explicit ready/degraded/blocked evidence rather than inferred AI state",
+                "keep runtime probing opt-in, read-only, bounded, secret-safe and fail-closed"
             ]
         },
         {
@@ -49,7 +51,7 @@
             ]
         }
     ],
-    "next_tranche": "22.3A-unified-project-engineering-context",
+    "next_tranche": "22.3B-data-runtime-status-composition",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -58,6 +60,6 @@
         "candidate-verification.json": "b3bc84052d2da9606146c5587e88d80c8208197570926ebaea023389a3e25af2",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "55d283fbd5f12efa79c3c318c80ccca148f119c52045b4c3db5fbe04e155361b"
+        "docs/project/engineering/stage-plan.json": "f5147a303e606bd2d0bea55bfdb910fc4e03888894ab633d179351df680a4007"
     }
 }

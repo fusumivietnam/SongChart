@@ -11,14 +11,14 @@
 
 ## Stage progress
 
-- `22.3A` — `ACTIVE` — Unified project and engineering context
-- `22.3B` — `PLANNED` — Data and runtime status composition
+- `22.3A` — `ACCEPTED` — Unified project and engineering context
+- `22.3B` — `ACTIVE` — Data and runtime status composition
 - `22.3C` — `PLANNED` — Bounded handoff and resume evidence
 - `22.3D` — `PLANNED` — Machine-readable task and verification guidance
 
 ## Next bounded tranche
 
-- `22.3A-unified-project-engineering-context`
+- `22.3B-data-runtime-status-composition`
 
 ## Live work lease
 
