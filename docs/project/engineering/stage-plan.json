@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "22.2",
-  "active_tranche": "22.3B",
+  "active_tranche": "22.3C",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -38,21 +38,23 @@
     },
     {
       "id": "22.3B",
-      "status": "active",
+      "status": "accepted",
       "title": "Data and runtime status composition",
       "goals": [
         "compose existing doctor, provider, chart, storage/database and data-trace capabilities without duplicating their owners",
         "expose explicit ready/degraded/blocked evidence rather than inferred AI state",
         "keep runtime probing opt-in, read-only, bounded, secret-safe and fail-closed"
-      ]
+      ],
+      "verification": "Accepted on exact head 4ebf57fb6c06932f938c3917906e2bc7d0152387 by Auto Closure run 362 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote green."
     },
     {
       "id": "22.3C",
-      "status": "planned",
+      "status": "active",
       "title": "Bounded handoff and resume evidence",
       "goals": [
         "produce deterministic branch/stage/task handoff context that survives chat or coding-agent boundaries",
-        "exclude secrets and volatile claims that must be resolved live"
+        "exclude secrets and volatile claims that must be resolved live",
+        "expose bounded Git change-surface and resume evidence without creating a second work-lease authority"
       ]
     },
     {
@@ -66,7 +68,7 @@
       ]
     }
   ],
-  "next_tranche": "22.3B-data-runtime-status-composition",
+  "next_tranche": "22.3C-bounded-handoff-resume-evidence",
   "next_stage_outline": {
     "id": "22.4",
     "title": "Vibe Coding Operations",
