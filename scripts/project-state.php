@@ -61,8 +61,9 @@ function liveWorkLease(string $root): array
     ];
 }
 
-/** @param array<string,mixed> $plan
- *  @return list<string>
+/**
+ * @param array<string,mixed> $plan
+ * @return list<string>
  */
 function activeGoals(array $plan): array
 {
@@ -81,8 +82,11 @@ function activeGoals(array $plan): array
     return [];
 }
 
-/** @return array<string,mixed> */
-function projectContextSummary(string $root): array
+/**
+ * @param array<string,mixed> $plan
+ * @return array<string,mixed>
+ */
+function projectContextSummary(string $root, array $plan): array
 {
     $path = $root.'/docs/project/generated/project-context.json';
     $context = readJsonFile($path);
@@ -94,9 +98,16 @@ function projectContextSummary(string $root): array
         ];
     }
 
+    $currentStage = (string) ($plan['current_stage']['id'] ?? '');
+    $contextStage = (string) ($context['candidate']['stage'] ?? '');
+    $status = $currentStage !== '' && $contextStage === $currentStage ? 'ready' : 'stale';
+
     return [
-        'status' => 'ready',
+        'status' => $status,
         'source' => 'docs/project/generated/project-context.json',
+        'stage' => $contextStage !== '' ? $contextStage : null,
+        'expected_stage' => $currentStage !== '' ? $currentStage : null,
+        'reason' => $status === 'stale' ? 'generated project context does not match the authored current stage; run the governed PREPARE flow' : null,
         'source_fingerprint' => $context['source_fingerprint'] ?? null,
         'runtime_authority' => $context['runtime_authority'] ?? null,
         'command_surface' => $context['command_surface'] ?? null,
@@ -187,10 +198,11 @@ function controlPlaneCapabilities(): array
     ];
 }
 
-/** @param array<string,mixed> $plan
- *  @param array<string,mixed> $lease
- *  @param array<string,mixed> $context
- *  @return array<string,mixed>
+/**
+ * @param array<string,mixed> $plan
+ * @param array<string,mixed> $lease
+ * @param array<string,mixed> $context
+ * @return array<string,mixed>
  */
 function controlPlaneState(array $plan, array $lease, array $context): array
 {
@@ -199,7 +211,7 @@ function controlPlaneState(array $plan, array $lease, array $context): array
     $taskExists = $taskContract !== '' && is_file(dirname(__DIR__).'/'.$taskContract);
     $contextReady = ($context['status'] ?? 'blocked') === 'ready';
     $orientationStatus = $taskExists && $contextReady ? 'ready' : 'blocked';
-    $handoffStatus = ($lease['dirty'] ?? true) ? 'attention_required' : 'ready';
+    $handoffStatus = ($lease['dirty'] ?? true) ? 'degraded' : 'ready';
 
     return [
         'schema_version' => 1,
@@ -211,6 +223,7 @@ function controlPlaneState(array $plan, array $lease, array $context): array
                 'task_contract' => $taskContract !== '' ? $taskContract : null,
                 'task_contract_present' => $taskExists,
                 'project_context_status' => $context['status'] ?? 'blocked',
+                'source' => 'docs/project/engineering/stage-plan.json + docs/project/generated/project-context.json',
             ],
         ],
         'runtime' => [
@@ -218,19 +231,25 @@ function controlPlaneState(array $plan, array $lease, array $context): array
             'reason' => 'Repository orientation does not execute environment-specific runtime probes.',
             'probe' => './songchart artisan songchart:doctor --strict',
             'deep_diagnostics' => './songchart ai doctor',
+            'source' => 'songchart:doctor + scripts/ai-doctor.sh',
         ],
         'handoff' => [
             'status' => $handoffStatus,
             'branch' => $lease['branch'] ?? null,
             'head_sha' => $lease['head_sha'] ?? null,
-            'working_tree_clean' => ! ($lease['dirty'] ?? true),
+            'working_tree_clean' => ($lease['dirty'] ?? true) === false,
             'live_pr_resolution_required' => true,
             'live_workflow_resolution_required' => true,
             'secrets_included' => false,
             'resume_rule' => $lease['resume_rule'] ?? null,
+            'source' => 'git-and-github-runtime',
         ],
-        'next_actions' => activeGoals($plan),
+        'next_actions' => [
+            'source' => 'docs/project/engineering/stage-plan.json',
+            'goals' => activeGoals($plan),
+        ],
         'verification_guidance' => [
+            'source' => 'canonical SongChart verification command surface',
             'impact' => './songchart impact --diff',
             'focused' => './songchart impact --verify',
             'candidate' => './songchart candidate',
@@ -239,6 +258,7 @@ function controlPlaneState(array $plan, array $lease, array $context): array
         ],
         'capabilities' => controlPlaneCapabilities(),
         'boundaries' => [
+            'source' => 'docs/project/engineering/mcp-contract.json + repository authority rules',
             'repository_authority' => 'Git repository plus authored machine authorities',
             'live_work_lease_authority' => 'Git branch plus live GitHub pull request',
             'mcp_role' => 'future thin adapter only',
@@ -333,7 +353,7 @@ try {
 
     if (! $writeSource) {
         $lease = liveWorkLease($root);
-        $context = projectContextSummary($root);
+        $context = projectContextSummary($root, $plan);
         $state['live_work_lease'] = $lease;
         $state['project_context'] = $context;
         $state['control_plane'] = controlPlaneState($plan, $lease, $context);
