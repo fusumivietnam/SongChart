@@ -1,12 +1,12 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "23af75203d0ed6031822f297894b9ff07f28f85defa3dc945315ea4edd445837",
+    "source_fingerprint": "0e80eef3ff53299e2cff2efdfc918ec097b32cb4f475684ad66266fb858dbfe0",
     "current_stage": {
         "id": "22.1",
         "title": "System Intersection Map + Golden Vertical Contract",
         "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
-        "status": "active"
+        "status": "verification_pending"
     },
     "accepted_through": "21.0",
     "stage_progress": [
@@ -44,26 +44,34 @@
         },
         {
             "id": "22.1D",
-            "status": "active",
+            "status": "accepted",
             "title": "Runtime integrity surface",
-            "goals": [
-                "Expose canonical polymorphic-reference integrity as a read-only songchart:doctor check",
-                "Make --strict fail when persisted canonical polymorphic references are corrupt",
-                "Preserve repository/domain contract ownership; doctor remains a consumer",
-                "Verify the exact current head after runtime-diagnostic integration"
-            ]
+            "implemented": [
+                "canonical polymorphic-reference integrity exposed as read-only songchart:doctor check",
+                "songchart:doctor --strict fails on persisted canonical polymorphic corruption",
+                "doctor remains a consumer of repository/domain integrity ownership",
+                "command-level regression coverage for runtime integrity visibility"
+            ],
+            "verification_evidence": "Auto Closure run 296 passed prepare, PostgreSQL, browser, frontend, canonical close and ready-to-promote on the effective prepared PR head generated from source head 9efa7465a114daadb0bae08baa9dec81ac3eaa60"
         },
         {
             "id": "22.1E",
-            "status": "planned",
-            "title": "Stage closure and next control-plane tranche",
+            "status": "verification_pending",
+            "title": "Authority convergence and Stage 22.1 closure",
+            "implemented": [
+                "system intersection authority reconciled to the production YouTube metric adapter",
+                "canonical-to-chart input and provider metric normalization edges bound to concrete implementation/tests",
+                "canonical Recording correction-to-chart refresh edge bound to the existing listener/job flow",
+                "golden-flow verification bound to existing impact/candidate/canonical owners instead of an unimplemented duplicate command",
+                "remaining partial data-spine edges explicitly carried into Stage 22.2"
+            ],
             "blockers": [
-                "exact-head Auto Closure must pass after Runtime Integrity Surface changes",
-                "live production activation of YouTube chart observations still requires accepted policy/quota, credential and at least one approved public canonical destination"
+                "exact-current-head Auto Closure must pass after authority convergence",
+                "live production activation of YouTube chart observations still requires accepted policy/quota, credential and at least one approved public canonical destination; this is an environment/runtime activation gate, not missing source implementation"
             ]
         }
     ],
-    "next_tranche": "22.2-runtime-control-plane-consolidation",
+    "next_tranche": "22.2-data-spine-closure",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -72,6 +80,6 @@
         "candidate-verification.json": "a96c2cbbd3e32ac06e102acdb8029530c1130134f202dd8bfe99df170ef9dc1c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "cd9f7e9f31da5dd6ffa4db9c6dd24039281a2c40adaa6827d40e920f17b556c3"
+        "docs/project/engineering/stage-plan.json": "ed6b8ec7cbddc5e3e23995150a11f7b7009e352b27a81be5b4a4d7a538c823c7"
     }
 }
