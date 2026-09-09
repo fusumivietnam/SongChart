@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "charts": [
+    {
+      "id": "youtube-video-views",
+      "entity_type": "recording",
+      "metric": "youtube_video_view_count",
+      "metric_unit": "views",
+      "metric_semantics_version": "youtube-view-count-2026-08-24",
+      "calculation_version": "songchart-chart-v1",
+      "input_selection": "latest-approved-public-destination-observations-per-refresh",
+      "score_aggregation": "sum-per-canonical-recording",
+      "provider": "youtube",
+      "active": true,
+      "freshness": {
+        "max_observation_age_seconds": 7200,
+        "max_snapshot_age_seconds": 7200
+      },
+      "dependencies": {
+        "canonical_entity_types": ["recording"],
+        "provider_capabilities": ["media.statistics"]
+      }
+    }
+  ]
+}
