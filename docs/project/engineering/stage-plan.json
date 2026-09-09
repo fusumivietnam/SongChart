@@ -1,13 +1,13 @@
 {
-  "schema_version": 7,
+  "schema_version": 8,
   "current_stage": {
     "id": "22.2",
     "title": "Data Spine Closure",
     "task_contract": "docs/foundation/STAGE_22_2_TASK_CONTRACT.md",
-    "status": "active"
+    "status": "verification_pending"
   },
   "accepted_through": "22.1",
-  "active_tranche": "22.2A",
+  "active_tranche": "22.2D",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -20,36 +20,60 @@
   "stage_progress": [
     {
       "id": "22.2A",
-      "status": "active",
+      "status": "verification_pending",
       "title": "Unified observation and metric time-series contract",
-      "goals": [
-        "inventory existing provider evidence and ChartMetricObservation semantics",
-        "define the smallest shared observation/time-series contract required by chart and lineage consumers",
-        "persist metric observations/history idempotently without mutating historical evidence",
-        "preserve provider, canonical Recording, provider item, metric, unit, semantics version, observed/fetched timestamps and source reference",
-        "bind the existing YouTube view-count source to the governed history contract without creating a parallel provider/canonical path"
+      "implemented": [
+        "append-only chart_metric_observations PostgreSQL history",
+        "idempotent observation persistence with fail-closed collision semantics",
+        "YouTube chart refresh persists/reloads observations before calculation",
+        "schema ownership and PostgreSQL feature coverage"
       ]
     },
     {
       "id": "22.2B",
-      "status": "planned",
-      "title": "Chart definition and dependency authority"
+      "status": "verification_pending",
+      "title": "Chart definition and dependency authority",
+      "implemented": [
+        "authored chart-definitions.json authority",
+        "ChartDefinitionRegistry validation",
+        "PlanChartRecompute canonical dependency selection",
+        "explicit metric semantics, aggregation and freshness policy"
+      ]
     },
     {
       "id": "22.2C",
-      "status": "planned",
-      "title": "Freshness and lineage/data-trace surfaces"
+      "status": "verification_pending",
+      "title": "Freshness and lineage/data-trace surfaces",
+      "implemented": [
+        "RecordingDataTrace read-only application query",
+        "fresh/stale/unknown observation and snapshot states",
+        "songchart:data:trace machine-readable CLI",
+        "provider destination to chart/public lineage coverage"
+      ]
     },
     {
       "id": "22.2D",
-      "status": "planned",
-      "title": "Generalized correction propagation across bound projections"
+      "status": "verification_pending",
+      "title": "Generalized correction propagation across bound projections",
+      "implemented": [
+        "chart refresh listener consumes dependency planner rather than canonical entity hard-coding",
+        "only active chart definitions bound to the changed entity type are selected",
+        "provider-specific execution remains bounded outside canonical models"
+      ]
     }
   ],
-  "next_tranche": "22.2A-unified-observation-metric-time-series",
-  "follow_on": {
-    "after_stage_22_2": "AI-ready control plane and future MCP adapters over deterministic SongChart capabilities",
-    "runtime_constraint": "SongChart must remain fully operable without external AI model calls or MCP runtime dependency"
+  "next_tranche": "22.3-ai-ready-control-plane",
+  "next_stage_outline": {
+    "id": "22.3",
+    "title": "AI-ready Control Plane",
+    "priority": "compile existing deterministic repository/data/runtime capabilities into bounded machine-readable context and status surfaces",
+    "runtime_constraint": "no external model calls, MCP server, local LLM or paid AI runtime dependency",
+    "planned_capabilities": [
+      "single project/engineering context output",
+      "data/runtime status composition",
+      "bounded handoff/resume evidence",
+      "machine-readable task/verification guidance"
+    ]
   },
   "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md",
   "work_lease": {
