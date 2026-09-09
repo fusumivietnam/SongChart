@@ -55,7 +55,7 @@ final readonly class RecordingDataTrace
             $row = null;
             if ($snapshot !== null) {
                 foreach ($snapshot->rows as $candidate) {
-                    if (($candidate['canonical_recording_id'] ?? null) === $recordingId) {
+                    if ($candidate['canonical_recording_id'] === $recordingId) {
                         $row = $candidate;
                         break;
                     }
