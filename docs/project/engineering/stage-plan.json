@@ -1,13 +1,13 @@
 {
-  "schema_version": 8,
+  "schema_version": 9,
   "current_stage": {
-    "id": "22.2",
-    "title": "Data Spine Closure",
-    "task_contract": "docs/foundation/STAGE_22_2_TASK_CONTRACT.md",
-    "status": "verification_pending"
+    "id": "22.3",
+    "title": "AI-ready Control Plane",
+    "task_contract": "docs/foundation/STAGE_22_3_TASK_CONTRACT.md",
+    "status": "active"
   },
-  "accepted_through": "22.1",
-  "active_tranche": "22.2D",
+  "accepted_through": "22.2",
+  "active_tranche": "22.3A",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -15,64 +15,66 @@
       "effective_prepared_head": "4d9d22969caa2dfd4d92f42ccfe27015c4644474",
       "verification": "Auto Closure run 300 passed PREPARE, PostgreSQL, browser smoke, frontend build, failure classification, canonical CLOSE and ready-to-promote.",
       "external_runtime_gate": "Live YouTube chart activation still requires accepted policy/quota, governed credentials and at least one approved public canonical destination; this does not reopen Stage 22.1 source closure."
+    },
+    "22.2": {
+      "title": "Data Spine Closure",
+      "source_head": "0477dfe0a4a32ceb18aa743bf94d4ed4867f01ec",
+      "verification_run": 34300166642,
+      "verification": "Auto Closure run 330 passed PREPARE/QUALITY, PostgreSQL, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head.",
+      "external_runtime_gate": "Live YouTube chart activation remains an environment/credential gate only and does not reopen Stage 22.2 source closure."
     }
   },
   "stage_progress": [
     {
-      "id": "22.2A",
-      "status": "verification_pending",
-      "title": "Unified observation and metric time-series contract",
-      "implemented": [
-        "append-only chart_metric_observations PostgreSQL history",
-        "idempotent observation persistence with fail-closed collision semantics",
-        "YouTube chart refresh persists/reloads observations before calculation",
-        "schema ownership and PostgreSQL feature coverage"
+      "id": "22.3A",
+      "status": "active",
+      "title": "Unified project and engineering context",
+      "goals": [
+        "inventory existing deterministic project/context/status surfaces before adding new commands",
+        "compose authored and generated repository authority into one bounded machine-readable engineering context",
+        "keep generated authority projection-only and preserve source ownership"
       ]
     },
     {
-      "id": "22.2B",
-      "status": "verification_pending",
-      "title": "Chart definition and dependency authority",
-      "implemented": [
-        "authored chart-definitions.json authority",
-        "ChartDefinitionRegistry validation",
-        "PlanChartRecompute canonical dependency selection",
-        "explicit metric semantics, aggregation and freshness policy"
+      "id": "22.3B",
+      "status": "planned",
+      "title": "Data and runtime status composition",
+      "goals": [
+        "compose existing doctor, provider, chart, storage/database and data-trace capabilities without duplicating their owners",
+        "expose explicit ready/degraded/blocked evidence rather than inferred AI state"
       ]
     },
     {
-      "id": "22.2C",
-      "status": "verification_pending",
-      "title": "Freshness and lineage/data-trace surfaces",
-      "implemented": [
-        "RecordingDataTrace read-only application query",
-        "fresh/stale/unknown observation and snapshot states",
-        "songchart:data:trace machine-readable CLI",
-        "provider destination to chart/public lineage coverage"
+      "id": "22.3C",
+      "status": "planned",
+      "title": "Bounded handoff and resume evidence",
+      "goals": [
+        "produce deterministic branch/stage/task handoff context that survives chat or coding-agent boundaries",
+        "exclude secrets and volatile claims that must be resolved live"
       ]
     },
     {
-      "id": "22.2D",
-      "status": "verification_pending",
-      "title": "Generalized correction propagation across bound projections",
-      "implemented": [
-        "chart refresh listener consumes dependency planner rather than canonical entity hard-coding",
-        "only active chart definitions bound to the changed entity type are selected",
-        "provider-specific execution remains bounded outside canonical models"
+      "id": "22.3D",
+      "status": "planned",
+      "title": "Machine-readable task and verification guidance",
+      "goals": [
+        "expose bounded next-action and verification guidance from existing authorities",
+        "keep all write actions human/governance gated",
+        "close Stage 22.3 through exact-head Auto Closure"
       ]
     }
   ],
-  "next_tranche": "22.3-ai-ready-control-plane",
+  "next_tranche": "22.3A-unified-project-engineering-context",
   "next_stage_outline": {
-    "id": "22.3",
-    "title": "AI-ready Control Plane",
-    "priority": "compile existing deterministic repository/data/runtime capabilities into bounded machine-readable context and status surfaces",
-    "runtime_constraint": "no external model calls, MCP server, local LLM or paid AI runtime dependency",
+    "id": "22.4",
+    "title": "Vibe Coding Operations",
+    "priority": "use the deterministic Stage 22.3 control plane to accelerate coding, verification and handoff without creating a second repository authority",
+    "runtime_constraint": "AI/agent integrations remain adapters over bounded machine-readable capabilities; no autonomous production mutation",
     "planned_capabilities": [
-      "single project/engineering context output",
-      "data/runtime status composition",
-      "bounded handoff/resume evidence",
-      "machine-readable task/verification guidance"
+      "task-oriented coding operation bundles",
+      "impact-aware verification recommendations",
+      "bounded agent handoff/resume workflows",
+      "human-gated automation for repository operations"
     ]
   },
   "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md",
