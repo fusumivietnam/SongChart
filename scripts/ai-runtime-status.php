@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 use App\Support\ControlPlane\RuntimeProbeRunner;
 use Symfony\Component\Process\Process;
+use Throwable;
 
 $root = dirname(__DIR__);
 require $root.'/vendor/autoload.php';
 
 $stateProcess = new Process([PHP_BINARY, $root.'/scripts/project-state.php', '--json'], $root);
 $stateProcess->setTimeout(30);
-$stateProcess->run();
+
+try {
+    $stateProcess->run();
+} catch (Throwable) {
+    fwrite(STDERR, "Unable to load repository project state.\n");
+    exit(1);
+}
 
 if (! $stateProcess->isSuccessful()) {
     fwrite(STDERR, "Unable to load repository project state.\n");
