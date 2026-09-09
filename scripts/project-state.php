@@ -61,11 +61,200 @@ function liveWorkLease(string $root): array
     ];
 }
 
+/** @param array<string,mixed> $plan
+ *  @return list<string>
+ */
+function activeGoals(array $plan): array
+{
+    $activeTranche = (string) ($plan['active_tranche'] ?? '');
+    foreach (($plan['stage_progress'] ?? []) as $item) {
+        if (! is_array($item) || (string) ($item['id'] ?? '') !== $activeTranche) {
+            continue;
+        }
+
+        return array_values(array_filter(
+            $item['goals'] ?? [],
+            static fn (mixed $goal): bool => is_string($goal) && $goal !== '',
+        ));
+    }
+
+    return [];
+}
+
+/** @return array<string,mixed> */
+function projectContextSummary(string $root): array
+{
+    $path = $root.'/docs/project/generated/project-context.json';
+    $context = readJsonFile($path);
+    if ($context === []) {
+        return [
+            'status' => 'blocked',
+            'source' => 'docs/project/generated/project-context.json',
+            'reason' => 'generated project context is missing or invalid',
+        ];
+    }
+
+    return [
+        'status' => 'ready',
+        'source' => 'docs/project/generated/project-context.json',
+        'source_fingerprint' => $context['source_fingerprint'] ?? null,
+        'runtime_authority' => $context['runtime_authority'] ?? null,
+        'command_surface' => $context['command_surface'] ?? null,
+        'project_intelligence' => $context['project_intelligence'] ?? null,
+    ];
+}
+
+/** @return array<string,array<string,mixed>> */
+function controlPlaneCapabilities(): array
+{
+    return [
+        'project_state' => [
+            'owner' => 'scripts/project-state.php',
+            'command' => './songchart ai status --json',
+            'side_effects' => false,
+            'runtime_probe' => false,
+        ],
+        'project_intelligence' => [
+            'owner' => 'scripts/project-intelligence.php',
+            'command' => './songchart artisan project:intelligence --json',
+            'side_effects' => false,
+            'runtime_probe' => false,
+        ],
+        'runtime_readiness' => [
+            'owner' => 'songchart:doctor',
+            'command' => './songchart artisan songchart:doctor --strict',
+            'side_effects' => false,
+            'runtime_probe' => true,
+            'status' => 'not_evaluated',
+        ],
+        'development_database' => [
+            'owner' => 'development:database-status',
+            'command' => './songchart dev db status --json',
+            'side_effects' => false,
+            'runtime_probe' => true,
+            'environment' => 'local',
+            'status' => 'not_evaluated',
+        ],
+        'development_storage' => [
+            'owner' => 'development:storage-status',
+            'command' => './songchart artisan development:storage-status --json',
+            'side_effects' => false,
+            'runtime_probe' => true,
+            'environment' => 'local',
+            'status' => 'not_evaluated',
+        ],
+        'recording_data_trace' => [
+            'owner' => 'songchart:data:trace',
+            'command' => './songchart artisan songchart:data:trace <recording> --json',
+            'side_effects' => false,
+            'runtime_probe' => true,
+            'requires' => ['recording'],
+            'status' => 'not_evaluated',
+        ],
+        'deep_diagnostics' => [
+            'owner' => 'scripts/ai-doctor.sh',
+            'command' => './songchart ai doctor',
+            'side_effects' => false,
+            'runtime_probe' => true,
+            'secret_redacted' => true,
+            'status' => 'not_evaluated',
+        ],
+        'impact_resolution' => [
+            'owner' => 'scripts/resolve-repository-impact.php',
+            'command' => './songchart impact --diff',
+            'side_effects' => false,
+            'runtime_probe' => false,
+        ],
+        'impact_verification' => [
+            'owner' => 'scripts/run-impact-verification.sh',
+            'command' => './songchart impact --verify',
+            'side_effects' => false,
+            'runtime_probe' => true,
+        ],
+        'candidate_verification' => [
+            'owner' => './songchart candidate',
+            'command' => './songchart candidate',
+            'side_effects' => false,
+            'runtime_probe' => true,
+            'requires_clean_tree' => true,
+        ],
+        'canonical_verification' => [
+            'owner' => './songchart verify',
+            'command' => './songchart verify',
+            'side_effects' => false,
+            'runtime_probe' => true,
+        ],
+    ];
+}
+
+/** @param array<string,mixed> $plan
+ *  @param array<string,mixed> $lease
+ *  @param array<string,mixed> $context
+ *  @return array<string,mixed>
+ */
+function controlPlaneState(array $plan, array $lease, array $context): array
+{
+    $stage = is_array($plan['current_stage'] ?? null) ? $plan['current_stage'] : [];
+    $taskContract = (string) ($stage['task_contract'] ?? '');
+    $taskExists = $taskContract !== '' && is_file(dirname(__DIR__).'/'.$taskContract);
+    $contextReady = ($context['status'] ?? 'blocked') === 'ready';
+    $orientationStatus = $taskExists && $contextReady ? 'ready' : 'blocked';
+    $handoffStatus = ($lease['dirty'] ?? true) ? 'attention_required' : 'ready';
+
+    return [
+        'schema_version' => 1,
+        'status' => $orientationStatus === 'ready' ? $handoffStatus : 'blocked',
+        'orientation' => [
+            'status' => $orientationStatus,
+            'evidence' => [
+                'stage_plan' => 'docs/project/engineering/stage-plan.json',
+                'task_contract' => $taskContract !== '' ? $taskContract : null,
+                'task_contract_present' => $taskExists,
+                'project_context_status' => $context['status'] ?? 'blocked',
+            ],
+        ],
+        'runtime' => [
+            'status' => 'not_evaluated',
+            'reason' => 'Repository orientation does not execute environment-specific runtime probes.',
+            'probe' => './songchart artisan songchart:doctor --strict',
+            'deep_diagnostics' => './songchart ai doctor',
+        ],
+        'handoff' => [
+            'status' => $handoffStatus,
+            'branch' => $lease['branch'] ?? null,
+            'head_sha' => $lease['head_sha'] ?? null,
+            'working_tree_clean' => ! ($lease['dirty'] ?? true),
+            'live_pr_resolution_required' => true,
+            'live_workflow_resolution_required' => true,
+            'secrets_included' => false,
+            'resume_rule' => $lease['resume_rule'] ?? null,
+        ],
+        'next_actions' => activeGoals($plan),
+        'verification_guidance' => [
+            'impact' => './songchart impact --diff',
+            'focused' => './songchart impact --verify',
+            'candidate' => './songchart candidate',
+            'canonical' => './songchart verify',
+            'promotion_rule' => 'Resolve exact-head GitHub Auto Closure before claiming major-stage acceptance or promotion readiness.',
+        ],
+        'capabilities' => controlPlaneCapabilities(),
+        'boundaries' => [
+            'repository_authority' => 'Git repository plus authored machine authorities',
+            'live_work_lease_authority' => 'Git branch plus live GitHub pull request',
+            'mcp_role' => 'future thin adapter only',
+            'ai_memory_authority' => false,
+            'autonomous_repository_writes' => false,
+            'autonomous_production_writes' => false,
+        ],
+    ];
+}
+
 /** @param array<string,mixed> $state */
 function stateMarkdown(array $state): string
 {
     $stage = is_array($state['current_stage'] ?? null) ? $state['current_stage'] : [];
-    $next = is_array($state['next_tranche'] ?? null) ? $state['next_tranche'] : [];
+    $next = $state['next_tranche'] ?? 'unknown';
+    $nextLabel = is_array($next) ? (($next['id'] ?? 'unknown').' — '.($next['title'] ?? 'unknown')) : (string) $next;
     $lines = [
         '# Generated Development State',
         '',
@@ -93,7 +282,7 @@ function stateMarkdown(array $state): string
         '',
         '## Next bounded tranche',
         '',
-        '- `'.($next['id'] ?? 'unknown').'` — '.($next['title'] ?? 'unknown'),
+        '- `'.$nextLabel.'`',
         '',
         '## Live work lease',
         '',
@@ -131,7 +320,7 @@ try {
     ksort($hashes);
 
     $state = [
-        'schema_version' => 1,
+        'schema_version' => 2,
         'generated_from_repository' => true,
         'source_fingerprint' => hash('sha256', json_encode($hashes, JSON_THROW_ON_ERROR)),
         'current_stage' => $plan['current_stage'] ?? null,
@@ -143,7 +332,11 @@ try {
     ];
 
     if (! $writeSource) {
-        $state['live_work_lease'] = liveWorkLease($root);
+        $lease = liveWorkLease($root);
+        $context = projectContextSummary($root);
+        $state['live_work_lease'] = $lease;
+        $state['project_context'] = $context;
+        $state['control_plane'] = controlPlaneState($plan, $lease, $context);
     }
 
     if ($writeSource) {
@@ -167,14 +360,18 @@ try {
     }
 
     $stage = is_array($state['current_stage'] ?? null) ? $state['current_stage'] : [];
-    $next = is_array($state['next_tranche'] ?? null) ? $state['next_tranche'] : [];
+    $next = $state['next_tranche'] ?? 'unknown';
+    $nextLabel = is_array($next) ? (($next['id'] ?? 'unknown').' — '.($next['title'] ?? 'unknown')) : (string) $next;
     fwrite(STDOUT, 'SongChart Derived Project State'.PHP_EOL);
     fwrite(STDOUT, 'Stage: '.($stage['id'] ?? 'unknown').' — '.($stage['status'] ?? 'unknown').PHP_EOL);
     fwrite(STDOUT, 'Accepted through: '.($state['accepted_through'] ?? 'unknown').PHP_EOL);
-    fwrite(STDOUT, 'Next tranche: '.($next['id'] ?? 'unknown').' — '.($next['title'] ?? 'unknown').PHP_EOL);
+    fwrite(STDOUT, 'Next tranche: '.$nextLabel.PHP_EOL);
     if (isset($state['live_work_lease']) && is_array($state['live_work_lease'])) {
         $lease = $state['live_work_lease'];
         fwrite(STDOUT, 'Work lease: branch='.($lease['branch'] ?? 'unknown').' head='.substr((string) ($lease['head_sha'] ?? 'unknown'), 0, 12).' pr='.($lease['pr_number'] ?? 'n/a').' dirty='.(($lease['dirty'] ?? true) ? 'yes' : 'no').PHP_EOL);
+    }
+    if (isset($state['control_plane']) && is_array($state['control_plane'])) {
+        fwrite(STDOUT, 'Control plane: '.($state['control_plane']['status'] ?? 'unknown').PHP_EOL);
     }
 } catch (Throwable $exception) {
     fwrite(STDERR, 'Unable to build derived project state: '.$exception->getMessage().PHP_EOL);
