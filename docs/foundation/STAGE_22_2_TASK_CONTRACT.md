@@ -98,6 +98,8 @@ Implemented:
 
 ## Authority and official sources
 
+### Repository authorities
+
 - `docs/project/engineering/system-intersection-map.json`
 - `docs/project/engineering/golden-flow-contract.json`
 - `docs/project/domain/chart-definitions.json`
@@ -108,6 +110,28 @@ Implemented:
 - `docs/chart/YOUTUBE_VIEW_COUNT_CONTRACT.md`
 - `docs/project/stack/impact-test-map.json`
 - `docs/project/engineering/verification-consumer-graph.json`
+
+### Installed versions
+
+- PHP `^8.5` and Laravel `^13.0` remain owned by `composer.json` and `composer.lock`.
+- PostgreSQL major 18 remains the release-authoritative database.
+- Node 24 and frontend package versions remain lockfile-owned.
+- Stage 22.2 adds no new package/runtime dependency.
+
+### Official external sources
+
+- Laravel 13 Eloquent/Query Builder documentation for application-owned persistence boundaries.
+- Laravel 13 events, listeners and queues documentation for bounded downstream recomputation.
+- PostgreSQL 18 documentation for unique constraints, numeric/timestamp storage and indexing.
+- YouTube Data API v3 `videos.list` documentation for the existing `viewCount` source semantics.
+
+### Native capability assessment
+
+Laravel's existing database, event/listener and queued-job capabilities cover persistence and bounded recomputation. PostgreSQL 18 provides the unique/index/timestamp semantics required by append-only metric history. Existing SongChart provider evidence, `ChartMetricObservation`, canonical Recording and chart snapshot owners already define adjacent boundaries. No new framework, provider, AI runtime or MCP runtime is required.
+
+### Custom implementation justification
+
+SongChart needs a small domain-specific observation-history/chart-definition layer because provider metric identity, semantics compatibility, canonical Recording linkage, aggregation, provenance, freshness and dependency selection are product rules that Laravel/PostgreSQL primitives do not define. The implementation composes existing owners rather than introducing a parallel data platform.
 
 ## Tests and verification
 
