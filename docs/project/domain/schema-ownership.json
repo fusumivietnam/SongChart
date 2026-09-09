@@ -53,6 +53,7 @@
     "discovery_channel_exclusions": "domain-contracts",
     "discovery_placements": "domain-contracts",
     "discovery_projections": "domain-contracts",
+    "chart_metric_observations": "domain-contracts",
     "chart_snapshots": "domain-contracts",
     "pulse_values": "laravel-pulse",
     "pulse_entries": "laravel-pulse",
