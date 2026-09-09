@@ -2,9 +2,9 @@
 
 ## Status
 
-Verification pending for major-stage closure.
+Accepted.
 
-All bounded tranches `22.2A` through `22.2D` are implemented on the active Stage 22 branch. Stage acceptance still requires exact-current-head Auto Closure.
+All bounded tranches `22.2A` through `22.2D` are implemented and accepted. Auto Closure run 330 (`34300166642`) passed PREPARE/QUALITY, PostgreSQL, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote on exact source head `0477dfe0a4a32ceb18aa743bf94d4ed4867f01ec`.
 
 ## Purpose
 
@@ -52,7 +52,7 @@ No external AI model or MCP runtime is required.
 
 ## 22.2A — Unified observation and metric time-series contract
 
-Status: implemented; verification pending.
+Status: accepted.
 
 Implemented:
 - append-only PostgreSQL `chart_metric_observations` history;
@@ -65,7 +65,7 @@ Implemented:
 
 ## 22.2B — Chart definition and dependency authority
 
-Status: implemented; verification pending.
+Status: accepted.
 
 Implemented:
 - `docs/project/domain/chart-definitions.json` as authored chart-definition authority;
@@ -76,7 +76,7 @@ Implemented:
 
 ## 22.2C — Freshness and lineage / data trace
 
-Status: implemented; verification pending.
+Status: accepted.
 
 Implemented:
 - source-based observation and snapshot freshness states (`fresh`, `stale`, `unknown`);
@@ -87,7 +87,7 @@ Implemented:
 
 ## 22.2D — Generalized correction propagation
 
-Status: implemented; verification pending.
+Status: accepted.
 
 Implemented:
 - canonical chart recomputation selection is driven by chart-definition dependencies;
@@ -143,15 +143,14 @@ Focused evidence is owned by:
 - existing chart provenance/persistence/public-projection tests;
 - existing canonical-change reprojection tests.
 
-Major-stage closure remains:
+Accepted major-stage closure evidence:
 
-```bash
-./songchart impact --verify
-./songchart candidate
-./songchart verify
+```text
+Auto Closure: #330
+Run ID: 34300166642
+Exact source head: 0477dfe0a4a32ceb18aa743bf94d4ed4867f01ec
+Result: PREPARE/QUALITY + PostgreSQL + browser + frontend + classify + canonical CLOSE + exact-tree preservation + ready-to-promote PASSED
 ```
-
-Auto Closure on the exact current source/effective prepared head is required before Stage 22.2 becomes accepted.
 
 ## Explicit non-goals
 
@@ -166,4 +165,4 @@ Auto Closure on the exact current source/effective prepared head is required bef
 
 ## Follow-on
 
-After Stage 22.2 closes, Stage 22.3 may expose these deterministic capabilities through an AI-ready control plane. MCP remains a future thin adapter rather than a Stage 22.2 runtime requirement.
+Stage 22.3 exposes these deterministic capabilities through an AI-ready control plane. MCP remains a future thin adapter rather than a Stage 22.3 prerequisite.
