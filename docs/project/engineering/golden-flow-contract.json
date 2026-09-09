@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "stage": "22.1",
   "purpose": "Define the first production-oriented vertical contract that must be demonstrably closed from provider evidence through canonical identity, chart projection and public discovery.",
   "golden_flow": {
@@ -11,12 +11,12 @@
       {"order": 3, "id": "resolve_identity", "required": true, "evidence": ["candidate/canonical decision context", "conflict state when ambiguous"]},
       {"order": 4, "id": "governed_admission", "required": true, "evidence": ["proposal/decision state", "rationale/audit for human decision when required"]},
       {"order": 5, "id": "canonical_graph_projection", "required": true, "evidence": ["canonical song id", "artist/release relationships", "provider evidence link"]},
-      {"order": 6, "id": "chart_input_projection", "required": true, "evidence": ["canonical song id", "metric observation ids/timestamps", "calculation version"]},
+      {"order": 6, "id": "chart_input_projection", "required": true, "evidence": ["canonical song id", "metric observation ids/timestamps", "metric unit/semantics version", "calculation version"]},
       {"order": 7, "id": "chart_snapshot", "required": true, "evidence": ["chart id", "rank", "score or ranking basis", "snapshot_at", "input provenance"]},
-      {"order": 8, "id": "public_projection", "required": true, "evidence": ["stable public route", "song/artist/chart consistency", "cache freshness"]},
+      {"order": 8, "id": "public_projection", "required": true, "evidence": ["stable public route", "song/artist/chart consistency", "no fabricated fallback data"]},
       {"order": 9, "id": "search_discovery", "required": true, "evidence": ["canonical identity searchable", "aliases/provider identity do not create duplicate public entities"]},
       {"order": 10, "id": "seo_projection", "required": true, "evidence": ["canonical URL", "metadata/indexability follows URL/SEO authority"]},
-      {"order": 11, "id": "editorial_correction", "required": true, "evidence": ["governed correction", "audit trail", "dependent projections invalidated/recomputed"]}
+      {"order": 11, "id": "editorial_correction", "required": true, "evidence": ["governed correction", "audit trail", "dependent Discovery/chart projections invalidated or recomputed through bounded handlers"]}
     ]
   },
   "golden_cases": [
@@ -33,8 +33,9 @@
     "No provider evidence may become canonical identity merely because it was fetched successfully.",
     "No rejected or unresolved admission may leak into canonical public projection.",
     "Repeating the same provider input must be idempotent at observation/canonical projection boundaries.",
-    "One semantic editorial correction must converge all dependent projections without direct manual database repair.",
-    "Public song, artist, chart, search and SEO surfaces must agree on canonical identity."
+    "One semantic editorial correction must converge all currently bound dependent projections without direct manual database repair.",
+    "Public song, artist, chart and search surfaces must agree on canonical identity; broader chart-page SEO presentation remains public UX work.",
+    "External provider metric observations must preserve provider, source reference, unit, semantics version and timestamps before ranking."
   ],
   "acceptance": {
     "required_cases_pass": true,
@@ -46,8 +47,20 @@
     "public_discovery_proven": true
   },
   "verification_surface": {
-    "target_command": "./songchart golden verify",
-    "stage_22_1_rule": "Stage 22.1 may define the command contract and bind existing verification owners; it must not add a parallel verification engine when existing test/impact/canonical lanes can own the checks.",
-    "machine_output": "A future implementation should emit bounded JSON containing exact source identity, case results, failed edge ids and owning verification lanes."
+    "ownership": "existing_verification_topology",
+    "commands": [
+      "./songchart impact --verify",
+      "./songchart candidate",
+      "./songchart verify"
+    ],
+    "tests": [
+      "tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php",
+      "tests/Feature/Chart/YouTubeViewChartFlowTest.php",
+      "tests/Feature/Chart/ChartSnapshotPersistenceTest.php",
+      "tests/Feature/Chart/PublicChartProjectionTest.php",
+      "tests/Feature/Chart/PublicChartRouteTest.php",
+      "tests/Feature/Discovery/CanonicalChangeReprojectionTest.php"
+    ],
+    "rule": "Golden-flow closure is owned by existing impact, focused test, candidate and canonical verification lanes; SongChart must not introduce a duplicate golden verification engine or a dead command surface."
   }
 }
