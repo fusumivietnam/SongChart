@@ -11,7 +11,7 @@ use Throwable;
 final class RuntimeProbeRunner
 {
     /**
-     * @param list<string> $command
+     * @param  list<string>  $command
      * @return array{status:string,owner:string,exit_code:?int,timed_out:bool,secrets_included:bool}
      */
     public function run(array $command, string $owner, string $workingDirectory, int $timeoutSeconds = 30): array
