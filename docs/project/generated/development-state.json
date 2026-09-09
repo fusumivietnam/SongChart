@@ -1,85 +1,68 @@
 {
     "schema_version": 1,
     "generated_from_repository": true,
-    "source_fingerprint": "0e80eef3ff53299e2cff2efdfc918ec097b32cb4f475684ad66266fb858dbfe0",
+    "source_fingerprint": "896c24567d24055469919ba454c8bc0cca1514f2826d54f8ecaded04939938ea",
     "current_stage": {
-        "id": "22.1",
-        "title": "System Intersection Map + Golden Vertical Contract",
-        "task_contract": "docs/foundation/STAGE_22_1_TASK_CONTRACT.md",
+        "id": "22.2",
+        "title": "Data Spine Closure",
+        "task_contract": "docs/foundation/STAGE_22_2_TASK_CONTRACT.md",
         "status": "verification_pending"
     },
-    "accepted_through": "21.0",
+    "accepted_through": "22.1",
     "stage_progress": [
         {
-            "id": "22.1A",
-            "status": "accepted",
-            "title": "Intersection audit and ownership binding"
-        },
-        {
-            "id": "22.1B",
-            "status": "accepted",
-            "title": "Golden provider/canonical fixtures"
-        },
-        {
-            "id": "22.1C",
-            "status": "accepted",
-            "title": "Chart/public provenance contract closure",
-            "implemented": [
-                "provider-neutral provenance-first chart observation DTO",
-                "YouTube approved-destination viewCount production observation source",
-                "YouTube viewCount 2026-08-24 semantics version boundary",
-                "provider media.statistics capability authority",
-                "versioned deterministic chart snapshot calculator with semantic compatibility guard",
-                "self-contained input fingerprint and observation provenance",
-                "immutable/idempotent chart snapshot persistence",
-                "canonical public chart projection and read-only route",
-                "manual and opt-in hourly chart refresh",
-                "canonical-change semantic event",
-                "bounded active-channel Discovery reprojection",
-                "bounded queued chart refresh for canonical Recording changes",
-                "polymorphic canonical-reference contract and runtime scanner",
-                "raw-persistence corruption verification for unknown canonical entity types"
-            ],
-            "verification_evidence": "Auto Closure run 293 passed on exact head 9940aeda6b4e198aa02045ad5553b97de072c594"
-        },
-        {
-            "id": "22.1D",
-            "status": "accepted",
-            "title": "Runtime integrity surface",
-            "implemented": [
-                "canonical polymorphic-reference integrity exposed as read-only songchart:doctor check",
-                "songchart:doctor --strict fails on persisted canonical polymorphic corruption",
-                "doctor remains a consumer of repository/domain integrity ownership",
-                "command-level regression coverage for runtime integrity visibility"
-            ],
-            "verification_evidence": "Auto Closure run 296 passed prepare, PostgreSQL, browser, frontend, canonical close and ready-to-promote on the effective prepared PR head generated from source head 9efa7465a114daadb0bae08baa9dec81ac3eaa60"
-        },
-        {
-            "id": "22.1E",
+            "id": "22.2A",
             "status": "verification_pending",
-            "title": "Authority convergence and Stage 22.1 closure",
+            "title": "Unified observation and metric time-series contract",
             "implemented": [
-                "system intersection authority reconciled to the production YouTube metric adapter",
-                "canonical-to-chart input and provider metric normalization edges bound to concrete implementation/tests",
-                "canonical Recording correction-to-chart refresh edge bound to the existing listener/job flow",
-                "golden-flow verification bound to existing impact/candidate/canonical owners instead of an unimplemented duplicate command",
-                "remaining partial data-spine edges explicitly carried into Stage 22.2"
-            ],
-            "blockers": [
-                "exact-current-head Auto Closure must pass after authority convergence",
-                "live production activation of YouTube chart observations still requires accepted policy/quota, credential and at least one approved public canonical destination; this is an environment/runtime activation gate, not missing source implementation"
+                "append-only chart_metric_observations PostgreSQL history",
+                "idempotent observation persistence with fail-closed collision semantics",
+                "YouTube chart refresh persists/reloads observations before calculation",
+                "schema ownership and PostgreSQL feature coverage"
+            ]
+        },
+        {
+            "id": "22.2B",
+            "status": "verification_pending",
+            "title": "Chart definition and dependency authority",
+            "implemented": [
+                "authored chart-definitions.json authority",
+                "ChartDefinitionRegistry validation",
+                "PlanChartRecompute canonical dependency selection",
+                "explicit metric semantics, aggregation and freshness policy"
+            ]
+        },
+        {
+            "id": "22.2C",
+            "status": "verification_pending",
+            "title": "Freshness and lineage/data-trace surfaces",
+            "implemented": [
+                "RecordingDataTrace read-only application query",
+                "fresh/stale/unknown observation and snapshot states",
+                "songchart:data:trace machine-readable CLI",
+                "provider destination to chart/public lineage coverage"
+            ]
+        },
+        {
+            "id": "22.2D",
+            "status": "verification_pending",
+            "title": "Generalized correction propagation across bound projections",
+            "implemented": [
+                "chart refresh listener consumes dependency planner rather than canonical entity hard-coding",
+                "only active chart definitions bound to the changed entity type are selected",
+                "provider-specific execution remains bounded outside canonical models"
             ]
         }
     ],
-    "next_tranche": "22.2-data-spine-closure",
+    "next_tranche": "22.3-ai-ready-control-plane",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "a96c2cbbd3e32ac06e102acdb8029530c1130134f202dd8bfe99df170ef9dc1c",
+        "candidate-verification.json": "ec1d56da313c1cd2f40f97e604e814b56d71a6b9dbd5810d5db56a6d96ba3655",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "ed6b8ec7cbddc5e3e23995150a11f7b7009e352b27a81be5b4a4d7a538c823c7"
+        "docs/project/engineering/stage-plan.json": "1004adea09fbf16b0efcdf5a6d387f0f5d2d90e80d248d21a25dc29734753857"
     }
 }

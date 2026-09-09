@@ -4,18 +4,17 @@
 
 ## Current stage
 
-- Stage `22.1 — System Intersection Map + Golden Vertical Contract`
+- Stage `22.2 — Data Spine Closure`
 - Status: `verification_pending`
-- Accepted through: `21.0`
-- Task contract: `docs/foundation/STAGE_22_1_TASK_CONTRACT.md`
+- Accepted through: `22.1`
+- Task contract: `docs/foundation/STAGE_22_2_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `22.1A` — `ACCEPTED` — Intersection audit and ownership binding
-- `22.1B` — `ACCEPTED` — Golden provider/canonical fixtures
-- `22.1C` — `ACCEPTED` — Chart/public provenance contract closure
-- `22.1D` — `ACCEPTED` — Runtime integrity surface
-- `22.1E` — `VERIFICATION_PENDING` — Authority convergence and Stage 22.1 closure
+- `22.2A` — `VERIFICATION_PENDING` — Unified observation and metric time-series contract
+- `22.2B` — `VERIFICATION_PENDING` — Chart definition and dependency authority
+- `22.2C` — `VERIFICATION_PENDING` — Freshness and lineage/data-trace surfaces
+- `22.2D` — `VERIFICATION_PENDING` — Generalized correction propagation across bound projections
 
 ## Next bounded tranche
 
