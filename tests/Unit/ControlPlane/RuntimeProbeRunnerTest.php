@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 use App\Support\ControlPlane\RuntimeProbeRunner;
 
-it('reports successful runtime probes without exposing process output', function (): void {
+$repositoryRoot = dirname(__DIR__, 3);
+
+it('reports successful runtime probes without exposing process output', function () use ($repositoryRoot): void {
     $secret = 'runtime-probe-secret-sentinel';
     $result = (new RuntimeProbeRunner())->run(
         [PHP_BINARY, '-r', 'fwrite(STDOUT, '.var_export($secret, true).'); exit(0);'],
         'test:success',
-        base_path(),
+        $repositoryRoot,
         5,
     );
 
@@ -24,11 +26,11 @@ it('reports successful runtime probes without exposing process output', function
         ->and(json_encode($result, JSON_THROW_ON_ERROR))->not->toContain($secret);
 });
 
-it('fails closed when a runtime probe returns a non-zero exit code', function (): void {
+it('fails closed when a runtime probe returns a non-zero exit code', function () use ($repositoryRoot): void {
     $result = (new RuntimeProbeRunner())->run(
         [PHP_BINARY, '-r', 'fwrite(STDERR, "sensitive diagnostic"); exit(7);'],
         'test:failure',
-        base_path(),
+        $repositoryRoot,
         5,
     );
 
@@ -43,11 +45,11 @@ it('fails closed when a runtime probe returns a non-zero exit code', function ()
         ->and(json_encode($result, JSON_THROW_ON_ERROR))->not->toContain('sensitive diagnostic');
 });
 
-it('fails closed when a runtime probe exceeds its bounded timeout', function (): void {
+it('fails closed when a runtime probe exceeds its bounded timeout', function () use ($repositoryRoot): void {
     $result = (new RuntimeProbeRunner())->run(
         [PHP_BINARY, '-r', 'sleep(2);'],
         'test:timeout',
-        base_path(),
+        $repositoryRoot,
         1,
     );
 
