@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "17f49eca9906b617aca9f7b9be5b2213bfb44d37195f1251622f3df4c2cda002",
+    "source_fingerprint": "8433fecdd481afb2788400cfbe4a46a0d79ceb00c3916564b77283549abb1a94",
     "current_stage": {
         "id": "22.3",
         "title": "AI-ready Control Plane",
@@ -23,21 +23,23 @@
         },
         {
             "id": "22.3B",
-            "status": "active",
+            "status": "accepted",
             "title": "Data and runtime status composition",
             "goals": [
                 "compose existing doctor, provider, chart, storage/database and data-trace capabilities without duplicating their owners",
                 "expose explicit ready/degraded/blocked evidence rather than inferred AI state",
                 "keep runtime probing opt-in, read-only, bounded, secret-safe and fail-closed"
-            ]
+            ],
+            "verification": "Accepted on exact head 4ebf57fb6c06932f938c3917906e2bc7d0152387 by Auto Closure run 362 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote green."
         },
         {
             "id": "22.3C",
-            "status": "planned",
+            "status": "active",
             "title": "Bounded handoff and resume evidence",
             "goals": [
                 "produce deterministic branch/stage/task handoff context that survives chat or coding-agent boundaries",
-                "exclude secrets and volatile claims that must be resolved live"
+                "exclude secrets and volatile claims that must be resolved live",
+                "expose bounded Git change-surface and resume evidence without creating a second work-lease authority"
             ]
         },
         {
@@ -51,7 +53,7 @@
             ]
         }
     ],
-    "next_tranche": "22.3B-data-runtime-status-composition",
+    "next_tranche": "22.3C-bounded-handoff-resume-evidence",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -60,6 +62,6 @@
         "candidate-verification.json": "b3bc84052d2da9606146c5587e88d80c8208197570926ebaea023389a3e25af2",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "f5147a303e606bd2d0bea55bfdb910fc4e03888894ab633d179351df680a4007"
+        "docs/project/engineering/stage-plan.json": "8f1663bf608badf12ea6d3d8c8d9bc96c8b8492c71001a9a7af61c0a12acc11a"
     }
 }
