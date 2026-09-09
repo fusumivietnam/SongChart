@@ -14,7 +14,18 @@ final readonly class ChartSnapshot
      *   canonical_recording_id:string,
      *   score:float,
      *   observation_ids:list<string>,
-     *   observations:list<array{observation_id:string,provider:string,provider_item_id:string,metric:string,value:float,observed_at:string}>
+     *   observations:list<array{
+     *     observation_id:string,
+     *     provider:string,
+     *     provider_item_id:string,
+     *     metric:string,
+     *     value:float,
+     *     observed_at:string,
+     *     metric_unit:string,
+     *     metric_semantics_version:string,
+     *     fetched_at:string|null,
+     *     source_reference:string|null
+     *   }>
      * }> $rows
      */
     public function __construct(
