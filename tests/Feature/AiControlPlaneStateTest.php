@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\Process\Process;
 
-it('exposes the active repository work lease through the AI status JSON surface', function (): void {
+it('exposes bounded repository handoff evidence through the AI status JSON surface', function (): void {
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path());
     $process->setTimeout(30);
     $process->run();
@@ -12,6 +12,8 @@ it('exposes the active repository work lease through the AI status JSON surface'
     expect($process->isSuccessful())->toBeTrue($process->getErrorOutput());
 
     $state = json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR);
+    $handoff = $state['control_plane']['handoff'];
+    $changeSurface = $handoff['local_change_surface'];
 
     expect($state['schema_version'])->toBe(2)
         ->and($state['current_stage']['id'])->toBe('22.3')
@@ -19,9 +21,20 @@ it('exposes the active repository work lease through the AI status JSON surface'
         ->and($state['live_work_lease']['source'])->toBe('git-and-github-runtime')
         ->and($state['control_plane']['orientation']['evidence']['stage_plan'])->toBe('docs/project/engineering/stage-plan.json')
         ->and($state['control_plane']['runtime']['status'])->toBe('not_evaluated')
-        ->and($state['control_plane']['handoff']['live_pr_resolution_required'])->toBeTrue()
-        ->and($state['control_plane']['handoff']['live_workflow_resolution_required'])->toBeTrue()
-        ->and($state['control_plane']['handoff']['secrets_included'])->toBeFalse();
+        ->and($handoff['stage'])->toBe('22.3')
+        ->and($handoff['active_tranche'])->toBe('22.3C')
+        ->and($handoff['task_contract'])->toBe('docs/foundation/STAGE_22_3_TASK_CONTRACT.md')
+        ->and($handoff['head_sha'])->toBe($state['live_work_lease']['head_sha'])
+        ->and($handoff['committed_pr_change_surface']['status'])->toBe('requires_live_pr_resolution')
+        ->and($handoff['verification']['status'])->toBe('requires_live_workflow_resolution')
+        ->and($handoff['live_pr_resolution_required'])->toBeTrue()
+        ->and($handoff['live_workflow_resolution_required'])->toBeTrue()
+        ->and($handoff['secrets_included'])->toBeFalse()
+        ->and($changeSurface['path_count'])->toBeInt()
+        ->and($changeSurface['paths'])->toBeArray()
+        ->and($changeSurface['path_limit'])->toBe(100)
+        ->and($changeSurface['truncated'])->toBeBool()
+        ->and(count($changeSurface['paths']))->toBeLessThanOrEqual(100);
 });
 
 it('composes existing owners instead of duplicating diagnostic and verification capabilities', function (): void {
@@ -48,7 +61,7 @@ it('composes existing owners instead of duplicating diagnostic and verification 
 
 it('does not expose environment secrets in machine-readable handoff state', function (): void {
     $secret = 'songchart-stage-22-3-secret-sentinel';
-    $process = new Process([PHP_BINARY, base_path('scripts/project-state.php'), '--json'], base_path(), [
+    $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path(), [
         'DB_PASSWORD' => $secret,
         'YOUTUBE_API_KEY' => $secret,
     ]);
