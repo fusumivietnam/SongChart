@@ -63,20 +63,15 @@ Status: planned.
 
 ## Changed authorities
 
-The Stage 22.3 plan and this task contract record tranche ownership. Runtime composition changes the existing AI status command surface but does not create a new business/domain authority.
+None. Stage 22.3B changes implementation consumers of existing command owners but does not create or modify a registered semantic authority. The stage plan and this task contract remain stage-control metadata rather than entries in the semantic authority dependency registry.
 
-Current implementation owners:
-
-- `scripts/ai-status.sh` — command routing for repository-only versus opt-in runtime status;
-- `scripts/ai-runtime-status.php` — thin runtime composition adapter;
-- `app/Support/ControlPlane/RuntimeProbeRunner.php` — bounded subprocess execution without returning process output;
-- existing runtime owners remain authoritative for their own checks.
-
-Each implementation slice must reconcile affected reverse verification consumers before closure. Generated repository authority must only be refreshed through its owning PREPARE/reconciliation flow.
+Implementation scope is recorded below under affected modules and boundaries. Existing runtime owners remain authoritative for their own checks, and generated repository authority remains PREPARE-owned.
 
 ## Affected modules and boundaries
 
-Expected owners include:
+Expected implementation owners include the AI status command router, its bounded runtime-status composition adapter, and the subprocess runner used only to obtain exit/timeout state without command output. Existing runtime diagnostic commands retain ownership of their checks.
+
+Related repository surfaces include:
 
 - `./songchart ai ...` command routing;
 - application/read-model composition for repository, data and runtime status;
