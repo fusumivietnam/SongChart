@@ -2,7 +2,7 @@
 
 ## Status
 
-Active. Tranche 22.4A owns the current bounded implementation. Stage 22.3 is accepted on exact head `bc17d5e0d05a2f1d40ed7ebbc124bc837dbd6c39` after SongChart Auto Closure run 377 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote.
+Active. Tranche 22.4A is accepted; tranche 22.4B owns the current bounded implementation. 22.4A closed through SongChart Auto Closure run 384: PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote all passed. The source head was `e882604c9d9f41941229fea714c3601abacaeb10` and PREPARE produced effective exact head `f1777af86e60026a668f498256ef08cd0ac9c13f`.
 
 ## Goal
 
@@ -12,20 +12,21 @@ Use the accepted Stage 22.3 deterministic AI control plane to reduce manual reco
 
 ### 22.4A — Task-oriented coding operation bundles
 
-Status: active.
+Status: accepted.
 
 - Compose existing orientation, impact, focused verification and closure surfaces into bounded machine-readable bundles.
-- Derive commands and provenance from the authored stage plan, verification topology and verification command-surface authority.
+- Derive commands and provenance from authored stage and verification authorities rather than hard-coding a parallel workflow.
 - Keep every emitted action non-mutating by default and explicit about human gates.
 - Reuse `./songchart ai status --json` as the machine-readable surface rather than creating a competing CLI.
 
 ### 22.4B — Impact-aware verification recommendations
 
-Status: planned.
+Status: active.
 
-- Map resolved repository change surfaces to the smallest registered verification set.
-- Reuse the existing impact resolver and verification topology.
-- Do not duplicate test selection or closure semantics.
+- Map the resolved actual repository change surface to the existing impact resolver output.
+- Expose the resolved focused-check evidence without independently executing child checks.
+- Recommend only the registered `songchart impact --verify` public entrypoint and leave overlap collapse/execution to `scripts/run-impact-verification.sh`.
+- Preserve resolver, impact-map, execution-owner and human-gate provenance.
 
 ### 22.4C — Bounded agent handoff and resume workflows
 
@@ -46,11 +47,13 @@ Status: planned.
 ## Acceptance criteria
 
 - The AI status JSON exposes task-oriented operation bundles from existing repository authorities.
-- Bundles identify their source authority and contain only registered public command entrypoints or descriptive human-gated steps.
-- No bundle grants autonomous repository or production mutation.
-- Missing stage goals or verification authorities fail closed.
-- Existing Stage 22.3 context, runtime, handoff and guidance outputs remain compatible.
-- Focused regression coverage proves deterministic bundle composition and secret exclusion.
+- The AI status JSON exposes bounded impact-aware verification evidence for the actual diff when a diff exists.
+- Resolved checks come from `scripts/resolve-repository-impact.php`; no second impact matcher is introduced.
+- The only focused execution recommendation is the registered `songchart impact --verify` entrypoint; child-check collapse remains owned by `scripts/run-impact-verification.sh`.
+- No bundle or recommendation grants autonomous repository or production mutation.
+- Missing stage goals or required verification authorities fail closed; absence of a change surface is reported as not applicable rather than fabricated.
+- Existing Stage 22.3 context/runtime/handoff/guidance and Stage 22.4A operation-bundle outputs remain compatible.
+- Focused regression coverage proves provenance, deduplication ownership and secret exclusion.
 - Generated projections remain PREPARE-owned.
 - Each accepted tranche requires exact-head Auto Closure evidence before stage authority advances.
 
@@ -63,6 +66,7 @@ Status: planned.
 - `docs/project/engineering/verification-topology.json`
 - `docs/project/engineering/verification-command-surface.json`
 - `docs/project/engineering/verification-consumer-graph.json`
+- `docs/project/stack/impact-test-map.json`
 - `docs/project/engineering/ai-development-contract.json`
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
 - `docs/project/generated/project-context.json`
@@ -75,21 +79,21 @@ Stage 22.4 introduces no package or runtime dependency. Exact package versions r
 
 ### Official external sources
 
-No new external API, package, provider schema or model runtime is introduced by Stage 22.4A. The tranche intentionally reuses the already accepted Laravel Console, Symfony Process and Git command/runtime capabilities documented by Stage 22.3. No external source is allowed to override SongChart repository authority.
+No new external API, package, provider schema or model runtime is introduced by Stage 22.4. The stage intentionally reuses already accepted Laravel Console, Symfony Process and Git command/runtime capabilities. No external source is allowed to override SongChart repository authority.
 
 ### Native capability assessment
 
-Laravel Console, Symfony Process, Git, `./songchart`, the Stage 22.3 AI control-plane scripts, the impact resolver and the verification topology/command-surface contracts already provide the primitives required for task-oriented operation bundles. A new CLI framework, agent framework, workflow engine or verifier would duplicate accepted ownership and is therefore rejected.
+Laravel Console, Symfony Process, Git, `./songchart`, Stage 22.3 control-plane scripts, `scripts/resolve-repository-impact.php`, `scripts/run-impact-verification.sh`, the impact-test map and verification topology/command-surface contracts already provide the primitives required for 22.4A and 22.4B. A new CLI framework, agent framework, workflow engine, impact matcher or verifier would duplicate accepted ownership and is rejected.
 
 ### Custom implementation justification
 
-A narrow SongChart-specific projection is required because generic framework tooling does not understand SongChart stage goals, semantic impact ownership, public verification entrypoints or exact-head acceptance rules. The custom implementation only composes existing authorities into bounded JSON and must not execute writes, redefine verification logic, store a second source of truth or persist volatile GitHub state.
+A narrow SongChart-specific projection is required because generic tooling does not understand SongChart stage goals, semantic impact ownership, public verification entrypoints or exact-head acceptance rules. Stage 22.4 only composes bounded JSON around existing owners. It must not execute writes, redefine verification logic, store a second source of truth or persist volatile GitHub state.
 
 ## Command mutation envelopes
 
 | Surface | Envelope | Tracked mutation |
 |---|---|---|
-| `./songchart ai status --json` | read-only orientation, handoff, guidance and operation bundles | none |
+| `./songchart ai status --json` | read-only orientation, handoff, guidance, operation bundles and impact recommendations | none |
 | `./songchart ai status --json --runtime` | read-only status plus bounded runtime probes | none |
 | `./songchart impact --diff` | read-only actual-diff resolution | none |
 | `./songchart impact --verify` | focused verification orchestration | none expected from the verified source tree |
@@ -99,27 +103,25 @@ A narrow SongChart-specific projection is required because generic framework too
 
 ## 22.4A implementation boundary
 
-Implementation may change only the narrow AI control-plane composition and focused tests required to expose operation bundles. It must not change canonical models, providers, chart semantics, public routes, schema, authentication, authorization or production mutation services.
+The operation-bundle projection covers `orient`, `implement`, `verify` and `close`. Every bundle identifies provenance, has `mutation_allowed=false`, requires a human gate for writes and disables autonomous execution.
 
-The operation-bundle projection must cover at least:
+## 22.4B implementation boundary
 
-1. `orient` — inspect deterministic project/stage/handoff state;
-2. `implement` — resolve planned/actual impact and identify the current stage goal without executing a write;
-3. `verify` — expose registered focused verification entrypoints;
-4. `close` — expose candidate/canonical closure entrypoints and the exact-head GitHub evidence rule.
+Impact-aware guidance may invoke the existing resolver in read-only `--diff --json` mode and project only bounded evidence: change count, matched rule names, impacted authority names, resolved focused checks and the registered focused execution entrypoint. It must not copy path-pattern matching logic from the impact map or copy check-collapse semantics from the impact runner.
 
-All bundles must include provenance and a `human_gate_required_for_writes` boundary.
+If the resolver cannot establish an actual change surface, the recommendation is `not_applicable`. If a change surface resolves but the registered focused public entrypoint is absent, guidance fails closed as `blocked`.
 
 ## Tests and verification
 
 Focused evidence must prove:
 
-- operation bundles are deterministic arrays/objects on the JSON status surface;
-- commands come from registered verification/public command authorities;
-- current stage/tranche context is projected from the authored stage plan;
-- every bundle remains non-mutating unless an explicit future human-gated execution surface is accepted;
-- secrets and raw sensitive command output are not included;
-- Stage 22.3 control-plane fields remain present.
+- operation bundles remain deterministic and non-mutating;
+- active stage/tranche context comes from the authored stage plan;
+- impact evidence comes from the existing actual-diff resolver;
+- the recommendation delegates execution to `songchart impact --verify` / `scripts/run-impact-verification.sh` instead of exposing a duplicate execution plan;
+- resolver/impact-map/execution-owner provenance is explicit;
+- secrets and raw sensitive command output are excluded;
+- Stage 22.3 and 22.4A control-plane fields remain present.
 
 Required closure remains owned by existing entrypoints:
 
@@ -139,7 +141,8 @@ Exact-current-head Auto Closure must pass before tranche acceptance.
 - Production mutation.
 - External model/API dependency.
 - New MCP runtime.
-- Duplicate verifier/test harness.
+- Duplicate impact matcher, verifier or test harness.
+- Independent execution of resolver child checks from the AI projection.
 - New provider, chart or canonical identity semantics.
 - Stage 23 public UX work.
 
