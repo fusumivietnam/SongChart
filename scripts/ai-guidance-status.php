@@ -65,6 +65,31 @@ function guidanceActiveTranche(array $plan): array
     return [];
 }
 
+/**
+ * @param  array<string, mixed>  $publicEntrypoints
+ * @return list<string>
+ */
+function guidanceEntrypoints(array $publicEntrypoints, string $group): array
+{
+    return array_values(array_filter(
+        $publicEntrypoints[$group] ?? [],
+        static fn (mixed $command): bool => is_string($command) && $command !== '',
+    ));
+}
+
+/**
+ * @param  list<string>  $registered
+ * @param  list<string>  $preferred
+ * @return list<string>
+ */
+function guidanceRegisteredCommands(array $registered, array $preferred): array
+{
+    return array_values(array_filter(
+        $preferred,
+        static fn (string $command): bool => in_array($command, $registered, true),
+    ));
+}
+
 $stateResult = guidanceRun([PHP_BINARY, $root.'/scripts/ai-handoff-status.php'], $root);
 if ($stateResult['exit_code'] !== 0) {
     fwrite(STDERR, "Unable to load bounded handoff state.\n");
@@ -106,18 +131,10 @@ $impactCommands = array_values(array_filter(
     $impactLane['commands'] ?? [],
     static fn (mixed $command): bool => is_string($command) && $command !== '',
 ));
-$focused = array_values(array_filter(
-    $publicEntrypoints['focused'] ?? [],
-    static fn (mixed $command): bool => is_string($command) && $command !== '',
-));
-$candidate = array_values(array_filter(
-    $publicEntrypoints['candidate_closure'] ?? [],
-    static fn (mixed $command): bool => is_string($command) && $command !== '',
-));
-$canonical = array_values(array_filter(
-    $publicEntrypoints['canonical_closure'] ?? [],
-    static fn (mixed $command): bool => is_string($command) && $command !== '',
-));
+$development = guidanceEntrypoints($publicEntrypoints, 'development');
+$focused = guidanceEntrypoints($publicEntrypoints, 'focused');
+$candidate = guidanceEntrypoints($publicEntrypoints, 'candidate_closure');
+$canonical = guidanceEntrypoints($publicEntrypoints, 'canonical_closure');
 
 $workingTreeClean = ($state['control_plane']['handoff']['working_tree_clean'] ?? false) === true;
 $guidanceStatus = $goals === [] ? 'blocked' : 'ready';
@@ -151,6 +168,46 @@ if ($workingTreeClean === false) {
     ];
 }
 
+$operationBundles = [
+    'orient' => [
+        'status' => 'ready',
+        'purpose' => 'Resolve deterministic repository, stage and handoff context before coding.',
+        'commands' => guidanceRegisteredCommands($development, ['songchart ai status', 'songchart ai doctor']),
+        'source' => $surfacePath.'#public_entrypoints/development',
+        'mutation_allowed' => false,
+        'human_gate_required_for_writes' => true,
+    ],
+    'implement' => [
+        'status' => $guidanceStatus,
+        'purpose' => 'Resolve the current authored tranche goals and repository impact before source changes.',
+        'stage' => $plan['current_stage']['id'] ?? null,
+        'active_tranche' => $plan['active_tranche'] ?? null,
+        'goals' => $goals,
+        'commands' => guidanceRegisteredCommands($development, ['songchart impact', 'songchart impact --diff']),
+        'source' => $planPath.' + '.$surfacePath.'#public_entrypoints/development',
+        'mutation_allowed' => false,
+        'human_gate_required_for_writes' => true,
+    ],
+    'verify' => [
+        'status' => $focused === [] ? 'blocked' : 'ready',
+        'purpose' => 'Use only registered focused verification entrypoints for the resolved change surface.',
+        'commands' => $focused,
+        'source' => $surfacePath.'#public_entrypoints/focused',
+        'mutation_allowed' => false,
+        'human_gate_required_for_writes' => true,
+    ],
+    'close' => [
+        'status' => ($candidate === [] || $canonical === []) ? 'blocked' : 'ready',
+        'purpose' => 'Run existing candidate and canonical closure owners, then resolve exact-head GitHub evidence before acceptance.',
+        'candidate_commands' => $candidate,
+        'canonical_commands' => $canonical,
+        'source' => $surfacePath.'#public_entrypoints/candidate_closure + '.$surfacePath.'#public_entrypoints/canonical_closure',
+        'exact_head_rule' => 'Resolve live GitHub Auto Closure on the exact PR head before claiming tranche or major-stage acceptance.',
+        'mutation_allowed' => false,
+        'human_gate_required_for_writes' => true,
+    ],
+];
+
 $state['control_plane']['next_actions'] = [
     'status' => $guidanceStatus,
     'source' => $planPath.' + '.$topologyPath.' + '.$surfacePath,
@@ -172,8 +229,14 @@ $state['control_plane']['verification_guidance'] = [
     'exact_head_rule' => 'Resolve live GitHub Auto Closure on the exact PR head before claiming tranche or major-stage acceptance.',
     'writes_remain_human_gated' => true,
 ];
+$state['control_plane']['operation_bundles'] = [
+    'status' => in_array('blocked', array_column($operationBundles, 'status'), true) ? 'blocked' : 'ready',
+    'source' => $planPath.' + '.$surfacePath,
+    'bundles' => $operationBundles,
+    'autonomous_execution_allowed' => false,
+];
 
-if ($guidanceStatus === 'blocked') {
+if ($guidanceStatus === 'blocked' || $state['control_plane']['operation_bundles']['status'] === 'blocked') {
     $state['control_plane']['status'] = 'blocked';
 }
 
