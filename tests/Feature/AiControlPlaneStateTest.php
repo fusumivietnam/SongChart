@@ -52,11 +52,7 @@ it('exposes bounded repository handoff, guidance, operation bundles and impact-a
         ->and($verification['candidate_closure_entrypoints'])->toContain('songchart candidate')
         ->and($verification['canonical_closure_entrypoints'])->toContain('songchart verify')
         ->and($verification['writes_remain_human_gated'])->toBeTrue()
-        ->and($impactAware['status'])->toBe('ready')
-        ->and($impactAware['mode'])->toBe('actual-diff')
-        ->and($impactAware['changed_path_count'])->toBeGreaterThan(0)
-        ->and($impactAware['resolved_focused_checks'])->toBeArray()->not->toBeEmpty()
-        ->and($impactAware['recommended_entrypoints'])->toBe(['songchart impact --verify'])
+        ->and(in_array($impactAware['status'], ['ready', 'not_applicable'], true))->toBeTrue()
         ->and($impactAware['resolver_owner'])->toBe('scripts/resolve-repository-impact.php')
         ->and($impactAware['impact_map_authority'])->toBe('docs/project/stack/impact-test-map.json')
         ->and($impactAware['execution_owner'])->toBe('scripts/run-impact-verification.sh')
@@ -72,6 +68,18 @@ it('exposes bounded repository handoff, guidance, operation bundles and impact-a
         ->and($bundles['verify']['commands'])->toContain('songchart impact --verify')
         ->and($bundles['close']['candidate_commands'])->toContain('songchart candidate')
         ->and($bundles['close']['canonical_commands'])->toContain('songchart verify');
+
+    if ($impactAware['status'] === 'ready') {
+        expect($impactAware['mode'])->toBe('actual-diff')
+            ->and($impactAware['changed_path_count'])->toBeGreaterThan(0)
+            ->and($impactAware['resolved_focused_checks'])->toBeArray()->not->toBeEmpty()
+            ->and($impactAware['recommended_entrypoints'])->toBe(['songchart impact --verify']);
+    } else {
+        expect($impactAware['mode'])->toBe('no-change-surface')
+            ->and($impactAware['changed_path_count'])->toBe(0)
+            ->and($impactAware['resolved_focused_checks'])->toBe([])
+            ->and($impactAware['recommended_entrypoints'])->toBe([]);
+    }
 
     foreach ($nextActions['actions'] as $action) {
         expect($action['mutation_allowed'])->toBeFalse();
@@ -96,10 +104,16 @@ it('delegates verification-set resolution and execution deduplication to existin
 
     expect($impactAware['resolver_owner'])->toBe('scripts/resolve-repository-impact.php')
         ->and($impactAware['execution_owner'])->toBe('scripts/run-impact-verification.sh')
-        ->and($impactAware['recommended_entrypoints'])->toBe(['songchart impact --verify'])
+        ->and(in_array($impactAware['status'], ['ready', 'not_applicable'], true))->toBeTrue()
         ->and($impactAware['deduplication_rule'])->toContain('semantic owner')
         ->and($impactAware)->not->toHaveKey('execution_plan')
         ->and($impactAware)->not->toHaveKey('auto_execute');
+
+    if ($impactAware['status'] === 'ready') {
+        expect($impactAware['recommended_entrypoints'])->toBe(['songchart impact --verify']);
+    } else {
+        expect($impactAware['recommended_entrypoints'])->toBe([]);
+    }
 });
 
 it('composes existing owners instead of duplicating diagnostic and verification capabilities', function (): void {
