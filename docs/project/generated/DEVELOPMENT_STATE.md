@@ -11,14 +11,14 @@
 
 ## Stage progress
 
-- `22.4A` — `ACTIVE` — Task-oriented coding operation bundles
-- `22.4B` — `PLANNED` — Impact-aware verification recommendations
+- `22.4A` — `ACCEPTED` — Task-oriented coding operation bundles
+- `22.4B` — `ACTIVE` — Impact-aware verification recommendations
 - `22.4C` — `PLANNED` — Bounded agent handoff and resume workflows
 - `22.4D` — `PLANNED` — Human-gated repository operation automation
 
 ## Next bounded tranche
 
-- `22.4A-task-oriented-coding-operation-bundles`
+- `22.4B-impact-aware-verification-recommendations`
 
 ## Live work lease
 
