@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "22.2",
-  "active_tranche": "22.3C",
+  "active_tranche": "22.3D",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -49,17 +49,18 @@
     },
     {
       "id": "22.3C",
-      "status": "active",
+      "status": "accepted",
       "title": "Bounded handoff and resume evidence",
       "goals": [
         "produce deterministic branch/stage/task handoff context that survives chat or coding-agent boundaries",
         "exclude secrets and volatile claims that must be resolved live",
         "expose bounded Git change-surface and resume evidence without creating a second work-lease authority"
-      ]
+      ],
+      "verification": "Accepted on exact head c5c910aa1f3607f80732ef9d10961da26f771a8f by Auto Closure run 370 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote green."
     },
     {
       "id": "22.3D",
-      "status": "planned",
+      "status": "active",
       "title": "Machine-readable task and verification guidance",
       "goals": [
         "expose bounded next-action and verification guidance from existing authorities",
@@ -68,7 +69,7 @@
       ]
     }
   ],
-  "next_tranche": "22.3C-bounded-handoff-resume-evidence",
+  "next_tranche": "22.3D-machine-readable-task-verification-guidance",
   "next_stage_outline": {
     "id": "22.4",
     "title": "Vibe Coding Operations",
