@@ -90,6 +90,29 @@ function guidanceRegisteredCommands(array $registered, array $preferred): array
     ));
 }
 
+/** @return array<string, mixed> */
+function guidanceImpactResolution(string $root): array
+{
+    $result = guidanceRun([
+        PHP_BINARY,
+        $root.'/scripts/resolve-repository-impact.php',
+        '--diff',
+        '--json',
+    ], $root);
+
+    if ($result['exit_code'] !== 0) {
+        return [];
+    }
+
+    try {
+        $decoded = json_decode($result['output'], true, flags: JSON_THROW_ON_ERROR);
+    } catch (Throwable) {
+        return [];
+    }
+
+    return is_array($decoded) ? $decoded : [];
+}
+
 $stateResult = guidanceRun([PHP_BINARY, $root.'/scripts/ai-handoff-status.php'], $root);
 if ($stateResult['exit_code'] !== 0) {
     fwrite(STDERR, "Unable to load bounded handoff state.\n");
@@ -111,6 +134,9 @@ if (is_array($state) === false || is_array($state['control_plane'] ?? null) === 
 $planPath = 'docs/project/engineering/stage-plan.json';
 $topologyPath = 'docs/project/engineering/verification-topology.json';
 $surfacePath = 'docs/project/engineering/verification-command-surface.json';
+$impactMapPath = 'docs/project/stack/impact-test-map.json';
+$impactResolverPath = 'scripts/resolve-repository-impact.php';
+$impactRunnerPath = 'scripts/run-impact-verification.sh';
 $plan = guidanceReadJson($root.'/'.$planPath);
 $topology = guidanceReadJson($root.'/'.$topologyPath);
 $surface = guidanceReadJson($root.'/'.$surfacePath);
@@ -208,6 +234,28 @@ $operationBundles = [
     ],
 ];
 
+$impactResolution = guidanceImpactResolution($root);
+$resolvedChecks = array_values(array_filter(
+    $impactResolution['required_focused_checks'] ?? [],
+    static fn (mixed $check): bool => is_string($check) && $check !== '',
+));
+$matchedRuleNames = [];
+foreach (($impactResolution['matched_impact_rules'] ?? []) as $rule) {
+    if (is_array($rule) && is_string($rule['name'] ?? null) && $rule['name'] !== '') {
+        $matchedRuleNames[] = $rule['name'];
+    }
+}
+$impactedAuthorityNames = [];
+foreach (($impactResolution['impacted_authorities'] ?? []) as $authority) {
+    if (is_array($authority) && is_string($authority['name'] ?? null) && $authority['name'] !== '') {
+        $impactedAuthorityNames[] = $authority['name'];
+    }
+}
+$focusedExecutionEntrypoints = guidanceRegisteredCommands($focused, ['songchart impact --verify']);
+$impactRecommendationStatus = $impactResolution === []
+    ? 'not_applicable'
+    : ($focusedExecutionEntrypoints === [] ? 'blocked' : 'ready');
+
 $state['control_plane']['next_actions'] = [
     'status' => $guidanceStatus,
     'source' => $planPath.' + '.$topologyPath.' + '.$surfacePath,
@@ -229,6 +277,21 @@ $state['control_plane']['verification_guidance'] = [
     'exact_head_rule' => 'Resolve live GitHub Auto Closure on the exact PR head before claiming tranche or major-stage acceptance.',
     'writes_remain_human_gated' => true,
 ];
+$state['control_plane']['impact_aware_verification'] = [
+    'status' => $impactRecommendationStatus,
+    'mode' => $impactResolution['mode'] ?? 'no-change-surface',
+    'changed_path_count' => is_array($impactResolution['changed_paths'] ?? null) ? count($impactResolution['changed_paths']) : 0,
+    'matched_impact_rules' => array_values(array_unique($matchedRuleNames)),
+    'impacted_authorities' => array_values(array_unique($impactedAuthorityNames)),
+    'resolved_focused_checks' => $resolvedChecks,
+    'recommended_entrypoints' => $impactResolution === [] ? [] : $focusedExecutionEntrypoints,
+    'resolver_owner' => $impactResolverPath,
+    'impact_map_authority' => $impactMapPath,
+    'execution_owner' => $impactRunnerPath,
+    'deduplication_rule' => 'Do not execute resolved child checks independently. The registered impact verification owner collapses overlapping checks under their semantic owner before execution.',
+    'mutation_allowed' => false,
+    'human_gate_required_for_writes' => true,
+];
 $state['control_plane']['operation_bundles'] = [
     'status' => in_array('blocked', array_column($operationBundles, 'status'), true) ? 'blocked' : 'ready',
     'source' => $planPath.' + '.$surfacePath,
@@ -236,7 +299,11 @@ $state['control_plane']['operation_bundles'] = [
     'autonomous_execution_allowed' => false,
 ];
 
-if ($guidanceStatus === 'blocked' || $state['control_plane']['operation_bundles']['status'] === 'blocked') {
+if (
+    $guidanceStatus === 'blocked'
+    || $state['control_plane']['operation_bundles']['status'] === 'blocked'
+    || $impactRecommendationStatus === 'blocked'
+) {
     $state['control_plane']['status'] = 'blocked';
 }
 
