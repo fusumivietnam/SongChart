@@ -1,68 +1,63 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "d0a2c81ed84aa6097897c7aa961188d542f8dc0b726068945ab3ea3b59b2a1fe",
+    "source_fingerprint": "8c6d54cb0df829863d1f4ce84be72ab001075284dca676264b330452722d70f9",
     "current_stage": {
-        "id": "22.3",
-        "title": "AI-ready Control Plane",
-        "task_contract": "docs/foundation/STAGE_22_3_TASK_CONTRACT.md",
+        "id": "22.4",
+        "title": "Vibe Coding Operations",
+        "task_contract": "docs/foundation/STAGE_22_4_TASK_CONTRACT.md",
         "status": "active"
     },
-    "accepted_through": "22.2",
+    "accepted_through": "22.3",
     "stage_progress": [
         {
-            "id": "22.3A",
-            "status": "accepted",
-            "title": "Unified project and engineering context",
-            "goals": [
-                "inventory existing deterministic project/context/status surfaces before adding new commands",
-                "compose authored and generated repository authority into one bounded machine-readable engineering context",
-                "keep generated authority projection-only and preserve source ownership"
-            ],
-            "verification": "Accepted on exact head 04b5ebcd1e7ad17de24b8cdef4d931a671c9cf9c by Auto Closure run 344 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, canonical CLOSE, exact-tree preservation and ready-to-promote green."
-        },
-        {
-            "id": "22.3B",
-            "status": "accepted",
-            "title": "Data and runtime status composition",
-            "goals": [
-                "compose existing doctor, provider, chart, storage/database and data-trace capabilities without duplicating their owners",
-                "expose explicit ready/degraded/blocked evidence rather than inferred AI state",
-                "keep runtime probing opt-in, read-only, bounded, secret-safe and fail-closed"
-            ],
-            "verification": "Accepted on exact head 4ebf57fb6c06932f938c3917906e2bc7d0152387 by Auto Closure run 362 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote green."
-        },
-        {
-            "id": "22.3C",
-            "status": "accepted",
-            "title": "Bounded handoff and resume evidence",
-            "goals": [
-                "produce deterministic branch/stage/task handoff context that survives chat or coding-agent boundaries",
-                "exclude secrets and volatile claims that must be resolved live",
-                "expose bounded Git change-surface and resume evidence without creating a second work-lease authority"
-            ],
-            "verification": "Accepted on exact head c5c910aa1f3607f80732ef9d10961da26f771a8f by Auto Closure run 370 with PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote green."
-        },
-        {
-            "id": "22.3D",
+            "id": "22.4A",
             "status": "active",
-            "title": "Machine-readable task and verification guidance",
+            "title": "Task-oriented coding operation bundles",
             "goals": [
-                "expose bounded next-action and verification guidance from existing authorities",
-                "keep all write actions human/governance gated",
-                "close Stage 22.3 through exact-head Auto Closure"
+                "compose existing orientation, impact, focused verification and closure entrypoints into bounded task-oriented operation bundles",
+                "derive commands and provenance from existing stage and verification authorities rather than hard-coding a parallel workflow",
+                "keep every repository mutation and promotion action explicitly human-governed"
+            ]
+        },
+        {
+            "id": "22.4B",
+            "status": "planned",
+            "title": "Impact-aware verification recommendations",
+            "goals": [
+                "map the resolved repository change surface to the smallest registered verification set",
+                "preserve semantic ownership in verification topology and avoid duplicate test orchestration"
+            ]
+        },
+        {
+            "id": "22.4C",
+            "status": "planned",
+            "title": "Bounded agent handoff and resume workflows",
+            "goals": [
+                "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
+                "surface stale or unresolved live GitHub evidence instead of inventing continuity"
+            ]
+        },
+        {
+            "id": "22.4D",
+            "status": "planned",
+            "title": "Human-gated repository operation automation",
+            "goals": [
+                "compose safe repository operation plans over existing command owners",
+                "require explicit human approval for write-capable execution",
+                "close Stage 22.4 through exact-head Auto Closure"
             ]
         }
     ],
-    "next_tranche": "22.3D-machine-readable-task-verification-guidance",
+    "next_tranche": "22.4A-task-oriented-coding-operation-bundles",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "b3bc84052d2da9606146c5587e88d80c8208197570926ebaea023389a3e25af2",
+        "candidate-verification.json": "fe0bf1fcaba8ec2058b0cc333a7c8106b2bff9112630df2efc0f5f58d5957c3c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "9ce973b7300407e493ee92cf447a56d3c9e45e1d01277e1ba6ef2c27c4f976b0"
+        "docs/project/engineering/stage-plan.json": "2adc1d9103be28ba08a0e3558942f564f938146a93e9d6d1e04331cd84be29df"
     }
 }

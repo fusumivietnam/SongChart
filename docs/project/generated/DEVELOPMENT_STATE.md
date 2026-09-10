@@ -4,21 +4,21 @@
 
 ## Current stage
 
-- Stage `22.3 — AI-ready Control Plane`
+- Stage `22.4 — Vibe Coding Operations`
 - Status: `active`
-- Accepted through: `22.2`
-- Task contract: `docs/foundation/STAGE_22_3_TASK_CONTRACT.md`
+- Accepted through: `22.3`
+- Task contract: `docs/foundation/STAGE_22_4_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `22.3A` — `ACCEPTED` — Unified project and engineering context
-- `22.3B` — `ACCEPTED` — Data and runtime status composition
-- `22.3C` — `ACCEPTED` — Bounded handoff and resume evidence
-- `22.3D` — `ACTIVE` — Machine-readable task and verification guidance
+- `22.4A` — `ACTIVE` — Task-oriented coding operation bundles
+- `22.4B` — `PLANNED` — Impact-aware verification recommendations
+- `22.4C` — `PLANNED` — Bounded agent handoff and resume workflows
+- `22.4D` — `PLANNED` — Human-gated repository operation automation
 
 ## Next bounded tranche
 
-- `22.3D-machine-readable-task-verification-guidance`
+- `22.4A-task-oriented-coding-operation-bundles`
 
 ## Live work lease
 
