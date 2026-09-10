@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\Process\Process;
 
-it('exposes bounded repository handoff, guidance and operation bundles through the AI status JSON surface', function (): void {
+it('exposes bounded repository handoff, guidance, operation bundles and impact-aware verification through the AI status JSON surface', function (): void {
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path());
     $process->setTimeout(30);
     $process->run();
@@ -17,6 +17,7 @@ it('exposes bounded repository handoff, guidance and operation bundles through t
     $changeSurface = $handoff['local_change_surface'];
     $nextActions = $controlPlane['next_actions'];
     $verification = $controlPlane['verification_guidance'];
+    $impactAware = $controlPlane['impact_aware_verification'];
     $operations = $controlPlane['operation_bundles'];
     $bundles = $operations['bundles'];
 
@@ -27,7 +28,7 @@ it('exposes bounded repository handoff, guidance and operation bundles through t
         ->and($controlPlane['orientation']['evidence']['stage_plan'])->toBe('docs/project/engineering/stage-plan.json')
         ->and($controlPlane['runtime']['status'])->toBe('not_evaluated')
         ->and($handoff['stage'])->toBe('22.4')
-        ->and($handoff['active_tranche'])->toBe('22.4A')
+        ->and($handoff['active_tranche'])->toBe('22.4B')
         ->and($handoff['task_contract'])->toBe('docs/foundation/STAGE_22_4_TASK_CONTRACT.md')
         ->and($handoff['head_sha'])->toBe($state['live_work_lease']['head_sha'])
         ->and($handoff['committed_pr_change_surface']['status'])->toBe('requires_live_pr_resolution')
@@ -41,7 +42,7 @@ it('exposes bounded repository handoff, guidance and operation bundles through t
         ->and($changeSurface['truncated'])->toBeBool()
         ->and(count($changeSurface['paths']))->toBeLessThanOrEqual(100)
         ->and($nextActions['status'])->toBe('ready')
-        ->and($nextActions['active_tranche'])->toBe('22.4A')
+        ->and($nextActions['active_tranche'])->toBe('22.4B')
         ->and($nextActions['human_gate_required_for_writes'])->toBeTrue()
         ->and($nextActions['actions'])->toBeArray()->not->toBeEmpty()
         ->and($verification['status'])->toBe('ready')
@@ -51,12 +52,22 @@ it('exposes bounded repository handoff, guidance and operation bundles through t
         ->and($verification['candidate_closure_entrypoints'])->toContain('songchart candidate')
         ->and($verification['canonical_closure_entrypoints'])->toContain('songchart verify')
         ->and($verification['writes_remain_human_gated'])->toBeTrue()
+        ->and($impactAware['status'])->toBe('ready')
+        ->and($impactAware['mode'])->toBe('actual-diff')
+        ->and($impactAware['changed_path_count'])->toBeGreaterThan(0)
+        ->and($impactAware['resolved_focused_checks'])->toBeArray()->not->toBeEmpty()
+        ->and($impactAware['recommended_entrypoints'])->toBe(['songchart impact --verify'])
+        ->and($impactAware['resolver_owner'])->toBe('scripts/resolve-repository-impact.php')
+        ->and($impactAware['impact_map_authority'])->toBe('docs/project/stack/impact-test-map.json')
+        ->and($impactAware['execution_owner'])->toBe('scripts/run-impact-verification.sh')
+        ->and($impactAware['mutation_allowed'])->toBeFalse()
+        ->and($impactAware['human_gate_required_for_writes'])->toBeTrue()
         ->and($operations['status'])->toBe('ready')
         ->and($operations['autonomous_execution_allowed'])->toBeFalse()
         ->and(array_keys($bundles))->toBe(['orient', 'implement', 'verify', 'close'])
         ->and($bundles['orient']['commands'])->toContain('songchart ai status')
         ->and($bundles['implement']['stage'])->toBe('22.4')
-        ->and($bundles['implement']['active_tranche'])->toBe('22.4A')
+        ->and($bundles['implement']['active_tranche'])->toBe('22.4B')
         ->and($bundles['implement']['commands'])->toContain('songchart impact --diff')
         ->and($bundles['verify']['commands'])->toContain('songchart impact --verify')
         ->and($bundles['close']['candidate_commands'])->toContain('songchart candidate')
@@ -71,6 +82,24 @@ it('exposes bounded repository handoff, guidance and operation bundles through t
             ->and($bundle['human_gate_required_for_writes'])->toBeTrue()
             ->and($bundle['source'])->toBeString()->not->toBeEmpty();
     }
+});
+
+it('delegates verification-set resolution and execution deduplication to existing owners', function (): void {
+    $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path());
+    $process->setTimeout(30);
+    $process->run();
+
+    expect($process->isSuccessful())->toBeTrue($process->getErrorOutput());
+
+    $state = json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR);
+    $impactAware = $state['control_plane']['impact_aware_verification'];
+
+    expect($impactAware['resolver_owner'])->toBe('scripts/resolve-repository-impact.php')
+        ->and($impactAware['execution_owner'])->toBe('scripts/run-impact-verification.sh')
+        ->and($impactAware['recommended_entrypoints'])->toBe(['songchart impact --verify'])
+        ->and($impactAware['deduplication_rule'])->toContain('semantic owner')
+        ->and($impactAware)->not->toHaveKey('execution_plan')
+        ->and($impactAware)->not->toHaveKey('auto_execute');
 });
 
 it('composes existing owners instead of duplicating diagnostic and verification capabilities', function (): void {
@@ -95,7 +124,7 @@ it('composes existing owners instead of duplicating diagnostic and verification 
         ->and($state['control_plane']['boundaries']['autonomous_production_writes'])->toBeFalse();
 });
 
-it('does not expose environment secrets in machine-readable handoff, guidance or operation bundles', function (): void {
+it('does not expose environment secrets in machine-readable handoff, guidance, operation bundles or impact recommendations', function (): void {
     $secret = 'songchart-stage-22-4-secret-sentinel';
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path(), [
         'DB_PASSWORD' => $secret,
