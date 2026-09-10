@@ -9,7 +9,7 @@ use Throwable;
 $root = dirname(__DIR__);
 require $root.'/vendor/autoload.php';
 
-$stateProcess = new Process([PHP_BINARY, $root.'/scripts/ai-handoff-status.php'], $root);
+$stateProcess = new Process([PHP_BINARY, $root.'/scripts/ai-guidance-status.php'], $root);
 $stateProcess->setTimeout(30);
 
 try {
