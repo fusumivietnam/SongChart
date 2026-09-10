@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "22.3",
-  "active_tranche": "22.4A",
+  "active_tranche": "22.4B",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -31,10 +31,19 @@
       "owner_acceptance": "Accepted by the repository owner on 2026-09-10 after exact-head closure evidence was reviewed."
     }
   },
+  "accepted_tranche_evidence": {
+    "22.4A": {
+      "title": "Task-oriented coding operation bundles",
+      "source_head": "e882604c9d9f41941229fea714c3601abacaeb10",
+      "effective_prepared_head": "f1777af86e60026a668f498256ef08cd0ac9c13f",
+      "verification_run": 34500549519,
+      "verification": "Auto Closure run 384 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote."
+    }
+  },
   "stage_progress": [
     {
       "id": "22.4A",
-      "status": "active",
+      "status": "accepted",
       "title": "Task-oriented coding operation bundles",
       "goals": [
         "compose existing orientation, impact, focused verification and closure entrypoints into bounded task-oriented operation bundles",
@@ -44,7 +53,7 @@
     },
     {
       "id": "22.4B",
-      "status": "planned",
+      "status": "active",
       "title": "Impact-aware verification recommendations",
       "goals": [
         "map the resolved repository change surface to the smallest registered verification set",
@@ -71,7 +80,7 @@
       ]
     }
   ],
-  "next_tranche": "22.4A-task-oriented-coding-operation-bundles",
+  "next_tranche": "22.4B-impact-aware-verification-recommendations",
   "next_stage_outline": {
     "id": "23.0",
     "title": "Public Product UX",
