@@ -224,8 +224,30 @@ jobs:
             ${{ runner.os }}-playwright-
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --no-audit --no-fund
-      - name: Install Chromium runtime
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright system dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+
+          for attempt in 1 2 3; do
+            sudo apt-get clean
+            sudo rm -rf /var/lib/apt/lists/*
+
+            if sudo apt-get update && npx playwright install-deps chromium; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo 'Playwright system dependency bootstrap failed after 3 attempts.' >&2
+              exit 1
+            fi
+
+            sleep $((attempt * 5))
+          done
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
       - name: Prepare browser database
         run: php artisan migrate --force --no-interaction
       - name: Run desktop/mobile browser smoke
