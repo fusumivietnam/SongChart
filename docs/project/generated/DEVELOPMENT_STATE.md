@@ -13,12 +13,12 @@
 
 - `22.3A` — `ACCEPTED` — Unified project and engineering context
 - `22.3B` — `ACCEPTED` — Data and runtime status composition
-- `22.3C` — `ACTIVE` — Bounded handoff and resume evidence
-- `22.3D` — `PLANNED` — Machine-readable task and verification guidance
+- `22.3C` — `ACCEPTED` — Bounded handoff and resume evidence
+- `22.3D` — `ACTIVE` — Machine-readable task and verification guidance
 
 ## Next bounded tranche
 
-- `22.3C-bounded-handoff-resume-evidence`
+- `22.3D-machine-readable-task-verification-guidance`
 
 ## Live work lease
 
