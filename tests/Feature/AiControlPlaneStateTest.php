@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\Process\Process;
 
-it('exposes bounded repository handoff evidence through the AI status JSON surface', function (): void {
+it('exposes bounded repository handoff and authority-backed guidance through the AI status JSON surface', function (): void {
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path());
     $process->setTimeout(30);
     $process->run();
@@ -12,17 +12,20 @@ it('exposes bounded repository handoff evidence through the AI status JSON surfa
     expect($process->isSuccessful())->toBeTrue($process->getErrorOutput());
 
     $state = json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR);
-    $handoff = $state['control_plane']['handoff'];
+    $controlPlane = $state['control_plane'];
+    $handoff = $controlPlane['handoff'];
     $changeSurface = $handoff['local_change_surface'];
+    $nextActions = $controlPlane['next_actions'];
+    $verification = $controlPlane['verification_guidance'];
 
     expect($state['schema_version'])->toBe(2)
         ->and($state['current_stage']['id'])->toBe('22.3')
         ->and($state['accepted_through'])->toBe('22.2')
         ->and($state['live_work_lease']['source'])->toBe('git-and-github-runtime')
-        ->and($state['control_plane']['orientation']['evidence']['stage_plan'])->toBe('docs/project/engineering/stage-plan.json')
-        ->and($state['control_plane']['runtime']['status'])->toBe('not_evaluated')
+        ->and($controlPlane['orientation']['evidence']['stage_plan'])->toBe('docs/project/engineering/stage-plan.json')
+        ->and($controlPlane['runtime']['status'])->toBe('not_evaluated')
         ->and($handoff['stage'])->toBe('22.3')
-        ->and($handoff['active_tranche'])->toBe('22.3C')
+        ->and($handoff['active_tranche'])->toBe('22.3D')
         ->and($handoff['task_contract'])->toBe('docs/foundation/STAGE_22_3_TASK_CONTRACT.md')
         ->and($handoff['head_sha'])->toBe($state['live_work_lease']['head_sha'])
         ->and($handoff['committed_pr_change_surface']['status'])->toBe('requires_live_pr_resolution')
@@ -34,7 +37,22 @@ it('exposes bounded repository handoff evidence through the AI status JSON surfa
         ->and($changeSurface['paths'])->toBeArray()
         ->and($changeSurface['path_limit'])->toBe(100)
         ->and($changeSurface['truncated'])->toBeBool()
-        ->and(count($changeSurface['paths']))->toBeLessThanOrEqual(100);
+        ->and(count($changeSurface['paths']))->toBeLessThanOrEqual(100)
+        ->and($nextActions['status'])->toBe('ready')
+        ->and($nextActions['active_tranche'])->toBe('22.3D')
+        ->and($nextActions['human_gate_required_for_writes'])->toBeTrue()
+        ->and($nextActions['actions'])->toBeArray()->not->toBeEmpty()
+        ->and($verification['status'])->toBe('ready')
+        ->and($verification['impact']['owner'])->toBe('scripts/resolve-repository-impact.php')
+        ->and($verification['impact']['commands'])->toContain('./songchart impact --diff')
+        ->and($verification['focused_entrypoints'])->toContain('songchart impact --verify')
+        ->and($verification['candidate_closure_entrypoints'])->toContain('songchart candidate')
+        ->and($verification['canonical_closure_entrypoints'])->toContain('songchart verify')
+        ->and($verification['writes_remain_human_gated'])->toBeTrue();
+
+    foreach ($nextActions['actions'] as $action) {
+        expect($action['mutation_allowed'])->toBeFalse();
+    }
 });
 
 it('composes existing owners instead of duplicating diagnostic and verification capabilities', function (): void {
@@ -59,7 +77,7 @@ it('composes existing owners instead of duplicating diagnostic and verification 
         ->and($state['control_plane']['boundaries']['autonomous_production_writes'])->toBeFalse();
 });
 
-it('does not expose environment secrets in machine-readable handoff state', function (): void {
+it('does not expose environment secrets in machine-readable handoff or guidance state', function (): void {
     $secret = 'songchart-stage-22-3-secret-sentinel';
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path(), [
         'DB_PASSWORD' => $secret,
