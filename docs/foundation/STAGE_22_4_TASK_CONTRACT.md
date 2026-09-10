@@ -54,9 +54,9 @@ Status: planned.
 - Generated projections remain PREPARE-owned.
 - Each accepted tranche requires exact-head Auto Closure evidence before stage authority advances.
 
-## Authority and source ownership
+## Authority and official sources
 
-Primary authorities:
+### Repository authorities
 
 - `PROJECT_AUTHORITY.md`
 - `docs/project/engineering/stage-plan.json`
@@ -66,8 +66,24 @@ Primary authorities:
 - `docs/project/engineering/ai-development-contract.json`
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
 - `docs/project/generated/project-context.json`
+- `docs/project/docs/OFFICIAL_SOURCE_POLICY.md`
+- `docs/templates/TASK_CONTRACT_TEMPLATE.md`
 
-Stage 22.4 adds no package or runtime dependency. Laravel Console, Symfony Process, Git, the SongChart command router and existing verification owners remain the implementation primitives.
+### Installed versions
+
+Stage 22.4 introduces no package or runtime dependency. Exact package versions remain owned by `composer.lock` and `package-lock.json`. The accepted runtime baseline remains PHP 8.5, Laravel 13, PostgreSQL 18, Node 24 and the repository-owned Redis/Docker development topology.
+
+### Official external sources
+
+No new external API, package, provider schema or model runtime is introduced by Stage 22.4A. The tranche intentionally reuses the already accepted Laravel Console, Symfony Process and Git command/runtime capabilities documented by Stage 22.3. No external source is allowed to override SongChart repository authority.
+
+### Native capability assessment
+
+Laravel Console, Symfony Process, Git, `./songchart`, the Stage 22.3 AI control-plane scripts, the impact resolver and the verification topology/command-surface contracts already provide the primitives required for task-oriented operation bundles. A new CLI framework, agent framework, workflow engine or verifier would duplicate accepted ownership and is therefore rejected.
+
+### Custom implementation justification
+
+A narrow SongChart-specific projection is required because generic framework tooling does not understand SongChart stage goals, semantic impact ownership, public verification entrypoints or exact-head acceptance rules. The custom implementation only composes existing authorities into bounded JSON and must not execute writes, redefine verification logic, store a second source of truth or persist volatile GitHub state.
 
 ## Command mutation envelopes
 
@@ -76,7 +92,7 @@ Stage 22.4 adds no package or runtime dependency. Laravel Console, Symfony Proce
 | `./songchart ai status --json` | read-only orientation, handoff, guidance and operation bundles | none |
 | `./songchart ai status --json --runtime` | read-only status plus bounded runtime probes | none |
 | `./songchart impact --diff` | read-only actual-diff resolution | none |
-| `./songchart impact --verify` | read-only focused verification orchestration | none expected from the verified source tree |
+| `./songchart impact --verify` | focused verification orchestration | none expected from the verified source tree |
 | `./songchart candidate` | candidate closure | governed by existing owner |
 | `./songchart verify` | canonical closure | none on verified tree |
 | repository writes / PR promotion / merge / production mutation | human-governed | explicit human approval required |
@@ -85,7 +101,7 @@ Stage 22.4 adds no package or runtime dependency. Laravel Console, Symfony Proce
 
 Implementation may change only the narrow AI control-plane composition and focused tests required to expose operation bundles. It must not change canonical models, providers, chart semantics, public routes, schema, authentication, authorization or production mutation services.
 
-The operation-bundle projection should cover at least:
+The operation-bundle projection must cover at least:
 
 1. `orient` — inspect deterministic project/stage/handoff state;
 2. `implement` — resolve planned/actual impact and identify the current stage goal without executing a write;
