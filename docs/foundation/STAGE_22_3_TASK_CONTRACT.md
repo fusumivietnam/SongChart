@@ -2,9 +2,9 @@
 
 ## Status
 
-Active. Tranche `22.3A` is accepted on exact head `04b5ebcd1e7ad17de24b8cdef4d931a671c9cf9c` by Auto Closure run 344. Tranche `22.3B` is accepted on exact head `4ebf57fb6c06932f938c3917906e2bc7d0152387` by Auto Closure run 362. Tranche `22.3C` owns the current bounded implementation slice.
+Active. Tranches 22.3A, 22.3B and 22.3C are accepted. Tranche 22.3D owns the current bounded implementation and major-stage closure slice.
 
-Stage 22.2 remains the latest accepted major stage. Stage 22.3 composes the existing deterministic repository, data, runtime and verification capabilities into machine-readable context. It does not add an external model, MCP server, autonomous production mutation, or a second repository authority.
+Stage 22.2 remains the latest accepted major stage until Stage 22.3 exact-head closure passes. Stage 22.3 composes deterministic repository, data, runtime, handoff and verification capabilities into one machine-readable control plane. It does not add an external model, MCP server, autonomous production mutation, or a second repository authority.
 
 ## Goal
 
@@ -16,10 +16,8 @@ Expose one bounded, deterministic control plane that lets a human or coding agen
 
 Status: accepted.
 
-- Inventory existing `./songchart ai status --json`, generated project context, project intelligence and repository contract surfaces.
-- Compose authored and generated authority into one bounded machine-readable engineering context.
-- Preserve authored-source ownership and keep generated authority projection-only.
-- Exclude secrets and volatile GitHub claims that must be resolved live.
+- Compose authored and generated repository authority into one bounded machine-readable engineering context.
+- Preserve authored-source ownership and generated projection-only semantics.
 - Exact-head evidence: Auto Closure run 344 on `04b5ebcd1e7ad17de24b8cdef4d931a671c9cf9c` passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, canonical CLOSE, exact-tree preservation and ready-to-promote.
 
 ### 22.3B — Data and runtime status composition
@@ -27,82 +25,78 @@ Status: accepted.
 Status: accepted.
 
 - Compose existing runtime owners through opt-in `./songchart ai status --json --runtime`.
-- Keep default `./songchart ai status --json` repository-only and non-probing.
-- Evaluate `songchart:doctor --strict`, development database status and development storage status through their existing command owners.
-- Report a Recording data trace as `requires_subject` until an explicit Recording is supplied; never invent a canonical subject.
-- Runtime probes are read-only, bounded by timeout, output-redacted and fail closed on non-zero exit or timeout.
-- Do not execute deep diagnostics, impact verification, candidate verification or canonical verification as implicit status probes.
-- Emit only bounded status evidence (`ready`/`blocked`/`requires_subject`), owner, exit code/timeout state and secret-exclusion markers; raw stdout/stderr is not part of the control-plane response.
+- Keep default status repository-only and non-probing.
+- Runtime probes remain read-only, bounded, secret-safe and fail closed.
 - Exact-head evidence: Auto Closure run 362 on `4ebf57fb6c06932f938c3917906e2bc7d0152387` passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote.
 
 ### 22.3C — Bounded handoff and resume evidence
 
-Status: active.
+Status: accepted.
 
 - Produce deterministic branch, stage, active-tranche, task-contract and local changed-surface evidence for device/agent handoff.
-- Keep committed PR change-surface and workflow verdict as explicit live-GitHub resolutions instead of copying volatile claims into repository-authored progress.
-- Expose upstream/ahead/behind state when Git can resolve it locally; unknown facts remain explicit rather than inferred.
-- Bound path lists, sort them deterministically, and emit counts/truncation state.
-- Preserve human ownership of promotion and production mutation.
-- Never include secret values, environment contents, command output, or chat memory as handoff authority.
+- Keep committed PR change-surface and workflow verdict as explicit live-GitHub resolutions.
+- Bound and sort local path evidence; exclude secrets, raw command output and chat memory.
+- Exact-head evidence: Auto Closure run 370 on `c5c910aa1f3607f80732ef9d10961da26f771a8f` passed PREPARE/QUALITY, PostgreSQL 18, hardened Playwright browser smoke, frontend build, failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote.
 
 ### 22.3D — Machine-readable task and verification guidance
 
-Status: planned.
+Status: active.
 
-- Derive bounded next-action and verification guidance from stage, impact and verification authorities.
-- Keep recommendations traceable to repository-owned evidence.
+- Derive active goals from the authored stage plan.
+- Derive impact owner, commands and rules from verification topology.
+- Derive focused, candidate and canonical public entrypoints from verification command-surface authority.
+- Emit bounded next actions with source provenance and explicit no-mutation semantics.
+- Preserve human ownership of repository writes, promotion, merge and production mutation.
 - Close Stage 22.3 through exact-current-head Auto Closure.
 
 ## Acceptance criteria
 
-- One machine-readable context surface composes existing owners rather than duplicating them.
-- Every emitted field identifies its source authority or application capability.
+- One machine-readable status surface composes existing owners rather than duplicating their business or verification logic.
+- Every emitted guidance group identifies its repository source authority.
 - Missing, stale and blocked evidence remain explicit and fail closed.
 - Output excludes secrets, credentials, raw sensitive provider payloads and unsupported volatile claims.
-- Runtime status is opt-in, read-only and bounded; default orientation does not start environment-specific probes.
-- Handoff identifies the current Git head, stage, active tranche, task contract and bounded local change surface without claiming live PR/workflow facts it has not resolved.
-- Commands have declared mutation envelopes and non-interactive JSON behavior.
+- Runtime status is opt-in, read-only and bounded.
+- Handoff identifies current Git/stage context without inventing live PR/workflow verdicts.
+- Guidance uses the current stage plan plus registered verification topology and public command surface instead of hard-coded parallel policy.
+- Guidance never authorizes a repository or production mutation.
 - Generated projections remain PREPARE-owned.
-- Stage 22.3 closes only after exact-head PREPARE, QUALITY, PostgreSQL 18, browser, frontend and canonical CLOSE pass.
+- Stage 22.3 closes only after exact-head PREPARE, QUALITY, PostgreSQL 18, browser, frontend, failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote pass.
 
 ## Changed authorities
 
-None. Stage 22.3C extends the runtime handoff projection of existing Git and stage-plan owners but does not create or modify a registered semantic authority. The stage plan and this task contract remain stage-control metadata rather than entries in the semantic authority dependency registry.
+None.
 
-Implementation scope is recorded below under affected modules and boundaries. Git remains the local repository-state owner, GitHub PR/workflow state remains live work-lease evidence, and generated repository authority remains PREPARE-owned.
+Stage 22.3D changes consumers of existing stage and verification authorities. It does not register a new semantic authority. Stage-control metadata remains owned by the stage plan and this task contract; generated repository authority remains PREPARE-owned.
 
 ## Affected modules and boundaries
 
-Expected implementation owners include the existing AI status/project-state composition surface and focused control-plane tests. Existing runtime diagnostic commands retain ownership of their checks.
+Implementation owners include:
 
-Related repository surfaces include:
+- `./songchart ai status --json` routing;
+- bounded handoff composition;
+- bounded guidance composition;
+- opt-in runtime status composition;
+- focused AI control-plane Feature tests.
 
-- `./songchart ai ...` command routing;
-- `scripts/project-state.php` handoff projection;
-- local Git branch/head/upstream/change-surface reads;
-- `docs/project/engineering/stage-plan.json` for current stage/tranche/task intent;
-- generated `development-state.json` and `project-context.json` projections;
-- focused Feature, Unit and Architecture verification.
-
-Canonical models, provider adapters and production write services remain unchanged.
+Read-only source authorities consumed by 22.3D include the authored stage plan, verification topology and verification command-surface contract. Canonical models, provider adapters, production write services and public HTTP routes remain unchanged.
 
 ## Planned impact
 
-- Run `./songchart impact <planned-paths...>` before each implementation slice.
-- Run `./songchart impact --diff` after each source change.
-- Reconcile registered authority dependents and contradiction scans before broad verification.
-- Generated files may change only through `./songchart reconcile` or PREPARE.
+- Resolve planned impact before implementation using the existing impact owner.
+- Resolve actual diff after source changes.
+- Run only registered focused checks during implementation.
+- Use candidate/canonical owners for closure; do not reproduce their assertions in the guidance composer.
+- Generated files may change only through governed reconcile/PREPARE flows.
 
 ## Command mutation envelopes
 
 | Command surface | Envelope | Allowed tracked mutation | Interactive output |
 |---|---|---|---|
-| `./songchart ai status --json` | read-only repository orientation + bounded handoff evidence | none | no |
-| `./songchart ai status --json --runtime` | read-only bounded runtime probes | none | no |
+| `./songchart ai status --json` | read-only repository orientation + handoff + guidance | none | no |
+| `./songchart ai status --json --runtime` | read-only orientation + handoff + guidance + bounded runtime probes | none | no |
 | `./songchart reconcile` | generated-only | registered generated authority paths | no |
 | Auto Closure PREPARE | generated-only | registered generated authority paths | no |
-| Canonical CLOSE | closure | none on the verified tree | no |
+| Canonical CLOSE | closure | none on verified tree | no |
 
 ## Authority and official sources
 
@@ -110,24 +104,23 @@ Canonical models, provider adapters and production write services remain unchang
 
 - `AGENTS.md`
 - `PROJECT_AUTHORITY.md`
+- `docs/project/engineering/stage-plan.json`
+- `docs/project/engineering/verification-topology.json`
+- `docs/project/engineering/verification-command-surface.json`
+- `docs/project/engineering/verification-consumer-graph.json`
+- `docs/project/engineering/ai-development-contract.json`
+- `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
 - `docs/project/generated/development-state.json`
 - `docs/project/generated/project-context.json`
-- `docs/project/engineering/project-knowledge.json`
-- `docs/project/engineering/consolidation-plan.json`
-- `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
-- `docs/project/engineering/ai-development-contract.json`
-- `docs/project/engineering/verification-topology.json`
-- `docs/project/engineering/verification-consumer-graph.json`
 - `docs/project/docs/OFFICIAL_SOURCE_POLICY.md`
 - `docs/foundation/CODE_GENERATION_RULES.md`
-- `docs/project/domain/application-data-boundary.json`
 
 ### Installed versions
 
 | Capability | Version or constraint | Version authority |
 |---|---|---|
 | PHP | `^8.5` | `composer.json` / `composer.lock` |
-| Laravel | `^13.0` (resolved lockfile version) | `composer.json` / `composer.lock` |
+| Laravel | `^13.0` | `composer.json` / `composer.lock` |
 | PostgreSQL | major 18 | repository runtime and verification authority |
 | Node | 24 | repository runtime and lockfile authority |
 
@@ -137,52 +130,47 @@ Stage 22.3 adds no package or runtime dependency.
 
 Reviewed 2026-09-09:
 
-- Laravel 13 Console application API: https://api.laravel.com/docs/13.x/Illuminate/Console/Application.html — existing Artisan command composition and non-interactive execution.
-- Laravel 13 Command API: https://api.laravel.com/docs/13.x/Illuminate/Console/Command.html — command input/output boundaries.
-- Laravel 13 Filesystem API: https://api.laravel.com/docs/13.x/Illuminate/Filesystem/Filesystem.html — bounded repository file reads and decoded JSON support where existing repository owners select it.
-- Symfony Process component — existing application dependency used for bounded subprocess execution; Stage 22.3B exposes only exit/timeout state and never process output through the control-plane response.
-- Git CLI — existing repository-state owner for branch, head, working-tree and upstream evidence. Stage 22.3C does not replace Git with a second state store.
+- Laravel 13 Console application API — existing command composition and non-interactive execution.
+- Laravel 13 Command API — command input/output boundaries.
+- Symfony Process component — existing bounded subprocess execution dependency.
+- Git CLI — existing repository-state owner for branch, head, working-tree and upstream evidence.
 
 ### Native capability assessment
 
-Laravel Console, Symfony Process, Git, the existing SongChart command router, repository contract resolver, project intelligence, doctor/status commands and JSON authority files already provide the required primitives. Stage 22.3 composes these owners through narrow control-plane boundaries. No external model runtime, MCP server, new framework or parallel control-plane store is required.
+Laravel Console, Symfony Process, Git, the SongChart command router, stage plan, verification topology, verification command surface, repository project-state compiler, doctor/status commands and GitHub exact-head closure already provide all required primitives. Stage 22.3D composes these owners and does not require an external model runtime, MCP server, new framework or parallel state store.
 
 ### Custom implementation justification
 
-A narrow SongChart-specific composition layer is required because Laravel and Git do not define SongChart stage authority, impact routing, runtime readiness, exact-tree verification or handoff semantics. Custom code only maps existing owners into a stable JSON contract and must not reproduce their business rules or persist a second source of truth.
+A narrow SongChart-specific guidance projection is required because generic framework tooling does not understand SongChart stage goals, impact ownership, public verification entrypoints or exact-head acceptance policy. The custom layer only maps existing authorities into bounded JSON; it must not execute writes, redefine verification logic or persist a second source of truth.
 
 ## Domain contract and use-case data surface
 
-- Actor: authenticated development operator or bounded coding agent using local/CI command surfaces.
-- Inputs: repository-owned authority paths and explicit command options.
-- Reads: authored and generated project authority, registered application status/query capabilities, and local Git/runtime state where explicitly owned.
-- Writes: none for context/status commands.
-- Unknown semantics: unavailable, stale or unverified inputs remain explicit; they are never promoted to ready.
-- Output: versioned, deterministic JSON with source/provenance fields.
-- Handoff: local Git facts are emitted directly; committed PR change-surface and workflow verdict remain `requires_live_*_resolution` until resolved from GitHub.
-- Route/API contract: no public HTTP or production mutation route is introduced by default.
-- Security: never emit credentials, secrets, private payloads, tokens, raw command output or environment values outside approved non-secret status fields.
+- Actor: development operator or bounded coding agent using local/CI command surfaces.
+- Inputs: repository-owned authority paths plus explicit status options.
+- Reads: authored/generated project authority, local Git state and explicitly requested runtime readiness owners.
+- Writes: none for context/status/guidance commands.
+- Unknown semantics: unavailable, stale or unverified inputs remain explicit.
+- Output: deterministic JSON with source/provenance fields and human-gated write boundaries.
+- Route/API contract: no public HTTP or production mutation route is introduced.
+- Security: never emit credentials, tokens, raw provider payloads, environment secret values or raw diagnostic command output.
 
 ## Security, authorization, and data impact
 
-Control-plane reads remain local/CI operator capabilities. Production mutations, privileged business actions, PR promotion, merge and release remain human-governed. The stage reuses existing redaction and application data boundaries and does not broaden provider credential access.
+Control-plane reads remain development/CI operator capabilities. Production mutations, privileged business actions, PR promotion, merge and release remain human-governed. Stage 22.3D broadens no provider credential access and creates no production data mutation path.
 
 ## Tests and verification
 
 Focused evidence must cover:
 
-- deterministic context schema and ordering;
-- source-authority attribution;
+- deterministic context and handoff schema;
+- active tranche/task contract projection;
 - default status remains non-probing;
-- runtime success, non-zero failure, timeout and unavailable executable handling;
-- explicit `requires_subject` handling for data trace;
+- runtime success/failure/timeout/unavailable handling;
 - secret/raw-output exclusion;
-- branch/head/stage/tranche/task handoff evidence;
-- bounded deterministic local changed-surface projection;
-- explicit live-PR and live-workflow resolution requirements;
-- read-only command mutation boundaries;
-- generated-authority ownership;
-- existing command/help and AI protocol contracts.
+- authority-backed next actions;
+- verification owner and public-entrypoint provenance;
+- all emitted recommended actions remain non-mutating/human-gated;
+- generated-authority ownership and existing AI protocol contracts.
 
 Required closure:
 
@@ -200,20 +188,20 @@ Exact-current-head Auto Closure must pass PREPARE/QUALITY, PostgreSQL 18, browse
 - External OpenAI, Anthropic or other paid-model calls.
 - Local LLM/Ollama deployment.
 - MCP server/runtime implementation.
-- Autonomous production writes or self-healing.
+- Autonomous repository or production writes.
 - A second repository/project state database.
 - New provider adoption.
-- Public Stage 23 redesign or personalization.
+- Stage 23 UI redesign or personalization.
 - Microservices, Kubernetes, warehouse or lakehouse expansion.
 
 ## Documentation impact
 
-Update the stage plan, current task contract and affected machine authorities as each tranche closes. Historical accepted-stage evidence remains immutable. Generated development/project context is refreshed only by its owning generator.
+Update stage-control metadata as tranche/major-stage acceptance changes. Generated development/project context remains generator-owned and is refreshed only by governed PREPARE/reconcile flows.
 
 ## Delivery and handoff
 
-GitHub branch and PR state remain the live work lease. Resolve the exact branch, PR and head before writes. Local handoff may expose Git branch/head/upstream and bounded working-tree paths, but it must not claim committed PR change-surface or workflow verdict without live GitHub resolution. Chat-only progress is not authoritative.
+GitHub branch and PR state remain the live work lease. Resolve exact branch, PR, head and workflow before writes or acceptance claims. Machine guidance may recommend read-only impact/verification entrypoints but cannot claim a live workflow verdict without GitHub resolution.
 
 ## Rollback
 
-Revert the bounded Stage 22.3 source/contract commit and regenerate projections through the owning reconciliation command. Do not hand-edit generated authority or accepted Stage 22.1/22.2 evidence.
+Revert the bounded Stage 22.3D source/contract commits and regenerate projections through their owning reconciliation flow. Do not hand-edit generated authority or historical accepted-stage evidence.
