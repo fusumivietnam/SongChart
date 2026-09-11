@@ -5,8 +5,8 @@
 ## Current stage
 
 - Stage `22.4 — Vibe Coding Operations`
-- Status: `active`
-- Accepted through: `22.3`
+- Status: `accepted`
+- Accepted through: `22.4`
 - Task contract: `docs/foundation/STAGE_22_4_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -14,11 +14,11 @@
 - `22.4A` — `ACCEPTED` — Task-oriented coding operation bundles
 - `22.4B` — `ACCEPTED` — Impact-aware verification recommendations
 - `22.4C` — `ACCEPTED` — Bounded agent handoff and resume workflows
-- `22.4D` — `ACTIVE` — Human-gated repository operation automation
+- `22.4D` — `ACCEPTED` — Human-gated repository operation automation
 
 ## Next bounded tranche
 
-- `22.4D-human-gated-repository-operation-automation`
+- `unknown`
 
 ## Live work lease
 
