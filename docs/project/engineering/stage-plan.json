@@ -1,13 +1,13 @@
 {
-  "schema_version": 10,
+  "schema_version": 11,
   "current_stage": {
     "id": "22.4",
     "title": "Vibe Coding Operations",
     "task_contract": "docs/foundation/STAGE_22_4_TASK_CONTRACT.md",
-    "status": "active"
+    "status": "accepted"
   },
-  "accepted_through": "22.3",
-  "active_tranche": "22.4D",
+  "accepted_through": "22.4",
+  "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -29,6 +29,13 @@
       "verification_run": 34421739826,
       "verification": "Auto Closure run 377 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head.",
       "owner_acceptance": "Accepted by the repository owner on 2026-09-10 after exact-head closure evidence was reviewed."
+    },
+    "22.4": {
+      "title": "Vibe Coding Operations",
+      "source_head": "2f2d4a5a52a4857328be44dd7351f4b80e2ac4c1",
+      "effective_prepared_head": "2051c9151693981a590c00e41438feb13abfb238",
+      "verification_run": 34547026250,
+      "verification": "Auto Closure run 403 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the effective prepared head."
     }
   },
   "accepted_tranche_evidence": {
@@ -52,6 +59,13 @@
       "effective_prepared_head": "c3a3842534c080bc61fbe70882ec0262b5170a2c",
       "verification_run": 34546388596,
       "verification": "Auto Closure run 397 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
+    },
+    "22.4D": {
+      "title": "Human-gated repository operation automation",
+      "source_head": "2f2d4a5a52a4857328be44dd7351f4b80e2ac4c1",
+      "effective_prepared_head": "2051c9151693981a590c00e41438feb13abfb238",
+      "verification_run": 34547026250,
+      "verification": "Auto Closure run 403 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the effective prepared head."
     }
   },
   "stage_progress": [
@@ -85,7 +99,7 @@
     },
     {
       "id": "22.4D",
-      "status": "active",
+      "status": "accepted",
       "title": "Human-gated repository operation automation",
       "goals": [
         "compose safe repository operation plans over existing command owners",
@@ -94,7 +108,7 @@
       ]
     }
   ],
-  "next_tranche": "22.4D-human-gated-repository-operation-automation",
+  "next_tranche": null,
   "next_stage_outline": {
     "id": "23.0",
     "title": "Public Product UX",
@@ -104,7 +118,8 @@
       "artist, recording, work and release experience",
       "persisted chart presentation and provenance UX",
       "mobile-first public product refinement"
-    ]
+    ],
+    "activation_gate": "Merge the accepted Stage 22 umbrella pull request into main, resolve accepted-main CI for the merge SHA, then create/resume a dedicated Stage 23 work lease before source implementation."
   },
   "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md",
   "work_lease": {
