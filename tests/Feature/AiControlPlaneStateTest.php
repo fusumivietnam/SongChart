@@ -69,7 +69,7 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($bundles['verify']['commands'])->toContain('songchart impact --verify')
         ->and($bundles['close']['candidate_commands'])->toContain('songchart candidate')
         ->and($bundles['close']['canonical_commands'])->toContain('songchart verify')
-        ->and(in_array($resume['status'], ['requires_live_resolution', 'degraded'], true))->toBeTrue()
+        ->and(in_array($resume['status'], ['requires_live_resolution', 'degraded', 'blocked'], true))->toBeTrue()
         ->and($resume['branch'])->toBe($handoff['branch'])
         ->and($resume['head_sha'])->toBe($handoff['head_sha'])
         ->and($resume['stage'])->toBe('22.4')
@@ -83,6 +83,14 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($resume['mutation_allowed'])->toBeFalse()
         ->and($resume['human_gate_required_for_writes'])->toBeTrue()
         ->and($resume['steps'])->toBeArray()->toHaveCount(4);
+
+    if ($handoff['branch'] === null) {
+        expect($resume['status'])->toBe('blocked');
+    } elseif ($handoff['working_tree_clean']) {
+        expect($resume['status'])->toBe('requires_live_resolution');
+    } else {
+        expect($resume['status'])->toBe('degraded');
+    }
 
     expect(array_column($resume['steps'], 'id'))->toBe([
         'orient-local-authority',
