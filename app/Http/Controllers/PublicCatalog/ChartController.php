@@ -6,8 +6,10 @@ namespace App\Http\Controllers\PublicCatalog;
 
 use App\Application\Chart\Queries\PublicChartProjection;
 use App\Http\Controllers\Controller;
+use App\Support\Chart\ChartDefinitionRegistry;
 use App\Support\Chart\DatabaseChartSnapshotStore;
 use Illuminate\Contracts\View\View;
+use RuntimeException;
 
 final class ChartController extends Controller
 {
@@ -15,12 +17,20 @@ final class ChartController extends Controller
         string $chart,
         DatabaseChartSnapshotStore $snapshots,
         PublicChartProjection $projection,
+        ChartDefinitionRegistry $definitions,
     ): View {
+        try {
+            $definition = $definitions->get($chart);
+        } catch (RuntimeException) {
+            abort(404);
+        }
+
         $snapshot = $snapshots->latest($chart);
-        abort_if($snapshot === null, 404);
 
         return view('charts.show', [
-            'chart' => $projection->fromSnapshot($snapshot),
+            'chart' => $snapshot === null
+                ? $projection->unavailable($definition)
+                : $projection->fromSnapshot($snapshot),
         ]);
     }
 }
