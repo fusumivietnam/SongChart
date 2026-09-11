@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned. Stage 23 source implementation is blocked until the accepted Stage 22 umbrella pull request is merged to `main`, accepted-main CI passes for the merge SHA, and a dedicated Stage 23 work lease is created or resumed. This contract may be prepared on the Stage 22 branch, but it does not authorize mixing Stage 23 source changes into the Stage 22 work lease.
+Active. Stage 23 source implementation is authorized from accepted `main` SHA `84e05bed2cff63d5172e64b599e2f7e9d79971c5` after Stage 22 PR #30 was human-merged and accepted-main CI run `34624409179` passed quality, PostgreSQL, browser smoke, frontend build and accepted-main provenance. The dedicated Stage 23 work lease is `stage-23-public-product-ux`; tranche `23.0A` is the only active implementation tranche.
 
 ## Goal
 
@@ -50,7 +50,7 @@ No Stage 23 tranche may silently introduce a new visual direction.
 
 ### 23.0A — Discovery and search product shell
 
-Status: planned.
+Status: active.
 
 Goals:
 
@@ -58,7 +58,8 @@ Goals:
 - preserve the canonical search URL/filter contract and existing search owner semantics;
 - make entity type, primary context, verification/provenance state and navigation affordance consistently legible;
 - improve empty/partial/degraded states without inventing results or ranking evidence;
-- prove desktop and mobile behavior through the existing browser-smoke owner.
+- prove desktop and mobile behavior through the existing browser-smoke owner;
+- preserve exact-head desktop/mobile screenshots as bounded visual-review evidence in the existing browser CI lane.
 
 Primary surfaces:
 
@@ -66,6 +67,8 @@ Primary surfaces:
 - `resources/views/search/index.blade.php`
 - shared search/entity-result components already owned under `resources/views/components/`
 - existing public search controller/query/read-model owners
+- `tests/Browser/PublicCriticalSmokeTest.php`
+- existing `.github/workflows/tests.yml` browser-smoke job for visual evidence publication
 
 ### 23.0B — Canonical entity detail experience
 
@@ -125,19 +128,21 @@ Goals:
 - Shared components are reused before adding page-specific markup or styling.
 - No Stage 23 tranche introduces a provider-specific canonical identity, presentation-only schema, recommendation engine, social graph or visitor-facing AI assistant.
 - Focused regression coverage and browser smoke prove desktop/mobile/accessibility-sensitive flows.
+- Successful browser CI preserves exact-head visual-review screenshots for the bounded public surfaces owned by the active tranche.
 - Generated repository projections remain PREPARE-owned.
 - Each accepted tranche requires exact-current-head Auto Closure evidence before authority advances.
 
-## Activation gate
+## Activation evidence
 
-Before changing Stage 23 source code:
+The Stage 23 activation gate is satisfied:
 
-1. Stage 22.4 is accepted with exact-head Auto Closure evidence.
-2. The Stage 22 umbrella PR is merged by the human repository owner.
-3. Accepted-main CI passes for the resulting merge SHA.
-4. Runtime status is re-resolved from `main`.
-5. A dedicated Stage 23 branch/PR work lease is created or an existing matching lease is resumed.
-6. `stage-plan.json` is advanced to Stage 23.0 with exactly one active tranche, initially `23.0A` unless repository evidence at activation time requires a different ordering.
+1. Stage 22.4 was accepted with exact-head Auto Closure evidence.
+2. Stage 22 umbrella PR #30 was human-merged into `main`.
+3. Resulting merge SHA is `84e05bed2cff63d5172e64b599e2f7e9d79971c5`.
+4. Accepted-main CI run `34624409179` passed on that merge SHA.
+5. Runtime repository state was re-resolved from `main`.
+6. Dedicated branch `stage-23-public-product-ux` was created from the accepted merge SHA.
+7. `stage-plan.json` advances to Stage 23.0 with exactly one active tranche: `23.0A`.
 
 ## Verification ownership
 
@@ -151,7 +156,7 @@ Reuse repository-owned verification only:
 ./songchart verify
 ```
 
-Browser behavior remains owned by the existing browser-smoke lane. Do not add a second frontend test harness or a Stage 23-specific verifier if an existing contract/Pest/browser owner can express the invariant.
+Browser behavior remains owned by the existing browser-smoke lane. Do not add a second frontend test harness or a Stage 23-specific verifier if an existing contract/Pest/browser owner can express the invariant. Visual screenshots are evidence produced by that owner, not a separate source of truth and not an independent pixel-diff gate.
 
 ## Explicit non-goals
 
@@ -167,4 +172,4 @@ Browser behavior remains owned by the existing browser-smoke lane. Do not add a 
 
 ## Handoff
 
-Stage 23 planning can be reviewed before Stage 22 merge, but source implementation must begin only from the accepted `main` state under a dedicated Stage 23 work lease. At session start, resolve live branch/PR/exact head and repository-derived context; chat history is never volatile project-state authority.
+Stage 23 implementation proceeds only on the dedicated Stage 23 work lease. At session start, resolve live branch/PR/exact head and repository-derived context; chat history is never volatile project-state authority.
