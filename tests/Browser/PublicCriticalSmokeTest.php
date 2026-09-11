@@ -34,7 +34,7 @@ function stage23PublicChartFixture(): void
     $snapshot = (new BuildChartSnapshot)->handle(
         'youtube-video-views',
         YouTubeViewCountObservationSource::METRIC,
-        new DateTimeImmutable(),
+        new DateTimeImmutable,
         [
             new ChartMetricObservation(
                 'stage23-browser-chart-observation',
