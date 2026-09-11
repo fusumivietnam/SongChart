@@ -22,7 +22,8 @@ final readonly class PublicChartProjection
     {
         $definition = $this->definitionFor($snapshot->chartId);
         $freshness = $definition['freshness'] ?? [];
-        $snapshotAgeSeconds = max(0, time() - $snapshot->snapshotAt->getTimestamp());
+        $nowTimestamp = now()->getTimestamp();
+        $snapshotAgeSeconds = max(0, $nowTimestamp - $snapshot->snapshotAt->getTimestamp());
         $maxSnapshotAgeSeconds = is_int($freshness['max_snapshot_age_seconds'] ?? null)
             ? $freshness['max_snapshot_age_seconds']
             : null;
@@ -46,7 +47,7 @@ final readonly class PublicChartProjection
             ));
             $latestObservedAt = $this->latestObservedAt($observations);
             $observationAgeSeconds = $latestObservedAt instanceof DateTimeImmutable
-                ? max(0, time() - $latestObservedAt->getTimestamp())
+                ? max(0, $nowTimestamp - $latestObservedAt->getTimestamp())
                 : null;
             $score = (float) $row['score'];
             $slug = (string) $recording->getAttribute('slug');
