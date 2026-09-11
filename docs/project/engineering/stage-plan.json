@@ -1,13 +1,13 @@
 {
   "schema_version": 11,
   "current_stage": {
-    "id": "22.4",
-    "title": "Vibe Coding Operations",
-    "task_contract": "docs/foundation/STAGE_22_4_TASK_CONTRACT.md",
-    "status": "accepted"
+    "id": "23.0",
+    "title": "Public Product UX",
+    "task_contract": "docs/foundation/STAGE_23_0_TASK_CONTRACT.md",
+    "status": "implementing"
   },
   "accepted_through": "22.4",
-  "active_tranche": null,
+  "active_tranche": "23.0A",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -70,58 +70,55 @@
   },
   "stage_progress": [
     {
-      "id": "22.4A",
-      "status": "accepted",
-      "title": "Task-oriented coding operation bundles",
+      "id": "23.0A",
+      "status": "implementing",
+      "title": "Discovery and search product shell",
       "goals": [
-        "compose existing orientation, impact, focused verification and closure entrypoints into bounded task-oriented operation bundles",
-        "derive commands and provenance from existing stage and verification authorities rather than hard-coding a parallel workflow",
-        "keep every repository mutation and promotion action explicitly human-governed"
+        "align homepage discovery and search results with the approved search-first information hierarchy",
+        "preserve canonical search URL, filter and ranking ownership while making entity context and provenance legible",
+        "improve empty, partial and degraded public states without inventing results or ranking evidence",
+        "preserve desktop and mobile visual-review screenshots through the existing browser-smoke owner"
       ]
     },
     {
-      "id": "22.4B",
-      "status": "accepted",
-      "title": "Impact-aware verification recommendations",
+      "id": "23.0B",
+      "status": "planned",
+      "title": "Canonical entity detail experience",
       "goals": [
-        "map the resolved repository change surface to the smallest registered verification set",
-        "preserve semantic ownership in verification topology and avoid duplicate test orchestration"
+        "refine canonical entity detail around shared identity, facts, relationships, provenance and provider destinations",
+        "preserve stable canonical URLs, metadata ownership and provider-neutral identity"
       ]
     },
     {
-      "id": "22.4C",
-      "status": "accepted",
-      "title": "Bounded agent handoff and resume workflows",
+      "id": "23.0C",
+      "status": "planned",
+      "title": "Persisted chart and provenance UX",
       "goals": [
-        "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
-        "surface stale or unresolved live GitHub evidence instead of inventing continuity"
+        "present persisted chart observations with metric semantics, provenance and freshness",
+        "distinguish unavailable evidence from valid zero or empty chart state"
       ]
     },
     {
-      "id": "22.4D",
-      "status": "accepted",
-      "title": "Human-gated repository operation automation",
+      "id": "23.0D",
+      "status": "planned",
+      "title": "Mobile, accessibility, performance and stage closure",
       "goals": [
-        "compose safe repository operation plans over existing command owners",
-        "require explicit human approval for write-capable execution",
-        "close Stage 22.4 through exact-head Auto Closure"
+        "normalize responsive public behavior and WCAG 2.2 AA-sensitive interactions",
+        "protect server-rendered primary metadata and close Stage 23 through exact-head repository verification"
       ]
     }
   ],
-  "next_tranche": null,
-  "next_stage_outline": {
-    "id": "23.0",
-    "title": "Public Product UX",
-    "priority": "consume accepted Stage 22 data/provenance/control-plane contracts to improve public discovery, entity and chart experiences without inventing ranking semantics",
-    "planned_capabilities": [
-      "public discovery and search UX",
-      "artist, recording, work and release experience",
-      "persisted chart presentation and provenance UX",
-      "mobile-first public product refinement"
-    ],
-    "activation_gate": "Merge the accepted Stage 22 umbrella pull request into main, resolve accepted-main CI for the merge SHA, then create/resume a dedicated Stage 23 work lease before source implementation."
+  "next_tranche": {
+    "id": "23.0B",
+    "title": "Canonical entity detail experience"
   },
-  "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md",
+  "next_stage_outline": null,
+  "activation_evidence": {
+    "accepted_main_sha": "84e05bed2cff63d5172e64b599e2f7e9d79971c5",
+    "accepted_main_workflow_run": 34624409179,
+    "stage_22_pull_request": 30,
+    "stage_23_branch": "stage-23-public-product-ux"
+  },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
     "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
