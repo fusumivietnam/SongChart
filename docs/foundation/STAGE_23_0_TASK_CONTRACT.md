@@ -132,6 +132,39 @@ Goals:
 - Generated repository projections remain PREPARE-owned.
 - Each accepted tranche requires exact-current-head Auto Closure evidence before authority advances.
 
+## Authority and official sources
+
+### Repository authorities
+
+- `PROJECT_AUTHORITY.md`
+- `docs/project/engineering/stage-plan.json`
+- `docs/project/domain/product-user-journeys.json`
+- `docs/ui/DESIGN_AUTHORITY.md`
+- `docs/ui/SONGCHART_FRONTEND_DESIGN_CONTRACT.md`
+- existing Phase 4/5/6/7/8 public UI contracts and preview patterns
+- `docs/project/engineering/verification-topology.json`
+- `docs/project/engineering/verification-command-surface.json`
+- `docs/project/stack/impact-test-map.json`
+- `docs/project/docs/OFFICIAL_SOURCE_POLICY.md`
+- `docs/templates/TASK_CONTRACT_TEMPLATE.md`
+- existing public search/application read-model owners and shared Blade UI components
+
+### Installed versions
+
+Stage 23.0 introduces no package or runtime dependency. Exact versions remain owned by `composer.lock` and `package-lock.json`. The active baseline continues to use PHP 8.5, Laravel 13, PostgreSQL 18, Node 24, Tailwind CSS through the existing frontend build, Alpine/Livewire only where already justified, and Pest Browser through the repository's locked development dependencies.
+
+### Official external sources
+
+Stage 23.0 relies only on capabilities already present in the locked stack. Official Laravel documentation remains the external authority for Blade/server-rendered application behavior; official Pest Browser documentation remains the external authority for device emulation and screenshot capture; W3C/WAI WCAG 2.2 remains the accessibility reference. External documentation may validate framework capability but must not override SongChart's repository-owned product, domain, ranking, provenance or visual authority.
+
+### Native capability assessment
+
+Existing Blade/Tailwind components, the public search controller/application/read-model boundary, canonical public routes, Pest Browser, GitHub Actions artifact upload and the established browser-smoke lane already provide the required capabilities. Stage 23 therefore does not need React/Vue, a second search engine, a second browser harness, a visual-regression SaaS, a client-side provider query layer or a presentation-specific schema. Search ranking/filter behavior remains delegated to the accepted search owner.
+
+### Custom implementation justification
+
+SongChart-specific composition is required for the public information hierarchy because generic UI frameworks do not understand canonical music entity distinctions, verification/provenance semantics, governed provider destinations or SongChart's prohibition on fabricated ranking/popularity data. Custom work is limited to Blade/component composition, existing read-model projection and bounded browser evidence. Visual screenshots are review evidence tied to an exact SHA, not a second design source of truth or an autonomous pixel-diff acceptance gate.
+
 ## Activation evidence
 
 The Stage 23 activation gate is satisfied:
@@ -157,6 +190,31 @@ Reuse repository-owned verification only:
 ```
 
 Browser behavior remains owned by the existing browser-smoke lane. Do not add a second frontend test harness or a Stage 23-specific verifier if an existing contract/Pest/browser owner can express the invariant. Visual screenshots are evidence produced by that owner, not a separate source of truth and not an independent pixel-diff gate.
+
+## Tests and verification
+
+Focused evidence for 23.0A must prove:
+
+- homepage/discovery renders both populated and bounded empty canonical states without fabricated content;
+- search preserves the existing query, type, sort and canonical application ownership;
+- search results expose entity type, verification state, context and canonical navigation without provider identity leakage;
+- mobile filtering remains operable without duplicating entity-filter ownership on the same results surface;
+- desktop and iPhone-sized browser smoke complete without console/runtime errors;
+- browser screenshots are captured for home, empty search, populated results and no-result states on desktop and mobile;
+- successful CI preserves those screenshots in a SHA-bound `ui-evidence-*` artifact;
+- generated projections remain PREPARE-owned and the exact-head tree is preserved through canonical closure.
+
+Required verification remains owned by the existing entrypoints and CI topology:
+
+```bash
+./songchart ai status --json
+./songchart impact --diff
+./songchart impact --verify
+./songchart candidate
+./songchart verify
+```
+
+Each tranche requires exact-current-head Auto Closure evidence before acceptance. Visual review augments, but does not replace, functional/browser/accessibility verification.
 
 ## Explicit non-goals
 
