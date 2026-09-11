@@ -13,12 +13,12 @@
 
 - `22.4A` — `ACCEPTED` — Task-oriented coding operation bundles
 - `22.4B` — `ACCEPTED` — Impact-aware verification recommendations
-- `22.4C` — `ACTIVE` — Bounded agent handoff and resume workflows
-- `22.4D` — `PLANNED` — Human-gated repository operation automation
+- `22.4C` — `ACCEPTED` — Bounded agent handoff and resume workflows
+- `22.4D` — `ACTIVE` — Human-gated repository operation automation
 
 ## Next bounded tranche
 
-- `22.4C-bounded-agent-handoff-resume-workflows`
+- `22.4D-human-gated-repository-operation-automation`
 
 ## Live work lease
 

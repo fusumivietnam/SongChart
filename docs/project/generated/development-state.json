@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "944f03d0c49275f2f982405b7cf6c6aa79c6135ccf76bc34ab4e497b2abebb8f",
+    "source_fingerprint": "9b5bd940bcfb91403b695e4bd2619c59bf97425de2244a52723e43b1222a88ce",
     "current_stage": {
         "id": "22.4",
         "title": "Vibe Coding Operations",
@@ -31,7 +31,7 @@
         },
         {
             "id": "22.4C",
-            "status": "active",
+            "status": "accepted",
             "title": "Bounded agent handoff and resume workflows",
             "goals": [
                 "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
@@ -40,7 +40,7 @@
         },
         {
             "id": "22.4D",
-            "status": "planned",
+            "status": "active",
             "title": "Human-gated repository operation automation",
             "goals": [
                 "compose safe repository operation plans over existing command owners",
@@ -49,7 +49,7 @@
             ]
         }
     ],
-    "next_tranche": "22.4C-bounded-agent-handoff-resume-workflows",
+    "next_tranche": "22.4D-human-gated-repository-operation-automation",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -58,6 +58,6 @@
         "candidate-verification.json": "fe0bf1fcaba8ec2058b0cc333a7c8106b2bff9112630df2efc0f5f58d5957c3c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "355e12e880ea61260ca54fa83ae06e2579aa41cc0539aea42e30f7ce2888ac33"
+        "docs/project/engineering/stage-plan.json": "2ede07ecbdc2150c605ff9f8121d3822314e74dc9b4afed2aa16098ac7fd2b34"
     }
 }
