@@ -8,11 +8,32 @@ it('renders the governed artist detail composition on the canonical plural URL',
         ->assertSee('Canonical artist identity')
         ->assertSee('MusicBrainz Artist ID')
         ->assertSee('/releases/ok-computer', false)
-        ->assertSee('Data passport')
-        ->assertSee('Identity bridge')
-        ->assertSee('1 connected identity sources.')
-        ->assertSee('Enrichment plan')
-        ->assertSee('Nguồn và provenance');
+        ->assertSee('Độ tin cậy dữ liệu')
+        ->assertSee('Định danh đối chiếu')
+        ->assertSee('1 nguồn identity đang kết nối')
+        ->assertSee('Tình trạng hoàn thiện dữ liệu')
+        ->assertSee('Nguồn và provenance')
+        ->assertSee('Nơi nghe / xem');
+});
+
+it('keeps canonical identity, evidence and provider destinations as separate public regions', function (): void {
+    $response = $this->get('/groups/radiohead');
+
+    $response->assertOk()
+        ->assertSee('data-entity-passport', false)
+        ->assertSee('data-identity-bridge', false)
+        ->assertSee('data-provider-chooser', false)
+        ->assertSee('Bằng chứng hỗ trợ canonical identity, không thay thế identity.')
+        ->assertSee('Khả dụng không quyết định canonical identity');
+});
+
+it('preserves canonical URL metadata and structured-data ownership', function (): void {
+    $response = $this->get('/groups/radiohead');
+
+    $response->assertOk()
+        ->assertSee('<link rel="canonical" href="http://localhost/groups/radiohead">', false)
+        ->assertSee('"@type":"MusicGroup"', false)
+        ->assertSee('"name":"Radiohead"', false);
 });
 
 it('keeps the public entity page to one main landmark with a labelled entity article', function (): void {
