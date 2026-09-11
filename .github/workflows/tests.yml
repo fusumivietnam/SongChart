@@ -224,6 +224,8 @@ jobs:
             ${{ runner.os }}-playwright-
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --no-audit --no-fund
+      - name: Build browser assets
+        run: npm run build
       - name: Install Playwright system dependencies
         shell: bash
         run: |
