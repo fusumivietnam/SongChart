@@ -42,7 +42,7 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($changeSurface['path_limit'])->toBe(100)
         ->and($changeSurface['truncated'])->toBeBool()
         ->and(count($changeSurface['paths']))->toBeLessThanOrEqual(100)
-        ->and($nextActions['status'])->toBe('ready')
+        ->and($nextActions['status'])->toBe('blocked')
         ->and($nextActions['active_tranche'])->toBeNull()
         ->and($nextActions['human_gate_required_for_writes'])->toBeTrue()
         ->and($nextActions['actions'])->toBeArray()->not->toBeEmpty()
@@ -59,17 +59,18 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($impactAware['execution_owner'])->toBe('scripts/run-impact-verification.sh')
         ->and($impactAware['mutation_allowed'])->toBeFalse()
         ->and($impactAware['human_gate_required_for_writes'])->toBeTrue()
-        ->and($operations['status'])->toBe('ready')
+        ->and($operations['status'])->toBe('blocked')
         ->and($operations['autonomous_execution_allowed'])->toBeFalse()
         ->and(array_keys($bundles))->toBe(['orient', 'implement', 'verify', 'close'])
         ->and($bundles['orient']['commands'])->toContain('songchart ai status')
+        ->and($bundles['implement']['status'])->toBe('blocked')
         ->and($bundles['implement']['stage'])->toBe('22.4')
         ->and($bundles['implement']['active_tranche'])->toBeNull()
         ->and($bundles['implement']['commands'])->toContain('songchart impact --diff')
         ->and($bundles['verify']['commands'])->toContain('songchart impact --verify')
         ->and($bundles['close']['candidate_commands'])->toContain('songchart candidate')
         ->and($bundles['close']['canonical_commands'])->toContain('songchart verify')
-        ->and(in_array($resume['status'], ['requires_live_resolution', 'degraded', 'blocked'], true))->toBeTrue()
+        ->and($resume['status'])->toBe('blocked')
         ->and($resume['branch'])->toBe($handoff['branch'])
         ->and($resume['head_sha'])->toBe($handoff['head_sha'])
         ->and($resume['stage'])->toBe('22.4')
@@ -84,7 +85,7 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($resume['human_gate_required_for_writes'])->toBeTrue()
         ->and($resume['steps'])->toBeArray()->toHaveCount(4);
 
-    if ($handoff['branch'] === null) {
+    if ($handoff['active_tranche'] === null || $handoff['branch'] === null) {
         expect($resume['status'])->toBe('blocked');
     } elseif ($handoff['working_tree_clean']) {
         expect($resume['status'])->toBe('requires_live_resolution');
