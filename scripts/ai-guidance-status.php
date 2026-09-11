@@ -137,6 +137,7 @@ $surfacePath = 'docs/project/engineering/verification-command-surface.json';
 $impactMapPath = 'docs/project/stack/impact-test-map.json';
 $impactResolverPath = 'scripts/resolve-repository-impact.php';
 $impactRunnerPath = 'scripts/run-impact-verification.sh';
+$handoffOwnerPath = 'scripts/ai-handoff-status.php';
 $plan = guidanceReadJson($root.'/'.$planPath);
 $topology = guidanceReadJson($root.'/'.$topologyPath);
 $surface = guidanceReadJson($root.'/'.$surfacePath);
@@ -256,6 +257,57 @@ $impactRecommendationStatus = $impactResolution === []
     ? 'not_applicable'
     : ($focusedExecutionEntrypoints === [] ? 'blocked' : 'ready');
 
+$handoff = is_array($state['control_plane']['handoff'] ?? null) ? $state['control_plane']['handoff'] : [];
+$resumeDevelopmentCommands = guidanceRegisteredCommands($development, [
+    'songchart ai status',
+    'songchart ai doctor',
+    'songchart impact --diff',
+]);
+$resumeBlocked = $handoff === []
+    || ($handoff['branch'] ?? null) === null
+    || ($handoff['head_sha'] ?? null) === null
+    || ($handoff['stage'] ?? null) === null
+    || ($handoff['active_tranche'] ?? null) === null
+    || ($handoff['task_contract'] ?? null) === null;
+$resumeStatus = $resumeBlocked
+    ? 'blocked'
+    : (($handoff['working_tree_clean'] ?? false) === true ? 'requires_live_resolution' : 'degraded');
+$resumeSteps = [
+    [
+        'id' => 'orient-local-authority',
+        'status' => $resumeBlocked ? 'blocked' : 'ready',
+        'purpose' => 'Confirm deterministic local branch, exact Git head, stage, tranche and task-contract authority.',
+        'commands' => guidanceRegisteredCommands($resumeDevelopmentCommands, ['songchart ai status', 'songchart ai doctor']),
+        'source' => $handoffOwnerPath.' + '.$planPath,
+        'mutation_allowed' => false,
+    ],
+    [
+        'id' => 'resolve-live-pr',
+        'status' => 'requires_live_resolution',
+        'purpose' => 'Resolve the existing live GitHub pull request for this branch and compare its exact head to the local Git head before writing.',
+        'source' => 'GitHub pull request runtime',
+        'mutation_allowed' => false,
+    ],
+    [
+        'id' => 'resolve-exact-head-workflow',
+        'status' => 'requires_live_resolution',
+        'purpose' => 'Resolve Auto Closure for the exact live PR head; stale or missing workflow evidence cannot establish continuity or acceptance.',
+        'source' => 'GitHub Auto Closure runtime',
+        'mutation_allowed' => false,
+    ],
+    [
+        'id' => 'resolve-change-impact',
+        'status' => $workingTreeClean ? 'ready' : 'required',
+        'purpose' => $workingTreeClean
+            ? 'Resolve planned impact before the next source mutation.'
+            : 'Resolve the current repository diff and run registered focused verification before closure.',
+        'commands' => guidanceRegisteredCommands($resumeDevelopmentCommands, ['songchart impact --diff']),
+        'focused_entrypoints' => $workingTreeClean ? [] : $focusedExecutionEntrypoints,
+        'source' => $surfacePath.' + '.$impactResolverPath,
+        'mutation_allowed' => false,
+    ],
+];
+
 $state['control_plane']['next_actions'] = [
     'status' => $guidanceStatus,
     'source' => $planPath.' + '.$topologyPath.' + '.$surfacePath,
@@ -298,11 +350,32 @@ $state['control_plane']['operation_bundles'] = [
     'bundles' => $operationBundles,
     'autonomous_execution_allowed' => false,
 ];
+$state['control_plane']['resume_workflow'] = [
+    'status' => $resumeStatus,
+    'source' => $handoffOwnerPath.' + '.$planPath.' + '.$surfacePath,
+    'branch' => $handoff['branch'] ?? null,
+    'head_sha' => $handoff['head_sha'] ?? null,
+    'stage' => $handoff['stage'] ?? null,
+    'active_tranche' => $handoff['active_tranche'] ?? null,
+    'task_contract' => $handoff['task_contract'] ?? null,
+    'working_tree_clean' => $handoff['working_tree_clean'] ?? null,
+    'upstream' => $handoff['upstream'] ?? null,
+    'ahead' => $handoff['ahead'] ?? null,
+    'behind' => $handoff['behind'] ?? null,
+    'live_pr_resolution_required' => true,
+    'live_workflow_resolution_required' => true,
+    'chat_memory_authority' => false,
+    'volatile_github_state_persisted' => false,
+    'steps' => $resumeSteps,
+    'mutation_allowed' => false,
+    'human_gate_required_for_writes' => true,
+];
 
 if (
     $guidanceStatus === 'blocked'
     || $state['control_plane']['operation_bundles']['status'] === 'blocked'
     || $impactRecommendationStatus === 'blocked'
+    || $resumeStatus === 'blocked'
 ) {
     $state['control_plane']['status'] = 'blocked';
 }
