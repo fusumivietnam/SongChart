@@ -2,7 +2,7 @@
 
 ## Status
 
-Active. Stage 23 source implementation is authorized from accepted `main` SHA `84e05bed2cff63d5172e64b599e2f7e9d79971c5` after Stage 22 PR #30 was human-merged and accepted-main CI run `34624409179` passed quality, PostgreSQL, browser smoke, frontend build and accepted-main provenance. The dedicated Stage 23 work lease is `stage-23-public-product-ux`; tranche `23.0A` is the only active implementation tranche.
+Active. Stage 23 source implementation is authorized from accepted `main` SHA `84e05bed2cff63d5172e64b599e2f7e9d79971c5` after Stage 22 PR #30 was human-merged and accepted-main CI run `34624409179` passed quality, PostgreSQL, browser smoke, frontend build and accepted-main provenance. The dedicated Stage 23 work lease is `stage-23-public-product-ux`. Tranche `23.0A` is accepted on exact head `e5dfc72e1b81753baa425bcdb5fb01f351b5899d` by Auto Closure run `34628234776`; tranche `23.0B` is now the only active implementation tranche.
 
 ## Goal
 
@@ -50,7 +50,9 @@ No Stage 23 tranche may silently introduce a new visual direction.
 
 ### 23.0A — Discovery and search product shell
 
-Status: active.
+Status: accepted.
+
+Acceptance evidence: exact head `e5dfc72e1b81753baa425bcdb5fb01f351b5899d`, Auto Closure run `34628234776`; PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote all passed. SHA-bound `ui-evidence-*` screenshots were reviewed after the browser lane was corrected to build production assets before capture.
 
 Goals:
 
@@ -72,14 +74,16 @@ Primary surfaces:
 
 ### 23.0B — Canonical entity detail experience
 
-Status: planned.
+Status: active.
 
 Goals:
 
 - refine Artist/Group, Recording, Work, Release/Release Group, Version and Collection detail pages around the shared identity/facts/relationships/provenance/provider system;
 - keep entity-specific differences in catalog/read-model payloads instead of duplicating page architecture;
 - make canonical relationships, source state and provider destinations understandable without admin-style density;
-- preserve SEO/structured-data ownership and stable canonical URLs.
+- preserve SEO/structured-data ownership and stable canonical URLs;
+- preserve provider-neutral identity while separating canonical identity, evidence quality and outbound provider actions visually;
+- extend exact-head desktop/mobile visual evidence to representative entity types without creating a second browser harness.
 
 Primary surfaces:
 
@@ -87,6 +91,7 @@ Primary surfaces:
 - `resources/views/catalog/`
 - shared entity/provider components
 - existing public catalog/detail read-model owners
+- existing browser-smoke and feature-test owners for public entity detail
 
 ### 23.0C — Persisted chart and provenance UX
 
@@ -121,6 +126,7 @@ Goals:
 - Homepage/discovery and search conform to approved public design contracts on desktop and mobile.
 - Search preserves existing canonical query/filter/ranking semantics and never fabricates metrics.
 - Public detail pages use shared entity architecture and preserve canonical entity distinctions.
+- Canonical identity, provenance/evidence and provider destinations are visually distinct and understandable without exposing internal/admin workflow density as the primary user experience.
 - Provider chooser/destination actions remain compliant, status-aware and externally disclosed.
 - Persisted chart pages expose provenance/freshness/metric semantics without presenting unavailable evidence as observed data.
 - Public routes retain stable canonical URLs and appropriate metadata/structured-data ownership.
@@ -175,7 +181,8 @@ The Stage 23 activation gate is satisfied:
 4. Accepted-main CI run `34624409179` passed on that merge SHA.
 5. Runtime repository state was re-resolved from `main`.
 6. Dedicated branch `stage-23-public-product-ux` was created from the accepted merge SHA.
-7. `stage-plan.json` advances to Stage 23.0 with exactly one active tranche: `23.0A`.
+7. Stage 23.0A was accepted by exact-head Auto Closure run `34628234776` on `e5dfc72e1b81753baa425bcdb5fb01f351b5899d`.
+8. `stage-plan.json` now exposes exactly one active tranche: `23.0B`.
 
 ## Verification ownership
 
@@ -193,16 +200,26 @@ Browser behavior remains owned by the existing browser-smoke lane. Do not add a 
 
 ## Tests and verification
 
-Focused evidence for 23.0A must prove:
+Accepted evidence for 23.0A proves:
 
-- homepage/discovery renders both populated and bounded empty canonical states without fabricated content;
+- homepage/discovery renders populated and bounded empty canonical states without fabricated content;
 - search preserves the existing query, type, sort and canonical application ownership;
 - search results expose entity type, verification state, context and canonical navigation without provider identity leakage;
 - mobile filtering remains operable without duplicating entity-filter ownership on the same results surface;
-- desktop and iPhone-sized browser smoke complete without console/runtime errors;
+- desktop and iPhone-sized browser smoke complete with production-built assets;
 - browser screenshots are captured for home, empty search, populated results and no-result states on desktop and mobile;
 - successful CI preserves those screenshots in a SHA-bound `ui-evidence-*` artifact;
 - generated projections remain PREPARE-owned and the exact-head tree is preserved through canonical closure.
+
+Focused evidence for 23.0B must prove:
+
+- representative canonical entity detail routes preserve stable URLs, SEO metadata and structured-data ownership;
+- shared detail architecture is reused across Artist/Group, Recording, Work, Release/Release Group, Version and Collection rather than copied per entity type;
+- canonical identity/facts/relationships, provenance/evidence and provider destinations remain separate concerns in the rendered hierarchy;
+- provider destination actions retain review/status/compliance semantics and external-provider disclosure;
+- missing identifiers, destinations, relationships or provenance render bounded empty/degraded states instead of fabricated values;
+- representative desktop and mobile entity screenshots are captured through the existing browser-smoke lane with production-built assets;
+- PostgreSQL, frontend build, browser smoke and canonical exact-head closure pass before 23.0B acceptance.
 
 Required verification remains owned by the existing entrypoints and CI topology:
 
