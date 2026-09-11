@@ -86,7 +86,7 @@ it('captures representative Stage 23 canonical entity detail evidence on desktop
     $group = visit('/groups/nirvana')
         ->assertSee('Nirvana')
         ->assertSee('Độ tin cậy dữ liệu')
-        ->assertSee('Nơi nghe / xem')
+        ->assertSee('Chọn nơi nghe')
         ->assertNoSmoke();
     $group->screenshot(filename: 'stage23-entity-group-desktop', fullPage: true);
 
@@ -104,7 +104,7 @@ it('captures representative Stage 23 canonical entity detail evidence on mobile'
         ->iPhone14Pro()
         ->assertSee('Nirvana')
         ->assertSee('Độ tin cậy dữ liệu')
-        ->assertSee('Nơi nghe / xem')
+        ->assertSee('Chọn nơi nghe')
         ->assertNoSmoke();
     $group->screenshot(filename: 'stage23-entity-group-mobile', fullPage: true);
 
