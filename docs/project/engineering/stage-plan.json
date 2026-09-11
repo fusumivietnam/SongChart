@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "22.3",
-  "active_tranche": "22.4B",
+  "active_tranche": "22.4C",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -38,6 +38,13 @@
       "effective_prepared_head": "f1777af86e60026a668f498256ef08cd0ac9c13f",
       "verification_run": 34500549519,
       "verification": "Auto Closure run 384 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote."
+    },
+    "22.4B": {
+      "title": "Impact-aware verification recommendations",
+      "source_head": "3f74d596f151567dec763bf1fdb75b3b66d708ce",
+      "effective_prepared_head": "3f74d596f151567dec763bf1fdb75b3b66d708ce",
+      "verification_run": 34502049368,
+      "verification": "Auto Closure run 391 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
     }
   },
   "stage_progress": [
@@ -53,7 +60,7 @@
     },
     {
       "id": "22.4B",
-      "status": "active",
+      "status": "accepted",
       "title": "Impact-aware verification recommendations",
       "goals": [
         "map the resolved repository change surface to the smallest registered verification set",
@@ -62,7 +69,7 @@
     },
     {
       "id": "22.4C",
-      "status": "planned",
+      "status": "active",
       "title": "Bounded agent handoff and resume workflows",
       "goals": [
         "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
@@ -80,7 +87,7 @@
       ]
     }
   ],
-  "next_tranche": "22.4B-impact-aware-verification-recommendations",
+  "next_tranche": "22.4C-bounded-agent-handoff-resume-workflows",
   "next_stage_outline": {
     "id": "23.0",
     "title": "Public Product UX",
