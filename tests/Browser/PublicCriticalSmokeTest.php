@@ -2,7 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Application\Chart\BuildChartSnapshot;
+use App\Domain\Chart\DTO\ChartMetricObservation;
 use App\Models\Catalog\Artist;
+use App\Models\Catalog\Recording;
+use App\Support\Chart\DatabaseChartSnapshotStore;
+use App\Support\Chart\YouTubeViewCountObservationSource;
+use DateTimeImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -16,6 +22,37 @@ function stage23PublicDiscoveryFixture(): void
         'artist_type' => 'group',
         'verification_state' => 'verified',
     ]);
+}
+
+function stage23PublicChartFixture(): void
+{
+    $recording = Recording::factory()->create([
+        'title' => 'Chart Evidence Song',
+        'slug' => 'chart-evidence-song',
+    ]);
+
+    $snapshot = (new BuildChartSnapshot)->handle(
+        'youtube-video-views',
+        YouTubeViewCountObservationSource::METRIC,
+        new DateTimeImmutable(),
+        [
+            new ChartMetricObservation(
+                'stage23-browser-chart-observation',
+                (string) $recording->getKey(),
+                'youtube',
+                'stage23-browser-video',
+                YouTubeViewCountObservationSource::METRIC,
+                123456,
+                new DateTimeImmutable('-5 minutes'),
+                YouTubeViewCountObservationSource::METRIC_UNIT,
+                YouTubeViewCountObservationSource::SEMANTICS_VERSION,
+                new DateTimeImmutable('-4 minutes'),
+                'youtube:videos.list:stage23-browser-video:statistics',
+            ),
+        ],
+    );
+
+    app(DatabaseChartSnapshotStore::class)->append($snapshot);
 }
 
 it('captures Stage 23 discovery and search visual evidence on desktop', function (): void {
@@ -116,4 +153,42 @@ it('captures representative Stage 23 canonical entity detail evidence on mobile'
         ->assertSee('Nguồn và provenance')
         ->assertNoSmoke();
     $recording->screenshot(filename: 'stage23-entity-recording-mobile', fullPage: true);
+});
+
+it('captures Stage 23 chart unavailable and persisted provenance evidence on desktop', function (): void {
+    $unavailable = visit('/charts/youtube-video-views')
+        ->assertSee('Chưa có đủ bằng chứng')
+        ->assertSee('Chưa thể công bố thứ hạng')
+        ->assertNoSmoke();
+    $unavailable->screenshot(filename: 'stage23-chart-unavailable-desktop', fullPage: true);
+
+    stage23PublicChartFixture();
+
+    $chart = visit('/charts/youtube-video-views')
+        ->assertSee('Chart Evidence Song')
+        ->assertSee('123.456')
+        ->assertSee('Nguồn và provenance')
+        ->assertNoSmoke();
+    $chart->screenshot(filename: 'stage23-chart-observed-desktop', fullPage: true);
+});
+
+it('captures Stage 23 chart unavailable and persisted provenance evidence on mobile', function (): void {
+    $unavailable = visit('/charts/youtube-video-views')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Chưa có đủ bằng chứng')
+        ->assertSee('Chưa thể công bố thứ hạng')
+        ->assertNoSmoke();
+    $unavailable->screenshot(filename: 'stage23-chart-unavailable-mobile', fullPage: true);
+
+    stage23PublicChartFixture();
+
+    $chart = visit('/charts/youtube-video-views')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Chart Evidence Song')
+        ->assertSee('123.456')
+        ->assertSee('Nguồn và provenance')
+        ->assertNoSmoke();
+    $chart->screenshot(filename: 'stage23-chart-observed-mobile', fullPage: true);
 });
