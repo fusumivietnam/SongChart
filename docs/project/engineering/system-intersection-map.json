@@ -1,0 +1,68 @@
+{
+  "schema_version": 5,
+  "purpose": "Machine-readable authority for critical end-to-end SongChart product-flow intersections.",
+  "status_values": ["verified", "partial", "missing", "unknown"],
+  "policy": {
+    "component_existence_is_not_flow_closure": true,
+    "critical_edges_require_verification": true,
+    "missing_edges_block_vertical_closure_acceptance": true,
+    "unknown_edges_must_be_zero_before_stage_22_1_closure": true,
+    "fabricated_chart_data_is_forbidden": true
+  },
+  "audit": {
+    "stage": "22.1E",
+    "result": "no_unknown_or_missing_critical_edges; youtube_metric_ingestion_and_bounded_chart_recompute_are_bound; remaining_partial_edges_are_explicit_stage_22_2_data_spine_work",
+    "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md"
+  },
+  "flows": {
+    "provider_to_canonical": {
+      "critical": true,
+      "edges": [
+        {"id":"provider.fetch_to_raw_observation","status":"partial","implementation":["app/Support/Providers"],"verification":"Production provider adapters and governed import paths exist, while a unified cross-provider observation ledger remains Stage 22.2 Data Spine work."},
+        {"id":"raw_observation_to_normalization","status":"partial","implementation":["app/Support/Providers/Normalization"],"verification":"Provider normalization exists for current catalog/provider entities; a unified observation contract across identity and metric data remains Stage 22.2 work."},
+        {"id":"normalization_to_identity_resolution","status":"partial","implementation":["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php"],"tests":["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php"],"verification":"Golden cases prove replay, ambiguity, provider conflict, same-name artist separation and remaster/version behavior; a generalized identity-evidence graph remains Stage 22.2 work."},
+        {"id":"identity_resolution_to_admission","status":"verified","implementation":["app/Application/Catalog/Admission/MaterializeProviderAdmissionEvidence.php","app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],"tests":["tests/Feature/Catalog/ProviderAdmissionIntegrationTest.php","tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]},
+        {"id":"admission_to_canonical_graph","status":"verified","implementation":["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php","app/Models/Catalog/RecordingVersion.php"],"tests":["tests/Feature/Catalog/GoldenProviderCanonicalFlowTest.php","tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]}
+      ]
+    },
+    "canonical_to_chart": {
+      "critical": true,
+      "edges": [
+        {"id":"canonical_entity_to_chart_input","status":"verified","implementation":["app/Domain/Chart/DTO/ChartMetricObservation.php","app/Support/Chart/YouTubeViewCountObservationSource.php"],"tests":["tests/Feature/Chart/YouTubeViewChartFlowTest.php","tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],"verification":"Approved public YouTube Recording destinations emit provider-neutral chart observations carrying canonical Recording identity."},
+        {"id":"provider_signal_to_metric_normalization","status":"verified","implementation":["app/Support/Chart/YouTubeViewCountObservationSource.php","app/Domain/Chart/DTO/ChartMetricObservation.php"],"tests":["tests/Feature/Chart/YouTubeViewChartFlowTest.php"],"verification":"YouTube videos.list statistics are normalized to youtube_video_view_count with unit views, explicit youtube-view-count-2026-08-24 semantics, source timestamps and source reference; cross-provider comparability/time-series storage remains Stage 22.2 work."},
+        {"id":"metric_normalization_to_ranking","status":"verified","implementation":["app/Application/Chart/BuildChartSnapshot.php"],"tests":["tests/Unit/Chart/ChartSnapshotProvenanceTest.php"],"verification":"For one explicitly comparable metric/semantics version, ranking is deterministic, calculation-versioned and canonically tie-broken."},
+        {"id":"ranking_to_chart_snapshot","status":"verified","implementation":["app/Domain/Chart/DTO/ChartSnapshot.php","app/Application/Chart/BuildChartSnapshot.php","app/Support/Chart/DatabaseChartSnapshotStore.php","database/migrations/2026_09_09_000100_create_chart_snapshots_table.php"],"tests":["tests/Unit/Chart/ChartSnapshotProvenanceTest.php","tests/Feature/Chart/ChartSnapshotPersistenceTest.php"],"verification":"Snapshot calculation is persisted idempotently by chart/version/input fingerprint; historical rows are stored as self-contained payload rather than mutated in place."},
+        {"id":"chart_snapshot_to_provenance","status":"verified","implementation":["app/Domain/Chart/DTO/ChartMetricObservation.php","app/Domain/Chart/DTO/ChartSnapshot.php","app/Support/Chart/DatabaseChartSnapshotStore.php"],"tests":["tests/Feature/Chart/ChartSnapshotPersistenceTest.php"],"verification":"Persisted snapshot retains calculation version, input fingerprint, canonical recording ids and provider observation provenance."}
+      ]
+    },
+    "canonical_chart_to_public": {
+      "critical": true,
+      "edges": [
+        {"id":"canonical_to_public_read_model","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php"]},
+        {"id":"chart_to_public_read_model","status":"verified","implementation":["app/Support/Chart/DatabaseChartSnapshotStore.php","app/Application/Chart/Queries/PublicChartProjection.php","app/Http/Controllers/PublicCatalog/ChartController.php","resources/views/charts/show.blade.php","routes/web.php"],"tests":["tests/Feature/Chart/PublicChartProjectionTest.php","tests/Feature/Chart/PublicChartRouteTest.php"],"verification":"Latest persisted chart rows resolve to the same canonical Recording identity/URL; a chart without a persisted snapshot returns 404 and does not fabricate data."},
+        {"id":"public_read_model_to_routes_views","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php","app/Http/Controllers/PublicCatalog/ChartController.php","routes/web.php"]},
+        {"id":"canonical_to_search","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php"]},
+        {"id":"public_entity_to_seo","status":"partial","implementation":["app/Support/Catalog/PublicEntityUrl.php","app/Application/Chart/Queries/PublicChartProjection.php","routes/web.php","docs/project/docs/URL_SEO.md"],"verification":"Chart rows use canonical Recording URLs; richer chart-page sitemap/metadata presentation belongs to the public product/UX tranche and does not block Stage 22.1 data correctness closure."}
+      ]
+    },
+    "editorial_correction_propagation": {
+      "critical": true,
+      "edges": [
+        {"id":"admin_decision_to_canonical_mutation","status":"verified","implementation":["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]},
+        {"id":"canonical_mutation_to_decision_provenance","status":"verified","implementation":["app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"]},
+        {"id":"canonical_mutation_to_semantic_change","status":"verified","implementation":["app/Domain/Catalog/Events/CanonicalEntityChanged.php","app/Application/Catalog/Admission/GovernedCanonicalAdmissionService.php"],"tests":["tests/Feature/Catalog/GovernedCanonicalAdmissionTest.php"]},
+        {"id":"canonical_mutation_to_reprojection","status":"verified","implementation":["app/Application/Discovery/Listeners/RebuildDiscoveryAfterCanonicalChange.php","app/Jobs/Discovery/BuildDiscoveryProjection.php","app/Providers/AppServiceProvider.php"],"tests":["tests/Feature/Discovery/CanonicalChangeReprojectionTest.php"],"verification":"Only active Discovery channels matching the changed canonical entity type are queued."},
+        {"id":"canonical_mutation_to_chart_recompute","status":"verified","implementation":["app/Application/Chart/Listeners/RefreshChartAfterCanonicalChange.php","app/Jobs/Chart/RefreshYouTubeViewChartJob.php","app/Application/Chart/RefreshYouTubeViewChart.php","app/Providers/AppServiceProvider.php"],"tests":["tests/Feature/Discovery/CanonicalChangeReprojectionTest.php","tests/Feature/Chart/YouTubeViewChartFlowTest.php"],"verification":"Recording semantic changes dispatch a bounded unique YouTube chart refresh when the provider is enabled; generalized chart-definition dependency selection remains Stage 22.2 Data Spine work."},
+        {"id":"canonical_mutation_to_search_refresh","status":"verified","implementation":["app/Support/Search/EloquentSearchCatalog.php"],"verification":"Search is a bounded direct canonical database read; no artificial reindex layer is required."}
+      ]
+    },
+    "source_to_release": {
+      "critical": true,
+      "edges": [
+        {"id":"source_to_candidate","status":"verified","verification":"existing candidate/release authority"},
+        {"id":"candidate_to_canonical_verification","status":"verified","verification":"existing canonical verification authority"},
+        {"id":"canonical_verification_to_package","status":"verified","verification":"existing release baseline/provenance gates"}
+      ]
+    }
+  }
+}

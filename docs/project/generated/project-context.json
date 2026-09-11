@@ -1,9 +1,9 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "74dc9b3653cea969fc51f62addf8fdbe47b9b5ca5d2425b2bd7f760dd59a6841",
+    "source_fingerprint": "5dd50cc4170b60a8d4e4780028a6d9d8051a0f43b2fd2b1000f9d8cba26ae0cb",
     "candidate": {
-        "stage": "21.0",
+        "stage": "22.4",
         "candidate": "v1",
         "informational_not_fingerprinted": true
     },
@@ -182,6 +182,40 @@
                     "applied_at"
                 ],
                 "owner": "operational-contracts"
+            },
+            "chart_metric_observations": {
+                "migration": "2026_09_09_000200_create_chart_metric_observations_table.php",
+                "columns": [
+                    "id",
+                    "observation_id",
+                    "canonical_recording_id",
+                    "provider",
+                    "provider_item_id",
+                    "metric",
+                    "metric_unit",
+                    "metric_semantics_version",
+                    "value",
+                    "value_kind",
+                    "observed_at",
+                    "fetched_at",
+                    "source_reference"
+                ],
+                "owner": "domain-contracts"
+            },
+            "chart_snapshots": {
+                "migration": "2026_09_09_000100_create_chart_snapshots_table.php",
+                "columns": [
+                    "id",
+                    "chart_key",
+                    "metric",
+                    "calculation_version",
+                    "input_fingerprint",
+                    "snapshot_at",
+                    "payload",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "domain-contracts"
             },
             "collection_items": {
                 "migration": "2026_08_04_000100_create_canonical_catalog_tables.php",
@@ -1046,10 +1080,12 @@
         "database/migrations/2026_08_26_000100_create_canonical_admission_decisions_table.php": "faa967c798f821519f854f8545cc35c554ed7810eb6bb5c49a60cf342ab93c5b",
         "database/migrations/2026_08_27_000100_create_provider_credentials_table.php": "10346e2aa9eacd8880d31ecb478126681e099f1ca04c80444e57df961015110b",
         "database/migrations/2026_09_07_000100_add_public_read_indexes_to_entity_relationships.php": "5eb7023e7985c67e200d7ee103b4f622ed08df764ed231f8e44d863610acd41b",
+        "database/migrations/2026_09_09_000100_create_chart_snapshots_table.php": "91b0db0abc04fe0e7ebdaebc9763bd53333a54f13c8aa2aaa2b544745d7a17e4",
+        "database/migrations/2026_09_09_000200_create_chart_metric_observations_table.php": "b3be48a4d1dedaa571bc7342eff02b7406beb8025652c38ca9bc2e7197ee924a",
         "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
         "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
         "database/seeders/ProviderRegistrySeeder.php": "1337fd46a76721466ed147b24e808cb0b632dc45fbcbaa742b79c8d699e684d3",
-        "docs/project/domain/schema-ownership.json": "61e2251e139d3ad41a56a675752cb0eb7249b00fae54a31ba5f5050973063f2b",
+        "docs/project/domain/schema-ownership.json": "59092803cc4d47c7340014047f5ea118ced362e6a6e999d810dc4b36ccf6014e",
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "b0278efd3ac42af6e2ef1952d384f743a830ea6b478a0e7ec37f5744ea2b8792",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
         "docs/project/engineering/ai-development-contract.json": "ce79b069eaada91dafe01db5fff59c6b07fcc419bd5af3a8c21a07c1c9fb1a14",

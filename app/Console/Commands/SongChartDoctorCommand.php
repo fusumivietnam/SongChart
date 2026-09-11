@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Support\DomainContracts\PolymorphicReferenceIntegrity;
 use App\Support\Engineering\RepositoryContractResolver;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ final class SongChartDoctorCommand extends Command
 {
     protected $signature = 'songchart:doctor {--strict : Return failure when a required runtime check fails} {--contract= : Explain one executable repository authority and its registered consumers}';
 
-    protected $description = 'Inspect SongChart runtime, package, database and queue readiness without mutating application state.';
+    protected $description = 'Inspect SongChart runtime, package, database, queue and canonical-reference readiness without mutating application state.';
 
     public function handle(): int
     {
@@ -70,6 +71,18 @@ final class SongChartDoctorCommand extends Command
             );
         } catch (Throwable $exception) {
             $checks[] = $this->check('PostgreSQL', $exception->getMessage(), false);
+        }
+
+        try {
+            $integrity = app(PolymorphicReferenceIntegrity::class)->scan();
+            $failureCount = count($integrity['failures']);
+            $checks[] = $this->check(
+                'Canonical polymorphic references',
+                sprintf('checked %d; failures %d', $integrity['checked'], $failureCount),
+                $failureCount === 0,
+            );
+        } catch (Throwable $exception) {
+            $checks[] = $this->check('Canonical polymorphic references', $exception->getMessage(), false);
         }
 
         $queue = (string) config('queue.default');

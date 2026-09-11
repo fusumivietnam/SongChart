@@ -6,11 +6,13 @@ use App\Application\Catalog\Admission\GovernedCanonicalAdmissionService;
 use App\Domain\Catalog\Enums\CanonicalAdmissionStatus;
 use App\Domain\Catalog\Enums\EntityType;
 use App\Domain\Catalog\Enums\VerificationState;
+use App\Domain\Catalog\Events\CanonicalEntityChanged;
 use App\Models\Catalog\Artist;
 use App\Models\Catalog\MetadataAssertion;
 use App\Models\Catalog\MetadataSource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 
 uses(RefreshDatabase::class);
 
@@ -45,7 +47,9 @@ it('stages evidence without mutating canonical data', function (): void {
         ->and($assertion->refresh()->verification_state)->toBe(VerificationState::Candidate);
 });
 
-it('applies an approved scalar assertion atomically to a fillable canonical field', function (): void {
+it('applies an approved scalar assertion atomically and emits one semantic canonical change', function (): void {
+    Event::fake([CanonicalEntityChanged::class]);
+
     $artist = Artist::factory()->create(['name' => 'Before']);
     $reviewer = User::factory()->create();
     $assertion = canonicalAdmissionAssertion($artist, 'name', 'After');
@@ -59,6 +63,11 @@ it('applies an approved scalar assertion atomically to a fillable canonical fiel
         ->and($applied->reviewer_id)->toBe((string) $reviewer->getKey())
         ->and($artist->refresh()->name)->toBe('After')
         ->and($assertion->refresh()->verification_state)->toBe(VerificationState::Verified);
+
+    Event::assertDispatched(CanonicalEntityChanged::class, fn (CanonicalEntityChanged $event): bool => $event->entityType === EntityType::Artist
+        && $event->entityId === (string) $artist->getKey()
+        && $event->fieldName === 'name'
+    );
 });
 
 it('rejects evidence without changing canonical data', function (): void {

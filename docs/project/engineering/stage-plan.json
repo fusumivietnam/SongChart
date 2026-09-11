@@ -1,36 +1,127 @@
 {
-  "schema_version": 2,
+  "schema_version": 11,
   "current_stage": {
-    "id": "21.0",
-    "title": "Editorial Admin UX",
-    "task_contract": "docs/foundation/STAGE_21_0_TASK_CONTRACT.md",
+    "id": "22.4",
+    "title": "Vibe Coding Operations",
+    "task_contract": "docs/foundation/STAGE_22_4_TASK_CONTRACT.md",
     "status": "accepted"
   },
-  "accepted_through": "21.0",
+  "accepted_through": "22.4",
   "active_tranche": null,
+  "accepted_stage_evidence": {
+    "22.1": {
+      "title": "System Intersection Map + Golden Vertical Contract",
+      "source_head": "fb64fe52e0f4afffff08804e4c0e20951a9d244c",
+      "effective_prepared_head": "4d9d22969caa2dfd4d92f42ccfe27015c4644474",
+      "verification": "Auto Closure run 300 passed PREPARE, PostgreSQL, browser smoke, frontend build, failure classification, canonical CLOSE and ready-to-promote.",
+      "external_runtime_gate": "Live YouTube chart activation still requires accepted policy/quota, governed credentials and at least one approved public canonical destination; this does not reopen Stage 22.1 source closure."
+    },
+    "22.2": {
+      "title": "Data Spine Closure",
+      "source_head": "0477dfe0a4a32ceb18aa743bf94d4ed4867f01ec",
+      "verification_run": 34300166642,
+      "verification": "Auto Closure run 330 passed PREPARE/QUALITY, PostgreSQL, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head.",
+      "external_runtime_gate": "Live YouTube chart activation remains an environment/credential gate only and does not reopen Stage 22.2 source closure."
+    },
+    "22.3": {
+      "title": "AI-ready Control Plane",
+      "source_head": "bc17d5e0d05a2f1d40ed7ebbc124bc837dbd6c39",
+      "verification_run": 34421739826,
+      "verification": "Auto Closure run 377 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head.",
+      "owner_acceptance": "Accepted by the repository owner on 2026-09-10 after exact-head closure evidence was reviewed."
+    },
+    "22.4": {
+      "title": "Vibe Coding Operations",
+      "source_head": "2f2d4a5a52a4857328be44dd7351f4b80e2ac4c1",
+      "effective_prepared_head": "2051c9151693981a590c00e41438feb13abfb238",
+      "verification_run": 34547026250,
+      "verification": "Auto Closure run 403 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the effective prepared head."
+    }
+  },
+  "accepted_tranche_evidence": {
+    "22.4A": {
+      "title": "Task-oriented coding operation bundles",
+      "source_head": "e882604c9d9f41941229fea714c3601abacaeb10",
+      "effective_prepared_head": "f1777af86e60026a668f498256ef08cd0ac9c13f",
+      "verification_run": 34500549519,
+      "verification": "Auto Closure run 384 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote."
+    },
+    "22.4B": {
+      "title": "Impact-aware verification recommendations",
+      "source_head": "3f74d596f151567dec763bf1fdb75b3b66d708ce",
+      "effective_prepared_head": "3f74d596f151567dec763bf1fdb75b3b66d708ce",
+      "verification_run": 34502049368,
+      "verification": "Auto Closure run 391 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
+    },
+    "22.4C": {
+      "title": "Bounded agent handoff and resume workflows",
+      "source_head": "c3a3842534c080bc61fbe70882ec0262b5170a2c",
+      "effective_prepared_head": "c3a3842534c080bc61fbe70882ec0262b5170a2c",
+      "verification_run": 34546388596,
+      "verification": "Auto Closure run 397 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
+    },
+    "22.4D": {
+      "title": "Human-gated repository operation automation",
+      "source_head": "2f2d4a5a52a4857328be44dd7351f4b80e2ac4c1",
+      "effective_prepared_head": "2051c9151693981a590c00e41438feb13abfb238",
+      "verification_run": 34547026250,
+      "verification": "Auto Closure run 403 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the effective prepared head."
+    }
+  },
   "stage_progress": [
     {
-      "id": "21.0A",
+      "id": "22.4A",
       "status": "accepted",
-      "title": "Admission queue information hierarchy"
+      "title": "Task-oriented coding operation bundles",
+      "goals": [
+        "compose existing orientation, impact, focused verification and closure entrypoints into bounded task-oriented operation bundles",
+        "derive commands and provenance from existing stage and verification authorities rather than hard-coding a parallel workflow",
+        "keep every repository mutation and promotion action explicitly human-governed"
+      ]
     },
     {
-      "id": "21.0B",
+      "id": "22.4B",
       "status": "accepted",
-      "title": "Decision safety and review context"
+      "title": "Impact-aware verification recommendations",
+      "goals": [
+        "map the resolved repository change surface to the smallest registered verification set",
+        "preserve semantic ownership in verification topology and avoid duplicate test orchestration"
+      ]
     },
     {
-      "id": "21.0C",
+      "id": "22.4C",
       "status": "accepted",
-      "title": "Editorial navigation and accessibility"
+      "title": "Bounded agent handoff and resume workflows",
+      "goals": [
+        "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
+        "surface stale or unresolved live GitHub evidence instead of inventing continuity"
+      ]
     },
     {
-      "id": "21.0D",
+      "id": "22.4D",
       "status": "accepted",
-      "title": "Stage acceptance and closure"
+      "title": "Human-gated repository operation automation",
+      "goals": [
+        "compose safe repository operation plans over existing command owners",
+        "require explicit human approval for write-capable execution",
+        "close Stage 22.4 through exact-head Auto Closure"
+      ]
     }
   ],
   "next_tranche": null,
+  "next_stage_outline": {
+    "id": "23.0",
+    "title": "Public Product UX",
+    "priority": "consume accepted Stage 22 data/provenance/control-plane contracts to improve public discovery, entity and chart experiences without inventing ranking semantics",
+    "planned_capabilities": [
+      "public discovery and search UX",
+      "artist, recording, work and release experience",
+      "persisted chart presentation and provenance UX",
+      "mobile-first public product refinement"
+    ],
+    "activation_gate": "Merge the accepted Stage 22 umbrella pull request into main, resolve accepted-main CI for the merge SHA, then create/resume a dedicated Stage 23 work lease before source implementation."
+  },
+  "blocker_report": "docs/foundation/STAGE_22_BLOCKER_REPORT.md",
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
     "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."

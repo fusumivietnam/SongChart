@@ -1,34 +1,52 @@
 {
-    "schema_version": 1,
+    "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "d1aa2b94fd68c742fc64c56a7c8b2f4a0f5b51a25a4e3c4d7ccdea99ba7f2da8",
+    "source_fingerprint": "38e56644d797893ccde764fd0546d8987ef82fd65acfd1f1d16d724535a5e9be",
     "current_stage": {
-        "id": "21.0",
-        "title": "Editorial Admin UX",
-        "task_contract": "docs/foundation/STAGE_21_0_TASK_CONTRACT.md",
+        "id": "22.4",
+        "title": "Vibe Coding Operations",
+        "task_contract": "docs/foundation/STAGE_22_4_TASK_CONTRACT.md",
         "status": "accepted"
     },
-    "accepted_through": "21.0",
+    "accepted_through": "22.4",
     "stage_progress": [
         {
-            "id": "21.0A",
+            "id": "22.4A",
             "status": "accepted",
-            "title": "Admission queue information hierarchy"
+            "title": "Task-oriented coding operation bundles",
+            "goals": [
+                "compose existing orientation, impact, focused verification and closure entrypoints into bounded task-oriented operation bundles",
+                "derive commands and provenance from existing stage and verification authorities rather than hard-coding a parallel workflow",
+                "keep every repository mutation and promotion action explicitly human-governed"
+            ]
         },
         {
-            "id": "21.0B",
+            "id": "22.4B",
             "status": "accepted",
-            "title": "Decision safety and review context"
+            "title": "Impact-aware verification recommendations",
+            "goals": [
+                "map the resolved repository change surface to the smallest registered verification set",
+                "preserve semantic ownership in verification topology and avoid duplicate test orchestration"
+            ]
         },
         {
-            "id": "21.0C",
+            "id": "22.4C",
             "status": "accepted",
-            "title": "Editorial navigation and accessibility"
+            "title": "Bounded agent handoff and resume workflows",
+            "goals": [
+                "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
+                "surface stale or unresolved live GitHub evidence instead of inventing continuity"
+            ]
         },
         {
-            "id": "21.0D",
+            "id": "22.4D",
             "status": "accepted",
-            "title": "Stage acceptance and closure"
+            "title": "Human-gated repository operation automation",
+            "goals": [
+                "compose safe repository operation plans over existing command owners",
+                "require explicit human approval for write-capable execution",
+                "close Stage 22.4 through exact-head Auto Closure"
+            ]
         }
     ],
     "next_tranche": null,
@@ -37,9 +55,9 @@
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "1aeda9916b4427ef177a018453d9acf2dfa6de0b36b1ca12a4844e75b822bd9c",
+        "candidate-verification.json": "fe0bf1fcaba8ec2058b0cc333a7c8106b2bff9112630df2efc0f5f58d5957c3c",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "5f68285bbc25d2e46281e78faa7e632b7cd414d476d2a60cca10b69167085b9b"
+        "docs/project/engineering/stage-plan.json": "5f148bb5bb05c77b9b45494fb759d54b51a22e0d0a7cca965bb23b09f6a4fba7"
     }
 }

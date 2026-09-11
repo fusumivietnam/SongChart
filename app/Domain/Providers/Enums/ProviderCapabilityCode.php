@@ -14,6 +14,7 @@ enum ProviderCapabilityCode: string
     case CatalogEnrichment = 'catalog.enrichment';
     case MediaSearch = 'media.search';
     case MediaInspect = 'media.inspect';
+    case MediaStatistics = 'media.statistics';
     case MediaEmbed = 'media.embed';
     case MediaOutbound = 'media.outbound';
     case AnalyticsEvents = 'analytics.events';

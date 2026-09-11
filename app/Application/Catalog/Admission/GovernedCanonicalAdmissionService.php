@@ -7,6 +7,7 @@ namespace App\Application\Catalog\Admission;
 use App\Domain\Catalog\Enums\CanonicalAdmissionStatus;
 use App\Domain\Catalog\Enums\EntityType;
 use App\Domain\Catalog\Enums\VerificationState;
+use App\Domain\Catalog\Events\CanonicalEntityChanged;
 use App\Models\Catalog\CanonicalAdmissionDecision;
 use App\Models\Catalog\MetadataAssertion;
 use App\Models\User;
@@ -37,7 +38,7 @@ final class GovernedCanonicalAdmissionService
 
     public function apply(CanonicalAdmissionDecision $decision, User $reviewer, string $reason): CanonicalAdmissionDecision
     {
-        return DB::transaction(function () use ($decision, $reviewer, $reason): CanonicalAdmissionDecision {
+        $changed = DB::transaction(function () use ($decision, $reviewer, $reason): array {
             /** @var CanonicalAdmissionDecision $locked */
             $locked = CanonicalAdmissionDecision::query()->lockForUpdate()->findOrFail($decision->getKey());
             $this->assertPending($locked);
@@ -76,8 +77,21 @@ final class GovernedCanonicalAdmissionService
                 'applied_at' => now(),
             ])->save();
 
-            return $locked->refresh();
+            return [
+                'decision' => $locked->refresh(),
+                'entity_type' => $entityType,
+                'entity_id' => (string) $entity->getKey(),
+                'field_name' => $field,
+            ];
         });
+
+        event(new CanonicalEntityChanged(
+            $changed['entity_type'],
+            $changed['entity_id'],
+            $changed['field_name'],
+        ));
+
+        return $changed['decision'];
     }
 
     public function reject(CanonicalAdmissionDecision $decision, User $reviewer, string $reason): CanonicalAdmissionDecision

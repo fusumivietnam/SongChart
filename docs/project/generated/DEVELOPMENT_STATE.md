@@ -4,21 +4,21 @@
 
 ## Current stage
 
-- Stage `21.0 — Editorial Admin UX`
+- Stage `22.4 — Vibe Coding Operations`
 - Status: `accepted`
-- Accepted through: `21.0`
-- Task contract: `docs/foundation/STAGE_21_0_TASK_CONTRACT.md`
+- Accepted through: `22.4`
+- Task contract: `docs/foundation/STAGE_22_4_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `21.0A` — `ACCEPTED` — Admission queue information hierarchy
-- `21.0B` — `ACCEPTED` — Decision safety and review context
-- `21.0C` — `ACCEPTED` — Editorial navigation and accessibility
-- `21.0D` — `ACCEPTED` — Stage acceptance and closure
+- `22.4A` — `ACCEPTED` — Task-oriented coding operation bundles
+- `22.4B` — `ACCEPTED` — Impact-aware verification recommendations
+- `22.4C` — `ACCEPTED` — Bounded agent handoff and resume workflows
+- `22.4D` — `ACCEPTED` — Human-gated repository operation automation
 
 ## Next bounded tranche
 
-- `unknown` — unknown
+- `unknown`
 
 ## Live work lease
 

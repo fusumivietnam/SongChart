@@ -47,6 +47,8 @@ This index lists active documentation ownership. Legacy stage records are migrat
 - `docs/project/engineering/project-knowledge.json`
 - `docs/project/engineering/project-kernel-contract.json`
 - `docs/project/engineering/architecture-graph-contract.json`
+- `docs/project/engineering/system-intersection-map.json`
+- `docs/project/engineering/golden-flow-contract.json`
 - `docs/project/engineering/documentation-consolidation-contract.json`
 - `docs/project/engineering/recheck-policy.json`
 - `docs/project/engineering/verification-topology.json`
@@ -69,6 +71,7 @@ This index lists active documentation ownership. Legacy stage records are migrat
 ## Module authorities
 
 - `docs/providers/` — provider behavior/compliance.
+- `docs/chart/YOUTUBE_VIEW_COUNT_CONTRACT.md` — Stage 22 YouTube view-count metric semantics, provenance and activation policy.
 - `docs/operations/` — operational integrations/procedures.
 - `docs/extensions/` — extension lifecycle.
 - `docs/ui/` — public/admin design contracts.

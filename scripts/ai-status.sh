@@ -3,8 +3,27 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-if [[ "${1:-}" == '--json' ]]; then
-  exec php "$ROOT/scripts/project-state.php" --json
+json_mode=false
+runtime_mode=false
+for arg in "$@"; do
+  case "$arg" in
+    --json) json_mode=true ;;
+    --runtime) runtime_mode=true ;;
+    *) printf 'Unknown ai status option: %s\n' "$arg" >&2; exit 2 ;;
+  esac
+done
+
+if [[ "$runtime_mode" == true ]]; then
+  if [[ "$json_mode" != true ]]; then
+    printf '%s\n' 'Runtime status is machine-readable only; use ./songchart ai status --json --runtime.' >&2
+    exit 2
+  fi
+
+  exec php "$ROOT/scripts/ai-runtime-status.php"
+fi
+
+if [[ "$json_mode" == true ]]; then
+  exec php "$ROOT/scripts/ai-operation-plan-status.php"
 fi
 
 php "$ROOT/scripts/project-state.php"
