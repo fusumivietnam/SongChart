@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "22.3",
-  "active_tranche": "22.4C",
+  "active_tranche": "22.4D",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -45,6 +45,13 @@
       "effective_prepared_head": "3f74d596f151567dec763bf1fdb75b3b66d708ce",
       "verification_run": 34502049368,
       "verification": "Auto Closure run 391 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
+    },
+    "22.4C": {
+      "title": "Bounded agent handoff and resume workflows",
+      "source_head": "c3a3842534c080bc61fbe70882ec0262b5170a2c",
+      "effective_prepared_head": "c3a3842534c080bc61fbe70882ec0262b5170a2c",
+      "verification_run": 34546388596,
+      "verification": "Auto Closure run 397 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
     }
   },
   "stage_progress": [
@@ -69,7 +76,7 @@
     },
     {
       "id": "22.4C",
-      "status": "active",
+      "status": "accepted",
       "title": "Bounded agent handoff and resume workflows",
       "goals": [
         "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
@@ -78,7 +85,7 @@
     },
     {
       "id": "22.4D",
-      "status": "planned",
+      "status": "active",
       "title": "Human-gated repository operation automation",
       "goals": [
         "compose safe repository operation plans over existing command owners",
@@ -87,7 +94,7 @@
       ]
     }
   ],
-  "next_tranche": "22.4C-bounded-agent-handoff-resume-workflows",
+  "next_tranche": "22.4D-human-gated-repository-operation-automation",
   "next_stage_outline": {
     "id": "23.0",
     "title": "Public Product UX",
