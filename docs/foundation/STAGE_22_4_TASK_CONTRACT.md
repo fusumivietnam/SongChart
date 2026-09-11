@@ -2,7 +2,7 @@
 
 ## Status
 
-Active. Tranche 22.4A is accepted; tranche 22.4B owns the current bounded implementation. 22.4A closed through SongChart Auto Closure run 384: PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote all passed. The source head was `e882604c9d9f41941229fea714c3601abacaeb10` and PREPARE produced effective exact head `f1777af86e60026a668f498256ef08cd0ac9c13f`.
+Active. Tranches 22.4A and 22.4B are accepted; tranche 22.4C owns the current bounded implementation. 22.4A closed through SongChart Auto Closure run 384. 22.4B closed through Auto Closure run 391 on exact source head `3f74d596f151567dec763bf1fdb75b3b66d708ce`; PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote all passed.
 
 ## Goal
 
@@ -21,7 +21,7 @@ Status: accepted.
 
 ### 22.4B — Impact-aware verification recommendations
 
-Status: active.
+Status: accepted.
 
 - Map the resolved actual repository change surface to the existing impact resolver output.
 - Expose the resolved focused-check evidence without independently executing child checks.
@@ -30,11 +30,13 @@ Status: active.
 
 ### 22.4C — Bounded agent handoff and resume workflows
 
-Status: planned.
+Status: active.
 
-- Convert deterministic handoff evidence into explicit resume workflows.
-- Keep live PR/workflow facts as runtime resolutions rather than persisted authored state.
-- Keep chat memory advisory only.
+- Convert deterministic handoff evidence into an explicit, machine-readable resume workflow.
+- Reuse handoff branch/head/working-tree facts, authored stage/tranche/task-contract authority and registered read-only command surfaces.
+- Surface live PR and workflow resolution as required runtime steps instead of persisting volatile GitHub facts.
+- Mark continuity as blocked/degraded when repository state is not safe to resume rather than inventing a prior-session state.
+- Keep chat memory advisory only and all repository writes human-gated.
 
 ### 22.4D — Human-gated repository operation automation
 
@@ -50,10 +52,14 @@ Status: planned.
 - The AI status JSON exposes bounded impact-aware verification evidence for the actual diff when a diff exists.
 - Resolved checks come from `scripts/resolve-repository-impact.php`; no second impact matcher is introduced.
 - The only focused execution recommendation is the registered `songchart impact --verify` entrypoint; child-check collapse remains owned by `scripts/run-impact-verification.sh`.
-- No bundle or recommendation grants autonomous repository or production mutation.
+- The AI status JSON exposes a bounded `resume_workflow` composed from deterministic handoff evidence, authored stage authority and registered read-only command surfaces.
+- Resume workflow state never treats chat memory as authority and never persists live PR/workflow facts into authored progress.
+- Resume workflow requires live PR and exact-head workflow resolution before repository mutation or acceptance claims.
+- Dirty, divergent or unresolved repository continuity is surfaced explicitly rather than silently accepted.
+- No bundle, recommendation or resume workflow grants autonomous repository or production mutation.
 - Missing stage goals or required verification authorities fail closed; absence of a change surface is reported as not applicable rather than fabricated.
-- Existing Stage 22.3 context/runtime/handoff/guidance and Stage 22.4A operation-bundle outputs remain compatible.
-- Focused regression coverage proves provenance, deduplication ownership and secret exclusion.
+- Existing Stage 22.3 context/runtime/handoff/guidance and Stage 22.4A/22.4B outputs remain compatible.
+- Focused regression coverage proves provenance, deduplication ownership, resume boundaries and secret exclusion.
 - Generated projections remain PREPARE-owned.
 - Each accepted tranche requires exact-head Auto Closure evidence before stage authority advances.
 
@@ -83,7 +89,7 @@ No new external API, package, provider schema or model runtime is introduced by 
 
 ### Native capability assessment
 
-Laravel Console, Symfony Process, Git, `./songchart`, Stage 22.3 control-plane scripts, `scripts/resolve-repository-impact.php`, `scripts/run-impact-verification.sh`, the impact-test map and verification topology/command-surface contracts already provide the primitives required for 22.4A and 22.4B. A new CLI framework, agent framework, workflow engine, impact matcher or verifier would duplicate accepted ownership and is rejected.
+Laravel Console, Symfony Process, Git, `./songchart`, Stage 22.3 control-plane scripts, `scripts/resolve-repository-impact.php`, `scripts/run-impact-verification.sh`, the impact-test map and verification topology/command-surface contracts already provide the primitives required for 22.4A–22.4C. A new CLI framework, agent framework, workflow engine, impact matcher, handoff database or verifier would duplicate accepted ownership and is rejected.
 
 ### Custom implementation justification
 
@@ -93,7 +99,7 @@ A narrow SongChart-specific projection is required because generic tooling does 
 
 | Surface | Envelope | Tracked mutation |
 |---|---|---|
-| `./songchart ai status --json` | read-only orientation, handoff, guidance, operation bundles and impact recommendations | none |
+| `./songchart ai status --json` | read-only orientation, handoff, guidance, operation bundles, impact recommendations and resume workflow | none |
 | `./songchart ai status --json --runtime` | read-only status plus bounded runtime probes | none |
 | `./songchart impact --diff` | read-only actual-diff resolution | none |
 | `./songchart impact --verify` | focused verification orchestration | none expected from the verified source tree |
@@ -111,6 +117,12 @@ Impact-aware guidance may invoke the existing resolver in read-only `--diff --js
 
 If the resolver cannot establish an actual change surface, the recommendation is `not_applicable`. If a change surface resolves but the registered focused public entrypoint is absent, guidance fails closed as `blocked`.
 
+## 22.4C implementation boundary
+
+The resume workflow must be projection-only. It consumes the existing `control_plane.handoff` object plus authored stage authority and registered development/focused/closure entrypoints. It may describe read-only resume steps such as orientation, live PR resolution, exact-head workflow resolution and impact verification, but must not perform network mutation, source mutation, merge, release or production writes.
+
+Live PR and workflow values remain runtime-resolved facts. The authored stage plan may record accepted exact-head evidence only after closure; it must not become a cache of volatile current PR state. Chat history and model memory are never continuity authority.
+
 ## Tests and verification
 
 Focused evidence must prove:
@@ -119,9 +131,11 @@ Focused evidence must prove:
 - active stage/tranche context comes from the authored stage plan;
 - impact evidence comes from the existing actual-diff resolver;
 - the recommendation delegates execution to `songchart impact --verify` / `scripts/run-impact-verification.sh` instead of exposing a duplicate execution plan;
+- resume workflow branch/head/stage/tranche/task-contract facts are inherited from existing handoff/stage authority;
+- live PR/workflow resolution remains explicitly required and is not fabricated or persisted as authored state;
 - resolver/impact-map/execution-owner provenance is explicit;
 - secrets and raw sensitive command output are excluded;
-- Stage 22.3 and 22.4A control-plane fields remain present.
+- Stage 22.3 and 22.4A/22.4B control-plane fields remain present.
 
 Required closure remains owned by existing entrypoints:
 
@@ -143,6 +157,8 @@ Exact-current-head Auto Closure must pass before tranche acceptance.
 - New MCP runtime.
 - Duplicate impact matcher, verifier or test harness.
 - Independent execution of resolver child checks from the AI projection.
+- Persisted chat/session memory as repository continuity authority.
+- Persisted volatile PR/workflow state in authored stage authority.
 - New provider, chart or canonical identity semantics.
 - Stage 23 public UX work.
 
