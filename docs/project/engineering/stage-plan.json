@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "22.4",
-  "active_tranche": "23.0A",
+  "active_tranche": "23.0B",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -66,12 +66,19 @@
       "effective_prepared_head": "2051c9151693981a590c00e41438feb13abfb238",
       "verification_run": 34547026250,
       "verification": "Auto Closure run 403 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the effective prepared head."
+    },
+    "23.0A": {
+      "title": "Discovery and search product shell",
+      "source_head": "e5dfc72e1b81753baa425bcdb5fb01f351b5899d",
+      "effective_prepared_head": "e5dfc72e1b81753baa425bcdb5fb01f351b5899d",
+      "verification_run": 34628234776,
+      "verification": "Auto Closure run 426 passed PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke with SHA-bound visual evidence, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
     }
   },
   "stage_progress": [
     {
       "id": "23.0A",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Discovery and search product shell",
       "goals": [
         "align homepage discovery and search results with the approved search-first information hierarchy",
@@ -82,7 +89,7 @@
     },
     {
       "id": "23.0B",
-      "status": "planned",
+      "status": "implementing",
       "title": "Canonical entity detail experience",
       "goals": [
         "refine canonical entity detail around shared identity, facts, relationships, provenance and provider destinations",
@@ -109,8 +116,8 @@
     }
   ],
   "next_tranche": {
-    "id": "23.0B",
-    "title": "Canonical entity detail experience"
+    "id": "23.0C",
+    "title": "Persisted chart and provenance UX"
   },
   "next_stage_outline": null,
   "activation_evidence": {
