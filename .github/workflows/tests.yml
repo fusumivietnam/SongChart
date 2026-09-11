@@ -252,6 +252,14 @@ jobs:
         run: php artisan migrate --force --no-interaction
       - name: Run desktop/mobile browser smoke
         run: vendor/bin/pest tests/Browser --compact
+      - name: Preserve Stage 23 visual review evidence
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ui-evidence-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
+          path: tests/Browser/Screenshots/stage23-*
+          if-no-files-found: error
+          retention-days: 14
       - name: Preserve browser diagnostics
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
