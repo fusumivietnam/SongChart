@@ -17,8 +17,8 @@ it('exposes a projection-only repository operation plan with explicit human writ
 
     expect(in_array($plan['status'], ['ready_for_human_review', 'blocked'], true))->toBeTrue()
         ->and($plan['source'])->toBe('control_plane.operation_bundles + control_plane.resume_workflow')
-        ->and($plan['stage'])->toBe('22.4')
-        ->and($plan['active_tranche'])->toBeNull()
+        ->and($plan['stage'])->toBe('23.0')
+        ->and($plan['active_tranche'])->toBe('23.0A')
         ->and($plan['branch'])->toBe($resume['branch'])
         ->and($plan['head_sha'])->toBe($resume['head_sha'])
         ->and($plan['human_approval_required_for_writes'])->toBeTrue()
@@ -49,7 +49,7 @@ it('exposes a projection-only repository operation plan with explicit human writ
 });
 
 it('does not leak secrets through the repository operation plan', function (): void {
-    $secret = 'songchart-stage-22-4-operation-plan-secret';
+    $secret = 'songchart-stage-23-operation-plan-secret';
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path(), [
         'DB_PASSWORD' => $secret,
         'YOUTUBE_API_KEY' => $secret,
