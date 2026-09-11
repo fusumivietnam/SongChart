@@ -37,7 +37,7 @@ final readonly class PublicChartProjection
         $rows = [];
         foreach ($snapshot->rows as $row) {
             $recording = $recordings->get($row['canonical_recording_id']);
-            if (! $recording instanceof Recording) {
+            if ($recording instanceof Recording === false) {
                 throw new LogicException('Chart snapshot references a missing canonical recording.');
             }
 
@@ -132,12 +132,12 @@ final readonly class PublicChartProjection
         $latest = null;
         foreach ($observations as $observation) {
             $value = $observation['observed_at'] ?? null;
-            if (! is_string($value) || $value === '') {
+            if (is_string($value) === false || $value === '') {
                 continue;
             }
 
             $candidate = new DateTimeImmutable($value);
-            if (! $latest instanceof DateTimeImmutable || $candidate > $latest) {
+            if ($latest === null || $candidate > $latest) {
                 $latest = $candidate;
             }
         }
