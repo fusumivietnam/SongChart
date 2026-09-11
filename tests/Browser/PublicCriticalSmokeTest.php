@@ -81,3 +81,39 @@ it('captures Stage 23 discovery and search visual evidence on mobile', function 
         ->assertNoSmoke();
     $searchMissing->screenshot(filename: 'stage23-search-missing-mobile', fullPage: true);
 });
+
+it('captures representative Stage 23 canonical entity detail evidence on desktop', function (): void {
+    $group = visit('/groups/nirvana')
+        ->assertSee('Nirvana')
+        ->assertSee('Độ tin cậy dữ liệu')
+        ->assertSee('Nơi nghe / xem')
+        ->assertNoSmoke();
+    $group->screenshot(filename: 'stage23-entity-group-desktop', fullPage: true);
+
+    $recording = visit('/recordings/paranoid-android')
+        ->assertSee('Paranoid Android')
+        ->assertSee('Tổng quan')
+        ->assertSee('Nguồn và provenance')
+        ->assertNoSmoke();
+    $recording->screenshot(filename: 'stage23-entity-recording-desktop', fullPage: true);
+});
+
+it('captures representative Stage 23 canonical entity detail evidence on mobile', function (): void {
+    $group = visit('/groups/nirvana')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Nirvana')
+        ->assertSee('Độ tin cậy dữ liệu')
+        ->assertSee('Nơi nghe / xem')
+        ->assertNoSmoke();
+    $group->screenshot(filename: 'stage23-entity-group-mobile', fullPage: true);
+
+    $recording = visit('/recordings/paranoid-android')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Paranoid Android')
+        ->assertSee('Tổng quan')
+        ->assertSee('Nguồn và provenance')
+        ->assertNoSmoke();
+    $recording->screenshot(filename: 'stage23-entity-recording-mobile', fullPage: true);
+});
