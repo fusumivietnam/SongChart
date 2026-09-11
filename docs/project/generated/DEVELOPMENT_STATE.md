@@ -12,13 +12,13 @@
 ## Stage progress
 
 - `23.0A` — `ACCEPTED` — Discovery and search product shell
-- `23.0B` — `IMPLEMENTING` — Canonical entity detail experience
-- `23.0C` — `PLANNED` — Persisted chart and provenance UX
+- `23.0B` — `ACCEPTED` — Canonical entity detail experience
+- `23.0C` — `IMPLEMENTING` — Persisted chart and provenance UX
 - `23.0D` — `PLANNED` — Mobile, accessibility, performance and stage closure
 
 ## Next bounded tranche
 
-- `23.0C — Persisted chart and provenance UX`
+- `23.0D — Mobile, accessibility, performance and stage closure`
 
 ## Live work lease
 

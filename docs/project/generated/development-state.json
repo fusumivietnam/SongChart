@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "1b01e36fd079346e409fdef3b30ab516eb1f2d49e8ec7ad1c93eac042636cdad",
+    "source_fingerprint": "392e1d87a5e186653337be36a999799bc7d990e4b4883df374bae843b443a130",
     "current_stage": {
         "id": "23.0",
         "title": "Public Product UX",
@@ -23,7 +23,7 @@
         },
         {
             "id": "23.0B",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Canonical entity detail experience",
             "goals": [
                 "refine canonical entity detail around shared identity, facts, relationships, provenance and provider destinations",
@@ -32,7 +32,7 @@
         },
         {
             "id": "23.0C",
-            "status": "planned",
+            "status": "implementing",
             "title": "Persisted chart and provenance UX",
             "goals": [
                 "present persisted chart observations with metric semantics, provenance and freshness",
@@ -50,8 +50,8 @@
         }
     ],
     "next_tranche": {
-        "id": "23.0C",
-        "title": "Persisted chart and provenance UX"
+        "id": "23.0D",
+        "title": "Mobile, accessibility, performance and stage closure"
     },
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
@@ -61,6 +61,6 @@
         "candidate-verification.json": "7d206d77236b5cde71ab8b0951dc45fa532fed88ba275d32c35cf80159eef9ca",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "b74615fd1dc7f0124a52b364d482c1ac094dfb974da359d4f936c86d071098fe"
+        "docs/project/engineering/stage-plan.json": "0207ffcfba805de9b7a99ffddd3100960310d81616bb5417f042b2c86ec400c0"
     }
 }
