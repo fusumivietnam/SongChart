@@ -3,9 +3,9 @@
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
             <p class="sc-caption">PROVIDER DESTINATIONS</p>
-            <h2 id="provider-chooser-title" class="mt-1 text-xl font-bold">Nơi nghe / xem</h2>
+            <h2 id="provider-chooser-title" class="mt-1 text-xl font-bold">Chọn nơi nghe</h2>
         </div>
-        <x-ui.badge variant="neutral">Mở bên ngoài SongChart</x-ui.badge>
+        <x-ui.badge variant="neutral">Không phát tại SongChart</x-ui.badge>
     </div>
     <p class="mt-3 text-sm leading-6 text-[var(--sc-text-secondary)]">Các điểm đến dưới đây thuộc provider bên ngoài. Khả dụng không quyết định canonical identity và có thể thay đổi theo thị trường hoặc thời điểm.</p>
 
