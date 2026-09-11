@@ -18,7 +18,7 @@ it('exposes a projection-only repository operation plan with explicit human writ
     expect(in_array($plan['status'], ['ready_for_human_review', 'blocked'], true))->toBeTrue()
         ->and($plan['source'])->toBe('control_plane.operation_bundles + control_plane.resume_workflow')
         ->and($plan['stage'])->toBe('22.4')
-        ->and($plan['active_tranche'])->toBe('22.4D')
+        ->and($plan['active_tranche'])->toBeNull()
         ->and($plan['branch'])->toBe($resume['branch'])
         ->and($plan['head_sha'])->toBe($resume['head_sha'])
         ->and($plan['human_approval_required_for_writes'])->toBeTrue()
