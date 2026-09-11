@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\Process\Process;
 
-it('exposes bounded repository handoff, guidance, operation bundles and impact-aware verification through the AI status JSON surface', function (): void {
+it('exposes bounded repository handoff, guidance, operation bundles, impact-aware verification and resume workflow through the AI status JSON surface', function (): void {
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path());
     $process->setTimeout(30);
     $process->run();
@@ -20,6 +20,7 @@ it('exposes bounded repository handoff, guidance, operation bundles and impact-a
     $impactAware = $controlPlane['impact_aware_verification'];
     $operations = $controlPlane['operation_bundles'];
     $bundles = $operations['bundles'];
+    $resume = $controlPlane['resume_workflow'];
 
     expect($state['schema_version'])->toBe(2)
         ->and($state['current_stage']['id'])->toBe('22.4')
@@ -28,7 +29,7 @@ it('exposes bounded repository handoff, guidance, operation bundles and impact-a
         ->and($controlPlane['orientation']['evidence']['stage_plan'])->toBe('docs/project/engineering/stage-plan.json')
         ->and($controlPlane['runtime']['status'])->toBe('not_evaluated')
         ->and($handoff['stage'])->toBe('22.4')
-        ->and($handoff['active_tranche'])->toBe('22.4B')
+        ->and($handoff['active_tranche'])->toBe('22.4C')
         ->and($handoff['task_contract'])->toBe('docs/foundation/STAGE_22_4_TASK_CONTRACT.md')
         ->and($handoff['head_sha'])->toBe($state['live_work_lease']['head_sha'])
         ->and($handoff['committed_pr_change_surface']['status'])->toBe('requires_live_pr_resolution')
@@ -42,7 +43,7 @@ it('exposes bounded repository handoff, guidance, operation bundles and impact-a
         ->and($changeSurface['truncated'])->toBeBool()
         ->and(count($changeSurface['paths']))->toBeLessThanOrEqual(100)
         ->and($nextActions['status'])->toBe('ready')
-        ->and($nextActions['active_tranche'])->toBe('22.4B')
+        ->and($nextActions['active_tranche'])->toBe('22.4C')
         ->and($nextActions['human_gate_required_for_writes'])->toBeTrue()
         ->and($nextActions['actions'])->toBeArray()->not->toBeEmpty()
         ->and($verification['status'])->toBe('ready')
@@ -63,11 +64,36 @@ it('exposes bounded repository handoff, guidance, operation bundles and impact-a
         ->and(array_keys($bundles))->toBe(['orient', 'implement', 'verify', 'close'])
         ->and($bundles['orient']['commands'])->toContain('songchart ai status')
         ->and($bundles['implement']['stage'])->toBe('22.4')
-        ->and($bundles['implement']['active_tranche'])->toBe('22.4B')
+        ->and($bundles['implement']['active_tranche'])->toBe('22.4C')
         ->and($bundles['implement']['commands'])->toContain('songchart impact --diff')
         ->and($bundles['verify']['commands'])->toContain('songchart impact --verify')
         ->and($bundles['close']['candidate_commands'])->toContain('songchart candidate')
-        ->and($bundles['close']['canonical_commands'])->toContain('songchart verify');
+        ->and($bundles['close']['canonical_commands'])->toContain('songchart verify')
+        ->and(in_array($resume['status'], ['requires_live_resolution', 'degraded'], true))->toBeTrue()
+        ->and($resume['branch'])->toBe($handoff['branch'])
+        ->and($resume['head_sha'])->toBe($handoff['head_sha'])
+        ->and($resume['stage'])->toBe('22.4')
+        ->and($resume['active_tranche'])->toBe('22.4C')
+        ->and($resume['task_contract'])->toBe('docs/foundation/STAGE_22_4_TASK_CONTRACT.md')
+        ->and($resume['working_tree_clean'])->toBe($handoff['working_tree_clean'])
+        ->and($resume['live_pr_resolution_required'])->toBeTrue()
+        ->and($resume['live_workflow_resolution_required'])->toBeTrue()
+        ->and($resume['chat_memory_authority'])->toBeFalse()
+        ->and($resume['volatile_github_state_persisted'])->toBeFalse()
+        ->and($resume['mutation_allowed'])->toBeFalse()
+        ->and($resume['human_gate_required_for_writes'])->toBeTrue()
+        ->and($resume['steps'])->toBeArray()->toHaveCount(4);
+
+    expect(array_column($resume['steps'], 'id'))->toBe([
+        'orient-local-authority',
+        'resolve-live-pr',
+        'resolve-exact-head-workflow',
+        'resolve-change-impact',
+    ]);
+
+    foreach ($resume['steps'] as $step) {
+        expect($step['mutation_allowed'])->toBeFalse();
+    }
 
     if ($impactAware['status'] === 'ready') {
         expect($impactAware['mode'])->toBe('actual-diff')
@@ -116,6 +142,30 @@ it('delegates verification-set resolution and execution deduplication to existin
     }
 });
 
+it('keeps resume continuity bounded to repository and live GitHub authority', function (): void {
+    $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path());
+    $process->setTimeout(30);
+    $process->run();
+
+    expect($process->isSuccessful())->toBeTrue($process->getErrorOutput());
+
+    $state = json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR);
+    $resume = $state['control_plane']['resume_workflow'];
+    $handoff = $state['control_plane']['handoff'];
+
+    expect($resume['source'])->toContain('scripts/ai-handoff-status.php')
+        ->and($resume['source'])->toContain('docs/project/engineering/stage-plan.json')
+        ->and($resume['source'])->toContain('docs/project/engineering/verification-command-surface.json')
+        ->and($resume['head_sha'])->toBe($handoff['head_sha'])
+        ->and($resume['branch'])->toBe($handoff['branch'])
+        ->and($resume['chat_memory_authority'])->toBeFalse()
+        ->and($resume['volatile_github_state_persisted'])->toBeFalse()
+        ->and($resume)->not->toHaveKey('pull_request_number')
+        ->and($resume)->not->toHaveKey('workflow_run_id')
+        ->and($resume)->not->toHaveKey('auto_execute')
+        ->and($resume)->not->toHaveKey('write_plan');
+});
+
 it('composes existing owners instead of duplicating diagnostic and verification capabilities', function (): void {
     $process = new Process([PHP_BINARY, base_path('scripts/project-state.php'), '--json'], base_path());
     $process->setTimeout(30);
@@ -138,7 +188,7 @@ it('composes existing owners instead of duplicating diagnostic and verification 
         ->and($state['control_plane']['boundaries']['autonomous_production_writes'])->toBeFalse();
 });
 
-it('does not expose environment secrets in machine-readable handoff, guidance, operation bundles or impact recommendations', function (): void {
+it('does not expose environment secrets in machine-readable handoff, guidance, operation bundles, impact recommendations or resume workflow', function (): void {
     $secret = 'songchart-stage-22-4-secret-sentinel';
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path(), [
         'DB_PASSWORD' => $secret,
