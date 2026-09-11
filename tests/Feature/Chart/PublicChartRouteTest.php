@@ -32,7 +32,7 @@ it('renders the latest persisted chart using canonical recording identity and pr
     $snapshot = (new BuildChartSnapshot)->handle(
         'youtube-video-views',
         YouTubeViewCountObservationSource::METRIC,
-        new DateTimeImmutable(),
+        new DateTimeImmutable,
         [
             new ChartMetricObservation(
                 'provider-observation-1',
@@ -71,7 +71,7 @@ it('renders an observed zero as evidence instead of an unavailable state', funct
     $snapshot = (new BuildChartSnapshot)->handle(
         'youtube-video-views',
         YouTubeViewCountObservationSource::METRIC,
-        new DateTimeImmutable(),
+        new DateTimeImmutable,
         [
             new ChartMetricObservation(
                 'provider-observation-zero',
