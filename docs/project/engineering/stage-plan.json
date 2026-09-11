@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "22.4",
-  "active_tranche": "23.0B",
+  "active_tranche": "23.0C",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -73,6 +73,13 @@
       "effective_prepared_head": "e5dfc72e1b81753baa425bcdb5fb01f351b5899d",
       "verification_run": 34628234776,
       "verification": "Auto Closure run 426 passed PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke with SHA-bound visual evidence, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
+    },
+    "23.0B": {
+      "title": "Canonical entity detail experience",
+      "source_head": "89582355a42fb93bba1268ec41f81eb6e297643e",
+      "effective_prepared_head": "89582355a42fb93bba1268ec41f81eb6e297643e",
+      "verification_run": 34630259521,
+      "verification": "Auto Closure run 438 passed PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke with representative group and recording visual evidence, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
     }
   },
   "stage_progress": [
@@ -89,7 +96,7 @@
     },
     {
       "id": "23.0B",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Canonical entity detail experience",
       "goals": [
         "refine canonical entity detail around shared identity, facts, relationships, provenance and provider destinations",
@@ -98,7 +105,7 @@
     },
     {
       "id": "23.0C",
-      "status": "planned",
+      "status": "implementing",
       "title": "Persisted chart and provenance UX",
       "goals": [
         "present persisted chart observations with metric semantics, provenance and freshness",
@@ -116,8 +123,8 @@
     }
   ],
   "next_tranche": {
-    "id": "23.0C",
-    "title": "Persisted chart and provenance UX"
+    "id": "23.0D",
+    "title": "Mobile, accessibility, performance and stage closure"
   },
   "next_stage_outline": null,
   "activation_evidence": {
