@@ -2,7 +2,7 @@
 
 ## Status
 
-Active. Stage 23 source implementation is authorized from accepted `main` SHA `84e05bed2cff63d5172e64b599e2f7e9d79971c5` after Stage 22 PR #30 was human-merged and accepted-main CI run `34624409179` passed quality, PostgreSQL, browser smoke, frontend build and accepted-main provenance. The dedicated Stage 23 work lease is `stage-23-public-product-ux`. Tranche `23.0A` is accepted on exact head `e5dfc72e1b81753baa425bcdb5fb01f351b5899d` by Auto Closure run `34628234776`; tranche `23.0B` is now the only active implementation tranche.
+Active. Stage 23 source implementation is authorized from accepted `main` SHA `84e05bed2cff63d5172e64b599e2f7e9d79971c5` after Stage 22 PR #30 was human-merged and accepted-main CI run `34624409179` passed quality, PostgreSQL, browser smoke, frontend build and accepted-main provenance. The dedicated Stage 23 work lease is `stage-23-public-product-ux`. Tranche `23.0A` is accepted on exact head `e5dfc72e1b81753baa425bcdb5fb01f351b5899d` by Auto Closure run `34628234776`; tranche `23.0B` is accepted on exact head `89582355a42fb93bba1268ec41f81eb6e297643e` by Auto Closure run `34630259521`; tranche `23.0C` is now the only active implementation tranche.
 
 ## Goal
 
@@ -74,7 +74,9 @@ Primary surfaces:
 
 ### 23.0B — Canonical entity detail experience
 
-Status: active.
+Status: accepted.
+
+Acceptance evidence: exact head `89582355a42fb93bba1268ec41f81eb6e297643e`, Auto Closure run `34630259521`; PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke with representative Group and Recording visual evidence, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote all passed.
 
 Goals:
 
@@ -95,20 +97,23 @@ Primary surfaces:
 
 ### 23.0C — Persisted chart and provenance UX
 
-Status: planned.
+Status: active.
 
 Goals:
 
 - present persisted Stage 22 chart observations with metric semantics, observation/provenance context and freshness state;
 - distinguish unavailable/insufficient chart evidence from a valid zero or empty ranking;
 - connect chart rows to canonical entity detail and approved destinations without provider identity leakage;
-- prohibit fabricated chart, listener, popularity or engagement values.
+- prohibit fabricated chart, listener, popularity or engagement values;
+- preserve existing chart ingestion/read-model semantics and avoid recomputing provider rankings in Blade;
+- extend exact-head visual evidence to representative chart states through the existing browser-smoke owner.
 
 Primary surfaces:
 
 - `resources/views/charts/`
-- existing chart/public read-model owners
-- shared provenance and entity result components
+- existing chart/public controller and read-model owners
+- shared provenance and entity-result components
+- chart-focused feature tests and existing browser-smoke owner
 
 ### 23.0D — Mobile, accessibility, performance and stage closure
 
@@ -153,7 +158,7 @@ Goals:
 - `docs/project/stack/impact-test-map.json`
 - `docs/project/docs/OFFICIAL_SOURCE_POLICY.md`
 - `docs/templates/TASK_CONTRACT_TEMPLATE.md`
-- existing public search/application read-model owners and shared Blade UI components
+- existing public search/application read-model owners, chart read-model owners and shared Blade UI components
 
 ### Installed versions
 
@@ -165,11 +170,11 @@ Stage 23.0 relies only on capabilities already present in the locked stack. Offi
 
 ### Native capability assessment
 
-Existing Blade/Tailwind components, the public search controller/application/read-model boundary, canonical public routes, Pest Browser, GitHub Actions artifact upload and the established browser-smoke lane already provide the required capabilities. Stage 23 therefore does not need React/Vue, a second search engine, a second browser harness, a visual-regression SaaS, a client-side provider query layer or a presentation-specific schema. Search ranking/filter behavior remains delegated to the accepted search owner.
+Existing Blade/Tailwind components, the public search controller/application/read-model boundary, persisted chart read models, canonical public routes, Pest Browser, GitHub Actions artifact upload and the established browser-smoke lane already provide the required capabilities. Stage 23 therefore does not need React/Vue, a second search engine, a second browser harness, a visual-regression SaaS, a client-side provider query layer, a chart recomputation layer or a presentation-specific schema. Search ranking/filter behavior and chart observation semantics remain delegated to their accepted owners.
 
 ### Custom implementation justification
 
-SongChart-specific composition is required for the public information hierarchy because generic UI frameworks do not understand canonical music entity distinctions, verification/provenance semantics, governed provider destinations or SongChart's prohibition on fabricated ranking/popularity data. Custom work is limited to Blade/component composition, existing read-model projection and bounded browser evidence. Visual screenshots are review evidence tied to an exact SHA, not a second design source of truth or an autonomous pixel-diff acceptance gate.
+SongChart-specific composition is required for the public information hierarchy because generic UI frameworks do not understand canonical music entity distinctions, verification/provenance semantics, governed provider destinations, persisted chart observation semantics or SongChart's prohibition on fabricated ranking/popularity data. Custom work is limited to Blade/component composition, existing read-model projection and bounded browser evidence. Visual screenshots are review evidence tied to an exact SHA, not a second design source of truth or an autonomous pixel-diff acceptance gate.
 
 ## Activation evidence
 
@@ -182,7 +187,8 @@ The Stage 23 activation gate is satisfied:
 5. Runtime repository state was re-resolved from `main`.
 6. Dedicated branch `stage-23-public-product-ux` was created from the accepted merge SHA.
 7. Stage 23.0A was accepted by exact-head Auto Closure run `34628234776` on `e5dfc72e1b81753baa425bcdb5fb01f351b5899d`.
-8. `stage-plan.json` now exposes exactly one active tranche: `23.0B`.
+8. Stage 23.0B was accepted by exact-head Auto Closure run `34630259521` on `89582355a42fb93bba1268ec41f81eb6e297643e`.
+9. `stage-plan.json` now exposes exactly one active tranche: `23.0C`.
 
 ## Verification ownership
 
@@ -211,15 +217,26 @@ Accepted evidence for 23.0A proves:
 - successful CI preserves those screenshots in a SHA-bound `ui-evidence-*` artifact;
 - generated projections remain PREPARE-owned and the exact-head tree is preserved through canonical closure.
 
-Focused evidence for 23.0B must prove:
+Accepted evidence for 23.0B proves:
 
 - representative canonical entity detail routes preserve stable URLs, SEO metadata and structured-data ownership;
 - shared detail architecture is reused across Artist/Group, Recording, Work, Release/Release Group, Version and Collection rather than copied per entity type;
 - canonical identity/facts/relationships, provenance/evidence and provider destinations remain separate concerns in the rendered hierarchy;
 - provider destination actions retain review/status/compliance semantics and external-provider disclosure;
 - missing identifiers, destinations, relationships or provenance render bounded empty/degraded states instead of fabricated values;
-- representative desktop and mobile entity screenshots are captured through the existing browser-smoke lane with production-built assets;
-- PostgreSQL, frontend build, browser smoke and canonical exact-head closure pass before 23.0B acceptance.
+- representative desktop and mobile Group/Recording screenshots are captured through the existing browser-smoke lane with production-built assets;
+- PostgreSQL, frontend build, browser smoke, canonical CLOSE, exact-tree preservation and ready-to-promote passed on exact head `89582355a42fb93bba1268ec41f81eb6e297643e`.
+
+Focused evidence for 23.0C must prove:
+
+- public chart surfaces consume persisted chart observations/read models rather than deriving or fabricating ranking values in the view;
+- chart metric labels and units remain tied to the persisted observation semantics;
+- observation timestamp, provenance/source context and freshness are legible when present;
+- unavailable or insufficient evidence is visibly distinct from a valid observed zero, empty ranking or out-of-chart state;
+- canonical chart rows link to canonical SongChart entity routes without turning provider identity into the row identity;
+- degraded/stale chart states remain bounded and do not imply live/current data when freshness evidence is missing;
+- representative desktop/mobile chart visual evidence is captured through the existing production-built browser lane;
+- PostgreSQL, frontend build, browser smoke and exact-head canonical closure pass before 23.0C acceptance.
 
 Required verification remains owned by the existing entrypoints and CI topology:
 
