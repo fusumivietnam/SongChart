@@ -10,15 +10,15 @@
         'collection' => 'Bộ sưu tập',
     ];
 @endphp
-<nav aria-label="Lọc kết quả theo loại thực thể" class="space-y-1">
+<nav aria-label="Lọc kết quả theo loại thực thể" class="flex gap-2 overflow-x-auto pb-1 lg:block lg:space-y-1 lg:overflow-visible lg:pb-0">
     @foreach($types as $value => $label)
         @php($isActive = $activeType === $value)
         <a
             href="{{ route('search', ['q' => $query, 'type' => $value, 'sort' => $sort]) }}"
             @class([
-                'flex min-h-11 items-center justify-between rounded-[var(--sc-radius-control)] px-3 py-2 text-sm font-semibold transition',
+                'flex min-h-11 shrink-0 items-center justify-between gap-3 rounded-[var(--sc-radius-control)] px-3 py-2 text-sm font-semibold transition lg:w-full',
                 'bg-[var(--sc-primary)] text-white' => $isActive,
-                'text-[var(--sc-text-secondary)] hover:bg-[var(--sc-bg-subtle)] hover:text-[var(--sc-text-primary)]' => ! $isActive,
+                'border border-[var(--sc-border)] bg-white text-[var(--sc-text-secondary)] hover:bg-[var(--sc-bg-subtle)] hover:text-[var(--sc-text-primary)] lg:border-transparent lg:bg-transparent' => ! $isActive,
             ])
             @if($isActive) aria-current="page" @endif
         >
