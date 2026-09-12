@@ -95,8 +95,9 @@ final readonly class PublicChartProjection
         ];
     }
 
-    /** @param array<string, mixed> $definition
-     *  @return array<string, mixed>
+    /**
+     * @param  array<string, mixed>  $definition
+     * @return array<string, mixed>
      */
     public function unavailable(array $definition): array
     {
