@@ -192,3 +192,42 @@ it('captures Stage 23 chart unavailable and persisted provenance evidence on mob
         ->assertNoSmoke();
     $chart->screenshot(filename: 'stage23-chart-observed-mobile', fullPage: true);
 });
+
+it('proves Stage 23 mobile shell accessibility and fixed-navigation clearance', function (): void {
+    stage23PublicDiscoveryFixture();
+
+    visit('/search?q=Radiohead')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Kết quả cho “Radiohead”')
+        ->assertNoAccessibilityIssues()
+        ->assertScript(
+            "(() => { const nav = document.querySelector('.sc-mobile-nav'); if (!nav) return false; const reserve = parseFloat(getComputedStyle(document.body).paddingBottom); return reserve >= nav.getBoundingClientRect().height; })()",
+            true,
+        )
+        ->assertScript(
+            "(() => [...document.querySelectorAll('.sc-mobile-nav-item')].every((item) => { const rect = item.getBoundingClientRect(); return rect.width >= 44 && rect.height >= 44; }))()",
+            true,
+        )
+        ->assertScript(
+            "document.querySelector('main#main-content') !== null && document.querySelector('nav[aria-label=\"Điều hướng di động\"]') !== null",
+            true,
+        )
+        ->assertNoSmoke();
+
+    visit('/recordings/paranoid-android')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Paranoid Android')
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke();
+
+    stage23PublicChartFixture();
+
+    visit('/charts/youtube-video-views')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Chart Evidence Song')
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke();
+});
