@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "22.4",
-  "active_tranche": "23.0C",
+  "active_tranche": "23.0D",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -80,6 +80,13 @@
       "effective_prepared_head": "89582355a42fb93bba1268ec41f81eb6e297643e",
       "verification_run": 34630259521,
       "verification": "Auto Closure run 438 passed PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke with representative group and recording visual evidence, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
+    },
+    "23.0C": {
+      "title": "Persisted chart and provenance UX",
+      "source_head": "1562011bb51f512a25620f66155ab4a625dd375b",
+      "effective_prepared_head": "1562011bb51f512a25620f66155ab4a625dd375b",
+      "verification_run": 34767380205,
+      "verification": "Auto Closure run 459 passed PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke with SHA-bound visual evidence, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
     }
   },
   "stage_progress": [
@@ -105,7 +112,7 @@
     },
     {
       "id": "23.0C",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Persisted chart and provenance UX",
       "goals": [
         "present persisted chart observations with metric semantics, provenance and freshness",
@@ -114,7 +121,7 @@
     },
     {
       "id": "23.0D",
-      "status": "planned",
+      "status": "implementing",
       "title": "Mobile, accessibility, performance and stage closure",
       "goals": [
         "normalize responsive public behavior and WCAG 2.2 AA-sensitive interactions",
@@ -122,10 +129,7 @@
       ]
     }
   ],
-  "next_tranche": {
-    "id": "23.0D",
-    "title": "Mobile, accessibility, performance and stage closure"
-  },
+  "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "84e05bed2cff63d5172e64b599e2f7e9d79971c5",
