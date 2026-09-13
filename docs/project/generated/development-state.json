@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "392e1d87a5e186653337be36a999799bc7d990e4b4883df374bae843b443a130",
+    "source_fingerprint": "c49314b60dcc09fcddd1156766009445766ce76b2489084901d10c12a7095ec4",
     "current_stage": {
         "id": "23.0",
         "title": "Public Product UX",
@@ -32,7 +32,7 @@
         },
         {
             "id": "23.0C",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Persisted chart and provenance UX",
             "goals": [
                 "present persisted chart observations with metric semantics, provenance and freshness",
@@ -41,7 +41,7 @@
         },
         {
             "id": "23.0D",
-            "status": "planned",
+            "status": "implementing",
             "title": "Mobile, accessibility, performance and stage closure",
             "goals": [
                 "normalize responsive public behavior and WCAG 2.2 AA-sensitive interactions",
@@ -49,10 +49,7 @@
             ]
         }
     ],
-    "next_tranche": {
-        "id": "23.0D",
-        "title": "Mobile, accessibility, performance and stage closure"
-    },
+    "next_tranche": null,
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -61,6 +58,6 @@
         "candidate-verification.json": "7d206d77236b5cde71ab8b0951dc45fa532fed88ba275d32c35cf80159eef9ca",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "0207ffcfba805de9b7a99ffddd3100960310d81616bb5417f042b2c86ec400c0"
+        "docs/project/engineering/stage-plan.json": "f2e1166294dd4495eddfb31be902fae0491b9d9ce397d0beccc4c60e94106ffb"
     }
 }

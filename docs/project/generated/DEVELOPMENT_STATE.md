@@ -13,12 +13,12 @@
 
 - `23.0A` — `ACCEPTED` — Discovery and search product shell
 - `23.0B` — `ACCEPTED` — Canonical entity detail experience
-- `23.0C` — `IMPLEMENTING` — Persisted chart and provenance UX
-- `23.0D` — `PLANNED` — Mobile, accessibility, performance and stage closure
+- `23.0C` — `ACCEPTED` — Persisted chart and provenance UX
+- `23.0D` — `IMPLEMENTING` — Mobile, accessibility, performance and stage closure
 
 ## Next bounded tranche
 
-- `23.0D — Mobile, accessibility, performance and stage closure`
+- `unknown`
 
 ## Live work lease
 
