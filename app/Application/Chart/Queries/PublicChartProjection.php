@@ -41,7 +41,7 @@ final readonly class PublicChartProjection
                 throw new LogicException('Chart snapshot references a missing canonical recording.');
             }
 
-            $observations = array_values($row['observations']);
+            $observations = $row['observations'];
             $latestObservedAt = $this->latestObservedAt($observations);
             $observationAgeSeconds = $latestObservedAt instanceof DateTimeImmutable
                 ? max(0, $nowTimestamp - $latestObservedAt->getTimestamp())
