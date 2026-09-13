@@ -41,10 +41,7 @@ final readonly class PublicChartProjection
                 throw new LogicException('Chart snapshot references a missing canonical recording.');
             }
 
-            $observations = array_values(array_filter(
-                $row['observations'] ?? [],
-                static fn (mixed $observation): bool => is_array($observation),
-            ));
+            $observations = array_values($row['observations']);
             $latestObservedAt = $this->latestObservedAt($observations);
             $observationAgeSeconds = $latestObservedAt instanceof DateTimeImmutable
                 ? max(0, $nowTimestamp - $latestObservedAt->getTimestamp())
@@ -65,12 +62,12 @@ final readonly class PublicChartProjection
                 'latest_observed_at' => $latestObservedAt?->format(DATE_ATOM),
                 'observation_freshness' => $this->freshnessState($observationAgeSeconds, $maxObservationAgeSeconds),
                 'observations' => array_map(static fn (array $observation): array => [
-                    'provider' => (string) ($observation['provider'] ?? ''),
-                    'metric' => (string) ($observation['metric'] ?? ''),
-                    'value' => (float) ($observation['value'] ?? 0),
-                    'observed_at' => isset($observation['observed_at']) ? (string) $observation['observed_at'] : null,
-                    'metric_unit' => (string) ($observation['metric_unit'] ?? ''),
-                    'metric_semantics_version' => (string) ($observation['metric_semantics_version'] ?? ''),
+                    'provider' => (string) $observation['provider'],
+                    'metric' => (string) $observation['metric'],
+                    'value' => (float) $observation['value'],
+                    'observed_at' => (string) $observation['observed_at'],
+                    'metric_unit' => (string) $observation['metric_unit'],
+                    'metric_semantics_version' => (string) $observation['metric_semantics_version'],
                     'fetched_at' => isset($observation['fetched_at']) ? (string) $observation['fetched_at'] : null,
                     'source_reference' => isset($observation['source_reference']) ? (string) $observation['source_reference'] : null,
                 ], $observations),
