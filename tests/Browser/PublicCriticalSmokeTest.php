@@ -212,6 +212,15 @@ it('proves Stage 23 mobile shell accessibility and fixed-navigation clearance', 
             "document.querySelector('main#main-content') !== null && document.querySelector('nav[aria-label=\"Điều hướng di động\"]') !== null",
             true,
         )
+        ->assertScript(
+            "(() => { const input = document.querySelector('input[name=\"q\"]'); if (!input) return false; input.focus(); const style = getComputedStyle(input); return input.matches(':focus-visible') && parseFloat(style.outlineWidth) >= 3 && style.outlineStyle !== 'none'; })()",
+            true,
+        )
+        ->assertScript(
+            "(() => { const containsReducedMotion = (rules) => [...rules].some((rule) => (rule instanceof CSSMediaRule && rule.conditionText.includes('prefers-reduced-motion') && rule.conditionText.includes('reduce')) || ('cssRules' in rule && containsReducedMotion(rule.cssRules))); return [...document.styleSheets].some((sheet) => { try { return containsReducedMotion(sheet.cssRules); } catch { return false; } }); })()",
+            true,
+        )
+        ->assertScript("document.querySelector('[wire\\\\:id]') === null", true)
         ->assertNoSmoke();
 
     visit('/recordings/paranoid-android')
@@ -219,6 +228,7 @@ it('proves Stage 23 mobile shell accessibility and fixed-navigation clearance', 
         ->iPhone14Pro()
         ->assertSee('Paranoid Android')
         ->assertNoAccessibilityIssues()
+        ->assertScript("document.querySelector('[wire\\\\:id]') === null", true)
         ->assertNoSmoke();
 
     stage23PublicChartFixture();
@@ -228,5 +238,6 @@ it('proves Stage 23 mobile shell accessibility and fixed-navigation clearance', 
         ->iPhone14Pro()
         ->assertSee('Chart Evidence Song')
         ->assertNoAccessibilityIssues()
+        ->assertScript("document.querySelector('[wire\\\\:id]') === null", true)
         ->assertNoSmoke();
 });
