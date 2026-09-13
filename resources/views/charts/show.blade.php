@@ -1,24 +1,11 @@
 @extends('layouts.frontend')
 @php($activeNav = 'discover')
-@php
-    $providerLabel = match ($chart['provider'] ?? null) {
-        'youtube' => 'YouTube',
-        null => null,
-        default => ucfirst((string) $chart['provider']),
-    };
-    $metricLabel = match ($chart['metric']) {
-        'youtube_video_view_count' => 'Lượt xem video',
-        default => str($chart['metric'])->replace('_', ' ')->headline()->toString(),
-    };
-    $unitLabel = match ($chart['metric_unit']) {
-        'views' => 'lượt xem',
-        'streams' => 'lượt nghe',
-        'count' => 'lượt',
-        default => (string) $chart['metric_unit'],
-    };
-@endphp
 
 @section('content')
+@php($provider = $chart['provider'] ?? null)
+@php($providerLabel = $provider === 'youtube' ? 'YouTube' : ($provider === null ? null : ucfirst((string) $provider)))
+@php($metricLabel = $chart['metric'] === 'youtube_video_view_count' ? 'Lượt xem video' : str($chart['metric'])->replace('_', ' ')->headline()->toString())
+@php($unitLabel = $chart['metric_unit'] === 'views' ? 'lượt xem' : ($chart['metric_unit'] === 'streams' ? 'lượt nghe' : ($chart['metric_unit'] === 'count' ? 'lượt' : (string) $chart['metric_unit'])))
 <section class="sc-home-section">
     <div class="sc-container">
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
