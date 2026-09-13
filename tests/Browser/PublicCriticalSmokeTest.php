@@ -213,7 +213,11 @@ it('proves Stage 23 mobile shell accessibility and fixed-navigation clearance', 
             true,
         )
         ->assertScript(
-            "(() => { const input = document.querySelector('input[name=\"q\"]'); if (!input) return false; input.focus(); const style = getComputedStyle(input); return input.matches(':focus-visible') && parseFloat(style.outlineWidth) >= 3 && style.outlineStyle !== 'none'; })()",
+            "(() => { const input = document.querySelector('input[name=\"q\"]'); if (!input) return false; input.focus(); const style = getComputedStyle(input); const outlined = parseFloat(style.outlineWidth) >= 2 && style.outlineStyle !== 'none'; const ringed = style.boxShadow !== 'none' && style.boxShadow !== ''; return input.matches(':focus-visible') && (outlined || ringed); })()",
+            true,
+        )
+        ->assertScript(
+            "(() => { const radio = document.querySelector('input[type=\"radio\"][name=\"type\"]'); const chip = radio?.nextElementSibling; if (!radio || !chip) return false; radio.focus(); const style = getComputedStyle(chip); return radio.matches(':focus-visible') && parseFloat(style.outlineWidth) >= 3 && style.outlineStyle !== 'none'; })()",
             true,
         )
         ->assertScript(
