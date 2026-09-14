@@ -24,12 +24,12 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
 
     expect($state['schema_version'])->toBe(2)
         ->and($state['current_stage']['id'])->toBe('23.0')
-        ->and($state['accepted_through'])->toBe('22.4')
+        ->and($state['accepted_through'])->toBe('23.0')
         ->and($state['live_work_lease']['source'])->toBe('git-and-github-runtime')
         ->and($controlPlane['orientation']['evidence']['stage_plan'])->toBe('docs/project/engineering/stage-plan.json')
         ->and($controlPlane['runtime']['status'])->toBe('not_evaluated')
         ->and($handoff['stage'])->toBe('23.0')
-        ->and($handoff['active_tranche'])->toBe('23.0D')
+        ->and($handoff['active_tranche'])->toBeNull()
         ->and($handoff['task_contract'])->toBe('docs/foundation/STAGE_23_0_TASK_CONTRACT.md')
         ->and($handoff['head_sha'])->toBe($state['live_work_lease']['head_sha'])
         ->and($handoff['committed_pr_change_surface']['status'])->toBe('requires_live_pr_resolution')
@@ -42,8 +42,8 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($changeSurface['path_limit'])->toBe(100)
         ->and($changeSurface['truncated'])->toBeBool()
         ->and(count($changeSurface['paths']))->toBeLessThanOrEqual(100)
-        ->and($nextActions['status'])->toBe('ready')
-        ->and($nextActions['active_tranche'])->toBe('23.0D')
+        ->and($nextActions['status'])->toBe('blocked')
+        ->and($nextActions['active_tranche'])->toBeNull()
         ->and($nextActions['human_gate_required_for_writes'])->toBeTrue()
         ->and($nextActions['actions'])->toBeArray()->not->toBeEmpty()
         ->and($verification['status'])->toBe('ready')
@@ -59,21 +59,22 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($impactAware['execution_owner'])->toBe('scripts/run-impact-verification.sh')
         ->and($impactAware['mutation_allowed'])->toBeFalse()
         ->and($impactAware['human_gate_required_for_writes'])->toBeTrue()
-        ->and($operations['status'])->toBe('ready')
+        ->and($operations['status'])->toBe('blocked')
         ->and($operations['autonomous_execution_allowed'])->toBeFalse()
         ->and(array_keys($bundles))->toBe(['orient', 'implement', 'verify', 'close'])
         ->and($bundles['orient']['commands'])->toContain('songchart ai status')
-        ->and($bundles['implement']['status'])->toBe('ready')
+        ->and($bundles['implement']['status'])->toBe('blocked')
         ->and($bundles['implement']['stage'])->toBe('23.0')
-        ->and($bundles['implement']['active_tranche'])->toBe('23.0D')
+        ->and($bundles['implement']['active_tranche'])->toBeNull()
         ->and($bundles['implement']['commands'])->toContain('songchart impact --diff')
         ->and($bundles['verify']['commands'])->toContain('songchart impact --verify')
         ->and($bundles['close']['candidate_commands'])->toContain('songchart candidate')
         ->and($bundles['close']['canonical_commands'])->toContain('songchart verify')
+        ->and($resume['status'])->toBe('blocked')
         ->and($resume['branch'])->toBe($handoff['branch'])
         ->and($resume['head_sha'])->toBe($handoff['head_sha'])
         ->and($resume['stage'])->toBe('23.0')
-        ->and($resume['active_tranche'])->toBe('23.0D')
+        ->and($resume['active_tranche'])->toBeNull()
         ->and($resume['task_contract'])->toBe('docs/foundation/STAGE_23_0_TASK_CONTRACT.md')
         ->and($resume['working_tree_clean'])->toBe($handoff['working_tree_clean'])
         ->and($resume['live_pr_resolution_required'])->toBeTrue()
@@ -84,7 +85,7 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($resume['human_gate_required_for_writes'])->toBeTrue()
         ->and($resume['steps'])->toBeArray()->toHaveCount(4);
 
-    if ($handoff['branch'] === null) {
+    if ($handoff['active_tranche'] === null || $handoff['branch'] === null) {
         expect($resume['status'])->toBe('blocked');
     } elseif ($handoff['working_tree_clean']) {
         expect($resume['status'])->toBe('requires_live_resolution');
