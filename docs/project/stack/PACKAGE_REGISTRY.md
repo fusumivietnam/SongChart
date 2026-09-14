@@ -1,48 +1,33 @@
 # Package Registry
 
-Versions below are constraints from manifests. Exact resolved versions are owned by lockfiles.
+This document explains package-governance ownership. It intentionally does not duplicate package versions or status rows from machine-readable authorities.
 
-| Package | Constraint | Purpose | Status | Capability owner |
-|---|---:|---|---|---|
-| `laravel/framework` | `^13.0` | Core framework | required | application framework |
-| `laravel/fortify` | `^1.30` | Authentication and 2FA | required | authentication |
-| `livewire/livewire` | `^4.0` | Server-driven interaction | approved | interactive UI |
-| `laravel/pulse` | `^1.7.4` | Operational observability | required | observability |
-| `laravel/horizon` | `^5.48` | Primary Redis queue supervision and operational visibility | required | queue runtime |
-| `laravel/tinker` | `^3.0` | Local application console | approved | developer tooling |
-| `composer/semver` | `^3.4` | Version constraint evaluation | approved | extension/version tooling |
-| `larastan/larastan` | `^3.8` | Static analysis | required-dev | static analysis |
-| `laravel/pint` | `^1.24` | PHP formatting | required-dev | formatting |
-| `pestphp/pest` | `^4.0` | Test runner | required-dev | testing |
-| `pestphp/pest-plugin-laravel` | `^4.1` | Laravel test integration | required-dev | testing |
-| `fakerphp/faker` | `^1.24` | Factories and fixtures | approved-dev | test data |
-| `mockery/mockery` | `^1.6` | Test doubles | approved-dev | testing |
-| `nunomaduro/collision` | `^8.8` | Console test output | approved-dev | developer experience |
-| `laravel/pail` | `^1.2` | Local log inspection | approved-dev | developer tooling |
-| `laravel/boost` | `^2.7` | Laravel/package AI context and framework MCP tooling | required-dev | AI framework context |
-| `vite` | `^7.0.0` | Frontend build | required-dev | asset build |
-| `laravel-vite-plugin` | `^2.0.0` | Laravel/Vite integration | required-dev | asset build |
-| `tailwindcss` | `^4.2.0` | CSS design system | required-dev | styling |
-| `@tailwindcss/vite` | `^4.2.0` | Tailwind/Vite integration | required-dev | styling |
-| `alpinejs` | `^3.14.9` | Local UI state | approved | local interaction |
-| `axios` | `^1.11.0` | Browser HTTP utility | restricted | frontend transport |
-| `concurrently` | `^9.2.1` | Local multi-process development | approved-dev | developer tooling |
+## Authorities
 
-## Status meanings
+- `package-registry.json` is the package-governance authority for Composer packages, runtime package policy, deployment profiles, planned package decisions, and external tools.
+- `composer.json` declares Composer constraints; `composer.lock` owns exact resolved Composer versions.
+- `stack-manifest.json` owns required, restricted, and forbidden frontend/package capability policy.
+- `package.json` declares Node package constraints; `package-lock.json` owns exact resolved Node versions.
 
-- `required`: application capability owner; removal requires an ADR and migration plan.
-- `required-dev`: mandatory quality/build capability.
-- `approved`: permitted within the documented scope.
-- `approved-dev`: development/test use only.
-- `restricted`: use only when an existing Laravel/Livewire/browser boundary cannot satisfy the requirement.
-- `experimental`: not allowed in production paths without approval.
-- `deprecated`: no new usage.
+When these sources disagree, fix the declaring machine authority rather than copying the disagreement into another document.
+
+## Package status semantics
+
+- `required`: application/runtime capability owner; removal requires an explicit migration or retirement decision.
+- `required-dev`: mandatory development, quality, build, or verification capability.
+- `approved`: permitted within its documented runtime scope.
+- `approved-dev`: permitted for development or test use only.
+- `restricted`: not a default capability owner; use only when existing Laravel, Livewire, or browser/platform boundaries cannot satisfy the requirement and the stack authority permits it.
+- `experimental`: not allowed in production paths without explicit approval.
+- `deprecated`: no new usage; existing usage requires a retirement path.
 - `forbidden`: must not be installed or referenced.
 
-No package may silently take ownership from an existing capability owner.
+## Ownership rules
 
+- No package may silently take ownership from an existing capability owner.
+- Prefer framework/platform capabilities and existing approved owners before adding a package.
+- A package addition is incomplete until its declaring manifest and governing machine authority agree.
+- Exact resolved versions belong only in lockfiles.
+- Runtime database authority remains PostgreSQL major 18 and is governed by `package-registry.json` even though PostgreSQL is not a Composer package.
 
-Machine-readable authority: `package-registry.json`. Composer package additions are invalid until both authorities and `composer package-governance:verify` agree.
-
-
-Runtime database authority is PostgreSQL major 18. Database runtime versions are governed by `package-registry.json` even though PostgreSQL is not a Composer package.
+Use the machine-readable authorities above for current package inventory and constraints.
