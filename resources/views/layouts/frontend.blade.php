@@ -6,12 +6,21 @@
     @php
         $resolvedTitle = trim($__env->yieldContent('title')) ?: ($title ?? config('app.name'));
         $resolvedDescription = trim($__env->yieldContent('description')) ?: ($description ?? 'Khám phá nghệ sĩ, bản phát hành, bản thu và nơi nghe hợp pháp.');
+        $resolvedCanonicalUrl = trim($__env->yieldContent('canonical_url')) ?: ($canonicalUrl ?? request()->url());
+        $resolvedSocialTitle = trim($__env->yieldContent('social_title')) ?: ($socialTitle ?? $resolvedTitle);
+        $resolvedSocialType = trim($__env->yieldContent('social_type')) ?: ($socialType ?? 'website');
+        $resolvedSocialImage = trim($__env->yieldContent('social_image')) ?: ($socialImage ?? null);
+        $resolvedSocialImageAlt = trim($__env->yieldContent('social_image_alt')) ?: ($socialImageAlt ?? null);
     @endphp
     <title>{{ $resolvedTitle }}</title>
     <meta name="description" content="{{ $resolvedDescription }}">
     @include('partials.social-meta', [
-        'pageTitle' => $resolvedTitle,
+        'pageTitle' => $resolvedSocialTitle,
         'pageDescription' => $resolvedDescription,
+        'canonicalUrl' => $resolvedCanonicalUrl,
+        'socialType' => $resolvedSocialType,
+        'socialImage' => $resolvedSocialImage,
+        'socialImageAlt' => $resolvedSocialImageAlt,
     ])
     @stack('head')
     @php
