@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 it('keeps PostgreSQL verification evidence phase-aware and machine-readable', function (): void {
-    $runner = (string) file_get_contents(base_path('scripts/run-database-tests.php'));
+    $root = dirname(__DIR__, 2);
+    $runner = (string) file_get_contents($root.'/scripts/run-database-tests.php');
 
     expect($runner)
         ->toContain('postgres-test-result.json')
@@ -22,7 +23,8 @@ it('keeps PostgreSQL verification evidence phase-aware and machine-readable', fu
 });
 
 it('keeps the PostgreSQL failure artifact as the bounded human and automation entrypoint', function (): void {
-    $workflow = (string) file_get_contents(base_path('.github/workflows/tests.yml'));
+    $root = dirname(__DIR__, 2);
+    $workflow = (string) file_get_contents($root.'/.github/workflows/tests.yml');
 
     $start = strpos($workflow, "  tests-postgres:\n");
     $end = $start === false ? false : strpos($workflow, "\n  browser-smoke:\n", $start);
