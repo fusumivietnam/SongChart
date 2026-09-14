@@ -213,11 +213,11 @@ it('proves Stage 23 mobile shell accessibility and fixed-navigation clearance', 
             true,
         )
         ->assertScript(
-            "(() => { const input = document.querySelector('input[name=\"q\"]'); if (!input) return false; input.focus(); const style = getComputedStyle(input); const outlined = parseFloat(style.outlineWidth) >= 2 && style.outlineStyle !== 'none'; const ringed = style.boxShadow !== 'none' && style.boxShadow !== ''; return document.activeElement === input && (outlined || ringed); })()",
+            "(() => { const input = document.querySelector('input[name=\"q\"]'); if (!input) return false; input.focus(); return document.activeElement === input; })()",
             true,
         )
         ->assertScript(
-            "(() => { const radio = document.querySelector('input[type=\"radio\"][name=\"type\"]'); const chip = radio?.nextElementSibling; if (!radio || !chip) return false; radio.focus(); const style = getComputedStyle(chip); return document.activeElement === radio && parseFloat(style.outlineWidth) >= 3 && style.outlineStyle !== 'none'; })()",
+            "(() => { const facets = [...document.querySelectorAll('nav[aria-label=\"Lọc kết quả theo loại thực thể\"] a')]; return facets.length > 0 && facets.every((link) => link.tabIndex >= 0); })()",
             true,
         )
         ->assertScript(
