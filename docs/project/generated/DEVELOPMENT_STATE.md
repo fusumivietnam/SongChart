@@ -5,8 +5,8 @@
 ## Current stage
 
 - Stage `23.0 — Public Product UX`
-- Status: `implementing`
-- Accepted through: `22.4`
+- Status: `accepted`
+- Accepted through: `23.0`
 - Task contract: `docs/foundation/STAGE_23_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -14,7 +14,7 @@
 - `23.0A` — `ACCEPTED` — Discovery and search product shell
 - `23.0B` — `ACCEPTED` — Canonical entity detail experience
 - `23.0C` — `ACCEPTED` — Persisted chart and provenance UX
-- `23.0D` — `IMPLEMENTING` — Mobile, accessibility, performance and stage closure
+- `23.0D` — `ACCEPTED` — Mobile, accessibility, performance and stage closure
 
 ## Next bounded tranche
 
