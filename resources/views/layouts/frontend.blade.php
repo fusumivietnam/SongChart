@@ -3,8 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>@hasSection('title')@yield('title')@else{{ $title ?? config('app.name') }}@endif</title>
-    <meta name="description" content="@hasSection('description')@yield('description')@else{{ $description ?? 'Khám phá nghệ sĩ, bản phát hành, bản thu và nơi nghe hợp pháp.' }}@endif">
+    @php
+        $resolvedTitle = trim($__env->yieldContent('title')) ?: ($title ?? config('app.name'));
+        $resolvedDescription = trim($__env->yieldContent('description')) ?: ($description ?? 'Khám phá nghệ sĩ, bản phát hành, bản thu và nơi nghe hợp pháp.');
+    @endphp
+    <title>{{ $resolvedTitle }}</title>
+    <meta name="description" content="{{ $resolvedDescription }}">
+    @include('partials.social-meta', [
+        'pageTitle' => $resolvedTitle,
+        'pageDescription' => $resolvedDescription,
+    ])
     @stack('head')
     @php
         $viteReady = is_file(public_path('build/manifest.json')) || is_file(public_path('hot'));
