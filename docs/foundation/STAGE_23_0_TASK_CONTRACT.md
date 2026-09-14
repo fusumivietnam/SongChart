@@ -99,7 +99,7 @@ Generated repository projections remain PREPARE-owned. No Stage 23 tranche intro
 
 ## Authority and official sources
 
-Repository authority remains:
+### Repository authorities
 
 - `PROJECT_AUTHORITY.md`
 - `docs/project/engineering/stage-plan.json`
@@ -112,7 +112,21 @@ Repository authority remains:
 - `docs/project/docs/OFFICIAL_SOURCE_POLICY.md`
 - existing public search/read-model, chart read-model and shared Blade UI owners.
 
-Stage 23 introduces no new package/runtime dependency. Exact versions remain lockfile-owned. Existing Blade/Tailwind, canonical read models, Pest Browser and GitHub Actions artifact ownership were sufficient; no React/Vue, second search engine, visual-regression SaaS, client provider query layer, chart recomputation layer or accessibility SaaS was required.
+### Installed versions
+
+Stage 23 introduces no new package or runtime dependency. Exact versions remain lockfile-owned. The accepted baseline continues to use the repository-locked PHP 8.5, Laravel 13, PostgreSQL 18, Node 24, Tailwind CSS, Livewire only where already justified and Pest Browser through the locked development dependencies.
+
+### Official external sources
+
+Official Laravel documentation remains the external authority for Blade/server-rendered application behavior; official Pest Browser documentation remains the external authority for device/browser behavior; W3C/WAI WCAG 2.2 remains the accessibility reference. External documentation validates framework capability but does not override SongChart repository-owned product, domain, ranking, provenance or visual authority.
+
+### Native capability assessment
+
+Existing Blade/Tailwind components, canonical search/read-model ownership, persisted chart read models, canonical public routes, Pest Browser and GitHub Actions artifact ownership were sufficient. Stage 23 did not require React/Vue, a second search engine, visual-regression SaaS, client provider query layer, chart recomputation layer, accessibility SaaS or a second browser harness.
+
+### Custom implementation justification
+
+SongChart-specific composition is required because generic UI frameworks do not understand canonical music entity distinctions, verification/provenance semantics, governed provider destinations, persisted chart observation semantics or the prohibition on fabricated ranking/popularity data. Custom work remains bounded to existing Blade/component composition, existing read models, responsive/accessibility corrections and SHA-bound browser evidence.
 
 ## Activation and closure evidence
 
@@ -138,6 +152,10 @@ Repository-owned verification remains:
 ```
 
 Browser behavior remains owned by the existing browser-smoke lane. Visual screenshots are SHA-bound review evidence, not a separate source of truth or pixel-diff acceptance gate.
+
+## Tests and verification
+
+Accepted evidence through `23.0D` proves discovery/search, representative canonical detail pages, persisted chart/provenance presentation, mobile navigation clearance and accessibility-sensitive public behavior on production-built desktop/mobile browser lanes with PostgreSQL 18 and canonical exact-head closure. The authority-transition head must again pass PREPARE/QUALITY, PostgreSQL, frontend build, browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote.
 
 ## Handoff
 
