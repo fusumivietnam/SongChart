@@ -1,4 +1,4 @@
-@props(['query'=>'', 'type'=>'all', 'sort'=>'relevance', 'hero'=>false, 'inputId'=>'catalog-search'])
+@props(['query'=>'', 'type'=>'all', 'sort'=>'relevance', 'hero'=>false, 'inputId'=>'catalog-search', 'showTypeFilters'=>true])
 <form action="{{ route('search') }}" method="GET" role="search" class="space-y-4">
     <div class="flex flex-col gap-3 sm:flex-row">
         <div class="min-w-0 flex-1">
@@ -9,16 +9,20 @@
         </div>
         <x-ui.button type="submit" size="lg">Tìm kiếm</x-ui.button>
     </div>
-    <div class="flex flex-wrap gap-2" aria-label="Lọc theo loại thực thể">
-        @foreach(['all'=>'Tất cả','artist'=>'Nghệ sĩ','recording'=>'Bài hát','release'=>'Album','version'=>'Phiên bản','work'=>'Tác phẩm','collection'=>'Bộ sưu tập'] as $key=>$label)
-            <label class="cursor-pointer">
+    @if($showTypeFilters)
+    <div class="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap" aria-label="Lọc theo loại thực thể">
+        @foreach(['all'=>'Tất cả','artist'=>'Nghệ sĩ','recording'=>'Bản thu','release'=>'Album','version'=>'Phiên bản','work'=>'Tác phẩm','collection'=>'Bộ sưu tập'] as $key=>$label)
+            <label class="shrink-0 cursor-pointer">
                 <input type="radio" name="type" value="{{ $key }}" class="peer sr-only" @checked($type===$key) onchange="this.form.submit()">
-                <span class="inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition peer-checked:border-[var(--sc-primary)] peer-checked:bg-[var(--sc-primary)] peer-checked:text-white">{{ $label }}</span>
+                <span class="inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition peer-checked:border-[var(--sc-primary)] peer-checked:bg-[var(--sc-primary)] peer-checked:text-white peer-focus:border-[var(--sc-primary)] peer-focus:outline peer-focus:outline-[3px] peer-focus:outline-offset-2 peer-focus:outline-[var(--sc-focus)]">{{ $label }}</span>
             </label>
         @endforeach
     </div>
+    @else
+        <input type="hidden" name="type" value="{{ $type }}">
+    @endif
     @unless($hero)
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
         <label for="search-sort" class="text-sm font-semibold">Sắp xếp</label>
         <select id="search-sort" name="sort" onchange="this.form.submit()" class="min-h-11 rounded-[var(--sc-radius-control)] border border-[var(--sc-border-strong)] bg-white px-3">
             <option value="relevance" @selected($sort==='relevance')>Phù hợp nhất</option>

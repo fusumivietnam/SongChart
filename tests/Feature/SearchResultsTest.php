@@ -16,7 +16,8 @@ it('uses one document main landmark and labels the search result region', functi
 
     $response->assertOk()
         ->assertSee('<main id="main-content"', false)
-        ->assertSee('<section id="search-results" aria-labelledby="search-results-title">', false)
+        ->assertSee('id="search-results"', false)
+        ->assertSee('aria-labelledby="search-results-title"', false)
         ->assertSee('id="search-results-title"', false);
 
     expect(substr_count($response->getContent(), '<main'))->toBe(1);

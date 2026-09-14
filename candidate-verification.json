@@ -1,6 +1,6 @@
 {
     "schema_version": 1,
-    "stage": "22.4",
+    "stage": "23.0",
     "candidate": "v1",
     "closure_ready": false,
     "environment": "not_run",

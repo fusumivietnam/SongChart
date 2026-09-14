@@ -87,7 +87,7 @@ it('fetches approved YouTube viewCount evidence, persists observation history, a
     $this->get('/charts/'.RefreshYouTubeViewChart::CHART_ID)
         ->assertOk()
         ->assertSee('Golden YouTube Song')
-        ->assertSee('123456');
+        ->assertSee('123.456');
 });
 
 it('does not create a chart snapshot when no approved public YouTube destination exists', function (): void {

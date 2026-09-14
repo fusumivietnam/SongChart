@@ -1,51 +1,51 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "38e56644d797893ccde764fd0546d8987ef82fd65acfd1f1d16d724535a5e9be",
+    "source_fingerprint": "3513f18c69e0a211cdb4bc084121e460ac895e37c7c880ad8c9aed9f8d376119",
     "current_stage": {
-        "id": "22.4",
-        "title": "Vibe Coding Operations",
-        "task_contract": "docs/foundation/STAGE_22_4_TASK_CONTRACT.md",
+        "id": "23.0",
+        "title": "Public Product UX",
+        "task_contract": "docs/foundation/STAGE_23_0_TASK_CONTRACT.md",
         "status": "accepted"
     },
-    "accepted_through": "22.4",
+    "accepted_through": "23.0",
     "stage_progress": [
         {
-            "id": "22.4A",
+            "id": "23.0A",
             "status": "accepted",
-            "title": "Task-oriented coding operation bundles",
+            "title": "Discovery and search product shell",
             "goals": [
-                "compose existing orientation, impact, focused verification and closure entrypoints into bounded task-oriented operation bundles",
-                "derive commands and provenance from existing stage and verification authorities rather than hard-coding a parallel workflow",
-                "keep every repository mutation and promotion action explicitly human-governed"
+                "align homepage discovery and search results with the approved search-first information hierarchy",
+                "preserve canonical search URL, filter and ranking ownership while making entity context and provenance legible",
+                "improve empty, partial and degraded public states without inventing results or ranking evidence",
+                "preserve desktop and mobile visual-review screenshots through the existing browser-smoke owner"
             ]
         },
         {
-            "id": "22.4B",
+            "id": "23.0B",
             "status": "accepted",
-            "title": "Impact-aware verification recommendations",
+            "title": "Canonical entity detail experience",
             "goals": [
-                "map the resolved repository change surface to the smallest registered verification set",
-                "preserve semantic ownership in verification topology and avoid duplicate test orchestration"
+                "refine canonical entity detail around shared identity, facts, relationships, provenance and provider destinations",
+                "preserve stable canonical URLs, metadata ownership and provider-neutral identity"
             ]
         },
         {
-            "id": "22.4C",
+            "id": "23.0C",
             "status": "accepted",
-            "title": "Bounded agent handoff and resume workflows",
+            "title": "Persisted chart and provenance UX",
             "goals": [
-                "turn deterministic handoff evidence into explicit resume workflows without storing chat memory as authority",
-                "surface stale or unresolved live GitHub evidence instead of inventing continuity"
+                "present persisted chart observations with metric semantics, provenance and freshness",
+                "distinguish unavailable evidence from valid zero or empty chart state"
             ]
         },
         {
-            "id": "22.4D",
+            "id": "23.0D",
             "status": "accepted",
-            "title": "Human-gated repository operation automation",
+            "title": "Mobile, accessibility, performance and stage closure",
             "goals": [
-                "compose safe repository operation plans over existing command owners",
-                "require explicit human approval for write-capable execution",
-                "close Stage 22.4 through exact-head Auto Closure"
+                "normalize responsive public behavior and WCAG 2.2 AA-sensitive interactions",
+                "protect server-rendered primary metadata and close Stage 23 through exact-head repository verification"
             ]
         }
     ],
@@ -55,9 +55,9 @@
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "fe0bf1fcaba8ec2058b0cc333a7c8106b2bff9112630df2efc0f5f58d5957c3c",
+        "candidate-verification.json": "7d206d77236b5cde71ab8b0951dc45fa532fed88ba275d32c35cf80159eef9ca",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "5f148bb5bb05c77b9b45494fb759d54b51a22e0d0a7cca965bb23b09f6a4fba7"
+        "docs/project/engineering/stage-plan.json": "b0332ba49f6f2e8503631b72610ffca8001248d127901309e1b62a2be57e912a"
     }
 }

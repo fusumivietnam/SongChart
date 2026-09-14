@@ -6,13 +6,21 @@ use App\Application\Chart\BuildChartSnapshot;
 use App\Domain\Chart\DTO\ChartMetricObservation;
 use App\Models\Catalog\Recording;
 use App\Support\Chart\DatabaseChartSnapshotStore;
+use App\Support\Chart\YouTubeViewCountObservationSource;
 use DateTimeImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('returns 404 when a public chart has no persisted snapshot', function (): void {
-    $this->get('/charts/global-streams')->assertNotFound();
+it('renders a bounded unavailable state for a known chart without a persisted snapshot', function (): void {
+    $this->get('/charts/youtube-video-views')
+        ->assertOk()
+        ->assertSee('Chưa có đủ bằng chứng')
+        ->assertSee('Chưa thể công bố thứ hạng');
+});
+
+it('keeps unknown chart identifiers as 404', function (): void {
+    $this->get('/charts/not-a-real-chart')->assertNotFound();
 });
 
 it('renders the latest persisted chart using canonical recording identity and provenance metadata', function (): void {
@@ -22,27 +30,68 @@ it('renders the latest persisted chart using canonical recording identity and pr
     ]);
 
     $snapshot = (new BuildChartSnapshot)->handle(
-        'global-streams',
-        'streams',
-        new DateTimeImmutable('2026-09-09T00:00:00+00:00'),
+        'youtube-video-views',
+        YouTubeViewCountObservationSource::METRIC,
+        new DateTimeImmutable,
         [
             new ChartMetricObservation(
                 'provider-observation-1',
                 (string) $recording->getKey(),
-                'provider-a',
+                'youtube',
                 'provider-item-1',
-                'streams',
-                100,
-                new DateTimeImmutable('2026-09-08T23:00:00+00:00'),
+                YouTubeViewCountObservationSource::METRIC,
+                123456,
+                new DateTimeImmutable('-5 minutes'),
+                YouTubeViewCountObservationSource::METRIC_UNIT,
+                YouTubeViewCountObservationSource::SEMANTICS_VERSION,
+                new DateTimeImmutable('-4 minutes'),
+                'youtube:videos.list:provider-item-1:statistics',
             ),
         ],
     );
 
     app(DatabaseChartSnapshotStore::class)->append($snapshot);
 
-    $this->get('/charts/global-streams')
+    $this->get('/charts/youtube-video-views')
         ->assertOk()
         ->assertSee('Golden Song')
-        ->assertSee('songchart-chart-v1')
-        ->assertSee('golden-song');
+        ->assertSee('123.456')
+        ->assertSee('Nguồn và provenance')
+        ->assertSee('youtube:videos.list:provider-item-1:statistics')
+        ->assertSee('golden-song')
+        ->assertDontSee((string) $recording->getKey());
+});
+
+it('renders an observed zero as evidence instead of an unavailable state', function (): void {
+    $recording = Recording::factory()->create([
+        'title' => 'Observed Zero Song',
+        'slug' => 'observed-zero-song',
+    ]);
+
+    $snapshot = (new BuildChartSnapshot)->handle(
+        'youtube-video-views',
+        YouTubeViewCountObservationSource::METRIC,
+        new DateTimeImmutable,
+        [
+            new ChartMetricObservation(
+                'provider-observation-zero',
+                (string) $recording->getKey(),
+                'youtube',
+                'provider-item-zero',
+                YouTubeViewCountObservationSource::METRIC,
+                0,
+                new DateTimeImmutable('-5 minutes'),
+                YouTubeViewCountObservationSource::METRIC_UNIT,
+                YouTubeViewCountObservationSource::SEMANTICS_VERSION,
+            ),
+        ],
+    );
+
+    app(DatabaseChartSnapshotStore::class)->append($snapshot);
+
+    $this->get('/charts/youtube-video-views')
+        ->assertOk()
+        ->assertSee('Observed Zero Song')
+        ->assertSee('Giá trị 0 đã được quan sát')
+        ->assertDontSee('Chưa có đủ bằng chứng');
 });

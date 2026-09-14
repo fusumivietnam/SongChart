@@ -4,17 +4,17 @@
 
 ## Current stage
 
-- Stage `22.4 — Vibe Coding Operations`
+- Stage `23.0 — Public Product UX`
 - Status: `accepted`
-- Accepted through: `22.4`
-- Task contract: `docs/foundation/STAGE_22_4_TASK_CONTRACT.md`
+- Accepted through: `23.0`
+- Task contract: `docs/foundation/STAGE_23_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `22.4A` — `ACCEPTED` — Task-oriented coding operation bundles
-- `22.4B` — `ACCEPTED` — Impact-aware verification recommendations
-- `22.4C` — `ACCEPTED` — Bounded agent handoff and resume workflows
-- `22.4D` — `ACCEPTED` — Human-gated repository operation automation
+- `23.0A` — `ACCEPTED` — Discovery and search product shell
+- `23.0B` — `ACCEPTED` — Canonical entity detail experience
+- `23.0C` — `ACCEPTED` — Persisted chart and provenance UX
+- `23.0D` — `ACCEPTED` — Mobile, accessibility, performance and stage closure
 
 ## Next bounded tranche
 

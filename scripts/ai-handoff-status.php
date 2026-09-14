@@ -51,8 +51,13 @@ function nullSeparatedPaths(string $output): array
 /** @param array<string,mixed> $state */
 function activeTranche(array $state): ?string
 {
+    $declared = $state['active_tranche'] ?? null;
+    if (is_string($declared) && $declared !== '') {
+        return $declared;
+    }
+
     foreach (($state['stage_progress'] ?? []) as $item) {
-        if (! is_array($item) || ($item['status'] ?? null) !== 'active') {
+        if (! is_array($item) || ! in_array($item['status'] ?? null, ['active', 'implementing'], true)) {
             continue;
         }
 

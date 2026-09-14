@@ -11,12 +11,16 @@
 
         <div class="mx-auto mt-9 max-w-4xl rounded-[var(--sc-radius-panel)] border border-[var(--sc-border)] bg-white p-5 shadow-[var(--sc-shadow-float)] md:p-7">
             <x-search.form hero />
-            <div class="mt-4 flex flex-wrap items-center gap-2 text-sm text-[var(--sc-text-secondary)]">
-                <span class="font-semibold">Thử tìm:</span>
-                @foreach($examples as $example)
-                    <a class="rounded-full bg-[var(--sc-bg-subtle)] px-3 py-2 font-semibold hover:text-[var(--sc-primary)]" href="{{ route('search', ['q'=>$example]) }}">{{ $example }}</a>
-                @endforeach
-            </div>
+            @if($examples !== [])
+                <div class="mt-4 flex flex-wrap items-center gap-2 text-sm text-[var(--sc-text-secondary)]">
+                    <span class="font-semibold">Thử tìm:</span>
+                    @foreach($examples as $example)
+                        <a class="inline-flex min-h-11 items-center rounded-full bg-[var(--sc-bg-subtle)] px-3 py-2 font-semibold hover:text-[var(--sc-primary)]" href="{{ route('search', ['q'=>$example]) }}">{{ $example }}</a>
+                    @endforeach
+                </div>
+            @else
+                <p class="mt-4 text-sm leading-6 text-[var(--sc-text-muted)]">Catalog chưa có gợi ý tìm kiếm. Bạn vẫn có thể tìm theo tên canonical hoặc khám phá theo loại thực thể bên dưới.</p>
+            @endif
         </div>
 
         <div class="mx-auto mt-8 grid max-w-4xl gap-4 md:grid-cols-3">
@@ -47,11 +51,15 @@
     <div class="sc-container">
         <div class="sc-home-section-heading">
             <div><p class="sc-caption">CANONICAL STARTING POINTS</p><h2 id="featured-title" class="sc-section-title mt-2">Bắt đầu từ dữ liệu đã định danh</h2></div>
-            <p>Các mục mẫu minh họa cách SongChart nối identity, metadata và đường dẫn chi tiết mà không tạo popularity giả.</p>
+            <p>Các mục ở đây đến từ canonical catalog hiện có; SongChart không tạo popularity hoặc ranking giả để lấp khoảng trống dữ liệu.</p>
         </div>
-        <div class="mt-7 grid gap-5 md:grid-cols-3">
-            @foreach($featured as $item)<x-home.featured-card :item="$item" />@endforeach
-        </div>
+        @if($featured !== [])
+            <div class="mt-7 grid gap-5 md:grid-cols-3">
+                @foreach($featured as $item)<x-home.featured-card :item="$item" />@endforeach
+            </div>
+        @else
+            <div class="mt-7"><x-ui.empty-state title="Chưa có dữ liệu canonical nổi bật" description="Các thực thể sẽ xuất hiện ở đây sau khi catalog có dữ liệu được định danh. Bạn có thể tiếp tục bằng tìm kiếm hoặc khám phá từng loại thực thể." /></div>
+        @endif
     </div>
 </section>
 
@@ -61,9 +69,11 @@
             <x-ui.badge variant="entity">{{ $editorial['label'] }}</x-ui.badge>
             <h2 id="editorial-title" class="mt-4 text-3xl font-bold tracking-tight">{{ $editorial['title'] }}</h2>
             <p class="mt-3 max-w-2xl leading-7 text-[var(--sc-text-secondary)]">{{ $editorial['description'] }}</p>
-            <div class="mt-5 flex flex-wrap gap-2">
-                @foreach($editorial['items'] as $item)<span class="rounded-full border border-[var(--sc-primary-border)] bg-white px-3 py-2 text-sm font-semibold">{{ $item }}</span>@endforeach
-            </div>
+            @if($editorial['items'] !== [])
+                <div class="mt-5 flex flex-wrap gap-2">
+                    @foreach($editorial['items'] as $item)<span class="rounded-full border border-[var(--sc-primary-border)] bg-white px-3 py-2 text-sm font-semibold">{{ $item }}</span>@endforeach
+                </div>
+            @endif
             <a href="{{ $editorial['url'] }}" class="mt-6 inline-flex min-h-11 items-center font-semibold text-[var(--sc-primary)]">Mở bộ sưu tập <span class="ml-2" aria-hidden="true">→</span></a>
             <p class="mt-5 text-xs text-[var(--sc-text-muted)]">Nguồn: {{ $editorial['provenance'] }}</p>
         </article>

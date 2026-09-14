@@ -40,8 +40,8 @@
     --sc-bg-inverse: #0f172a;
 
     --sc-text-primary: #111827;
-    --sc-text-secondary: #64748b;
-    --sc-text-muted: #94a3b8;
+    --sc-text-secondary: #556176;
+    --sc-text-muted: #5b677a;
     --sc-text-inverse: #ffffff;
 
     --sc-primary: #4f35f5;
@@ -49,11 +49,11 @@
     --sc-primary-soft: #f0edff;
     --sc-primary-border: #cfc7ff;
 
-    --sc-success: #16a34a;
+    --sc-success: #166534;
     --sc-success-soft: #eaf8ef;
-    --sc-warning: #d97706;
+    --sc-warning: #92400e;
     --sc-warning-soft: #fff6e5;
-    --sc-danger: #dc2626;
+    --sc-danger: #b91c1c;
     --sc-danger-soft: #feecec;
     --sc-info: #2563eb;
     --sc-info-soft: #eaf2ff;

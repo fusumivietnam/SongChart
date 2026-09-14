@@ -23,14 +23,14 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
     $resume = $controlPlane['resume_workflow'];
 
     expect($state['schema_version'])->toBe(2)
-        ->and($state['current_stage']['id'])->toBe('22.4')
-        ->and($state['accepted_through'])->toBe('22.4')
+        ->and($state['current_stage']['id'])->toBe('23.0')
+        ->and($state['accepted_through'])->toBe('23.0')
         ->and($state['live_work_lease']['source'])->toBe('git-and-github-runtime')
         ->and($controlPlane['orientation']['evidence']['stage_plan'])->toBe('docs/project/engineering/stage-plan.json')
         ->and($controlPlane['runtime']['status'])->toBe('not_evaluated')
-        ->and($handoff['stage'])->toBe('22.4')
+        ->and($handoff['stage'])->toBe('23.0')
         ->and($handoff['active_tranche'])->toBeNull()
-        ->and($handoff['task_contract'])->toBe('docs/foundation/STAGE_22_4_TASK_CONTRACT.md')
+        ->and($handoff['task_contract'])->toBe('docs/foundation/STAGE_23_0_TASK_CONTRACT.md')
         ->and($handoff['head_sha'])->toBe($state['live_work_lease']['head_sha'])
         ->and($handoff['committed_pr_change_surface']['status'])->toBe('requires_live_pr_resolution')
         ->and($handoff['verification']['status'])->toBe('requires_live_workflow_resolution')
@@ -64,7 +64,7 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and(array_keys($bundles))->toBe(['orient', 'implement', 'verify', 'close'])
         ->and($bundles['orient']['commands'])->toContain('songchart ai status')
         ->and($bundles['implement']['status'])->toBe('blocked')
-        ->and($bundles['implement']['stage'])->toBe('22.4')
+        ->and($bundles['implement']['stage'])->toBe('23.0')
         ->and($bundles['implement']['active_tranche'])->toBeNull()
         ->and($bundles['implement']['commands'])->toContain('songchart impact --diff')
         ->and($bundles['verify']['commands'])->toContain('songchart impact --verify')
@@ -73,9 +73,9 @@ it('exposes bounded repository handoff, guidance, operation bundles, impact-awar
         ->and($resume['status'])->toBe('blocked')
         ->and($resume['branch'])->toBe($handoff['branch'])
         ->and($resume['head_sha'])->toBe($handoff['head_sha'])
-        ->and($resume['stage'])->toBe('22.4')
+        ->and($resume['stage'])->toBe('23.0')
         ->and($resume['active_tranche'])->toBeNull()
-        ->and($resume['task_contract'])->toBe('docs/foundation/STAGE_22_4_TASK_CONTRACT.md')
+        ->and($resume['task_contract'])->toBe('docs/foundation/STAGE_23_0_TASK_CONTRACT.md')
         ->and($resume['working_tree_clean'])->toBe($handoff['working_tree_clean'])
         ->and($resume['live_pr_resolution_required'])->toBeTrue()
         ->and($resume['live_workflow_resolution_required'])->toBeTrue()
@@ -198,7 +198,7 @@ it('composes existing owners instead of duplicating diagnostic and verification 
 });
 
 it('does not expose environment secrets in machine-readable handoff, guidance, operation bundles, impact recommendations or resume workflow', function (): void {
-    $secret = 'songchart-stage-22-4-secret-sentinel';
+    $secret = 'songchart-stage-23-secret-sentinel';
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path(), [
         'DB_PASSWORD' => $secret,
         'YOUTUBE_API_KEY' => $secret,
