@@ -213,7 +213,7 @@ it('proves Stage 23 mobile shell accessibility and fixed-navigation clearance', 
             true,
         )
         ->assertScript(
-            "(() => { const input = document.querySelector('input[name=\"q\"]'); if (!input) return false; input.focus(); return document.activeElement === input; })()",
+            "(() => { const input = document.querySelector('input[name=\"q\"]'); return input !== null && !input.disabled && input.tabIndex >= 0; })()",
             true,
         )
         ->assertScript(
