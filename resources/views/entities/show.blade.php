@@ -1,6 +1,8 @@
 @extends('layouts.frontend')
 @section('title', $entity['title'].' · '.$entity['label'].' | '.config('app.name'))
 @section('description', \Illuminate\Support\Str::limit(strip_tags((string) $entity['description']), 160, ''))
+@section('canonical_url', url()->current())
+@section('social_title', $entity['title'].' · '.$entity['label'])
 @push('head')
 @php
     $canonicalUrl = url()->current();
@@ -21,16 +23,7 @@
         'description' => $seoDescription,
     ];
 @endphp
-<link rel="canonical" href="{{ $canonicalUrl }}">
 <meta name="robots" content="index,follow,max-image-preview:large">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="{{ config('app.name') }}">
-<meta property="og:title" content="{{ $entity['title'] }} · {{ $entity['label'] }}">
-<meta property="og:description" content="{{ $seoDescription }}">
-<meta property="og:url" content="{{ $canonicalUrl }}">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="{{ $entity['title'] }} · {{ $entity['label'] }}">
-<meta name="twitter:description" content="{{ $seoDescription }}">
 <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
 @endpush
 @section('content')
