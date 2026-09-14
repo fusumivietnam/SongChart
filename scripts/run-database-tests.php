@@ -15,6 +15,39 @@ $testArguments = array_values(array_filter(
 ));
 
 $root = dirname(__DIR__);
+$diagnosticDirectory = $root.'/storage/logs';
+if (! is_dir($diagnosticDirectory)) {
+    @mkdir($diagnosticDirectory, 0777, true);
+}
+$resultPath = $diagnosticDirectory.'/postgres-test-result.json';
+
+$writeResult = static function (
+    string $status,
+    string $phase,
+    ?string $failureClass = null,
+    ?string $failedTest = null,
+    ?string $evidencePath = null,
+) use ($resultPath, $lane): void {
+    if ($lane !== 'postgres') {
+        return;
+    }
+
+    $payload = [
+        'schema_version' => 1,
+        'lane' => 'postgres',
+        'status' => $status,
+        'phase' => $phase,
+        'failure_class' => $failureClass,
+        'failed_test' => $failedTest,
+        'evidence_path' => $evidencePath,
+    ];
+
+    @file_put_contents(
+        $resultPath,
+        json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL,
+    );
+};
+
 $env = [];
 foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
     if (is_scalar($value) || $value === null) {
@@ -65,8 +98,10 @@ if ($lane === 'sqlite') {
 }
 
 if ($lane === 'postgres') {
+    $writeResult('running', 'safety-precheck');
     $safety = proc_open([PHP_BINARY, 'scripts/verify-test-database-safety.php'], [STDIN, STDOUT, STDERR], $pipes, $root, $env);
     if (! is_resource($safety) || proc_close($safety) !== 0) {
+        $writeResult('failed', 'safety-precheck', 'database-safety');
         fwrite(STDERR, 'PostgreSQL test database safety guard refused the test lane.'.PHP_EOL);
         exit(1);
     }
@@ -78,6 +113,7 @@ if ($prepareSchema) {
         exit(2);
     }
 
+    $writeResult('running', 'migration');
     fwrite(STDOUT, 'Preparing isolated PostgreSQL test schema with migrate:fresh...'.PHP_EOL);
     $migration = proc_open(
         [PHP_BINARY, 'artisan', 'migrate:fresh', '--force', '--ansi'],
@@ -88,10 +124,12 @@ if ($prepareSchema) {
     );
 
     if (! is_resource($migration) || proc_close($migration) !== 0) {
+        $writeResult('failed', 'migration', 'migration');
         fwrite(STDERR, 'Unable to prepare the isolated PostgreSQL test schema.'.PHP_EOL);
         exit(1);
     }
 
+    $writeResult('running', 'safety-postcheck');
     $postMigrationSafety = proc_open(
         [PHP_BINARY, 'scripts/verify-test-database-safety.php'],
         [STDIN, STDOUT, STDERR],
@@ -101,11 +139,13 @@ if ($prepareSchema) {
     );
 
     if (! is_resource($postMigrationSafety) || proc_close($postMigrationSafety) !== 0) {
+        $writeResult('failed', 'safety-postcheck', 'database-safety');
         fwrite(STDERR, 'Post-migration PostgreSQL test database safety verification failed.'.PHP_EOL);
         exit(1);
     }
 }
 
+$writeResult('running', 'test');
 $command = array_merge([PHP_BINARY, 'artisan', 'test', '--ansi', '--display-warnings'], $testArguments);
 $descriptors = [
     0 => STDIN,
@@ -114,6 +154,7 @@ $descriptors = [
 ];
 $process = proc_open($command, $descriptors, $pipes, $root, $env);
 if (! is_resource($process)) {
+    $writeResult('failed', 'test', 'test-runner');
     fwrite(STDERR, 'Unable to start Laravel test process.'.PHP_EOL);
     exit(1);
 }
@@ -171,11 +212,6 @@ while (true) {
 }
 
 $exitCode = proc_close($process);
-
-$diagnosticDirectory = $root.'/storage/logs';
-if (! is_dir($diagnosticDirectory)) {
-    @mkdir($diagnosticDirectory, 0777, true);
-}
 $redacted = preg_replace(
     '/(DB_PASSWORD|TEST_PGSQL_PASSWORD|API[_ -]?KEY|TOKEN|SECRET|AUTHORIZATION|password)(\s*[:=]\s*)[^\s]+/i',
     '$1$2[REDACTED]',
@@ -185,6 +221,8 @@ $redacted = preg_replace(
 
 $failureEvidenceTail = null;
 $failureEvidencePath = null;
+$failedTest = null;
+$failureClass = null;
 
 if ($exitCode !== 0) {
     $diagnosticPath = $diagnosticDirectory.'/postgres-test-last-failure.log';
@@ -194,6 +232,22 @@ if ($exitCode !== 0) {
     $lines = preg_split('/\R/', $plain) ?: [];
     $failureEvidenceTail = implode(PHP_EOL, array_slice($lines, -200));
     $failureEvidencePath = 'storage/logs/postgres-test-last-failure.log';
+
+    if (preg_match('/\b(?:FAIL|FAILED)\s+(Tests\\\\[^\r\n]+)/', $plain, $matches) === 1) {
+        $failedTest = trim($matches[1]);
+    }
+
+    if ($failedTest !== null || str_contains($plain, 'Failed asserting') || str_contains($plain, 'ExpectationFailedException')) {
+        $failureClass = 'assertion';
+    } elseif (str_contains($plain, 'SQLSTATE')) {
+        $failureClass = 'database-error';
+    } else {
+        $failureClass = 'test-process';
+    }
+
+    $writeResult('failed', 'test', $failureClass, $failedTest, $failureEvidencePath);
+} else {
+    $writeResult('passed', 'test');
 }
 
 if ($exitCode !== 0 && $lane === 'postgres') {
@@ -250,6 +304,7 @@ if ($exitCode !== 0 && $lane === 'postgres') {
         fwrite(STDERR, '[SongChart DB diagnostic] Unable to inspect database state: '.$exception->getMessage().PHP_EOL);
     }
 }
+
 if ($exitCode !== 0) {
     fwrite(STDERR, PHP_EOL.'[SongChart test evidence] === COPY FROM HERE ==='.PHP_EOL);
     fwrite(STDERR, '[SongChart test evidence] Exact tail from failing Laravel test process:'.PHP_EOL);
@@ -258,6 +313,7 @@ if ($exitCode !== 0) {
         STDERR,
         '[SongChart test evidence] Full captured failure: '.($failureEvidencePath ?? 'storage/logs/postgres-test-last-failure.log').PHP_EOL,
     );
+    fwrite(STDERR, '[SongChart test evidence] Machine result: storage/logs/postgres-test-result.json'.PHP_EOL);
     fwrite(STDERR, '[SongChart test evidence] === END COPY ==='.PHP_EOL);
 }
 
