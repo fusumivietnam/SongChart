@@ -14,7 +14,7 @@
         @foreach(['all'=>'Tất cả','artist'=>'Nghệ sĩ','recording'=>'Bản thu','release'=>'Album','version'=>'Phiên bản','work'=>'Tác phẩm','collection'=>'Bộ sưu tập'] as $key=>$label)
             <label class="shrink-0 cursor-pointer">
                 <input type="radio" name="type" value="{{ $key }}" class="peer sr-only" @checked($type===$key) onchange="this.form.submit()">
-                <span class="inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition peer-checked:border-[var(--sc-primary)] peer-checked:bg-[var(--sc-primary)] peer-checked:text-white peer-focus-visible:border-[var(--sc-primary)] peer-focus-visible:outline peer-focus-visible:outline-[3px] peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--sc-focus)]">{{ $label }}</span>
+                <span class="inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition peer-checked:border-[var(--sc-primary)] peer-checked:bg-[var(--sc-primary)] peer-checked:text-white peer-focus:border-[var(--sc-primary)] peer-focus:outline peer-focus:outline-[3px] peer-focus:outline-offset-2 peer-focus:outline-[var(--sc-focus)]">{{ $label }}</span>
             </label>
         @endforeach
     </div>
