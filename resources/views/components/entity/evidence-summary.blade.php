@@ -29,8 +29,10 @@
         ] as [$label, $value, $description])
             <div class="rounded-[var(--sc-radius-control)] border border-[var(--sc-border)] bg-[var(--sc-bg-subtle)] p-4">
                 <dt class="text-xs font-semibold uppercase tracking-wide text-[var(--sc-text-muted)]">{{ $label }}</dt>
-                <dd class="mt-1 text-2xl font-bold text-[var(--sc-text-primary)]">{{ $value }}</dd>
-                <p class="mt-2 text-xs leading-5 text-[var(--sc-text-secondary)]">{{ $description }}</p>
+                <dd>
+                    <span class="mt-1 block text-2xl font-bold text-[var(--sc-text-primary)]">{{ $value }}</span>
+                    <span class="mt-2 block text-xs leading-5 text-[var(--sc-text-secondary)]">{{ $description }}</span>
+                </dd>
             </div>
         @endforeach
     </dl>
