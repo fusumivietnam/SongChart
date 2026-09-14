@@ -23,8 +23,8 @@ it('keeps public social preview metadata centralized and crawler-ready', functio
         ->toContain('property="og:image:type" content="image/png"')
         ->toContain('name="twitter:card" content="summary_large_image"')
         ->toContain('name="twitter:image"')
-        ->toContain("$socialImage ?? asset('images/social/songchart-default.png')")
-        ->toContain("$canonicalUrl ?? request()->url()")
+        ->toContain('$socialImage ?? asset(\'images/social/songchart-default.png\')')
+        ->toContain('$canonicalUrl ?? request()->url()')
         ->and(file_exists($previewPath))->toBeTrue();
 
     $imageSize = getimagesize($previewPath);
