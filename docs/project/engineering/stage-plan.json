@@ -4,10 +4,10 @@
     "id": "23.0",
     "title": "Public Product UX",
     "task_contract": "docs/foundation/STAGE_23_0_TASK_CONTRACT.md",
-    "status": "implementing"
+    "status": "accepted"
   },
-  "accepted_through": "22.4",
-  "active_tranche": "23.0D",
+  "accepted_through": "23.0",
+  "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -36,6 +36,13 @@
       "effective_prepared_head": "2051c9151693981a590c00e41438feb13abfb238",
       "verification_run": 34547026250,
       "verification": "Auto Closure run 403 passed PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build, exact-head failure classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the effective prepared head."
+    },
+    "23.0": {
+      "title": "Public Product UX",
+      "source_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
+      "effective_prepared_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
+      "verification_run": 34798952416,
+      "verification": "Auto Closure run 479 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke with accessibility checks and SHA-bound visual evidence, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
     }
   },
   "accepted_tranche_evidence": {
@@ -87,6 +94,13 @@
       "effective_prepared_head": "1562011bb51f512a25620f66155ab4a625dd375b",
       "verification_run": 34767380205,
       "verification": "Auto Closure run 459 passed PREPARE/QUALITY, PostgreSQL 18, production-built desktop/mobile browser smoke with SHA-bound visual evidence, frontend build, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
+    },
+    "23.0D": {
+      "title": "Mobile, accessibility, performance and stage closure",
+      "source_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
+      "effective_prepared_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
+      "verification_run": 34798952416,
+      "verification": "Auto Closure run 479 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke with WCAG-sensitive Axe coverage and SHA-bound visual evidence, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
     }
   },
   "stage_progress": [
@@ -121,7 +135,7 @@
     },
     {
       "id": "23.0D",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Mobile, accessibility, performance and stage closure",
       "goals": [
         "normalize responsive public behavior and WCAG 2.2 AA-sensitive interactions",
