@@ -74,7 +74,7 @@ This index lists active documentation ownership. Legacy stage records are migrat
 
 - `docs/providers/` — provider behavior/compliance.
 - `docs/chart/YOUTUBE_VIEW_COUNT_CONTRACT.md` — Stage 22 YouTube view-count metric semantics, provenance and activation policy.
-- `docs/operations/` — operational integrations/procedures.
+- `docs/operations/` — operational integrations/procedures, including `edge-delivery-policy.md` and the evidence-gated `external-observability-evaluation.md`.
 - `docs/extensions/` — extension lifecycle.
 - `docs/ui/` — public/admin design contracts.
 
