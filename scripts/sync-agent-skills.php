@@ -16,14 +16,14 @@ function loadSkillContract(string $path): array
 /** @return list<string> */
 function relativeFiles(string $base): array
 {
-    if (! is_dir($base)) {
+    if (is_dir($base) === false) {
         return [];
     }
 
     $files = [];
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS));
     foreach ($iterator as $file) {
-        if (! $file->isFile()) {
+        if ($file->isFile() === false) {
             continue;
         }
 
@@ -48,12 +48,12 @@ $drift = [];
 $written = [];
 
 foreach ($managedSkills as $skill) {
-    if (! is_string($skill)) {
+    if (is_string($skill) === false) {
         continue;
     }
 
     $sourceDir = $root.'/'.$canonicalRoot.'/'.$skill;
-    if (! is_dir($sourceDir)) {
+    if (is_dir($sourceDir) === false) {
         $drift[] = 'canonical skill missing: '.$canonicalRoot.'/'.$skill;
         continue;
     }
@@ -63,7 +63,7 @@ foreach ($managedSkills as $skill) {
         $sourceContent = (string) file_get_contents($source);
 
         foreach ($projectionRoots as $projectionRoot) {
-            if (! is_string($projectionRoot)) {
+            if (is_string($projectionRoot) === false) {
                 continue;
             }
 
@@ -75,12 +75,12 @@ foreach ($managedSkills as $skill) {
 
             $label = $projectionRoot.'/'.$skill.'/'.$relative;
             $drift[] = $label;
-            if (! $write) {
+            if ($write === false) {
                 continue;
             }
 
             $directory = dirname($target);
-            if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
+            if (is_dir($directory) === false && mkdir($directory, 0775, true) === false && is_dir($directory) === false) {
                 fwrite(STDERR, 'Unable to create skill projection directory: '.$directory.PHP_EOL);
                 exit(1);
             }
@@ -104,6 +104,6 @@ $result = [
 
 echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES).PHP_EOL;
 
-if (! $write && $drift !== []) {
+if ($write === false && $drift !== []) {
     exit(1);
 }
