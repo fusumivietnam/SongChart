@@ -1,13 +1,13 @@
 {
   "schema_version": 11,
   "current_stage": {
-    "id": "24.0",
-    "title": "Operational Intelligence",
-    "task_contract": "docs/foundation/STAGE_24_0_TASK_CONTRACT.md",
-    "status": "accepted"
+    "id": "25.0",
+    "title": "Global Delivery & Scale",
+    "task_contract": "docs/foundation/STAGE_25_0_TASK_CONTRACT.md",
+    "status": "implementing"
   },
   "accepted_through": "24.0",
-  "active_tranche": null,
+  "active_tranche": "25.0A",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -46,10 +46,12 @@
     },
     "24.0": {
       "title": "Operational Intelligence",
-      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
-      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
-      "verification_run": 34924143552,
-      "verification": "Auto Closure run 518 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact implementation head. The authored closure head must pass a fresh exact-head Auto Closure before merge."
+      "source_head": "ca73de18ec0635b868740016ad07f073c3f1b970",
+      "effective_prepared_head": "6cb48bddf6101e7d55a933fa808d0e97a854e63d",
+      "verification_run": 34924745305,
+      "verification": "Auto Closure run 520 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 6cb48bddf6101e7d55a933fa808d0e97a854e63d.",
+      "accepted_main_sha": "d5eb48fd36ae3796de55201adbbf75c6d8ee99f4",
+      "accepted_main_workflow_run": 34925210011
     }
   },
   "accepted_tranche_evidence": {
@@ -140,50 +142,54 @@
   },
   "stage_progress": [
     {
-      "id": "24.0A",
-      "status": "accepted",
-      "title": "Runtime telemetry baseline",
+      "id": "25.0A",
+      "status": "implementing",
+      "title": "Edge delivery and cache policy baseline",
       "goals": [
-        "inventory and converge existing Pulse, Horizon and runtime evidence ownership",
-        "define one operational metric vocabulary with explicit freshness and unavailable semantics",
-        "reuse bounded read-only Project Kernel/Admin/CLI surfaces without request-time source scans"
+        "classify public routes and assets by cacheability, freshness, invalidation and bypass requirements",
+        "map Stage 24 latency and cache evidence to measurable thresholds for edge/CDN investigation",
+        "define a provider-neutral edge delivery profile that preserves direct Caddy delivery as a supported fallback"
       ]
     },
     {
-      "id": "24.0B",
-      "status": "accepted",
-      "title": "Provider and data-pipeline health",
+      "id": "25.0B",
+      "status": "planned",
+      "title": "Database connection and read scaling",
       "goals": [
-        "compose provider failures, freshness, ingestion/import and quarantine health without moving provider evidence into canonical authority",
-        "define stable operational failure classes and timestamps for degraded data pipelines"
+        "classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas",
+        "define consistency and failback rules that keep PostgreSQL primary authoritative",
+        "require connection saturation or query-latency evidence before promoting connection or replica infrastructure"
       ]
     },
     {
-      "id": "24.0C",
-      "status": "accepted",
-      "title": "Scale scorecard and decision thresholds",
+      "id": "25.0C",
+      "status": "planned",
+      "title": "Regional resilience and traffic control",
       "goals": [
-        "compose runtime, queue, database, cache, provider and search visibility evidence into a measurable scale scorecard",
-        "require metric thresholds and expected improvement before recommending infrastructure changes"
+        "evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured evidence",
+        "define health, drain, retry and failover semantics before routing automation",
+        "keep Envoy deferred until an explicit multi-service, gRPC, mTLS, multi-region or traffic-control trigger exists"
       ]
     },
     {
-      "id": "24.0D",
-      "status": "accepted",
-      "title": "External observability evaluation and stage closure",
+      "id": "25.0D",
+      "status": "planned",
+      "title": "External APM evaluation and stage closure",
       "goals": [
-        "evaluate external observability only against demonstrated internal gaps and security/cost constraints",
-        "close Stage 24 through existing exact-head verification and canonical closure ownership"
+        "evaluate external APM only against demonstrated Stage 24/25 observability gaps",
+        "record privacy, retention, operational cost and fallback behavior for any adoption decision",
+        "close Stage 25 through existing exact-head and canonical verification ownership"
       ]
     }
   ],
-  "next_tranche": null,
+  "next_tranche": "25.0B",
   "next_stage_outline": null,
   "activation_evidence": {
-    "accepted_main_sha": "18cf355aff62afca35fe600483dc14ad02c4a0c3",
-    "accepted_main_workflow_run": 34921198032,
-    "stage_23_pull_request": 35,
-    "stage_24_branch": "stage-24-operational-intelligence"
+    "accepted_main_sha": "d5eb48fd36ae3796de55201adbbf75c6d8ee99f4",
+    "accepted_main_workflow_run": 34925210011,
+    "stage_24_pull_request": 36,
+    "stage_24_final_auto_closure_run": 34924745305,
+    "stage_25_branch": "stage-25-global-delivery-scale"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
