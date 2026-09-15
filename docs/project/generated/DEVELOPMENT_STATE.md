@@ -4,17 +4,17 @@
 
 ## Current stage
 
-- Stage `25.0 — Global Delivery & Scale`
+- Stage `26.0 — Authority & Product Design Coherence`
 - Status: `accepted`
-- Accepted through: `25.0`
-- Task contract: `docs/foundation/STAGE_25_0_TASK_CONTRACT.md`
+- Accepted through: `26.0`
+- Task contract: `docs/foundation/STAGE_26_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `25.0A` — `ACCEPTED` — Edge delivery and cache policy baseline
-- `25.0B` — `ACCEPTED` — Database connection and read scaling
-- `25.0C` — `ACCEPTED` — Regional resilience and traffic control
-- `25.0D` — `ACCEPTED` — External APM evaluation and stage closure
+- `26.0A` — `ACCEPTED` — Authority Drift Closure
+- `26.0B` — `ACCEPTED` — Executable UI Contract Closure
+- `26.0C` — `ACCEPTED` — Canonical Product Screens
+- `26.0D` — `ACCEPTED` — Product-Coherence Closure
 
 ## Next bounded tranche
 

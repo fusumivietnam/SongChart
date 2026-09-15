@@ -50,6 +50,27 @@ function stage21BrowserReviewFixture(): array
     return [$admin, $decision];
 }
 
+it('captures Stage 26 account overview evidence on desktop and mobile', function (): void {
+    [$admin] = stage21BrowserReviewFixture();
+    $this->actingAs($admin);
+
+    $desktop = visit('/account')
+        ->assertSee('Tổng quan tài khoản')
+        ->assertSee('Quản lý bảo mật')
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke();
+    $desktop->screenshot(filename: 'stage26-account-overview-desktop', fullPage: true);
+
+    $mobile = visit('/account')
+        ->on()
+        ->iPhone14Pro()
+        ->assertSee('Tổng quan tài khoản')
+        ->assertSee('Quản lý bảo mật')
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke();
+    $mobile->screenshot(filename: 'stage26-account-overview-mobile', fullPage: true);
+});
+
 it('captures owner review evidence for the Stage 21 editorial admin flow', function (): void {
     [$admin, $decision] = stage21BrowserReviewFixture();
     $this->actingAs($admin);
@@ -57,6 +78,7 @@ it('captures owner review evidence for the Stage 21 editorial admin flow', funct
     $index = visit('/admin/canonical-admissions')
         ->assertSee('Duyệt thay đổi dữ liệu')
         ->assertSee('Đề xuất cần bạn xem xét')
+        ->assertNoAccessibilityIssues()
         ->assertNoSmoke();
     $index->screenshot(filename: 'stage21-admission-index-desktop', fullPage: true);
 
@@ -66,6 +88,7 @@ it('captures owner review evidence for the Stage 21 editorial admin flow', funct
         ->assertSee('Nếu từ chối')
         ->assertSee('Chấp nhận và cập nhật dữ liệu')
         ->assertSee('Từ chối đề xuất')
+        ->assertNoAccessibilityIssues()
         ->assertNoSmoke();
     $detail->screenshot(filename: 'stage21-admission-detail-desktop', fullPage: true);
 
@@ -74,6 +97,7 @@ it('captures owner review evidence for the Stage 21 editorial admin flow', funct
         ->iPhone14Pro()
         ->assertSee('Duyệt thay đổi dữ liệu')
         ->assertSee('Đề xuất cần bạn xem xét')
+        ->assertNoAccessibilityIssues()
         ->assertNoSmoke();
     $mobileIndex->screenshot(filename: 'stage21-admission-index-mobile', fullPage: true);
 
@@ -83,6 +107,7 @@ it('captures owner review evidence for the Stage 21 editorial admin flow', funct
         ->assertSee('Xem xét thay đổi dữ liệu')
         ->assertSee('Chấp nhận và cập nhật dữ liệu')
         ->assertSee('Từ chối đề xuất')
+        ->assertNoAccessibilityIssues()
         ->assertNoSmoke();
     $mobileDetail->screenshot(filename: 'stage21-admission-detail-mobile', fullPage: true);
 });

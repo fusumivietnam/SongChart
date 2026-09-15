@@ -6,7 +6,7 @@
 <x-ui.card class="mt-6">
     <div class="p-5">
         <h2 class="font-semibold">Chức năng duyệt chưa sẵn sàng</h2>
-        <p class="mt-2 text-sm text-slate-600">Hiện chưa thể tải danh sách đề xuất. Dữ liệu SongChart không bị thay đổi. Nếu tình trạng này tiếp diễn, hãy liên hệ người phụ trách kỹ thuật.</p>
+        <p class="mt-2 text-sm text-[var(--admin-text-secondary)]">Hiện chưa thể tải danh sách đề xuất. Dữ liệu SongChart không bị thay đổi. Nếu tình trạng này tiếp diễn, hãy liên hệ người phụ trách kỹ thuật.</p>
     </div>
 </x-ui.card>
 @else
@@ -14,9 +14,9 @@
     <div class="p-5">
         <h2 class="font-semibold">Cách duyệt một đề xuất</h2>
         <ol class="mt-3 grid gap-3 text-sm md:grid-cols-3">
-            <li class="rounded border p-3"><span class="font-semibold">1. Chọn đề xuất</span><p class="mt-1 text-slate-500">Một đề xuất mới chỉ là thông tin cần kiểm tra, chưa làm thay đổi dữ liệu.</p></li>
-            <li class="rounded border p-3"><span class="font-semibold">2. Kiểm tra nội dung</span><p class="mt-1 text-slate-500">Xem loại dữ liệu, nguồn cung cấp và giá trị được đề xuất.</p></li>
-            <li class="rounded border p-3"><span class="font-semibold">3. Ra quyết định</span><p class="mt-1 text-slate-500">Chấp nhận để cập nhật SongChart hoặc từ chối và ghi rõ lý do.</p></li>
+            <li class="rounded border border-[var(--admin-border)] p-3"><span class="font-semibold">1. Chọn đề xuất</span><p class="mt-1 text-[var(--admin-text-secondary)]">Một đề xuất mới chỉ là thông tin cần kiểm tra, chưa làm thay đổi dữ liệu.</p></li>
+            <li class="rounded border border-[var(--admin-border)] p-3"><span class="font-semibold">2. Kiểm tra nội dung</span><p class="mt-1 text-[var(--admin-text-secondary)]">Xem loại dữ liệu, nguồn cung cấp và giá trị được đề xuất.</p></li>
+            <li class="rounded border border-[var(--admin-border)] p-3"><span class="font-semibold">3. Ra quyết định</span><p class="mt-1 text-[var(--admin-text-secondary)]">Chấp nhận để cập nhật SongChart hoặc từ chối và ghi rõ lý do.</p></li>
         </ol>
     </div>
 </x-ui.card>
@@ -30,12 +30,12 @@
                 'rejected' => ['label' => 'Đã từ chối', 'description' => 'Không cập nhật dữ liệu'],
             ] as $key => $item)
                 <a
-                    class="min-h-11 rounded border px-3 py-2 @if($status === $key) font-semibold ring-1 @endif"
+                    class="min-h-11 rounded border border-[var(--admin-border)] px-3 py-2 @if($status === $key) font-semibold ring-1 ring-[var(--admin-primary)] @endif"
                     href="{{ route('admin.canonical-admissions.index', ['status' => $key]) }}"
                     @if($status === $key) aria-current="page" @endif
                 >
                     <span class="block">{{ $item['label'] }}</span>
-                    <span class="block text-xs font-normal text-slate-500">{{ $item['description'] }}</span>
+                    <span class="block text-xs font-normal text-[var(--admin-text-secondary)]">{{ $item['description'] }}</span>
                 </a>
             @endforeach
         </div>
@@ -46,47 +46,47 @@
     <x-ui.card>
         <div class="p-4">
             <h2 id="admission-decisions-heading" class="font-semibold">{{ $status === 'pending' ? 'Đề xuất cần bạn xem xét' : 'Lịch sử quyết định' }}</h2>
-            <p class="mt-1 text-sm text-slate-500">Mở từng đề xuất để xem đầy đủ thông tin trước khi quyết định.</p>
+            <p class="mt-1 text-sm text-[var(--admin-text-secondary)]">Mở từng đề xuất để xem đầy đủ thông tin trước khi quyết định.</p>
         </div>
 
-        <div class="divide-y md:hidden">
+        <div class="divide-y divide-[var(--admin-border)] md:hidden">
             @forelse($decisions as $decision)
                 <article class="p-4">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <p class="font-semibold">{{ $decision->entity_type->label() }}</p>
-                            <p class="mt-1 text-sm text-slate-600">{{ str($decision->field_name)->replace('_', ' ')->headline() }}</p>
+                            <p class="mt-1 text-sm text-[var(--admin-text-secondary)]">{{ str($decision->field_name)->replace('_', ' ')->headline() }}</p>
                         </div>
-                        <span class="shrink-0 rounded border px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span>
+                        <span class="shrink-0 rounded border border-[var(--admin-border)] px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span>
                     </div>
                     <dl class="mt-3 space-y-2 text-sm">
-                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">@include('admin.canonical-admissions.partials.value', ['value' => $decision->assertion?->value])</dd></div>
-                        <div><dt class="text-xs font-semibold text-slate-500">Nguồn</dt><dd class="mt-1">{{ $decision->assertion?->source?->name ?? 'Không xác định' }}</dd></div>
+                        <div><dt class="text-xs font-semibold text-[var(--admin-text-secondary)]">Giá trị đề xuất</dt><dd class="mt-1 break-words">@include('admin.canonical-admissions.partials.value', ['value' => $decision->assertion?->value])</dd></div>
+                        <div><dt class="text-xs font-semibold text-[var(--admin-text-secondary)]">Nguồn</dt><dd class="mt-1">{{ $decision->assertion?->source?->name ?? 'Không xác định' }}</dd></div>
                     </dl>
-                    <a class="mt-4 flex min-h-11 items-center justify-center rounded border px-3 py-2 font-semibold" href="{{ route('admin.canonical-admissions.show', $decision) }}">Xem chi tiết</a>
+                    <a class="mt-4 flex min-h-11 items-center justify-center rounded border border-[var(--admin-border)] px-3 py-2 font-semibold" href="{{ route('admin.canonical-admissions.show', $decision) }}">Xem chi tiết</a>
                 </article>
             @empty
-                <p class="p-8 text-center text-sm text-slate-500">Không có đề xuất nào ở trạng thái này.</p>
+                <p class="p-8 text-center text-sm text-[var(--admin-text-secondary)]">Không có đề xuất nào ở trạng thái này.</p>
             @endforelse
         </div>
 
         <div class="hidden overflow-x-auto md:block">
             <table class="min-w-full text-left text-sm">
-                <thead><tr class="border-b"><th class="p-3">Loại dữ liệu</th><th class="p-3">Nội dung đề xuất</th><th class="p-3">Nguồn</th><th class="p-3">Trạng thái</th><th class="p-3"><span class="sr-only">Thao tác</span></th></tr></thead>
-                <tbody class="divide-y">
+                <thead><tr class="border-b border-[var(--admin-border)]"><th class="p-3">Loại dữ liệu</th><th class="p-3">Nội dung đề xuất</th><th class="p-3">Nguồn</th><th class="p-3">Trạng thái</th><th class="p-3"><span class="sr-only">Thao tác</span></th></tr></thead>
+                <tbody class="divide-y divide-[var(--admin-border)]">
                     @forelse($decisions as $decision)
                         <tr>
                             <td class="p-3"><div class="font-semibold">{{ $decision->entity_type->label() }}</div></td>
                             <td class="p-3">
                                 <div class="font-medium">{{ str($decision->field_name)->replace('_', ' ')->headline() }}</div>
-                                <div class="mt-1 break-words text-slate-600">@include('admin.canonical-admissions.partials.value', ['value' => $decision->assertion?->value])</div>
+                                <div class="mt-1 break-words text-[var(--admin-text-secondary)]">@include('admin.canonical-admissions.partials.value', ['value' => $decision->assertion?->value])</div>
                             </td>
                             <td class="p-3">{{ $decision->assertion?->source?->name ?? 'Không xác định' }}</td>
-                            <td class="p-3"><span class="inline-flex rounded border px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span></td>
+                            <td class="p-3"><span class="inline-flex rounded border border-[var(--admin-border)] px-2 py-1 text-xs font-semibold">{{ ['pending' => 'Cần duyệt', 'applied' => 'Đã chấp nhận', 'rejected' => 'Đã từ chối'][$decision->status->value] ?? $decision->status->value }}</span></td>
                             <td class="p-3"><a class="inline-flex min-h-11 items-center font-semibold underline" href="{{ route('admin.canonical-admissions.show', $decision) }}">Xem chi tiết</a></td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="p-8 text-center text-slate-500">Không có đề xuất nào ở trạng thái này.</td></tr>
+                        <tr><td colspan="5" class="p-8 text-center text-[var(--admin-text-secondary)]">Không có đề xuất nào ở trạng thái này.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -100,49 +100,49 @@
     <x-ui.card>
         <div class="p-4">
             <h2 id="unstaged-evidence-heading" class="font-semibold">Đề xuất mới từ các nguồn dữ liệu</h2>
-            <p class="mt-1 text-sm text-slate-500">Thêm một đề xuất vào danh sách duyệt để xem xét riêng. Bước này chưa cập nhật dữ liệu SongChart.</p>
+            <p class="mt-1 text-sm text-[var(--admin-text-secondary)]">Thêm một đề xuất vào danh sách duyệt để xem xét riêng. Bước này chưa cập nhật dữ liệu SongChart.</p>
         </div>
 
-        <div class="divide-y md:hidden">
+        <div class="divide-y divide-[var(--admin-border)] md:hidden">
             @forelse($unstaged as $assertion)
                 <article class="p-4">
                     <p class="font-semibold">{{ $assertion->entity_type->label() }}</p>
-                    <p class="mt-1 text-sm text-slate-600">{{ str($assertion->field_name)->replace('_', ' ')->headline() }}</p>
+                    <p class="mt-1 text-sm text-[var(--admin-text-secondary)]">{{ str($assertion->field_name)->replace('_', ' ')->headline() }}</p>
                     <dl class="mt-3 space-y-2 text-sm">
-                        <div><dt class="text-xs font-semibold text-slate-500">Giá trị đề xuất</dt><dd class="mt-1 break-words">@include('admin.canonical-admissions.partials.value', ['value' => $assertion->value])</dd></div>
-                        <div><dt class="text-xs font-semibold text-slate-500">Nguồn</dt><dd class="mt-1">{{ $assertion->source?->name ?? 'Không xác định' }}</dd></div>
+                        <div><dt class="text-xs font-semibold text-[var(--admin-text-secondary)]">Giá trị đề xuất</dt><dd class="mt-1 break-words">@include('admin.canonical-admissions.partials.value', ['value' => $assertion->value])</dd></div>
+                        <div><dt class="text-xs font-semibold text-[var(--admin-text-secondary)]">Nguồn</dt><dd class="mt-1">{{ $assertion->source?->name ?? 'Không xác định' }}</dd></div>
                     </dl>
                     <form class="mt-4" method="post" action="{{ route('admin.canonical-admissions.stage', $assertion) }}">
                         @csrf
-                        <button class="min-h-11 w-full rounded border px-3 py-2 font-semibold">Đưa vào danh sách duyệt</button>
+                        <button class="min-h-11 w-full rounded border border-[var(--admin-border)] px-3 py-2 font-semibold">Đưa vào danh sách duyệt</button>
                     </form>
                 </article>
             @empty
-                <p class="p-8 text-center text-sm text-slate-500">Hiện không có đề xuất mới cần đưa vào danh sách duyệt.</p>
+                <p class="p-8 text-center text-sm text-[var(--admin-text-secondary)]">Hiện không có đề xuất mới cần đưa vào danh sách duyệt.</p>
             @endforelse
         </div>
 
         <div class="hidden overflow-x-auto md:block">
             <table class="min-w-full text-left text-sm">
-                <thead><tr class="border-b"><th class="p-3">Loại dữ liệu</th><th class="p-3">Nội dung đề xuất</th><th class="p-3">Nguồn</th><th class="p-3"><span class="sr-only">Thao tác</span></th></tr></thead>
-                <tbody class="divide-y">
+                <thead><tr class="border-b border-[var(--admin-border)]"><th class="p-3">Loại dữ liệu</th><th class="p-3">Nội dung đề xuất</th><th class="p-3">Nguồn</th><th class="p-3"><span class="sr-only">Thao tác</span></th></tr></thead>
+                <tbody class="divide-y divide-[var(--admin-border)]">
                     @forelse($unstaged as $assertion)
                         <tr>
                             <td class="p-3"><div class="font-semibold">{{ $assertion->entity_type->label() }}</div></td>
                             <td class="p-3">
                                 <div class="font-medium">{{ str($assertion->field_name)->replace('_', ' ')->headline() }}</div>
-                                <div class="mt-1 break-words text-slate-600">@include('admin.canonical-admissions.partials.value', ['value' => $assertion->value])</div>
+                                <div class="mt-1 break-words text-[var(--admin-text-secondary)]">@include('admin.canonical-admissions.partials.value', ['value' => $assertion->value])</div>
                             </td>
                             <td class="p-3">{{ $assertion->source?->name ?? 'Không xác định' }}</td>
                             <td class="p-3">
                                 <form method="post" action="{{ route('admin.canonical-admissions.stage', $assertion) }}">
                                     @csrf
-                                    <button class="min-h-11 rounded border px-3 py-2 font-semibold">Đưa vào danh sách duyệt</button>
+                                    <button class="min-h-11 rounded border border-[var(--admin-border)] px-3 py-2 font-semibold">Đưa vào danh sách duyệt</button>
                                 </form>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="p-8 text-center text-slate-500">Hiện không có đề xuất mới cần đưa vào danh sách duyệt.</td></tr>
+                        <tr><td colspan="4" class="p-8 text-center text-[var(--admin-text-secondary)]">Hiện không có đề xuất mới cần đưa vào danh sách duyệt.</td></tr>
                     @endforelse
                 </tbody>
             </table>

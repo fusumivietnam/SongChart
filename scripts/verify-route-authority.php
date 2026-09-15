@@ -148,6 +148,29 @@ if (is_array($edge) === false) {
     }
 }
 
+$currentDesignAuthorityFiles = [
+    'docs/ui/DESIGN_AUTHORITY.md',
+    'docs/ui/AI_DESIGN_HARNESS.md',
+    'docs/ui/PHASE_1_DESIGN_FOUNDATION.md',
+    'docs/ui/PHASE_3_UI_PREVIEW.md',
+    'docs/ui/PHASE_4_SEARCH_FLOW.md',
+    'docs/ui/PHASE_6_SEARCH_RESULTS.md',
+    '.github/skills/songchart-impeccable/SKILL.md',
+];
+foreach ($currentDesignAuthorityFiles as $relative) {
+    $path = $root.'/'.$relative;
+    if (is_file($path) === false) {
+        $errors[] = "Current design authority file is missing: {$relative}.";
+
+        continue;
+    }
+
+    $source = (string) file_get_contents($path);
+    if (str_contains($source, '/development/design-system') === false) {
+        $errors[] = "Current design authority {$relative} must reference the canonical /development/design-system route family.";
+    }
+}
+
 $viewRoots = [$root.'/resources/views', $root.'/tests'];
 foreach ($viewRoots as $viewRoot) {
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($viewRoot, FilesystemIterator::SKIP_DOTS));

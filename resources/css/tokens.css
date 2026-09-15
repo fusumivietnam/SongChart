@@ -62,13 +62,14 @@
     --sc-border-strong: #cbd5e1;
     --sc-focus: #6d5dfb;
 
-    /* Admin semantics are declared now so shared primitives can consume them. */
+    /* Admin semantics mirror the approved admin design contract. */
     --admin-bg-page: #f6f8fc;
     --admin-bg-surface: #ffffff;
     --admin-bg-subtle: #f1f5f9;
     --admin-text-primary: #0f172a;
     --admin-text-secondary: #475569;
     --admin-text-muted: #94a3b8;
+    --admin-text-inverse: #ffffff;
     --admin-sidebar-bg: #0b1328;
     --admin-sidebar-bg-2: #101a36;
     --admin-sidebar-text: rgb(255 255 255 / 0.84);
@@ -77,6 +78,19 @@
     --admin-primary: #5b4ef7;
     --admin-primary-hover: #4d3fea;
     --admin-primary-soft: #eef0ff;
+    --admin-success: #16a34a;
+    --admin-success-soft: #eaf8ef;
+    --admin-warning: #f59e0b;
+    --admin-warning-soft: #fff6e5;
+    --admin-danger: #ef4444;
+    --admin-danger-soft: #feecec;
+    --admin-info: #3b82f6;
+    --admin-info-soft: #eaf2ff;
+    --admin-border: #e2e8f0;
+    --admin-border-strong: #cbd5e1;
+    --admin-focus: #6d5dfb;
+    --admin-shadow-card: 0 6px 18px rgb(15 23 42 / 0.06);
+    --admin-shadow-float: 0 12px 30px rgb(15 23 42 / 0.08);
 
     /* Shared geometry. */
     --sc-radius-sm: 0.5rem;

@@ -7,7 +7,7 @@
         <a href="{{ route('home') }}" class="admin-topbar-icon" aria-label="Mở trang công khai"><x-icons.icon name="external" /></a>
         <div class="admin-user-menu">
             <span class="sc-avatar" aria-hidden="true">{{ auth()->check() ? str(auth()->user()->name)->substr(0, 1)->upper() : 'A' }}</span>
-            <span class="hidden text-left sm:block"><strong>{{ auth()->user()->name ?? 'Admin' }}</strong><small>{{ auth()->user()->role ?? 'super_admin' }}</small></span>
+            <span class="hidden text-left sm:block"><strong>{{ auth()->user()->name ?? 'Admin' }}</strong><small style="color: var(--admin-text-secondary)">{{ auth()->user()->role ?? 'super_admin' }}</small></span>
         </div>
     </div>
 </header>

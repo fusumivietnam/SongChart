@@ -35,10 +35,10 @@ resources/views/components/ui/
 ### UI preview
 
 ```text
-/ui-preview
+/development/design-system
 ```
 
-The route is available only when `DESIGN_LAB_ENABLED=true`.
+The canonical design-system route family is available in `local` and `testing`; outside those environments, `DESIGN_LAB_ENABLED=true` is required. The former `/ui-preview*` compatibility route is retired.
 
 It validates:
 
@@ -64,6 +64,6 @@ It validates:
 
 - PHP and Blade source pass syntax/static inspection.
 - Vite can resolve Tailwind and Alpine after dependency installation.
-- `/ui-preview` renders in local/staging.
+- `/development/design-system` renders through the canonical development route family.
 - Components expose disabled, error and accessible labeling where applicable.
 - Focus and reduced-motion behavior are globally available.

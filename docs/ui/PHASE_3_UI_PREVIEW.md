@@ -4,17 +4,17 @@ Status: implemented in Starter v10.2.
 
 ## Purpose
 
-`/ui-preview` is the living inventory for the approved SongChart UI system. It validates contracts, semantic tokens, shared Blade components, composed frontend/admin patterns and required data states before those patterns are copied into feature pages.
+`/development/design-system` is the living inventory for the approved SongChart UI system. It validates contracts, semantic tokens, shared Blade components, composed frontend/admin patterns and required data states before those patterns are copied into feature pages.
 
-It is not a public product page, a theme gallery or a source of live provider data.
+The former `/ui-preview*` compatibility surface is retired. It is not a public product page, a theme gallery or a source of live provider data.
 
 ## Routes
 
-- `/ui-preview` → foundations
-- `/ui-preview/components`
-- `/ui-preview/patterns`
-- `/ui-preview/states`
-- `/ui-preview/admin`
+- `/development/design-system` → foundations
+- `/development/design-system/components`
+- `/development/design-system/patterns`
+- `/development/design-system/states`
+- `/development/design-system/admin`
 
 The routes are available in `local` and `testing`. Outside those environments, `DESIGN_LAB_ENABLED=true` is required.
 
@@ -39,7 +39,7 @@ The routes are available in `local` and `testing`. Outside those environments, `
 
 ## Acceptance criteria
 
-- Each section has a stable named route.
+- Each section has a stable named route under `development.design-system.*`.
 - Unknown sections return 404.
 - The preview is navigable on desktop and mobile.
 - Breakpoint visibility is inspectable in the top bar.

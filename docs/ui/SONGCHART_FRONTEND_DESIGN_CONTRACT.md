@@ -756,13 +756,26 @@ Livewire only for stateful server-driven UI
 Vite
 ```
 
-Directory rules:
+Executable directory ownership follows the current repository rather than requiring a parallel `pages/` tree:
 
 ```text
-resources/views/components/ui/
-resources/views/components/entity/
-resources/views/components/provider/
-resources/views/pages/
+resources/css/tokens.css                         semantic design tokens
+resources/views/layouts/frontend.blade.php      public/auth shell owner
+resources/views/layouts/admin.blade.php         admin shell owner
+resources/views/components/ui/                   shared UI primitives
+resources/views/components/entity/               shared entity patterns
+resources/views/components/provider/             provider-routing patterns
+resources/views/components/search/               shared search patterns
+resources/views/components/shell/                shared public shell/navigation
+resources/views/home.blade.php                    homepage composition
+resources/views/search/                           search page family
+resources/views/entities/                         canonical entity-detail family
+resources/views/catalog/                          public catalog/browse family
+resources/views/charts/                           chart family
+resources/views/account/                          account family
+resources/views/auth/                             authentication family
+resources/views/admin/                            admin page family
+resources/views/ui-preview/                       internal design-system implementation rendered through /development/design-system
 ```
 
 Rules:
@@ -770,9 +783,11 @@ Rules:
 - reuse primitives before creating components;
 - page views compose components;
 - do not duplicate component markup;
+- do not create a parallel `resources/views/pages/` hierarchy merely to satisfy an obsolete convention;
 - do not introduce React/Vue for isolated interactions;
 - no raw colors in feature templates;
-- no page-specific CSS when a shared token/component can solve it.
+- no page-specific CSS when a shared token/component can solve it;
+- new reusable patterns must be represented in the canonical `/development/design-system` inventory before broad page adoption.
 
 ---
 

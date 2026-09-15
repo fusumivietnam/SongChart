@@ -15,12 +15,14 @@ docs/ui/DESIGN_AUTHORITY.md
         ↓
 owning frontend/admin design contract
         ↓
-approved tokens/components/UI-preview patterns
+approved tokens/components/design-system inventory
         ↓
 AI design harness (this document)
         ↓
 Impeccable or other external design guidance
 ```
+
+The governed living inventory is served through `/development/design-system` and route names under `development.design-system.*`. The former `/ui-preview*` compatibility surface is retired and must not be reintroduced.
 
 When generic design guidance conflicts with a SongChart contract, SongChart wins. External guidance never silently changes entity terminology, provenance/provider disclosure, route behavior, accessibility invariants, canonical identity semantics, ranking claims or approved design tokens.
 
@@ -47,7 +49,7 @@ Before using the design harness, an AI agent must:
 
 1. read `docs/ui/DESIGN_AUTHORITY.md`;
 2. read the owning public/admin design contract;
-3. inspect the existing shared component/token/UI-preview implementation;
+3. inspect the existing shared component/token implementation and `/development/design-system` inventory;
 4. identify the exact target surface and current behavior;
 5. use Impeccable-style guidance only to shape or review a bounded change;
 6. map actionable findings back to existing SongChart component/accessibility/performance owners;

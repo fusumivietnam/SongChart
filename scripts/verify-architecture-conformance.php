@@ -38,6 +38,119 @@ if (str_contains(file_get_contents($root.'/resources/views/ui-preview/sections/p
     $errors[] = 'UI preview contains dead href.';
 }
 
+$frontendDesignContract = (string) file_get_contents($root.'/docs/ui/SONGCHART_FRONTEND_DESIGN_CONTRACT.md');
+foreach ([
+    'resources/css/tokens.css',
+    'resources/views/layouts/frontend.blade.php',
+    'resources/views/layouts/admin.blade.php',
+    'resources/views/components/ui/',
+    'resources/views/components/entity/',
+    'resources/views/components/provider/',
+    'resources/views/components/search/',
+    'resources/views/components/shell/',
+    'resources/views/home.blade.php',
+    'resources/views/search/',
+    'resources/views/entities/',
+    'resources/views/catalog/',
+    'resources/views/charts/',
+    'resources/views/account/',
+    'resources/views/auth/',
+    'resources/views/admin/',
+    'resources/views/ui-preview/',
+] as $ownedUiPath) {
+    if (str_contains($frontendDesignContract, $ownedUiPath) === false) {
+        $errors[] = "Frontend design contract is missing executable UI owner [{$ownedUiPath}].";
+    }
+}
+if (preg_match('/^resources\/views\/pages\/$/m', $frontendDesignContract) === 1) {
+    $errors[] = 'Frontend design contract must not require the obsolete resources/views/pages/ hierarchy.';
+}
+if (str_contains($frontendDesignContract, '/development/design-system') === false) {
+    $errors[] = 'Frontend design contract must point reusable pattern governance at /development/design-system.';
+}
+
+$designTokens = (string) file_get_contents($root.'/resources/css/tokens.css');
+foreach ([
+    '--admin-bg-page',
+    '--admin-bg-surface',
+    '--admin-bg-subtle',
+    '--admin-text-primary',
+    '--admin-text-secondary',
+    '--admin-text-muted',
+    '--admin-text-inverse',
+    '--admin-primary',
+    '--admin-success',
+    '--admin-success-soft',
+    '--admin-warning',
+    '--admin-warning-soft',
+    '--admin-danger',
+    '--admin-danger-soft',
+    '--admin-info',
+    '--admin-info-soft',
+    '--admin-border',
+    '--admin-border-strong',
+    '--admin-focus',
+    '--admin-shadow-card',
+    '--admin-shadow-float',
+] as $adminToken) {
+    if (str_contains($designTokens, $adminToken.':') === false) {
+        $errors[] = "Semantic token contract is missing approved admin token [{$adminToken}].";
+    }
+}
+
+$adminDashboard = (string) file_get_contents($root.'/resources/views/admin/dashboard.blade.php');
+foreach (['slate-', 'amber-', 'emerald-'] as $rawAdminPalette) {
+    if (str_contains($adminDashboard, $rawAdminPalette)) {
+        $errors[] = "Admin dashboard bypasses semantic tokens with raw palette class [{$rawAdminPalette}].";
+    }
+}
+foreach (['--admin-text-secondary', '--admin-border', '--admin-bg-subtle', '--admin-success', '--admin-warning'] as $requiredAdminUse) {
+    if (str_contains($adminDashboard, $requiredAdminUse) === false) {
+        $errors[] = "Admin dashboard must consume semantic token [{$requiredAdminUse}].";
+    }
+}
+
+foreach ([
+    'resources/views/home.blade.php',
+    'resources/views/search/index.blade.php',
+    'resources/views/entities/show.blade.php',
+] as $representativePublicView) {
+    $publicSource = (string) file_get_contents($root.'/'.$representativePublicView);
+    if (str_contains($publicSource, 'bg-white')) {
+        $errors[] = "Representative public view [{$representativePublicView}] bypasses --sc-bg-surface with bg-white.";
+    }
+    if (str_contains($publicSource, '--sc-bg-surface') === false) {
+        $errors[] = "Representative public view [{$representativePublicView}] must consume --sc-bg-surface.";
+    }
+}
+
+$chartSurface = (string) file_get_contents($root.'/resources/views/charts/show.blade.php');
+foreach (['bg-white', '--sc-surface-subtle', 'emerald-', 'amber-', 'slate-'] as $chartDriftSignal) {
+    if (str_contains($chartSurface, $chartDriftSignal)) {
+        $errors[] = "Canonical chart surface contains non-semantic or invalid token signal [{$chartDriftSignal}].";
+    }
+}
+foreach (['--sc-bg-surface', '--sc-bg-subtle', '--sc-success-soft', '--sc-warning-soft'] as $requiredChartToken) {
+    if (str_contains($chartSurface, $requiredChartToken) === false) {
+        $errors[] = "Canonical chart surface must consume semantic token [{$requiredChartToken}].";
+    }
+}
+
+foreach ([
+    'resources/views/admin/canonical-admissions/index.blade.php',
+    'resources/views/admin/canonical-admissions/show.blade.php',
+] as $representativeAdminReviewView) {
+    $adminReviewSource = (string) file_get_contents($root.'/'.$representativeAdminReviewView);
+    if (str_contains($adminReviewSource, 'slate-')) {
+        $errors[] = "Representative admin review surface [{$representativeAdminReviewView}] bypasses semantic admin tokens with slate palette classes.";
+    }
+    foreach (['--admin-text-secondary', '--admin-border'] as $requiredReviewToken) {
+        if (str_contains($adminReviewSource, $requiredReviewToken) === false) {
+            $errors[] = "Representative admin review surface [{$representativeAdminReviewView}] must consume semantic token [{$requiredReviewToken}].";
+        }
+    }
+}
+
 $dataBoundary = json_decode(
     (string) file_get_contents($root.'/docs/project/domain/application-data-boundary.json'),
     true,
