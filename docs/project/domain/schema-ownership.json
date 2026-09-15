@@ -61,6 +61,7 @@
     "activity_log": "spatie-laravel-activitylog",
     "release_groups": "domain-contracts",
     "provider_destinations": "operational-contracts",
-    "enrichment_attempts": "operational-contracts"
+    "enrichment_attempts": "operational-contracts",
+    "product_search_daily_aggregates": "product-telemetry"
   }
 }
