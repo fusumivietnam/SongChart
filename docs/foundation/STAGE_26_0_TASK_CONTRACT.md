@@ -8,14 +8,14 @@ The first bounded tranche is `26.0A — Authority Drift Closure`. Later tranches
 
 ## Goal
 
-Turn the accepted Stage 25 technical baseline into a lower-drift product-development baseline before adding telemetry, retention or demand intelligence. Stage 26 reuses existing SongChart authorities, UI inventory, Blade/Livewire stack and verification ownership. It does not create a second architecture authority, redesign framework or frontend runtime.
+Turn the accepted Stage 25 technical baseline into a lower-drift product-development baseline before adding telemetry, retention or demand intelligence. Stage 26 reuses existing SongChart authorities, design-system inventory, Blade/Livewire stack and verification ownership. It does not create a second architecture authority, redesign framework or frontend runtime.
 
 ## Ponytail implementation posture
 
 Stop at the first solution that fully holds:
 
 1. remove or correct stale authority before creating new authority;
-2. reuse existing repository contracts, UI preview, components and verifiers;
+2. reuse existing repository contracts, design-system inventory, components and verifiers;
 3. prefer Laravel/PHP/browser-native capability before an additional dependency;
 4. use an already-approved dependency before SongChart-specific custom infrastructure;
 5. introduce the minimum custom code required by a demonstrated gap.
@@ -29,11 +29,12 @@ Minimality must not weaken security, trust-boundary validation, data integrity, 
 3. Current-state registries must not describe accepted Stage 22–25 work as future/unimplemented work.
 4. `partial` remains valid where coverage is genuinely bounded; drift closure must not promote an edge to `verified` without implementation/test evidence.
 5. A new registry or authority file is introduced only when it reduces recurring ambiguity or enables executable enforcement that existing owners cannot provide.
-6. `docs/ui/DESIGN_AUTHORITY.md` remains the visual/interaction authority. The existing `/ui-preview` living inventory is reused while it remains present and governed.
-7. Blade/Livewire remains the default frontend stack. React/Inertia requires a separately evidenced interaction/state use case; Stage 26 does not authorize a rewrite.
-8. No page-level visual invention is accepted outside approved tokens/components/patterns/layouts.
-9. Generated files remain generator-owned and are not hand-edited.
-10. Stage closure uses existing impact, candidate, canonical and Auto Closure ownership; no second verification framework is introduced.
+6. `docs/project/domain/route-authority.json` owns the canonical design-system HTTP family. The living inventory is served under `/development/design-system` with route names `development.design-system.*`; the retired `/ui-preview*` compatibility surface must not be reintroduced.
+7. `docs/ui/DESIGN_AUTHORITY.md` remains the visual/interaction authority and must consume the canonical route family rather than inventing a parallel URL.
+8. Blade/Livewire remains the default frontend stack. React/Inertia requires a separately evidenced interaction/state use case; Stage 26 does not authorize a rewrite.
+9. No page-level visual invention is accepted outside approved tokens/components/patterns/layouts.
+10. Generated files remain generator-owned and are not hand-edited.
+11. Stage closure uses existing impact, candidate, canonical and Auto Closure ownership; no second verification framework is introduced.
 
 ## Tranches
 
@@ -45,11 +46,11 @@ Scope:
 
 - reconcile `docs/project/engineering/system-intersection-map.json` with accepted Stage 22.2 data-spine reality without overclaiming generalized coverage;
 - remove stale Stage-specific future wording from current external-system decisions after accepted Stages 24/25;
-- audit current design/route authority references against repository reality and leave valid `/ui-preview` references intact rather than deleting them based on stale conversational assumptions;
+- audit design/route authority against `routes/web.php` and `docs/project/domain/route-authority.json`, then make current design owners consume `/development/design-system` rather than the retired `/ui-preview*` alias;
 - identify any remaining current-state registry statement that incorrectly points at an already-accepted stage as unfinished work;
 - extend an existing verifier only if the same drift class is demonstrably recurring and machine-checkable.
 
-Acceptance outcome: current authority describes current repository reality; historical evidence remains historical; no stale current-state statement falsely reopens accepted work.
+Acceptance outcome: current authority describes current repository reality; historical evidence remains historical; no stale current-state statement falsely reopens accepted work or reintroduces retired route aliases.
 
 ### 26.0B — Executable UI Contract Closure
 
@@ -57,7 +58,7 @@ Not active until 26.0A is accepted.
 
 Candidate scope:
 
-- inventory existing semantic tokens, shared components, UI-preview patterns and representative layouts;
+- inventory existing semantic tokens, shared components, canonical design-system patterns and representative layouts;
 - close only demonstrated gaps needed to make page implementation consume existing design authority consistently;
 - prefer extending current machine-readable UI contracts over introducing parallel registries;
 - add visual/browser evidence only for representative surfaces where current coverage is insufficient.
@@ -93,6 +94,8 @@ Validate responsive/accessibility/browser evidence, verify no page-level design 
 - `docs/project/docs/ROADMAP.md`
 - `docs/project/engineering/system-intersection-map.json`
 - `docs/project/engineering/external-systems-registry.json`
+- `docs/project/domain/route-authority.json`
+- `routes/web.php`
 - `docs/ui/DESIGN_AUTHORITY.md`
 - `docs/ui/PHASE_3_UI_PREVIEW.md`
 - existing route/UI/design contracts and verification consumers
@@ -108,7 +111,7 @@ No external product or provider is required to implement 26.0A. Laravel, PHP, Po
 
 ### Native capability assessment
 
-The repository already contains the required owners for this tranche: machine-readable stage authority, system-intersection authority, external-system governance, route authority, Design Authority, `/ui-preview`, generated project state, impact analysis and exact-head Auto Closure. The identified problem is stale or inconsistent authority text, not missing infrastructure. Existing repository capabilities are therefore sufficient.
+The repository already contains the required owners for this tranche: machine-readable stage authority, system-intersection authority, external-system governance, route authority, Design Authority, canonical development design-system routes, generated project state, impact analysis and exact-head Auto Closure. The identified problem is stale or inconsistent authority text, not missing infrastructure. Existing repository capabilities are therefore sufficient.
 
 ### Custom implementation justification
 
@@ -138,7 +141,7 @@ Use the existing repository workflow:
 ./songchart verify
 ```
 
-Focused verification is used while implementing 26.0A. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority and generated-state consistency remain mandatory quality gates for this contract.
+Focused verification is used while implementing 26.0A. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority, route-authority consistency and generated-state consistency remain mandatory quality gates for this contract.
 
 ## Handoff rule
 
