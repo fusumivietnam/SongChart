@@ -65,7 +65,7 @@
         "session_payload",
         "full_request_payload"
       ],
-      "retention": "indefinite_anonymous_aggregate_only; query-level demand evidence is deferred to a later privacy-governed stage",
+      "retention": "indefinite_anonymous_aggregate_only; query-level demand evidence is deferred to Stage 28 or another explicit privacy-governed authority",
       "sampling": "100_percent_first_page_non_empty_searches",
       "consumer": "zero_result_rate",
       "primary_metric": "zero_result_search_count",
