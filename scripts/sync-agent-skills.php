@@ -55,6 +55,7 @@ foreach ($managedSkills as $skill) {
     $sourceDir = $root.'/'.$canonicalRoot.'/'.$skill;
     if (is_dir($sourceDir) === false) {
         $drift[] = 'canonical skill missing: '.$canonicalRoot.'/'.$skill;
+
         continue;
     }
 
