@@ -60,7 +60,7 @@ final class OperationalIntelligenceSnapshot
             'scale_scorecard' => [
                 'status' => $scaleStatus,
                 'required_dimensions' => $requiredDimensions,
-                'available_dimensions' => array_values(array_keys($availableDimensions)),
+                'available_dimensions' => array_keys($availableDimensions),
                 'missing_dimensions' => $missingDimensions,
                 'automatic_infrastructure_mutation' => false,
             ],
