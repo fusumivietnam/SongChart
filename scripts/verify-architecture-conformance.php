@@ -110,6 +110,20 @@ foreach (['--admin-text-secondary', '--admin-border', '--admin-bg-subtle', '--ad
     }
 }
 
+foreach ([
+    'resources/views/home.blade.php',
+    'resources/views/search/index.blade.php',
+    'resources/views/entities/show.blade.php',
+] as $representativePublicView) {
+    $publicSource = (string) file_get_contents($root.'/'.$representativePublicView);
+    if (str_contains($publicSource, 'bg-white')) {
+        $errors[] = "Representative public view [{$representativePublicView}] bypasses --sc-bg-surface with bg-white.";
+    }
+    if (str_contains($publicSource, '--sc-bg-surface') === false) {
+        $errors[] = "Representative public view [{$representativePublicView}] must consume --sc-bg-surface.";
+    }
+}
+
 $dataBoundary = json_decode(
     (string) file_get_contents($root.'/docs/project/domain/application-data-boundary.json'),
     true,
