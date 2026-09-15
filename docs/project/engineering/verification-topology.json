@@ -1,5 +1,5 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "lanes": {
     "impact": {
       "owner": "scripts/resolve-repository-impact.php",
@@ -45,6 +45,13 @@
       "ordered_steps": ["@lockfile-authority:release", "@environment:verify", "@postgres-major:verify", "@test-database:safety", "@locks:verify", "@package-upstream:verify", "@stage:verify", "@migration-lifecycle:seal", "@migration-lifecycle:verify", "@migration-upgrade:verify", "@migration-runtime-contract:verify", "@postgres-schema:snapshot", "@project-context:runtime-verify", "@foundation:release", "@candidate-evidence:record", "@candidate-contract:verify"],
       "must_call_once": ["@stage:verify"],
       "owns": ["previous-release-to-current PostgreSQL migration upgrade verification", "one-time exact-canonical-target migration history baseline sealing"]
+    },
+    "ci_close": {
+      "owner": "scripts/run-canonical-close.php",
+      "purpose": "Run canonical-only release/runtime gates after reusable CI has already proven stage behavior on the same exact PR head.",
+      "source_lane": "canonical",
+      "reuse_step": "@stage:verify",
+      "rules": {"exact_sha_match_required": true, "stage_evidence_must_be_success": true, "fail_closed_on_unsupported_step": true, "public_command_surface": false}
     }
   },
   "deduplication_policy": {
@@ -74,9 +81,16 @@
   },
   "canonical_shell_contract": {
     "preparation_only": ["lockfile preflight", "canonical PHP extensions", "composer install", "npm ci", "exact-container repository contract refresh", "quality normalization"],
-    "single_closure_entrypoint": "composer canonical:verify"
+    "single_closure_entrypoint": "composer canonical:verify",
+    "ci_close_adapter": "scripts/run-canonical-close.php"
   },
-  "evidence_reuse": {"enabled": false, "reason": "Deferred until impact/reconcile/audit topology is stable; correctness before cache optimization."},
+  "evidence_reuse": {
+    "enabled": true,
+    "scope": "Auto Closure only",
+    "reusable_lane": "stage",
+    "consumer": "ci_close",
+    "requirements": ["same exact PR head SHA", "reusable tests workflow succeeded", "PR head is revalidated immediately before close", "canonical-only gates remain fail-closed"]
+  },
   "removed_aliases": ["verify", "release:verify", "test:all", "test:postgres-clean", "release-contract:verify", "delivery:verify"],
   "public_entrypoints_authority": "docs/project/engineering/verification-command-surface.json"
 }
