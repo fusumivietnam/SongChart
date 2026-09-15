@@ -45,7 +45,7 @@ final class OperationalIntelligenceSnapshot
         $requiredDimensions = config('songchart.operational_intelligence.required_scale_dimensions', []);
         $missingDimensions = array_values(array_filter(
             $requiredDimensions,
-            fn (string $dimension): bool => ! isset($availableDimensions[$dimension]),
+            fn (string $dimension): bool => isset($availableDimensions[$dimension]) === false,
         ));
 
         $scaleStatus = $missingDimensions === []
@@ -64,10 +64,57 @@ final class OperationalIntelligenceSnapshot
                 'missing_dimensions' => $missingDimensions,
                 'automatic_infrastructure_mutation' => false,
             ],
+            'regional_resilience' => $this->regionalResilience($metrics),
             'external_observability' => [
                 'decision' => (string) config('songchart.operational_intelligence.external_observability.decision', 'deferred'),
                 'reason' => (string) config('songchart.operational_intelligence.external_observability.reason', 'No demonstrated internal observability gap.'),
             ],
+        ];
+    }
+
+    /**
+     * @param  array<string, array<string, mixed>>  $metrics
+     * @return array<string, mixed>
+     */
+    private function regionalResilience(array $metrics): array
+    {
+        /** @var list<string> $requiredMetrics */
+        $requiredMetrics = config('songchart.operational_intelligence.regional_resilience.required_metrics', []);
+        $missingMetrics = [];
+        $worst = 'healthy';
+
+        foreach ($requiredMetrics as $metric) {
+            $status = (string) ($metrics[$metric]['status'] ?? 'unavailable');
+            if ($status === 'unavailable') {
+                $missingMetrics[] = $metric;
+
+                continue;
+            }
+
+            $worst = $this->worse($worst, $status);
+        }
+
+        if ($missingMetrics !== []) {
+            $decision = 'insufficient_evidence';
+        } elseif ($worst === 'critical') {
+            $decision = 'stabilize_before_regionalization';
+        } elseif ($worst === 'warning') {
+            $decision = 'investigate_multi_instance';
+        } else {
+            $decision = 'remain_single_region';
+        }
+
+        return [
+            'decision' => $decision,
+            'required_metrics' => $requiredMetrics,
+            'missing_metrics' => $missingMetrics,
+            'default_topology' => (string) config('songchart.operational_intelligence.regional_resilience.default_topology', 'direct_dns_to_caddy_compose'),
+            'failback_topology' => (string) config('songchart.operational_intelligence.regional_resilience.failback_topology', 'direct_dns_to_caddy_compose'),
+            'health_checks_side_effect_free' => true,
+            'mutation_retries_allowed' => false,
+            'automatic_routing' => false,
+            'automatic_infrastructure_mutation' => false,
+            'envoy' => 'deferred',
         ];
     }
 
@@ -78,7 +125,7 @@ final class OperationalIntelligenceSnapshot
         $warning = Arr::get($definition, 'warning');
         $critical = Arr::get($definition, 'critical');
 
-        if (! is_numeric($warning) || ! is_numeric($critical)) {
+        if (is_numeric($warning) === false || is_numeric($critical) === false) {
             return 'healthy';
         }
 

@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "status": "active",
+  "purpose": "Route AI/developer intent to the existing SongChart semantic owner, code placement, relevant skills, dependency policy and repository-hygiene constraints without creating parallel memory or authority systems.",
+  "principles": [
+    "Repository authority outranks observed legacy conventions, agent memory and chat memory.",
+    "Prefer deleting, reusing or extending an existing owned surface before creating a new file, abstraction, dependency, verifier, skill or document.",
+    "Use one authored owner and generate or derive projections whenever the same fact must appear in multiple agent/tool views.",
+    "A majority legacy pattern that conflicts with a current machine authority is debt, not a convention.",
+    "Small behavioral fixes should normally touch source plus a focused test; governance fan-out is justified only when semantic ownership or an architectural invariant changes.",
+    "Dependency updates are proposed automatically but promotion remains governed by SongChart impact analysis and exact-head Auto Closure.",
+    "This contract routes existing authorities; it does not replace domain, stack, security, provider, UI, release or stage authorities."
+  ],
+  "orientation": {
+    "command": "php scripts/ai-brief.php --intent <text> --json",
+    "live_state": "./songchart ai status --json",
+    "generated_context": "docs/project/generated/project-context.json",
+    "stage_authority": "docs/project/engineering/stage-plan.json",
+    "rule": "Use the brief to reduce search space, then read the returned semantic authorities before writing. Keep task-scoped routing behind the Project Kernel instead of adding a public CLI alias until a broader operator use case requires one."
+  },
+  "new_surface_admission": {
+    "ordered_questions": [
+      "Is the capability actually required by an accepted use case or active tranche?",
+      "Can an existing SongChart semantic owner be extended?",
+      "Can Laravel, PHP, PostgreSQL, Redis, the browser platform or another accepted native capability own it?",
+      "Can an already-installed approved package own it?",
+      "Can an existing class/file be extended without mixing responsibilities?",
+      "Only then create the minimum SongChart-specific surface."
+    ],
+    "default_decision": "extend_existing",
+    "required_creation_evidence": [
+      "semantic_owner",
+      "why_existing_owner_cannot_hold_the_behavior",
+      "placement",
+      "verification_owner",
+      "retirement_or_net_surface_effect"
+    ]
+  },
+  "hand_written_fanout_budget": {
+    "local_bug_or_behavior_fix": {
+      "expected_authored_files": 2,
+      "typical_shape": ["source", "focused_test"],
+      "authority_change_required": false
+    },
+    "bounded_capability": {
+      "expected_authored_files_max": 4,
+      "typical_shape": ["implementation", "tests", "one_semantic_authority"],
+      "authority_change_required_when": "the capability changes a durable semantic contract"
+    },
+    "architectural_pattern_change": {
+      "expected_authored_files_max": 7,
+      "typical_shape": ["owning_authority", "routing_or_placement", "implementation", "architecture_or_behavior_test"],
+      "review_when_exceeded": true
+    },
+    "rule": "Generated projections, lockfile changes and deterministic compiler outputs do not count as independent authored decisions. Exceeding the budget is a review signal, not a reason to hide a necessary change."
+  },
+  "code_placement": {
+    "application_queries": {
+      "path": "app/Application/{Context}/Queries",
+      "status": "preferred",
+      "owns": ["read composition", "bounded query/read-model orchestration"],
+      "must_not": ["business mutation", "transport response concerns"]
+    },
+    "application_actions": {
+      "path": "app/Application/{Context}/Actions",
+      "status": "preferred",
+      "owns": ["use-case mutation", "application orchestration", "transaction boundary coordination"]
+    },
+    "domain": {
+      "path": "app/Domain/{Context}",
+      "status": "preferred",
+      "owns": ["domain semantics", "domain policy", "value objects", "provider-neutral business invariants"]
+    },
+    "http": {
+      "path": "app/Http",
+      "status": "transport_only",
+      "owns": ["HTTP transport", "request adaptation", "response adaptation"],
+      "must_not": ["direct persistence mutation", "direct query composition"]
+    },
+    "jobs": {
+      "path": "app/Jobs",
+      "status": "async_adapter",
+      "owns": ["queue entrypoints", "retry/queue execution boundary"],
+      "rule": "Jobs delegate durable application/domain semantics instead of becoming a second business layer."
+    },
+    "models": {
+      "path": "app/Models",
+      "status": "persistence_model",
+      "owns": ["Eloquent mapping", "relationships", "persistence-local behavior"],
+      "must_not": ["cross-use-case orchestration"]
+    },
+    "legacy_actions": {
+      "path": "app/Actions",
+      "status": "existing_specialized_surface_not_default",
+      "rule": "Preserve existing framework/specialized consumers while they remain owned; new general SongChart use-case actions prefer app/Application/{Context}/Actions."
+    },
+    "services": {
+      "path": "app/Services",
+      "status": "integration_or_infrastructure_only",
+      "rule": "Do not use Services as a generic dumping ground. New business orchestration belongs to Application or Domain unless an integration/infrastructure responsibility is explicit."
+    }
+  },
+  "skill_registry": {
+    "canonical_root": ".agents/skills",
+    "projection_roots": [".claude/skills", ".github/skills"],
+    "projection_rule": "Canonical SongChart-managed skill content is authored once under .agents/skills; client-specific copies are projections and must not independently evolve.",
+    "precedence": ["SongChart machine/domain authority", "project-specific skill", "official framework/provider skill", "observed code convention"],
+    "skills": {
+      "governance": {
+        "triggers": ["authority", "workflow", "verification", "stage", "repository", "skill", "memory", "governance"],
+        "required_authorities": ["PROJECT_AUTHORITY.md", "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md", "docs/project/engineering/ai-control-plane-contract.json"]
+      },
+      "identity": {
+        "triggers": ["identity", "identifier", "matching", "conflict", "provenance"],
+        "required_authorities": ["docs/project/domain/domain-contracts.json", "docs/project/domain/schema-ownership.json"]
+      },
+      "providers": {
+        "triggers": ["provider", "ingestion", "normalization", "import", "quarantine", "rate limit"],
+        "required_authorities": ["docs/providers/PROVIDER_TAXONOMY.md", "docs/project/domain/operational-contracts.json"]
+      },
+      "authentication": {
+        "triggers": ["auth", "authentication", "login", "session", "2fa", "user sign-in"],
+        "required_authorities": ["docs/project/security/authorization-contract.json", "PROJECT_AUTHORITY.md"]
+      },
+      "extensions": {
+        "triggers": ["extension", "plugin lifecycle", "extension activation"],
+        "required_authorities": ["docs/extensions"]
+      }
+    }
+  },
+  "intent_routes": [
+    {
+      "id": "database-scaling",
+      "keywords": ["database", "postgres", "replica", "pooling", "hyperdrive", "connection", "read scaling", "query latency"],
+      "semantic_owner": "production-runtime/database-scaling",
+      "authorities": ["docs/project/stack/production-service-baseline.json", "docs/project/stack/runtime-environments.json", "config/database.php", "docs/project/performance/query-budget-contract.json"],
+      "preferred_paths": ["docs/project/stack", "config/database.php", "app/Application/Operations"],
+      "avoid_new": ["parallel database architecture authority", "automatic replica routing without accepted evidence"],
+      "skills": ["governance", "laravel-best-practices"],
+      "focused_checks": ["stack:verify", "database:verify", "performance:verify"]
+    },
+    {
+      "id": "provider",
+      "keywords": ["provider", "spotify", "youtube", "musicbrainz", "ingestion", "import", "normalization", "quarantine"],
+      "semantic_owner": "provider-evidence-and-operations",
+      "authorities": ["docs/providers/PROVIDER_TAXONOMY.md", "docs/project/domain/operational-contracts.json", "docs/project/domain/schema-ownership.json"],
+      "preferred_paths": ["app/Domain/Providers", "app/Application", "app/Jobs", "docs/providers"],
+      "avoid_new": ["provider-owned canonical identity", "browser-to-provider API business logic"],
+      "skills": ["providers", "laravel-best-practices"],
+      "focused_checks": ["provider-operations:verify", "provider:ingestion:verify", "provider:normalization:verify"]
+    },
+    {
+      "id": "identity",
+      "keywords": ["identity", "identifier", "matching", "canonical admission", "conflict", "reconciliation"],
+      "semantic_owner": "canonical-identity",
+      "authorities": ["docs/project/domain/domain-contracts.json", "docs/project/domain/schema-ownership.json", "docs/project/domain/application-data-boundary.json"],
+      "preferred_paths": ["app/Domain/Catalog", "app/Application/Catalog", "app/Application/Admin"],
+      "avoid_new": ["provider-specific canonical schema authority"],
+      "skills": ["identity", "laravel-best-practices"],
+      "focused_checks": ["provider:identity:verify", "schema-ownership:verify", "architecture:verify"]
+    },
+    {
+      "id": "frontend",
+      "keywords": ["frontend", "livewire", "blade", "tailwind", "responsive", "accessibility", "design", "ui"],
+      "semantic_owner": "ui-and-interaction",
+      "authorities": ["docs/ui/DESIGN_AUTHORITY.md", "docs/project/stack/FRONTEND_STACK.md"],
+      "preferred_paths": ["resources/views", "app/Livewire", "resources/css", "resources/js"],
+      "avoid_new": ["second SPA framework", "direct provider business logic in browser code"],
+      "skills": ["livewire-development", "tailwindcss-development", "songchart-impeccable"],
+      "focused_checks": ["npm run build", "browser smoke when route/UI behavior changes"]
+    },
+    {
+      "id": "verification-governance",
+      "keywords": ["verify", "verification", "ci", "workflow", "auto closure", "regression", "impact", "reconcile"],
+      "semantic_owner": "engineering-verification",
+      "authorities": ["docs/project/engineering/verification-topology.json", "docs/project/engineering/verification-consumer-graph.json", "docs/project/engineering/ai-development-contract.json"],
+      "preferred_paths": ["docs/project/engineering", "scripts", "tests/Architecture", ".github/workflows"],
+      "avoid_new": ["parallel verification framework", "one-off verifier when an existing contract or Pest test can own the invariant"],
+      "skills": ["governance", "testing-best-practices"],
+      "focused_checks": ["repository-compiler:verify", "verification-topology:verify", "test:architecture"]
+    },
+    {
+      "id": "repository-maintenance",
+      "keywords": ["repo", "repository", "skill", "memory", "cleanup", "dependency", "package", "version", "stale", "duplicate", "hygiene"],
+      "semantic_owner": "repository-control-plane",
+      "authorities": ["docs/project/engineering/ai-control-plane-contract.json", "docs/project/engineering/project-kernel-contract.json", "docs/project/stack/package-registry.json", "docs/project/engineering/documentation-consolidation-contract.json"],
+      "preferred_paths": ["docs/project/engineering", "docs/project/stack", ".agents/skills", ".github"],
+      "avoid_new": ["parallel memory database", "independent client skill sources", "standalone archive hierarchy"],
+      "skills": ["governance"],
+      "focused_checks": ["repository-contracts:verify", "ai-protocol:verify"]
+    }
+  ],
+  "default_route": {
+    "id": "repository-development",
+    "semantic_owner": "resolve-before-write",
+    "authorities": ["PROJECT_AUTHORITY.md", "docs/START_HERE.md", "docs/project/generated/project-context.json", "docs/project/engineering/stage-plan.json"],
+    "preferred_paths": [],
+    "avoid_new": ["new abstraction before existing-owner search"],
+    "skills": ["governance"],
+    "focused_checks": ["./songchart impact --diff"]
+  },
+  "dependency_updates": {
+    "automation": "github-dependabot",
+    "promotion": "SongChart exact-head Auto Closure; no dependency auto-merge by default",
+    "cadence": {
+      "security": "provider-triggered-immediate",
+      "routine": "weekly",
+      "major": "proposal-only; explicit compatibility/SWOT/ROI evaluation before adoption"
+    },
+    "groups": {
+      "laravel-runtime": ["laravel/framework", "laravel/fortify", "laravel/horizon", "laravel/pulse", "livewire/livewire"],
+      "php-quality": ["larastan/larastan", "laravel/boost", "laravel/pint", "pestphp/*", "nunomaduro/collision", "fakerphp/faker", "mockery/mockery"],
+      "frontend-toolchain": ["vite", "tailwindcss", "@tailwindcss/vite", "laravel-vite-plugin", "alpinejs", "playwright"],
+      "github-actions": ["actions/*"],
+      "container-runtime": ["php", "postgres", "node", "caddy"]
+    },
+    "rules": [
+      "Do not keep an unused dependency merely because automation can keep it current.",
+      "Lockfiles own exact resolved package state; generated project context projects installed versions.",
+      "Routine patch/minor updates may be grouped by capability owner; major runtime/framework updates remain bounded evaluations.",
+      "Do not install both Dependabot and Renovate without a new accepted requirement proving non-overlapping value."
+    ]
+  },
+  "repository_hygiene": {
+    "metrics": [
+      "tracked_source_files",
+      "new_vs_retired_files_per_tranche",
+      "custom_php_loc",
+      "verify_script_count",
+      "architecture_test_count",
+      "legacy_stage_document_count",
+      "skill_projection_drift_count",
+      "stale_active_record_count",
+      "orphan_document_or_script_count"
+    ],
+    "review_signals": {
+      "new_files_without_retirement": 7,
+      "new_machine_authorities_in_one_bounded_capability": 2,
+      "new_verifiers_in_one_bounded_capability": 1,
+      "skill_projection_drift": 0
+    },
+    "historical_document_rule": "Legacy STAGE_* files are migration inputs only. After durable semantics and consumers move to current owners, delete them and rely on Git/PR history instead of creating an archive directory.",
+    "stale_record_rule": "Records marked active must resolve obsolete historical target stages or explicitly declare carried_forward with a current owner/target.",
+    "regression_rule": "Record reusable failure classes, not every individual CI incident; support merged_into, superseded_by and retired lifecycle states."
+  },
+  "projection_policy": {
+    "authored": [
+      "domain/stack/security/provider/UI/release authorities",
+      "docs/project/engineering/ai-control-plane-contract.json",
+      "docs/project/engineering/stage-plan.json",
+      "application source and tests"
+    ],
+    "generated_or_derived": [
+      "docs/project/generated/**",
+      "installed-version views",
+      "architecture/source-intelligence snapshots",
+      "client-specific skill mirrors when identical capability content is required"
+    ],
+    "rule": "Do not hand-maintain the same durable fact in multiple projections."
+  }
+}

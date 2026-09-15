@@ -1,50 +1,53 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "454e14298f5ac4ced9a796b6f27c153ea8915e6204b0d8c023d99ec2171db015",
+    "source_fingerprint": "92d4021d394fae58b5d4df45f6bb180399be8cd310ca328e64dc899504e2c73f",
     "current_stage": {
-        "id": "24.0",
-        "title": "Operational Intelligence",
-        "task_contract": "docs/foundation/STAGE_24_0_TASK_CONTRACT.md",
+        "id": "25.0",
+        "title": "Global Delivery & Scale",
+        "task_contract": "docs/foundation/STAGE_25_0_TASK_CONTRACT.md",
         "status": "accepted"
     },
-    "accepted_through": "24.0",
+    "accepted_through": "25.0",
     "stage_progress": [
         {
-            "id": "24.0A",
+            "id": "25.0A",
             "status": "accepted",
-            "title": "Runtime telemetry baseline",
+            "title": "Edge delivery and cache policy baseline",
             "goals": [
-                "inventory and converge existing Pulse, Horizon and runtime evidence ownership",
-                "define one operational metric vocabulary with explicit freshness and unavailable semantics",
-                "reuse bounded read-only Project Kernel/Admin/CLI surfaces without request-time source scans"
+                "classify public routes and assets by cacheability, freshness, invalidation and bypass requirements",
+                "map Stage 24 latency and cache evidence to measurable thresholds for edge/CDN investigation",
+                "define a provider-neutral edge delivery profile that preserves direct Caddy delivery as a supported fallback"
             ]
         },
         {
-            "id": "24.0B",
+            "id": "25.0B",
             "status": "accepted",
-            "title": "Provider and data-pipeline health",
+            "title": "Database connection and read scaling",
             "goals": [
-                "compose provider failures, freshness, ingestion/import and quarantine health without moving provider evidence into canonical authority",
-                "define stable operational failure classes and timestamps for degraded data pipelines"
+                "classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas",
+                "define consistency and failback rules that keep PostgreSQL primary authoritative",
+                "require connection saturation or query-latency evidence before promoting connection or replica infrastructure"
             ]
         },
         {
-            "id": "24.0C",
+            "id": "25.0C",
             "status": "accepted",
-            "title": "Scale scorecard and decision thresholds",
+            "title": "Regional resilience and traffic control",
             "goals": [
-                "compose runtime, queue, database, cache, provider and search visibility evidence into a measurable scale scorecard",
-                "require metric thresholds and expected improvement before recommending infrastructure changes"
+                "evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured evidence",
+                "define health, drain, retry and failover semantics before routing automation",
+                "keep Envoy deferred until an explicit multi-service, gRPC, mTLS, multi-region or traffic-control trigger exists"
             ]
         },
         {
-            "id": "24.0D",
+            "id": "25.0D",
             "status": "accepted",
-            "title": "External observability evaluation and stage closure",
+            "title": "External APM evaluation and stage closure",
             "goals": [
-                "evaluate external observability only against demonstrated internal gaps and security/cost constraints",
-                "close Stage 24 through existing exact-head verification and canonical closure ownership"
+                "evaluate external APM only against demonstrated Stage 24/25 observability gaps",
+                "record privacy, retention, operational cost and fallback behavior for any adoption decision",
+                "close Stage 25 through existing exact-head and canonical verification ownership"
             ]
         }
     ],
@@ -54,9 +57,9 @@
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "de723ed6cdaff4243ab6b16bec84c1844da6b2d682733ebb31e0ee29c9a4ef67",
+        "candidate-verification.json": "6a4a3c6d6dcaa4d8a5c7795c425d0f115501af7b5f1a753e23739da0fe4e8d64",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "a8e267a42cfe99e13d13233cee48aa97b5527845ce4c71c6552b87d6e00177b8"
+        "docs/project/engineering/stage-plan.json": "d3d6d49d46288ed00fbec8bcf12b03d1de721a0a4dd855ca2c440dd5d6322fdb"
     }
 }

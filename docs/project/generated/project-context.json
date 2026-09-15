@@ -1,9 +1,9 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "0ee3c1af00e5c7f07986fccdb1d3e20b4c877eb7dc1778eacefbadb7a4dc140d",
+    "source_fingerprint": "653919184f653bf7988370837bc4fc252e795abbe06ef2c98eb38a6910fa8a65",
     "candidate": {
-        "stage": "24.0",
+        "stage": "25.0",
         "candidate": "v1",
         "informational_not_fingerprinted": true
     },
@@ -1049,7 +1049,7 @@
         "ownership_complete": true
     },
     "source_hashes": {
-        "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
+        "app/Console/Commands/ProjectIntelligenceCommand.php": "4b5afcc8e393e673681c49911cbd69aa2ebb25de4f3feb17104bae638f0a2c2f",
         "compose.dev.yml": "693b9c94517ceac6c9e257d44f444fa045a5a1e806247704a5c8761970eab3af",
         "compose.verify.yml": "075a78e92ba512f3a1346c84a1f3ab35777b6c7330a3cf1625afb91ef824b041",
         "composer.json": "746d53779bb79341621aba94abed1f5a3107a3b322a6db1a62a8f2c6c3c7ec7c",
@@ -1089,21 +1089,21 @@
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "b0278efd3ac42af6e2ef1952d384f743a830ea6b478a0e7ec37f5744ea2b8792",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
         "docs/project/engineering/ai-development-contract.json": "ce79b069eaada91dafe01db5fff59c6b07fcc419bd5af3a8c21a07c1c9fb1a14",
-        "docs/project/engineering/architecture-graph-contract.json": "72d81b7cf074ae8bc85e18832785568de4f4e1dd9d88d5b6d7f11067b4bdec22",
+        "docs/project/engineering/architecture-graph-contract.json": "71dfe43a370cddb55996ebd984887d7a639405399e8ef31f4a596493c31fd9ad",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/development-intelligence-contract.json": "bcfd44e3094bee60e660903ff3a1ceb334146e0125a769be9cb22f3c077ab560",
         "docs/project/engineering/mcp-contract.json": "d80f6a8c316e6744b89d2ba4e7f4f23d43d8fb2e2f8d5bd2d09b62cbd4065ea8",
-        "docs/project/engineering/project-kernel-contract.json": "cf71ec704a569d4852bf014bb13a330a04b71d67342a128f7fc026d9ac529107",
+        "docs/project/engineering/project-kernel-contract.json": "807a481b8a27ed99c97ab083231f6a51d6b5e25ea1d6ea4e28ae149b3f123a9c",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
         "docs/project/engineering/technology-evaluation-contract.json": "37546f94e594655adae3a50e703394b13cabc790f56e1443bc4be29ba2c0c01a",
         "docs/project/engineering/technology-watchlist.json": "a488a10b0f37b3be92b7be6a775454dd2a21006a57e81fab637200eb5b084c1b",
         "docs/project/engineering/use-case-contract.schema.json": "eddc2071d4f58c6e86fae9a87a687a591f597a82b032bd6c1df8bd6eec9ec2f0",
         "docs/project/engineering/verification-command-surface.json": "64fa57a5a66bf2f8a75e6baee8095002b3ad5696ee0306f6bc2d4a4b9d93ceb2",
         "docs/project/engineering/verification-topology.json": "f62b608aa22a3e508cb7e6313d3897bd488a60b57b073c90e009801ef82f377f",
-        "docs/project/release/versioning-policy.json": "c4ebec8bf9a9dfb791a46f9532b428e15e647a045588d3bca004c85c59971ffe",
+        "docs/project/release/versioning-policy.json": "b26b9b78935b5551774aeda1238d0f2befc0bb03a182ffb1fbfe0e9412287209",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
-        "docs/project/stack/runtime-environments.json": "fc5fe4c02cfb7a03157d64e395dd16e4807fcd7fc53155bdf634a8b49123a449",
-        "scripts/project-intelligence.php": "376683b5d0d95b2ea10b1c8670c39a6953f477f33ce2f6a743906a49117a3778",
+        "docs/project/stack/runtime-environments.json": "27ae4753527a4dd559308574386c8492f48697f65415be41bc41f822ed497c61",
+        "scripts/project-intelligence.php": "e2d03fe2873329f59f9544289f86e95a3e9bef51dc493e0cd747343740449725",
         "songchart": "6aae071b0acb257c7a573f3c75664dd185155ea550b1903be0cf14d1e3345e3a"
     }
 }

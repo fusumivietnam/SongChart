@@ -13,6 +13,8 @@ $required = [
     'tests/Architecture/ArchitectureConformanceTest.php',
     'docs/project/domain/application-data-boundary.json',
     'docs/project/performance/query-budget-contract.json',
+    'docs/project/stack/runtime-environments.json',
+    'config/database.php',
     'app/Application/Admin/Queries/ExtensionReadModel.php',
 ];
 foreach ($required as $file) {
@@ -133,6 +135,62 @@ $queryBudget = json_decode(
 );
 if (($queryBudget['policy']['do_not_guess_hard_limits_without_representative_fixture'] ?? false) !== true) {
     $errors[] = 'Query budget authority must prohibit guessed limits without representative PostgreSQL fixtures.';
+}
+
+$readScaling = is_array($queryBudget['read_scaling'] ?? null) ? $queryBudget['read_scaling'] : [];
+if (($readScaling['default_connection'] ?? null) !== 'pgsql'
+    || ($readScaling['optional_read_connection'] ?? null) !== 'pgsql_read'
+    || ($readScaling['automatic_read_routing'] ?? true) !== false
+) {
+    $errors[] = 'Read-scaling authority must keep pgsql primary-default and pgsql_read explicit-only.';
+}
+
+$allowedReadClassifications = ['primary_required', 'replica_eligible', 'insufficient_evidence'];
+foreach ((array) ($queryBudget['surfaces'] ?? []) as $surface => $definition) {
+    if (is_array($definition) === false) {
+        $errors[] = "Query budget surface [{$surface}] must be an object.";
+
+        continue;
+    }
+
+    $classification = $definition['read_scaling'] ?? null;
+    if (is_string($classification) === false || in_array($classification, $allowedReadClassifications, true) === false) {
+        $errors[] = "Query budget surface [{$surface}] has invalid read-scaling classification.";
+    }
+
+    $readModel = $definition['read_model'] ?? null;
+    if (is_string($readModel) && $readModel !== '' && is_file($root.'/'.$readModel) === false) {
+        $errors[] = "Query budget surface [{$surface}] references missing read model [{$readModel}].";
+    }
+}
+
+$runtimeEnvironments = json_decode(
+    (string) file_get_contents($root.'/docs/project/stack/runtime-environments.json'),
+    true,
+    512,
+    JSON_THROW_ON_ERROR,
+);
+$databaseScaling = is_array($runtimeEnvironments['database_scaling'] ?? null) ? $runtimeEnvironments['database_scaling'] : [];
+if (($databaseScaling['primary_connection'] ?? null) !== 'pgsql'
+    || ($databaseScaling['optional_read_connection'] ?? null) !== 'pgsql_read'
+    || ($databaseScaling['automatic_read_routing'] ?? true) !== false
+    || ($databaseScaling['primary_is_authoritative'] ?? false) !== true
+) {
+    $errors[] = 'Runtime database-scaling authority must preserve explicit primary ownership and disabled automatic routing.';
+}
+
+$databaseConfig = (string) file_get_contents($root.'/config/database.php');
+foreach ([
+    "'default' => env('DB_CONNECTION', 'pgsql')",
+    "'pgsql_read' => [",
+    'DB_READ_HOST',
+    'DB_READ_DATABASE',
+    'DB_READ_USERNAME',
+    'DB_READ_PASSWORD',
+] as $requiredDatabaseToken) {
+    if (str_contains($databaseConfig, $requiredDatabaseToken) === false) {
+        $errors[] = "Database config is missing Stage 25 read-scaling token [{$requiredDatabaseToken}].";
+    }
 }
 
 if ($errors !== []) {

@@ -10,10 +10,10 @@ use Symfony\Component\Process\Process;
 final class ProjectIntelligenceCommand extends Command
 {
     protected $signature = 'project:intelligence
-        {--json : Emit the structural snapshot as machine-readable JSON}
+        {--json : Emit the structural/connectivity snapshot as machine-readable JSON}
         {--write : Persist the snapshot under storage/project-intelligence/{sha}}';
 
-    protected $description = 'Inspect or persist the SongChart structural project intelligence snapshot';
+    protected $description = 'Inspect or persist the SongChart structural and source-connectivity project intelligence snapshot';
 
     public function handle(): int
     {

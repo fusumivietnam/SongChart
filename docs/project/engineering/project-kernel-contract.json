@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "active",
   "purpose": "Define the shared SongChart project-intelligence kernel consumed by CLI, CI, MCP, generated documentation and Admin Development Intelligence without duplicating authority parsing.",
   "principles": [
@@ -7,17 +7,49 @@
     "Adapters must be thin: CLI, CI, MCP and Admin consume the same normalized kernel outputs.",
     "Volatile PR, SHA and CI state are resolved live and are never committed as authored project truth.",
     "Expensive source analysis is snapshot-based and never runs in an HTTP request path.",
-    "Framework/package metadata should be obtained from Laravel, Composer and established parsers before custom analysis is added."
+    "Framework/package metadata should be obtained from Laravel, Composer and established parsers before custom analysis is added.",
+    "Task-scoped AI context is a derived routing view over existing authorities, not another memory authority."
   ],
   "canonical_outputs": {
     "project_state": "docs/project/generated/development-state.json",
     "project_context": "docs/project/generated/project-context.json",
+    "ai_control_plane": "docs/project/engineering/ai-control-plane-contract.json",
     "architecture_graph": "storage/project-intelligence/architecture-graph.json",
     "source_metrics": "storage/project-intelligence/source-metrics.json",
     "version_policy": "docs/project/release/versioning-policy.json"
   },
+  "task_scoped_context": {
+    "resolver": "scripts/ai-brief.php",
+    "input": "developer/agent intent text",
+    "output": [
+      "current stage and active tranche",
+      "semantic owner",
+      "required authorities",
+      "preferred placement",
+      "surfaces to avoid creating",
+      "relevant project skills",
+      "focused verification",
+      "new-surface default and fan-out budget"
+    ],
+    "hygiene_projection": [
+      "source/file growth versus main",
+      "custom PHP LOC",
+      "one-off verifier count",
+      "Architecture test count",
+      "legacy STAGE_* document count",
+      "skill projection drift",
+      "stale active-record signals"
+    ],
+    "rule": "The resolver narrows search space and points to owners; returned data never overrides the owning contract."
+  },
+  "skill_projection": {
+    "canonical_root": ".agents/skills",
+    "sync": "php scripts/sync-agent-skills.php --write",
+    "check": "php scripts/sync-agent-skills.php",
+    "rule": "SongChart-managed equivalent client skills are projected from one canonical source rather than independently maintained."
+  },
   "adapters": {
-    "cli": "./songchart",
+    "cli": "./songchart plus task-scoped scripts routed by this kernel",
     "ci": "GitHub Auto Closure and accepted-main tests",
     "mcp": "bounded SongChart MCP adapter over kernel resources/tools",
     "admin": "read-only Development Intelligence projections plus explicit refresh actions"
@@ -46,6 +78,7 @@
     "Do not duplicate Laravel Boost framework/runtime/documentation tools.",
     "Do not store conversational memory or semantic-vector memory as project authority.",
     "Do not implement a second CI/promotion engine inside MCP.",
-    "Do not expose unrestricted source mutation through the first MCP tranche."
+    "Do not expose unrestricted source mutation through the first MCP tranche.",
+    "Do not turn AI briefs, skills or hygiene metrics into independent architecture authorities."
   ]
 }

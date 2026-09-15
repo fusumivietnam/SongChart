@@ -105,6 +105,73 @@ foreach ([
     }
 }
 
+$controlPlanePath = $root.'/docs/project/engineering/ai-control-plane-contract.json';
+if (! is_file($controlPlanePath)) {
+    $errors[] = 'AI control-plane authority is missing.';
+} else {
+    $controlPlane = json_decode((string) file_get_contents($controlPlanePath), true, 512, JSON_THROW_ON_ERROR);
+    foreach ([
+        'orientation',
+        'new_surface_admission',
+        'hand_written_fanout_budget',
+        'code_placement',
+        'skill_registry',
+        'intent_routes',
+        'dependency_updates',
+        'repository_hygiene',
+        'projection_policy',
+    ] as $requiredSection) {
+        if (! is_array($controlPlane[$requiredSection] ?? null)) {
+            $errors[] = "AI control-plane contract is missing section [{$requiredSection}].";
+        }
+    }
+
+    if (($controlPlane['skill_registry']['canonical_root'] ?? null) !== '.agents/skills') {
+        $errors[] = 'AI control-plane skill registry must keep .agents/skills as canonical project-skill source.';
+    }
+
+    if (($controlPlane['new_surface_admission']['default_decision'] ?? null) !== 'extend_existing') {
+        $errors[] = 'AI control-plane new-surface default must remain extend_existing.';
+    }
+
+    if (($controlPlane['dependency_updates']['automation'] ?? null) !== 'github-dependabot') {
+        $errors[] = 'AI control-plane dependency updater must remain GitHub Dependabot unless a replacement is explicitly admitted.';
+    }
+}
+
+foreach (['scripts/ai-brief.php', 'scripts/sync-agent-skills.php'] as $controlPlaneScript) {
+    if (! is_file($root.'/'.$controlPlaneScript)) {
+        $errors[] = "AI control-plane implementation is missing [{$controlPlaneScript}].";
+    }
+}
+
+$governanceSkill = $root.'/.agents/skills/governance/SKILL.md';
+if (! is_file($governanceSkill)) {
+    $errors[] = 'Canonical SongChart governance skill is missing.';
+} else {
+    $canonicalGovernanceSkill = (string) file_get_contents($governanceSkill);
+    foreach (['.claude/skills/governance/SKILL.md', '.github/skills/governance/SKILL.md'] as $projectionPath) {
+        $absoluteProjection = $root.'/'.$projectionPath;
+        if (! is_file($absoluteProjection)) {
+            $errors[] = "Governance skill projection is missing [{$projectionPath}].";
+        } elseif ((string) file_get_contents($absoluteProjection) !== $canonicalGovernanceSkill) {
+            $errors[] = "Governance skill projection drifted from canonical source [{$projectionPath}].";
+        }
+    }
+}
+
+$dependabotPath = $root.'/.github/dependabot.yml';
+if (! is_file($dependabotPath)) {
+    $errors[] = 'Governed dependency update proposal configuration [.github/dependabot.yml] is missing.';
+} else {
+    $dependabot = (string) file_get_contents($dependabotPath);
+    foreach (['package-ecosystem: composer', 'package-ecosystem: npm', 'package-ecosystem: github-actions', 'package-ecosystem: docker'] as $ecosystem) {
+        if (! str_contains($dependabot, $ecosystem)) {
+            $errors[] = "Dependabot configuration is missing governed ecosystem [{$ecosystem}].";
+        }
+    }
+}
+
 foreach (['songchart.bat', 'scripts/songchart.ps1', 'scripts/ai-status.ps1'] as $retiredWindowsEntrypoint) {
     if (is_file($root.'/'.$retiredWindowsEntrypoint)) {
         $errors[] = "Retired native Windows AI/development entrypoint must be removed [{$retiredWindowsEntrypoint}].";

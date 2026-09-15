@@ -1,0 +1,97 @@
+version: 2
+
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "02:00"
+      timezone: Asia/Bangkok
+    open-pull-requests-limit: 6
+    labels:
+      - dependencies
+    groups:
+      laravel-runtime:
+        patterns:
+          - laravel/framework
+          - laravel/fortify
+          - laravel/horizon
+          - laravel/pulse
+          - livewire/livewire
+        update-types:
+          - minor
+          - patch
+      php-quality:
+        dependency-type: development
+        patterns:
+          - larastan/larastan
+          - laravel/boost
+          - laravel/pail
+          - laravel/pint
+          - pestphp/*
+          - nunomaduro/collision
+          - fakerphp/faker
+          - mockery/mockery
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "02:20"
+      timezone: Asia/Bangkok
+    open-pull-requests-limit: 4
+    labels:
+      - dependencies
+    groups:
+      frontend-toolchain:
+        patterns:
+          - vite
+          - tailwindcss
+          - "@tailwindcss/vite"
+          - laravel-vite-plugin
+          - alpinejs
+          - playwright
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "02:40"
+      timezone: Asia/Bangkok
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "03:00"
+      timezone: Asia/Bangkok
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+    groups:
+      container-runtime:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch

@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "active",
   "purpose": "Define one canonical versioning model for SongChart product releases, candidate builds, CI evidence, runtime display, graph snapshots and release artifacts.",
   "separation_rules": {
-    "delivery_stage": "Stage/tranche identifiers such as 19.0.4-C1B are planning and delivery coordinates only. They are never product versions or build numbers.",
+    "delivery_stage": "Stage/tranche identifiers are planning and delivery coordinates only. They are never product versions or build numbers.",
     "product_version": "Product releases use Semantic Versioning MAJOR.MINOR.PATCH and Git tag vMAJOR.MINOR.PATCH.",
     "build_identity": "Build identity is derived from immutable source/CI evidence and is never manually incremented."
   },
@@ -54,6 +54,7 @@
     "CI and release jobs derive build identity automatically from GitHub Actions and Git metadata.",
     "Generated docs, MCP resources, Admin Development Intelligence and release artifacts consume the same version/build contract.",
     "No application file, environment example, documentation page or AI agent may invent an independent version counter.",
-    "The final Stage 19 release automation must enforce tag-to-SHA immutability and emit the canonical build manifest."
+    "Release automation must enforce tag-to-SHA immutability and emit the canonical build manifest.",
+    "Durable versioning rules must not depend on historical Stage identifiers."
   ]
 }

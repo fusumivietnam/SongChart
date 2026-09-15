@@ -25,7 +25,7 @@
         },
         "runtime-environment": {
             "source": "docs/project/stack/runtime-environments.json",
-            "fingerprint": "f87fe7a2175be453376b62b7f84c80cbf14a38e35afd3c24edd946d538940aad",
+            "fingerprint": "39d96fa469ad9fdc72f1ec4db6cff49e2ff1995b66e91fb318940693973c468b",
             "consumers": [
                 "compose.verify.yml",
                 "docker/verify/Dockerfile",
@@ -301,7 +301,7 @@
         },
         "query-budget": {
             "source": "docs/project/performance/query-budget-contract.json",
-            "fingerprint": "48193ab60e6b786e658f0e922af29f1463ad87871811228b4eb0f601aaf3b01c",
+            "fingerprint": "0537e8bfdd76c9051bf5f3cf014373f599053d78f3072a86845c05bba6044e80",
             "consumers": [
                 "docs/project/domain/application-data-boundary.json",
                 "scripts/verify-architecture-conformance.php",
@@ -1263,6 +1263,15 @@
             ]
         },
         {
+            "target": "tests/Architecture/DocumentationStage25ExternalObservabilityContractTest.php",
+            "rule": "ai-doc-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "ai-development-protocol",
+                "repository-compiler"
+            ]
+        },
+        {
             "target": "tests/Architecture/DomainContractRegistryTest.php",
             "rule": "schema-domain",
             "classification": "declarative",
@@ -1697,5 +1706,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "af0f01cfe0b5971340b3e094531fe8da1ed0b26f7aec77f3f483b14b38fb0423"
+    "graph_fingerprint": "eab20ee1c0f9f5fc3b4f876beed449e69946efadbbe1fd802c488d01a4dd9e30"
 }

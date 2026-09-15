@@ -1,12 +1,86 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "authoritative",
-  "purpose": "Canonical HTTP route families and retired compatibility surfaces.",
+  "purpose": "Canonical HTTP route families, retired compatibility surfaces, and provider-neutral edge delivery/cache policy.",
   "canonical_families": {
-    "public_catalog": ["/", "/robots.txt", "/sitemap.xml", "/search", "/artists", "/groups", "/release-groups/{slug}", "/releases", "/recordings", "/works", "/collections"],
+    "public_catalog": ["/", "/robots.txt", "/sitemap.xml", "/search", "/charts/{chart}", "/artists", "/artists/{slug}", "/groups", "/groups/{slug}", "/release-groups/{slug}", "/releases", "/releases/{slug}", "/recordings", "/recordings/{slug}", "/works", "/works/{slug}", "/versions/{slug}", "/collections", "/collections/{slug}"],
     "account": ["/account", "/account/profile", "/account/security"],
     "admin": ["/admin", "/admin/catalog", "/admin/providers", "/admin/providers/{provider}/configuration", "/admin/imports", "/admin/imports/preview", "/admin/imports/search", "/admin/imports/select", "/admin/imports/preview/execute", "/admin/quarantine", "/admin/identity-conflicts", "/admin/users", "/admin/system", "/admin/audit", "/admin/extensions"],
     "development": ["/development/status", "/development/providers/musicbrainz/artists/import", "/development/design-system", "/development/design-system/shell/frontend", "/development/design-system/shell/admin", "/development/design-system/concepts", "/development/design-system/concepts/{concept}"]
+  },
+  "edge_delivery": {
+    "status": "policy_baseline",
+    "provider_mode": "provider_neutral",
+    "fallback": "direct_dns_to_caddy",
+    "automatic_infrastructure_mutation": false,
+    "shared_cache_methods": ["GET", "HEAD"],
+    "classes": {
+      "immutable_assets": {
+        "patterns": ["/build/*"],
+        "shared_cache": "eligible",
+        "browser_ttl_seconds": 31536000,
+        "edge_ttl_seconds": 31536000,
+        "invalidation": ["content_hash_change"]
+      },
+      "public_metadata": {
+        "patterns": ["/robots.txt", "/sitemap.xml"],
+        "shared_cache": "eligible_if_anonymous",
+        "browser_ttl_seconds": 300,
+        "edge_ttl_seconds": 900,
+        "invalidation": ["deployment", "sitemap_projection_change"]
+      },
+      "public_catalog": {
+        "patterns": ["/", "/artists*", "/groups*", "/release-groups/*", "/releases*", "/recordings*", "/works*", "/versions/*", "/collections*"],
+        "shared_cache": "eligible_if_anonymous",
+        "browser_ttl_seconds": 0,
+        "edge_ttl_seconds": 300,
+        "stale_while_revalidate_seconds": 60,
+        "invalidation": ["canonical_content_change", "deployment"]
+      },
+      "chart_snapshot": {
+        "patterns": ["/charts/*"],
+        "shared_cache": "eligible_if_anonymous",
+        "browser_ttl_seconds": 0,
+        "edge_ttl_seconds": 60,
+        "stale_while_revalidate_seconds": 0,
+        "invalidation": ["chart_snapshot_promotion", "deployment"]
+      },
+      "dynamic_search": {
+        "patterns": ["/search*"],
+        "shared_cache": "bypass",
+        "reason": "query-specific discovery remains origin-evaluated until traffic and correctness evidence justify a bounded cache key policy"
+      },
+      "private_or_mutating": {
+        "patterns": ["/account*", "/admin*", "/development*"],
+        "shared_cache": "bypass",
+        "reason": "authenticated, privileged, development and mutation-capable surfaces must never enter shared cache"
+      }
+    },
+    "mandatory_bypass": {
+      "methods_except": ["GET", "HEAD"],
+      "request_headers_present": ["Authorization"],
+      "cookies_present": ["songchart_session", "XSRF-TOKEN"],
+      "response_headers": ["Cache-Control: private", "Cache-Control: no-store", "Set-Cookie"]
+    },
+    "decision_thresholds": {
+      "investigate_edge_delivery": {
+        "required_scale_scorecard_status": ["investigate"],
+        "stage_24_signals_any": [
+          {"metric": "pulse_slow_events_15m", "status": "warning"},
+          {"metric": "cache_hit_ratio", "status": "warning"}
+        ],
+        "required_before_adoption": ["public_request_volume_baseline", "public_p95_latency_baseline", "origin_request_rate_baseline"],
+        "expected_improvement": {"public_p95_latency_percent_min": 20, "origin_request_rate_percent_min": 30}
+      },
+      "defer_external_edge": {
+        "when": ["insufficient_evidence", "within_baseline", "stabilize_before_scaling"]
+      }
+    },
+    "optional_capabilities": {
+      "cdn_proxy": "evaluation_only",
+      "workers": "evaluation_only",
+      "rule": "External edge capability may implement this policy but must not duplicate Laravel domain/business logic or replace Caddy/runtime authority."
+    }
   },
   "canonical_design_system_route_names": [
     "development.design-system.index",
@@ -32,6 +106,9 @@
   "rules": [
     "New HTTP surfaces must extend an existing canonical family or update this authority first.",
     "A retired alias must not be reintroduced after a canonical replacement exists.",
-    "Development design-system links and tests must use development.design-system.* route names and /development/design-system paths."
+    "Development design-system links and tests must use development.design-system.* route names and /development/design-system paths.",
+    "Shared edge caching is policy-only until evidence thresholds are met and an operator explicitly configures an external edge.",
+    "Authenticated, admin, development, mutation, authorization-header, session-cookie and private/no-store responses must bypass shared cache.",
+    "Direct DNS-to-Caddy remains a supported fallback even when an external CDN/proxy profile is adopted."
   ]
 }
