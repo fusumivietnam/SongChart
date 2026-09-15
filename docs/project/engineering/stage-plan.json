@@ -1,13 +1,13 @@
 {
   "schema_version": 11,
   "current_stage": {
-    "id": "25.0",
-    "title": "Global Delivery & Scale",
-    "task_contract": "docs/foundation/STAGE_25_0_TASK_CONTRACT.md",
-    "status": "accepted"
+    "id": "26.0",
+    "title": "Authority & Product Design Coherence",
+    "task_contract": "docs/foundation/STAGE_26_0_TASK_CONTRACT.md",
+    "status": "implementing"
   },
   "accepted_through": "25.0",
-  "active_tranche": null,
+  "active_tranche": "26.0A",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -177,54 +177,53 @@
   },
   "stage_progress": [
     {
-      "id": "25.0A",
-      "status": "accepted",
-      "title": "Edge delivery and cache policy baseline",
+      "id": "26.0A",
+      "status": "implementing",
+      "title": "Authority Drift Closure",
       "goals": [
-        "classify public routes and assets by cacheability, freshness, invalidation and bypass requirements",
-        "map Stage 24 latency and cache evidence to measurable thresholds for edge/CDN investigation",
-        "define a provider-neutral edge delivery profile that preserves direct Caddy delivery as a supported fallback"
+        "reconcile stale current-state authority with accepted Stage 22-25 repository reality",
+        "preserve intentional partial capability states without falsely reopening accepted stage work",
+        "remove stale stage-specific external-system decisions while keeping evidence-gated boundaries"
       ]
     },
     {
-      "id": "25.0B",
-      "status": "accepted",
-      "title": "Database connection and read scaling",
+      "id": "26.0B",
+      "status": "planned",
+      "title": "Executable UI Contract Closure",
       "goals": [
-        "classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas",
-        "define consistency and failback rules that keep PostgreSQL primary authoritative",
-        "require connection saturation or query-latency evidence before promoting connection or replica infrastructure"
+        "reuse existing semantic tokens, components and UI-preview patterns",
+        "close only demonstrated executable design-contract gaps",
+        "avoid parallel design-system or frontend-framework authority"
       ]
     },
     {
-      "id": "25.0C",
-      "status": "accepted",
-      "title": "Regional resilience and traffic control",
+      "id": "26.0C",
+      "status": "planned",
+      "title": "Canonical Product Screens",
       "goals": [
-        "evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured evidence",
-        "define health, drain, retry and failover semantics before routing automation",
-        "keep Envoy deferred until an explicit multi-service, gRPC, mTLS, multi-region or traffic-control trigger exists"
+        "prove shared design authority on representative public and admin screens",
+        "reuse compliant existing screens before redesign",
+        "preserve Blade and Livewire as the default frontend stack"
       ]
     },
     {
-      "id": "25.0D",
-      "status": "accepted",
-      "title": "External APM evaluation and stage closure",
+      "id": "26.0D",
+      "status": "planned",
+      "title": "Product-Coherence Closure",
       "goals": [
-        "evaluate external APM only against demonstrated Stage 24/25 observability gaps",
-        "record privacy, retention, operational cost and fallback behavior for any adoption decision",
-        "close Stage 25 through existing exact-head and canonical verification ownership"
+        "close remaining representative responsive and accessibility drift",
+        "record browser and visual evidence where current coverage is insufficient",
+        "close Stage 26 through existing exact-head verification ownership"
       ]
     }
   ],
-  "next_tranche": null,
+  "next_tranche": "26.0B",
   "next_stage_outline": null,
   "activation_evidence": {
-    "accepted_main_sha": "d5eb48fd36ae3796de55201adbbf75c6d8ee99f4",
-    "accepted_main_workflow_run": 34925210011,
-    "stage_24_pull_request": 36,
-    "stage_24_final_auto_closure_run": 34924745305,
-    "stage_25_branch": "stage-25-global-delivery-scale"
+    "accepted_main_sha": "d25dc667173bb47256a21db430b3c8e3ccd02212",
+    "stage_26_branch": "stage-26-authority-product-coherence",
+    "stage_26_pull_request": 48,
+    "baseline_verification": "Local candidate and canonical verification passed before Stage 26 activation."
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
