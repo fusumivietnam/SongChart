@@ -38,6 +38,7 @@ if ($deliveryMode) {
         'docs/DOCUMENTATION_INDEX.md',
         'docs/project/DEVELOPMENT_HISTORY.md',
         'docs/project/docs/ROADMAP.md',
+        'docs/project/engineering/stage-plan.json',
         'docs/project/domain/domain-contracts.json',
         'docs/project/domain/operational-contracts.json',
         'docs/project/domain/use-case-contracts.json',
@@ -48,21 +49,31 @@ if ($deliveryMode) {
         }
     }
 
-    $readme = @file_get_contents($root.'/README.md');
-    if ($readme === false || preg_match('/^Current stage:\s*\*\*([0-9]+(?:\.[0-9]+)+)\s+—\s+([^*]+)\*\*$/m', $readme, $match) !== 1) {
-        $errors[] = 'Delivery package README must declare exactly one valid Current stage pointer.';
+    $stagePlanPath = $root.'/docs/project/engineering/stage-plan.json';
+    $stagePlan = is_file($stagePlanPath) ? json_decode((string) file_get_contents($stagePlanPath), true) : null;
+    if (! is_array($stagePlan)) {
+        $errors[] = 'Delivery package stage-plan.json must be valid JSON.';
     } else {
-        $stage = $match[1];
-        $title = trim($match[2]);
-        $token = str_replace('.', '_', $stage);
-        foreach (["docs/foundation/STAGE_{$token}_TASK_CONTRACT.md", "docs/foundation/STAGE_{$token}_VALIDATION_REPORT.md"] as $relative) {
-            if (! is_file($root.'/'.$relative)) {
-                $errors[] = "Delivery package is missing current-stage governance file: {$relative}";
-            }
+        $current = is_array($stagePlan['current_stage'] ?? null) ? $stagePlan['current_stage'] : [];
+        $stage = is_string($current['id'] ?? null) ? $current['id'] : '';
+        $title = is_string($current['title'] ?? null) ? trim($current['title']) : '';
+        $taskContract = is_string($current['task_contract'] ?? null) ? $current['task_contract'] : '';
+
+        if ($stage === '' || $title === '' || $taskContract === '') {
+            $errors[] = 'Delivery package stage plan must declare current stage id, title and task_contract.';
+        } elseif (! is_file($root.'/'.$taskContract)) {
+            $errors[] = "Delivery package is missing current task contract declared by stage-plan.json: {$taskContract}";
         }
+
+        $readme = (string) @file_get_contents($root.'/README.md');
+        if ($stage !== '' && ! str_contains($readme, "Current stage: **{$stage} — {$title}**")) {
+            $errors[] = 'Delivery package README current-stage pointer must agree with stage-plan.json.';
+        }
+
+        $acceptedThrough = is_string($stagePlan['accepted_through'] ?? null) ? $stagePlan['accepted_through'] : '';
         $history = (string) @file_get_contents($root.'/docs/project/DEVELOPMENT_HISTORY.md');
-        if (! str_contains($history, "| {$stage} | {$title} |")) {
-            $errors[] = 'Delivery package current stage does not match DEVELOPMENT_HISTORY.md.';
+        if ($acceptedThrough !== '' && ! str_contains($history, "| {$acceptedThrough} |")) {
+            $errors[] = 'Delivery package accepted_through stage must exist in DEVELOPMENT_HISTORY.md.';
         }
     }
 }
