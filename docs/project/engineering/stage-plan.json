@@ -191,7 +191,7 @@
       "status": "planned",
       "title": "Executable UI Contract Closure",
       "goals": [
-        "reuse existing semantic tokens, components and UI-preview patterns",
+        "reuse existing semantic tokens, components and canonical design-system patterns",
         "close only demonstrated executable design-contract gaps",
         "avoid parallel design-system or frontend-framework authority"
       ]
