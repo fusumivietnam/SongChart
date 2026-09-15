@@ -38,6 +38,37 @@ if (str_contains(file_get_contents($root.'/resources/views/ui-preview/sections/p
     $errors[] = 'UI preview contains dead href.';
 }
 
+$frontendDesignContract = (string) file_get_contents($root.'/docs/ui/SONGCHART_FRONTEND_DESIGN_CONTRACT.md');
+foreach ([
+    'resources/css/tokens.css',
+    'resources/views/layouts/frontend.blade.php',
+    'resources/views/layouts/admin.blade.php',
+    'resources/views/components/ui/',
+    'resources/views/components/entity/',
+    'resources/views/components/provider/',
+    'resources/views/components/search/',
+    'resources/views/components/shell/',
+    'resources/views/home.blade.php',
+    'resources/views/search/',
+    'resources/views/entities/',
+    'resources/views/catalog/',
+    'resources/views/charts/',
+    'resources/views/account/',
+    'resources/views/auth/',
+    'resources/views/admin/',
+    'resources/views/ui-preview/',
+] as $ownedUiPath) {
+    if (str_contains($frontendDesignContract, $ownedUiPath) === false) {
+        $errors[] = "Frontend design contract is missing executable UI owner [{$ownedUiPath}].";
+    }
+}
+if (str_contains($frontendDesignContract, 'resources/views/pages/')) {
+    $errors[] = 'Frontend design contract must not require the obsolete resources/views/pages/ hierarchy.';
+}
+if (str_contains($frontendDesignContract, '/development/design-system') === false) {
+    $errors[] = 'Frontend design contract must point reusable pattern governance at /development/design-system.';
+}
+
 $dataBoundary = json_decode(
     (string) file_get_contents($root.'/docs/project/domain/application-data-boundary.json'),
     true,
