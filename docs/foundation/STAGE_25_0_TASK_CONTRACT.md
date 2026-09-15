@@ -2,13 +2,13 @@
 
 ## Status
 
-Implementing. Stage 25 is activated from accepted `main` SHA `d5eb48fd36ae3796de55201adbbf75c6d8ee99f4` after Stage 24 PR #36 was merged and accepted-main workflow run `34925210011` passed quality, PostgreSQL 18, frontend build, desktop/mobile browser smoke and accepted-main provenance classification.
+Accepted. Stage 25 was activated from accepted `main` SHA `d5eb48fd36ae3796de55201adbbf75c6d8ee99f4` after Stage 24 PR #36 was merged and accepted-main workflow run `34925210011` passed quality, PostgreSQL 18, frontend build, desktop/mobile browser smoke and accepted-main provenance classification.
 
-Active tranche: `25.0D` — External APM evaluation and stage closure.
+All declared tranches `25.0A` through `25.0D` are accepted. No next stage is activated by this contract; future roadmap direction remains intentionally unset until the planned post-Stage-25 survey is completed.
 
 ## Goal
 
-Use the Stage 24 operational-intelligence scorecard to decide, with measurable evidence, when SongChart needs edge caching/CDN behavior, database connection/read scaling, regional delivery, load balancing, circuit breaking or external APM. Stage 25 must preserve the first-release production topology as the supported fallback and must not promote an external platform merely because it is available.
+Use the Stage 24 operational-intelligence scorecard to decide, with measurable evidence, when SongChart needs edge caching/CDN behavior, database connection/read scaling, regional delivery, load balancing, circuit breaking or external APM. Stage 25 preserves the first-release production topology as the supported fallback and does not promote an external platform merely because it is available.
 
 ## Invariants
 
@@ -24,7 +24,7 @@ Use the Stage 24 operational-intelligence scorecard to decide, with measurable e
 10. Envoy remains deferred unless multi-service, gRPC, mTLS, multi-region or traffic-control requirements actually exist.
 11. External APM adoption must demonstrate a visibility gap not already satisfied by Pulse/Horizon/Stage 24 evidence and must include privacy, retention, cost and fallback review.
 12. No automatic infrastructure mutation or production scaling action is introduced without a separate human-gated authority.
-13. Direct DNS-to-Caddy and the accepted production Compose topology remain supported fallback paths during Stage 25.
+13. Direct DNS-to-Caddy and the accepted production Compose topology remain supported fallback paths.
 14. Stage closure uses the existing exact-head Auto Closure and canonical verification ownership; no second CI or deployment authority is introduced.
 
 ## Tranches
@@ -63,13 +63,13 @@ Accepted on Auto Closure run `34972809650` (#568), source head `82901e8b3dd64753
 
 ### 25.0D — External APM evaluation and stage closure
 
-Implementing.
+Accepted on Auto Closure run `34977446255` (#575), with source head `f950a736d396fcc60e86bc8776abee4462e78bdc` and effective prepared head `7c8f07167fe3e48345de7bbd47ca7d8cbc631afa`.
 
-- evaluate Sentry/external APM or equivalent only against demonstrated Stage 24/25 observability gaps;
-- record value, privacy/retention, operational cost and exit/fallback behavior for any adoption decision;
-- retain `deferred_no_demonstrated_gap` while the current repository-owned evidence baseline remains sufficient;
-- introduce no external APM package, agent, sidecar, proxy, credential, network dependency or automatic infrastructure mutation without separately accepted evidence;
-- close Stage 25 through exact-head quality, PostgreSQL, frontend, browser, classification, canonical CLOSE and exact-tree evidence.
+- external APM was evaluated only against demonstrated Stage 24/25 observability gaps;
+- value, privacy/retention, operational cost and exit/fallback behavior are recorded in `docs/operations/external-observability-evaluation.md`;
+- decision is `deferred_no_demonstrated_gap` while the current repository-owned evidence baseline remains sufficient;
+- no external APM package, agent, sidecar, proxy, credential, network dependency or automatic infrastructure mutation is introduced;
+- exact-head quality, PostgreSQL, frontend, browser, classification, canonical CLOSE and exact-tree evidence passed.
 
 ## Acceptance criteria
 
@@ -80,6 +80,8 @@ For 25.0B specifically, acceptance requires explicit read-path classification in
 For 25.0C specifically, acceptance requires repository-owned regional/traffic-control decision semantics with evidence states, side-effect-free health and drain rules, mutation-safe retry policy, explicit failback to the accepted direct Caddy/Compose topology, no automatic routing or infrastructure mutation, and an explicit Envoy deferral unless a declared trigger becomes true.
 
 For 25.0D specifically, acceptance requires a repository-owned external-observability evaluation that records the demonstrated-gap trigger, expected operational value, privacy/retention constraints, cost/cardinality controls and vendor exit/fallback semantics; absent a demonstrated gap, external APM remains deferred and must not become a production dependency.
+
+All Stage 25 acceptance criteria are satisfied subject to the final exact-head Auto Closure of this authored closure state before merge.
 
 ## Authority and official sources
 
@@ -103,7 +105,7 @@ For 25.0D specifically, acceptance requires a repository-owned external-observab
 
 ### Installed versions
 
-Exact package/runtime versions remain lockfile-owned. Stage 25 starts from the accepted PHP 8.5, Laravel 13, PostgreSQL 18, Redis, Caddy, Horizon and Pulse stack. Activation authorizes no new package, proxy, database service or external APM by itself.
+Exact package/runtime versions remain lockfile-owned. Stage 25 retains the accepted PHP 8.5, Laravel 13, PostgreSQL 18, Redis, Caddy, Horizon and Pulse stack. Acceptance authorizes no new package, proxy, database service or external APM by itself.
 
 ### Official external sources
 
@@ -115,7 +117,7 @@ SongChart already has Caddy TLS/static delivery, Laravel HTTP/cache primitives, 
 
 ### Custom implementation justification
 
-SongChart-specific work is limited to policy and decision composition that upstream products cannot know: route cacheability/freshness classes, canonical/provenance-sensitive bypass rules, evidence thresholds, primary/replica eligibility, regional/failure semantics, fallback behavior and provider-neutral scale decisions. Stage 25 must prefer configuration/read-model/verifier changes over custom network infrastructure.
+SongChart-specific work is limited to policy and decision composition that upstream products cannot know: route cacheability/freshness classes, canonical/provenance-sensitive bypass rules, evidence thresholds, primary/replica eligibility, regional/failure semantics, fallback behavior and provider-neutral scale decisions. Stage 25 prefers configuration/read-model/verifier changes over custom network infrastructure.
 
 ## Activation evidence
 
@@ -137,12 +139,12 @@ Repository-owned verification remains:
 ./songchart verify
 ```
 
-Stage 25 may extend current policy/verifier consumers when required, but must not introduce a second verification framework.
+Stage 25 extends existing policy/verifier consumers only where required and introduces no second verification framework.
 
 ## Tests and verification
 
-Activation must pass repository-owned quality verification before implementation proceeds. Each implementation tranche must maintain PostgreSQL 18 tests, production frontend build, desktop/mobile browser smoke when affected, exact-head classification and canonical closure according to the existing verification topology.
+Tranches 25.0A through 25.0D have repository-owned exact-head verification evidence. The authored closure state must pass one fresh Auto Closure before PR #37 is merged so that acceptance metadata itself is covered by exact-head verification.
 
 ## Handoff
 
-Stage 25 continues with `25.0D — External APM evaluation and stage closure`. Repository authority and live GitHub state remain authoritative over chat memory. One Stage 25 umbrella branch owns overlapping Stage 25 source until final accepted closure and merge.
+Stage 25 is closed at the authored authority level. No future stage or roadmap insertion is activated here. After the final exact-head closure and merge, the next action is a project-wide survey/review to agree future direction before any roadmap authority change.
