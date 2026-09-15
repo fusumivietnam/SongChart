@@ -111,5 +111,20 @@
       "new retention-sensitive dimensions"
     ],
     "rule": "Stage 27.0A aggregate approval does not authorize raw-event or user-level tracking."
+  },
+  "stage_27_0a_scope": {
+    "active_events": [
+      "search.performed",
+      "search.zero_result"
+    ],
+    "deferred_events": [
+      "entity.viewed",
+      "relationship.clicked",
+      "provider.clicked",
+      "favorite.added",
+      "favorite.removed",
+      "collection.updated"
+    ],
+    "rule": "No deferred event becomes active without a demonstrated producer, measurable consumer and updated privacy/retention authority."
   }
 }
