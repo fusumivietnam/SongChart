@@ -55,7 +55,7 @@ Implemented:
 - unknown/stale provider availability;
 - entity not found.
 
-Loading/degraded remote-provider states remain represented in `/ui-preview`; the current request is server-rendered and has no live remote dependency.
+Loading/degraded remote-provider states remain represented in `/development/design-system`; the current request is server-rendered and has no live remote dependency.
 
 ## Acceptance criteria
 
@@ -65,9 +65,8 @@ Loading/degraded remote-provider states remain represented in `/ui-preview`; the
 - Empty state includes query, broader filter and missing-content report.
 - Entity detail includes breadcrumb, identity, metadata, provider chooser and provenance.
 - Provider routing never claims universal availability.
-- Search patterns are represented in `/ui-preview`.
+- Search patterns are represented in `/development/design-system`.
 - Feature tests cover the complete vertical slice.
-
 
 ## Regression testing rule — scoped assertions
 
@@ -81,7 +80,6 @@ For filtered-result tests:
 - do not use a page-wide `assertDontSee()` for labels that may legitimately appear outside the result list.
 
 This rule prevents false failures when recommendation copy changes while the search filter itself remains correct.
-
 
 ## Cross-markup assertion rule
 
