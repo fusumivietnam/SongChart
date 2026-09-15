@@ -2,7 +2,7 @@
 
 ## Status
 
-Bounded post-Stage-26 task contract. Stage 26 remains the accepted baseline on `main`. This contract authorizes only the first tranche, `27.0A — Minimal Product Event Contract`, until repository stage authority is activated and exact-head verification passes.
+Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. This contract authorizes only the first tranche, `27.0A — Minimal Product Event Contract`, until exact-head verification accepts it.
 
 ## Goal
 
@@ -40,7 +40,7 @@ Minimality must not weaken privacy, abuse resistance, canonical authority, data 
 
 ### 27.0A — Minimal Product Event Contract
 
-Only active implementation target once stage authority is activated.
+Active implementation target.
 
 Initial candidate event vocabulary, subject to repository audit before implementation:
 
@@ -66,15 +66,14 @@ Required closure for each implemented event:
 - retention and deletion behavior;
 - sampling/deduplication/idempotency semantics where relevant;
 - consumer/query or derived metric proof;
-- PostgreSQL-backed verification.
+- PostgreSQL-backed verification when persistence is activated.
 
-Minimum likely implementation shape:
+Current contract decision:
 
-- small application-owned event taxonomy/DTO or equivalent native Laravel contract;
-- durable PostgreSQL event/evidence table only if current repository storage has no suitable non-audit owner;
-- minimal recorder boundary callable from existing product flows;
-- repository-owned verifier/tests that prevent privileged-audit/canonical-domain authority leakage;
-- no external analytics dependency.
+- `search.performed` and `search.zero_result` are approved at contract level because the search flow exposes a stable application boundary and measurable demand/zero-result metrics;
+- `entity.viewed` remains candidate-only until a concrete metric/action consumer is demonstrated;
+- relationship/provider click and favorites/collections events remain deferred until corresponding producer/consumer ownership exists;
+- contract approval alone does not authorize persistence.
 
 ### 27.0B — Favorites & Collections Closure
 
@@ -106,18 +105,27 @@ Deferred. Define bounded return/retention metrics from accepted signals; no reco
 - `docs/project/engineering/stage-plan.json`
 - `docs/project/docs/ROADMAP.md`
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
-- current search/entity/chart/account/favorites/collections implementation and tests
+- `docs/project/product/product-event-contract.json`
+- current search/entity/chart/account implementation and tests
 - privileged-audit authority and `docs/operations/privileged-audit.md`
+
+### Installed versions
+
+Use repository lockfiles and `composer.json` as executable version authority. Stage 27 assumes the accepted Laravel 13 / PHP 8.5 / PostgreSQL 18 baseline and adds no new package by default.
+
+### Official external sources
+
+No external analytics provider is required for 27.0A. If a framework/package behavior question becomes material, consult the version-matched official Laravel/PHP/PostgreSQL documentation before custom implementation. No third-party analytics documentation is authoritative for SongChart product-event semantics.
 
 ### Native capability assessment
 
-Before adding storage or abstractions, inspect existing Laravel events/listeners, application services, request/session/auth context, PostgreSQL tables/indexes, Spatie Activitylog boundaries, queues, cache and repository verification consumers. Prefer existing Laravel/PHP/PostgreSQL capability when it satisfies the contract.
+Before adding storage or abstractions, inspect existing Laravel events/listeners, application services, request/session/auth context, PostgreSQL tables/indexes, queues, cache and repository verification consumers. Prefer existing Laravel/PHP/PostgreSQL capability when it satisfies the contract. `spatie/laravel-activitylog` is explicitly excluded as a product-telemetry owner because its accepted authority is privileged/business audit.
 
-### External systems
+### Custom implementation justification
 
-No external analytics system is required for 27.0A. Any later external analytics evaluation requires demonstrated query/scale/operations pressure, explicit privacy/retention/cost ownership and an exit path.
+Custom telemetry code is allowed only when the repository lacks a suitable non-audit owner and the implementation is smaller than adopting an external analytics/event platform. Any custom recorder/storage must be typed, bounded, disable-able, privacy-classified, PostgreSQL-verifiable and attached to a named metric consumer. No generic event bus is justified by 27.0A.
 
-## Verification
+## Tests and verification
 
 Use existing SongChart ownership rather than a second telemetry test framework:
 
@@ -129,8 +137,8 @@ Use existing SongChart ownership rather than a second telemetry test framework:
 ./songchart verify
 ```
 
-Focused tests must prove event schema/recording/privacy boundaries and PostgreSQL behavior. Exact-head Auto Closure remains the acceptance gate.
+Focused architecture tests must prove contract/privacy/authority boundaries. If persistence is later activated inside 27.0A, focused PostgreSQL tests must additionally prove schema, retention/deletion behavior and derived metric consumption. Exact-head Auto Closure remains the acceptance gate.
 
 ## Handoff rule
 
-Audit first. Activate and implement only `27.0A`. Reuse existing capabilities where they fit; if current audit already provides a valid non-audit event owner, extend it instead of creating another subsystem. Do not begin 27.0B–27.0D until 27.0A has accepted evidence.
+Implement only `27.0A`. Reuse existing capabilities where they fit. Do not begin 27.0B–27.0D until 27.0A has accepted evidence. Persistence remains deferred until every activation gate in `docs/project/product/product-event-contract.json` is satisfied.
