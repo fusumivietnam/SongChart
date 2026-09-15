@@ -14,6 +14,8 @@ Before modifying source:
 
 Default ownership order: Laravel first-party → mature documented package → genuinely SongChart-specific custom code. Package adoption must retire replaced custom code instead of preserving permanent dual implementations.
 
+Implementation posture is Ponytail/full: stop at the first solution that fully holds — skip speculative work (YAGNI), reuse existing SongChart code/contracts, prefer language/framework/platform-native capability, then an already-approved dependency, and only then write the minimum SongChart-specific code. Minimal must never mean weaker security, trust-boundary validation, data integrity, accessibility, canonical authority, or required verification.
+
 Every bounded tranche must review continuous optimization: reuse/package opportunity, custom code retirement, automation opportunity, documentation/knowledge impact, active brand cleanup, release weight, mobile/remote operability, and technology SWOT/ROI freshness. Record deferred work in repository machine authority rather than rediscovering it later.
 
 PR closure is GitHub Auto Closure: PREPARE → CHECK → canonical CLOSE → Ready. Any new commit invalidates exact-head evidence. Human promotion remains Merge/Release.
