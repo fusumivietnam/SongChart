@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "authority": "product_telemetry_contract",
+  "purpose": "Define the minimum governed product signals needed to measure demonstrated SongChart product outcomes without turning telemetry into canonical music-domain truth or privileged audit.",
+  "storage_decision": "deferred_until_consumer_and_retention_evidence",
+  "defaults": {
+    "canonical_authority": false,
+    "raw_ip_allowed": false,
+    "raw_user_agent_allowed": false,
+    "request_payload_capture_allowed": false,
+    "external_analytics_dependency": false
+  },
+  "events": {
+    "search.performed": {
+      "status": "approved_contract_only",
+      "producer": "app/Http/Controllers/Search/SearchController.php after BuildSearchPage returns a valid non-empty-query result",
+      "purpose": "Measure actual search demand volume and provide the denominator for zero-result and recovery metrics.",
+      "pii_class": "pseudonymous_or_anonymous_product_signal",
+      "allowed_fields": [
+        "normalized_query",
+        "entity_type_filter",
+        "sort_order",
+        "page",
+        "result_count",
+        "total_result_count"
+      ],
+      "forbidden_fields": [
+        "raw_ip",
+        "raw_user_agent",
+        "cookie_value",
+        "session_payload",
+        "full_request_payload"
+      ],
+      "retention": "not_yet_activated",
+      "sampling": "100_percent_when_activated_until_volume_evidence_justifies_change",
+      "consumer": "search_demand_and_zero_result_rate",
+      "primary_metric": "search_count",
+      "guardrail": "query normalization must not fabricate canonical entity identity"
+    },
+    "search.zero_result": {
+      "status": "approved_contract_only",
+      "producer": "app/Http/Controllers/Search/SearchController.php when BuildSearchPage returns zero results for a valid non-empty query",
+      "purpose": "Measure unmet search demand and create evidence for later zero-result recovery and data-opportunity prioritization.",
+      "pii_class": "pseudonymous_or_anonymous_product_signal",
+      "allowed_fields": [
+        "normalized_query",
+        "entity_type_filter",
+        "sort_order",
+        "page"
+      ],
+      "forbidden_fields": [
+        "raw_ip",
+        "raw_user_agent",
+        "cookie_value",
+        "session_payload",
+        "full_request_payload"
+      ],
+      "retention": "not_yet_activated",
+      "sampling": "100_percent_when_activated_until_volume_evidence_justifies_change",
+      "consumer": "zero_result_rate_and_future_demand_priority",
+      "primary_metric": "zero_result_search_count",
+      "guardrail": "zero-result evidence may prioritize review/enrichment but cannot mutate canonical data directly"
+    },
+    "entity.viewed": {
+      "status": "candidate_not_approved",
+      "producer": "app/Http/Controllers/Search/EntityController.php after canonical entity resolution succeeds",
+      "purpose": "Potentially measure public entity exposure, but no accepted downstream metric/action currently requires persistence.",
+      "decision": "defer_until_consumer_is_demonstrated"
+    },
+    "relationship.clicked": {
+      "status": "deferred_no_demonstrated_producer_consumer"
+    },
+    "provider.clicked": {
+      "status": "deferred_no_demonstrated_producer_consumer"
+    },
+    "favorite.added": {
+      "status": "deferred_until_favorites_mvp_exists"
+    },
+    "favorite.removed": {
+      "status": "deferred_until_favorites_mvp_exists"
+    },
+    "collection.updated": {
+      "status": "deferred_until_user_collections_mvp_exists"
+    }
+  },
+  "activation_gate": {
+    "required_before_persistence": [
+      "explicit retention window",
+      "normalized-query privacy policy",
+      "repository-owned persistence owner",
+      "derived metric consumer",
+      "PostgreSQL-backed verification",
+      "disable/degradation path"
+    ],
+    "rule": "Contract approval does not authorize persistence by itself."
+  }
+}
