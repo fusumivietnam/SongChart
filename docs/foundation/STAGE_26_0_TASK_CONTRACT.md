@@ -4,7 +4,7 @@
 
 Active planning/implementation contract for the post-Stage-25 product-coherence workstream. The live work lease is branch `stage-26-authority-product-coherence`. Stage 25 remains the accepted stage baseline until Stage 26 passes repository-owned closure and is human-promoted.
 
-`26.0A — Authority Drift Closure` is accepted from Auto Closure run 608 on source head `587f9490afaee4d77fdf8a50aba8680e17c26926` with effective prepared head `a6175258072bba18c53083401344758ee76be9f4`. The current bounded tranche is `26.0B — Executable UI Contract Closure`. Later tranches remain declared for dependency visibility only and must not be implemented ahead of evidence.
+`26.0A — Authority Drift Closure` and `26.0B — Executable UI Contract Closure` are accepted. The current bounded tranche is `26.0C — Canonical Product Screens`. Later tranche `26.0D` remains declared for dependency visibility only and must not be implemented ahead of evidence.
 
 ## Goal
 
@@ -54,27 +54,38 @@ Acceptance evidence: Auto Closure run 608 passed PREPARE/QUALITY, PostgreSQL 18,
 
 ### 26.0B — Executable UI Contract Closure
 
-Current bounded tranche.
+Accepted.
 
-Scope:
+Delivered:
 
-- inventory existing semantic tokens, shared components, canonical design-system patterns and representative layouts;
-- close only demonstrated gaps needed to make page implementation consume existing design authority consistently;
-- prefer extending current machine-readable UI contracts over introducing parallel registries;
-- add visual/browser evidence only for representative surfaces where current coverage is insufficient;
-- keep Blade/Livewire and the current design-system route family unless a concrete implementation gap proves they are insufficient.
+- aligned the frontend design contract with the actual executable Blade tree rather than creating an obsolete parallel `resources/views/pages/` hierarchy;
+- completed the already-approved admin semantic token set in `resources/css/tokens.css`;
+- migrated representative homepage, search, entity-detail and admin-dashboard surfaces to semantic surface/state tokens without changing product behavior;
+- extended the existing architecture verifier to guard executable UI ownership and representative semantic-token regressions without introducing a new verifier or registry;
+- retained the canonical `/development/design-system` inventory and Blade/Livewire runtime.
 
-Acceptance outcome: representative page implementations can consume one coherent executable UI contract without page-specific visual invention or a new frontend/design-system subsystem.
+Acceptance evidence: Auto Closure run 622 on exact head `feccec439e6419c50da85252dcb06649c660fa02` passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote. Browser Review Evidence run 17 captured SHA-bound desktop/mobile screenshots on the same exact head.
 
 ### 26.0C — Canonical Product Screens
 
-Not active until 26.0B is accepted.
+Current bounded tranche.
 
-Candidate scope is limited to representative public/admin screens needed to prove the shared design system: search/zero-result, entity detail, chart, account and admin review/list surfaces. Reuse current screens where they already satisfy the contract; do not redesign for its own sake.
+Scope is limited to representative public/admin screens needed to prove the shared design system: search/zero-result, entity detail, persisted chart, account and admin review/list surfaces.
+
+Implementation rules:
+
+- audit existing screens first and reuse any surface that already satisfies the contract;
+- change only demonstrated contract or coherence gaps; do not redesign for its own sake;
+- compose approved tokens/components/patterns and current page families rather than inventing a second layout system;
+- preserve canonical data/provenance/provider semantics and existing route/application boundaries;
+- use browser/visual evidence for changed representative surfaces;
+- do not broaden scope into retention, telemetry, recommendation or frontend-stack migration.
+
+Acceptance outcome: the representative public/admin product surfaces demonstrate one coherent design authority on desktop/mobile without page-specific visual direction or fabricated product signals.
 
 ### 26.0D — Product-Coherence Closure
 
-Not active until preceding tranches are accepted.
+Not active until 26.0C is accepted.
 
 Validate responsive/accessibility/browser evidence, verify no page-level design divergence remains in representative flows, and close Stage 26 through existing exact-head verification.
 
@@ -112,19 +123,19 @@ Stage 26 introduces no package or runtime dependency. Exact installed versions r
 
 ### Official external sources
 
-No external product or provider is required for 26.0B. Laravel/Blade/Livewire, browser and accessibility documentation remain upstream references only where an existing repository contract needs clarification. Figma remains governed by `docs/project/engineering/external-systems-registry.json` and is used only when an accepted design node materially improves bounded design-to-code work; it is not a prerequisite or application dependency.
+No external product or provider is required for 26.0C. Laravel/Blade/Livewire, browser and accessibility documentation remain upstream references only where an existing repository contract needs clarification. Figma remains governed by `docs/project/engineering/external-systems-registry.json` and is used only when an accepted design node materially improves bounded design-to-code work; it is not a prerequisite or application dependency.
 
 ### Native capability assessment
 
-The repository already contains semantic tokens, shared Blade components, public/admin design contracts, the canonical `/development/design-system` inventory, route authority, browser/visual verification and Blade/Livewire runtime capability. The 26.0B task is therefore an inventory-and-gap-closure exercise, not a mandate to build a new design system or frontend runtime.
+The repository already contains semantic tokens, shared Blade components, public/admin design contracts, the canonical `/development/design-system` inventory, route authority, browser/visual verification and Blade/Livewire runtime capability. Stage 26.0C therefore starts by auditing existing representative screens and changes only proven product-coherence gaps.
 
 ### Custom implementation justification
 
-SongChart-specific implementation is justified only for concrete gaps between the current executable UI and existing SongChart contracts. Reuse and extension of existing tokens/components/patterns comes first. A new abstraction is not introduced unless at least several real consumers share the same semantics and the existing owners cannot express the requirement cleanly.
+SongChart-specific implementation is justified only for concrete gaps between representative product screens and the existing SongChart contracts. Reuse and extension of existing tokens/components/patterns comes first. A new abstraction is not introduced unless several real consumers share the same semantics and the existing owners cannot express the requirement cleanly.
 
 ## Activation baseline
 
-Stage 26 began from accepted `main` merge commit `d25dc667173bb47256a21db430b3c8e3ccd02212`. Tranche 26.0B begins only after accepted 26.0A evidence from Auto Closure run 608 was recorded in `stage-plan.json`.
+Stage 26 began from accepted `main` merge commit `d25dc667173bb47256a21db430b3c8e3ccd02212`. Tranche 26.0C begins after accepted 26.0B evidence from Auto Closure run 622 and Browser Review Evidence run 17 was recorded in `stage-plan.json`.
 
 Dependabot maintenance PRs remain separate dependency-governance work and do not own Stage 26 product source.
 
@@ -140,8 +151,8 @@ Use the existing repository workflow:
 ./songchart verify
 ```
 
-Focused verification is used while implementing 26.0B. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority, route-authority consistency, design-contract consistency and generated-state consistency remain mandatory quality gates for this contract.
+Focused verification is used while implementing 26.0C. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority, route-authority consistency, design-contract consistency and generated-state consistency remain mandatory quality gates for this contract.
 
 ## Handoff rule
 
-Only `26.0B` is currently actionable. Do not begin `26.0C` merely because it is listed here. First inventory the current executable UI, reuse what already satisfies the authority, close only demonstrated contract gaps, and prove representative browser/visual evidence where current coverage is insufficient.
+Only `26.0C` is currently actionable. Do not begin `26.0D` merely because it is listed here. First audit the representative screens, reuse compliant surfaces, close only demonstrated coherence gaps, and prove changed surfaces with existing browser/visual evidence ownership.
