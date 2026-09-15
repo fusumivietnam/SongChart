@@ -32,7 +32,7 @@ foreach ($steps as $step) {
     $script = substr($step, 1);
     fwrite(STDOUT, "[SongChart close] Running {$script}.\n");
     $process = proc_open(
-        ['composer', 'run-script', $script, '--no-interaction'],
+        ['composer', '--no-interaction', 'run-script', $script],
         [STDIN, STDOUT, STDERR],
         $pipes,
         $root,
