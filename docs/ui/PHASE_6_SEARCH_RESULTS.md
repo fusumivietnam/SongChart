@@ -80,8 +80,7 @@ Continue following the scoped assertion rule from Stage 04. Do not use page-wide
 - Empty active facets do not hide matches in other entity types.
 - Unverified results expose a visible partial-data state.
 - No fabricated ranking or provider availability is introduced.
-- Search result patterns remain represented in `/ui-preview/patterns`.
-
+- Search result patterns remain represented in `/development/design-system/patterns`.
 
 ## Patch 01 — semantic pagination assertions
 
