@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "24.0",
-  "active_tranche": "25.0A",
+  "active_tranche": "25.0B",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -138,12 +138,19 @@
       "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
       "verification_run": 34924143552,
       "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; external APM remained deferred without a demonstrated gap and Stage 24 passed canonical CLOSE, exact-tree preservation and ready-to-promote."
+    },
+    "25.0A": {
+      "title": "Edge delivery and cache policy baseline",
+      "source_head": "00f1513a74be191c0d34b59aedbd0ebf7008a9c9",
+      "effective_prepared_head": "00f1513a74be191c0d34b59aedbd0ebf7008a9c9",
+      "verification_run": 34941886006,
+      "verification": "Auto Closure run 532 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact 25.0A source head."
     }
   },
   "stage_progress": [
     {
       "id": "25.0A",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Edge delivery and cache policy baseline",
       "goals": [
         "classify public routes and assets by cacheability, freshness, invalidation and bypass requirements",
@@ -153,7 +160,7 @@
     },
     {
       "id": "25.0B",
-      "status": "planned",
+      "status": "implementing",
       "title": "Database connection and read scaling",
       "goals": [
         "classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas",
@@ -182,7 +189,7 @@
       ]
     }
   ],
-  "next_tranche": "25.0B",
+  "next_tranche": "25.0C",
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "d5eb48fd36ae3796de55201adbbf75c6d8ee99f4",
