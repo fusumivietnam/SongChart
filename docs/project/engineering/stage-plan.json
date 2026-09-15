@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "25.0",
-  "active_tranche": "26.0B",
+  "active_tranche": "26.0C",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -180,6 +180,14 @@
       "effective_prepared_head": "a6175258072bba18c53083401344758ee76be9f4",
       "verification_run": 35007694574,
       "verification": "Auto Closure run 608 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head a6175258072bba18c53083401344758ee76be9f4. Authority drift closure preserved intentional partial capability boundaries and canonicalized the development design-system route family without adding a parallel subsystem."
+    },
+    "26.0B": {
+      "title": "Executable UI Contract Closure",
+      "source_head": "feccec439e6419c50da85252dcb06649c660fa02",
+      "effective_prepared_head": "feccec439e6419c50da85252dcb06649c660fa02",
+      "verification_run": 35009685568,
+      "visual_evidence_run": 35009685441,
+      "verification": "Auto Closure run 622 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head feccec439e6419c50da85252dcb06649c660fa02. Browser Review Evidence run 17 captured and uploaded SHA-bound desktop/mobile screenshots on the same exact head. Executable UI ownership now follows the real Blade tree, representative public/admin surfaces consume approved semantic tokens, and recurring drift is guarded by existing architecture verification without introducing a parallel design-system subsystem."
     }
   },
   "stage_progress": [
@@ -195,7 +203,7 @@
     },
     {
       "id": "26.0B",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Executable UI Contract Closure",
       "goals": [
         "reuse existing semantic tokens, components and canonical design-system patterns",
@@ -205,7 +213,7 @@
     },
     {
       "id": "26.0C",
-      "status": "planned",
+      "status": "implementing",
       "title": "Canonical Product Screens",
       "goals": [
         "prove shared design authority on representative public and admin screens",
@@ -224,7 +232,7 @@
       ]
     }
   ],
-  "next_tranche": "26.0C",
+  "next_tranche": "26.0D",
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "d25dc667173bb47256a21db430b3c8e3ccd02212",
