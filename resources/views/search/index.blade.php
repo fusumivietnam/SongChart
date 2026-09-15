@@ -16,7 +16,7 @@
         <p class="mt-3 leading-7 text-[var(--sc-text-secondary)]">Tìm trong catalog SongChart trước, sau đó mở đúng identity, provenance và điểm đến provider đã được công bố.</p>
     </header>
 
-    <div class="mt-6 rounded-[var(--sc-radius-panel)] border border-[var(--sc-border)] bg-white p-4 shadow-sm md:p-5">
+    <div class="mt-6 rounded-[var(--sc-radius-panel)] border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] p-4 shadow-sm md:p-5">
         <x-search.form :query="$query" :type="$type" :sort="$sort" :show-type-filters="false" />
     </div>
 
@@ -47,7 +47,7 @@
                         <x-slot:actions><x-ui.button variant="secondary" :href="route('search',['q'=>$query,'type'=>'all','sort'=>$sort])">Xem tất cả {{ $result['total_all'] }} kết quả</x-ui.button></x-slot:actions>
                     </x-ui.empty-state></div>
                 @else
-                    <section aria-label="Danh sách kết quả" class="mt-5 rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-white px-4 md:px-5">
+                    <section aria-label="Danh sách kết quả" class="mt-5 rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] px-4 md:px-5">
                         @foreach($result['items'] as $item)<x-entity.result-row :item="$item" />@endforeach
                     </section>
                     <x-search.pagination :query="$query" :type="$type" :sort="$sort" :page="$result['page']" :last-page="$result['last_page']" />
