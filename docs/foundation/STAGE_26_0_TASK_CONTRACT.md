@@ -4,7 +4,7 @@
 
 Active planning/implementation contract for the post-Stage-25 product-coherence workstream. The live work lease is branch `stage-26-authority-product-coherence`. Stage 25 remains the accepted stage baseline until Stage 26 passes repository-owned closure and is human-promoted.
 
-`26.0A — Authority Drift Closure` and `26.0B — Executable UI Contract Closure` are accepted. The current bounded tranche is `26.0C — Canonical Product Screens`. Later tranche `26.0D` remains declared for dependency visibility only and must not be implemented ahead of evidence.
+`26.0A — Authority Drift Closure`, `26.0B — Executable UI Contract Closure`, and `26.0C — Canonical Product Screens` are accepted. The current bounded tranche is `26.0D — Product-Coherence Closure`. No later stage is activated by this contract.
 
 ## Goal
 
@@ -68,26 +68,33 @@ Acceptance evidence: Auto Closure run 622 on exact head `feccec439e6419c50da8525
 
 ### 26.0C — Canonical Product Screens
 
-Current bounded tranche.
+Accepted.
 
-Scope is limited to representative public/admin screens needed to prove the shared design system: search/zero-result, entity detail, persisted chart, account and admin review/list surfaces.
+Delivered:
 
-Implementation rules:
+- audited search/zero-result, entity detail, persisted chart, account and admin canonical-admission list/review surfaces before changing code;
+- deliberately retained compliant search, entity and account surfaces rather than redesigning them;
+- moved chart surface/background/freshness states onto approved public semantic tokens and corrected the stale `--sc-surface-subtle` token reference;
+- moved representative admin canonical-admission list/review surfaces off raw slate palette classes and onto approved admin semantic tokens;
+- extended the existing architecture verifier to guard only these demonstrated representative regressions.
 
-- audit existing screens first and reuse any surface that already satisfies the contract;
-- change only demonstrated contract or coherence gaps; do not redesign for its own sake;
-- compose approved tokens/components/patterns and current page families rather than inventing a second layout system;
-- preserve canonical data/provenance/provider semantics and existing route/application boundaries;
-- use browser/visual evidence for changed representative surfaces;
-- do not broaden scope into retention, telemetry, recommendation or frontend-stack migration.
-
-Acceptance outcome: the representative public/admin product surfaces demonstrate one coherent design authority on desktop/mobile without page-specific visual direction or fabricated product signals.
+Acceptance evidence: Auto Closure run 629 on exact head `a9f4cb145f9682225628a622b4d3870c65caf5da` passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote. Browser Review Evidence run 24 captured SHA-bound desktop/mobile screenshots on the same exact head.
 
 ### 26.0D — Product-Coherence Closure
 
-Not active until 26.0C is accepted.
+Current bounded tranche.
 
-Validate responsive/accessibility/browser evidence, verify no page-level design divergence remains in representative flows, and close Stage 26 through existing exact-head verification.
+Scope:
+
+- validate responsive and accessibility evidence for the representative flows already owned by Stage 26;
+- reuse existing browser suites and add only missing assertions/evidence rather than creating a new test framework;
+- close any remaining demonstrated accessibility/responsive drift without visual redesign;
+- run exact-head candidate/canonical/Auto Closure verification and prepare Stage 26 for human promotion;
+- do not activate Stage 27 or any new roadmap capability as part of Stage 26 closure.
+
+Current evidence gap: public critical browser coverage already exercises accessibility for search, entity and persisted chart on mobile, while the representative admin canonical-admission flow has desktop/mobile visual smoke but no accessibility assertion, and account overview lacks equivalent representative browser evidence. The minimum closure patch is to extend the existing browser evidence owner for those two gaps.
+
+Acceptance outcome: representative public/account/admin flows have bounded desktop/mobile and accessibility evidence, no known page-level design divergence remains within Stage 26 scope, and the exact Stage 26 head passes repository-owned closure.
 
 ## Explicit non-goals
 
@@ -123,19 +130,19 @@ Stage 26 introduces no package or runtime dependency. Exact installed versions r
 
 ### Official external sources
 
-No external product or provider is required for 26.0C. Laravel/Blade/Livewire, browser and accessibility documentation remain upstream references only where an existing repository contract needs clarification. Figma remains governed by `docs/project/engineering/external-systems-registry.json` and is used only when an accepted design node materially improves bounded design-to-code work; it is not a prerequisite or application dependency.
+No external product or provider is required for 26.0D. Laravel/Blade/Livewire, browser and accessibility documentation remain upstream references only where an existing repository contract needs clarification. Figma remains governed by `docs/project/engineering/external-systems-registry.json` and is not required for closure because no new visual direction is being introduced.
 
 ### Native capability assessment
 
-The repository already contains semantic tokens, shared Blade components, public/admin design contracts, the canonical `/development/design-system` inventory, route authority, browser/visual verification and Blade/Livewire runtime capability. Stage 26.0C therefore starts by auditing existing representative screens and changes only proven product-coherence gaps.
+The repository already contains semantic tokens, shared Blade components, public/admin design contracts, the canonical `/development/design-system` inventory, route authority, browser/visual verification and Blade/Livewire runtime capability. Stage 26.0D therefore extends existing browser evidence only where a representative gap is demonstrated.
 
 ### Custom implementation justification
 
-SongChart-specific implementation is justified only for concrete gaps between representative product screens and the existing SongChart contracts. Reuse and extension of existing tokens/components/patterns comes first. A new abstraction is not introduced unless several real consumers share the same semantics and the existing owners cannot express the requirement cleanly.
+No new product abstraction is justified for 26.0D. The only custom change permitted is the minimum test/evidence change or UI correction required by an observed accessibility/responsive failure in the representative Stage 26 surfaces.
 
 ## Activation baseline
 
-Stage 26 began from accepted `main` merge commit `d25dc667173bb47256a21db430b3c8e3ccd02212`. Tranche 26.0C begins after accepted 26.0B evidence from Auto Closure run 622 and Browser Review Evidence run 17 was recorded in `stage-plan.json`.
+Stage 26 began from accepted `main` merge commit `d25dc667173bb47256a21db430b3c8e3ccd02212`. Tranche 26.0D begins after accepted 26.0C evidence from Auto Closure run 629 and Browser Review Evidence run 24 was recorded in `stage-plan.json`.
 
 Dependabot maintenance PRs remain separate dependency-governance work and do not own Stage 26 product source.
 
@@ -151,8 +158,8 @@ Use the existing repository workflow:
 ./songchart verify
 ```
 
-Focused verification is used while implementing 26.0C. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority, route-authority consistency, design-contract consistency and generated-state consistency remain mandatory quality gates for this contract.
+Focused verification is used while implementing 26.0D. Exact-head Auto Closure is required before tranche/stage acceptance and human promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Browser evidence remains owned by the current Pest browser suites and GitHub workflows.
 
 ## Handoff rule
 
-Only `26.0C` is currently actionable. Do not begin `26.0D` merely because it is listed here. First audit the representative screens, reuse compliant surfaces, close only demonstrated coherence gaps, and prove changed surfaces with existing browser/visual evidence ownership.
+Only `26.0D` is currently actionable. Extend existing browser evidence for the demonstrated account/admin gaps, fix only failures that those assertions expose, then close Stage 26 through existing exact-head verification. Do not begin Stage 27 from this contract.
