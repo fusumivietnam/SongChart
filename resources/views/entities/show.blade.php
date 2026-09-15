@@ -36,7 +36,7 @@
         <span aria-current="page">{{ $entity['title'] }}</span>
     </nav>
 
-    <header class="mt-7 rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-white p-5 shadow-[var(--sc-shadow-card)] md:p-7">
+    <header class="mt-7 rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] p-5 shadow-[var(--sc-shadow-card)] md:p-7">
         <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
             <div class="grid h-28 w-28 shrink-0 place-items-center rounded-[var(--sc-radius-card)] bg-[var(--sc-primary-soft)] text-4xl font-bold text-[var(--sc-primary)]" aria-hidden="true">{{ mb_substr($entity['title'],0,1) }}</div>
             <div class="min-w-0 flex-1">
@@ -57,10 +57,10 @@
     </header>
 
     <nav aria-label="Nội dung thực thể" class="mt-4 flex gap-2 overflow-x-auto pb-1 text-sm">
-        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-white px-4 py-2.5 font-semibold" href="#overview">Tổng quan</a>
-        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-white px-4 py-2.5 font-semibold" href="#relationships">Quan hệ</a>
-        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-white px-4 py-2.5 font-semibold" href="#evidence">Nguồn & bằng chứng</a>
-        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-white px-4 py-2.5 font-semibold lg:hidden" href="#provider-destinations">Nơi nghe / xem</a>
+        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] px-4 py-2.5 font-semibold" href="#overview">Tổng quan</a>
+        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] px-4 py-2.5 font-semibold" href="#relationships">Quan hệ</a>
+        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] px-4 py-2.5 font-semibold" href="#evidence">Nguồn & bằng chứng</a>
+        <a class="min-h-11 shrink-0 rounded-full border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] px-4 py-2.5 font-semibold lg:hidden" href="#provider-destinations">Nơi nghe / xem</a>
     </nav>
 
     <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
@@ -92,7 +92,7 @@
                     </div>
                     <p class="text-sm text-[var(--sc-text-secondary)]">Bằng chứng hỗ trợ canonical identity, không thay thế identity.</p>
                 </div>
-                <div class="mt-4 overflow-x-auto rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-white" tabindex="0" aria-label="Bảng nguồn và provenance có thể cuộn ngang">
+                <div class="mt-4 overflow-x-auto rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-[var(--sc-bg-surface)]" tabindex="0" aria-label="Bảng nguồn và provenance có thể cuộn ngang">
                     <table class="min-w-[36rem] w-full text-left text-sm">
                         <thead class="bg-[var(--sc-bg-subtle)]"><tr><th class="px-4 py-3">Nguồn</th><th class="px-4 py-3">Trạng thái</th><th class="px-4 py-3">Kiểm tra</th></tr></thead>
                         <tbody>
