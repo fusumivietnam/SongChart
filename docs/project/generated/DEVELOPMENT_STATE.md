@@ -13,12 +13,12 @@
 
 - `26.0A` — `ACCEPTED` — Authority Drift Closure
 - `26.0B` — `ACCEPTED` — Executable UI Contract Closure
-- `26.0C` — `IMPLEMENTING` — Canonical Product Screens
-- `26.0D` — `PLANNED` — Product-Coherence Closure
+- `26.0C` — `ACCEPTED` — Canonical Product Screens
+- `26.0D` — `IMPLEMENTING` — Product-Coherence Closure
 
 ## Next bounded tranche
 
-- `26.0D`
+- `unknown`
 
 ## Live work lease
 
