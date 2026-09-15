@@ -67,6 +67,7 @@ if (is_array($edge) === false) {
     foreach ($classes as $className => $class) {
         if (is_array($class) === false) {
             $errors[] = "Edge delivery class {$className} must be an object.";
+
             continue;
         }
 
