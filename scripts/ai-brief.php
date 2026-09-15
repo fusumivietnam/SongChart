@@ -26,6 +26,13 @@ function gitLines(string $root, string $command): array
     return $code === 0 ? array_values(array_filter($output, static fn (string $line): bool => $line !== '')) : [];
 }
 
+function gitValue(string $root, string $command): ?string
+{
+    $lines = gitLines($root, $command);
+
+    return $lines[0] ?? null;
+}
+
 /** @return array<string, string> */
 function skillFiles(string $root, string $relativeRoot): array
 {
@@ -143,6 +150,74 @@ function hygieneSnapshot(string $root, array $contract, string $currentStage): a
     ];
 }
 
+/** @param list<string> $preferredPaths @return array<string,mixed> */
+function connectivitySnapshot(string $root, array $preferredPaths): array
+{
+    $headSha = gitValue($root, 'rev-parse HEAD');
+    if ($headSha === null) {
+        return [
+            'status' => 'unavailable',
+            'reason' => 'git-head-unavailable',
+            'refresh_command' => './songchart artisan project:intelligence --write',
+        ];
+    }
+
+    $path = $root.'/storage/project-intelligence/'.$headSha.'/architecture-graph.json';
+    $snapshot = readJsonFile($path);
+    if ($snapshot === []) {
+        return [
+            'status' => 'unavailable',
+            'reason' => 'exact-head-snapshot-missing',
+            'head_sha' => $headSha,
+            'refresh_command' => './songchart artisan project:intelligence --write',
+        ];
+    }
+
+    $nodes = is_array($snapshot['graph']['nodes'] ?? null) ? $snapshot['graph']['nodes'] : [];
+    $relevant = [];
+    foreach ($nodes as $node) {
+        if (is_array($node) === false) {
+            continue;
+        }
+
+        $pathValue = is_string($node['path'] ?? null) ? $node['path'] : '';
+        $owner = is_string($node['semantic_owner'] ?? null) ? $node['semantic_owner'] : '';
+        $matches = false;
+        foreach ($preferredPaths as $preferredPath) {
+            if (is_string($preferredPath) && $preferredPath !== '' && str_starts_with($pathValue, rtrim($preferredPath, '/'))) {
+                $matches = true;
+                break;
+            }
+        }
+
+        if ($matches === false && $owner === '') {
+            continue;
+        }
+
+        $relevant[] = [
+            'id' => $node['id'] ?? null,
+            'type' => $node['type'] ?? null,
+            'path' => $node['path'] ?? null,
+            'semantic_owner' => $node['semantic_owner'] ?? null,
+            'lifecycle' => $node['lifecycle'] ?? null,
+            'inbound_edges' => $node['inbound_edges'] ?? 0,
+            'outbound_edges' => $node['outbound_edges'] ?? 0,
+        ];
+
+        if (count($relevant) >= 20) {
+            break;
+        }
+    }
+
+    return [
+        'status' => 'fresh',
+        'head_sha' => $headSha,
+        'metrics' => $snapshot['metrics']['connectivity'] ?? [],
+        'relevant_nodes' => $relevant,
+        'refresh_command' => './songchart artisan project:intelligence --write',
+    ];
+}
+
 $intent = '';
 $json = false;
 $includeHygiene = false;
@@ -231,6 +306,7 @@ foreach ($selectedSkills as $skill) {
 
 $routeAuthorities = is_array($bestRoute['authorities'] ?? null) ? $bestRoute['authorities'] : [];
 $authorities = array_values(array_unique(array_merge($routeAuthorities, $skillAuthorities)));
+$preferredPaths = is_array($bestRoute['preferred_paths'] ?? null) ? $bestRoute['preferred_paths'] : [];
 
 $result = [
     'intent' => $intent,
@@ -239,12 +315,13 @@ $result = [
     'route' => $bestRoute['id'] ?? 'repository-development',
     'semantic_owner' => $bestRoute['semantic_owner'] ?? 'resolve-before-write',
     'authorities' => $authorities,
-    'preferred_paths' => is_array($bestRoute['preferred_paths'] ?? null) ? $bestRoute['preferred_paths'] : [],
+    'preferred_paths' => $preferredPaths,
     'avoid_new' => is_array($bestRoute['avoid_new'] ?? null) ? $bestRoute['avoid_new'] : [],
     'skills' => $selectedSkills,
     'focused_checks' => is_array($bestRoute['focused_checks'] ?? null) ? $bestRoute['focused_checks'] : [],
     'new_surface_default' => $contract['new_surface_admission']['default_decision'] ?? 'extend_existing',
     'fanout_budget' => $contract['hand_written_fanout_budget'] ?? [],
+    'connectivity' => connectivitySnapshot($root, $preferredPaths),
 ];
 
 if ($includeHygiene) {
@@ -262,6 +339,7 @@ echo 'Stage:           '.$currentStage.($activeTranche !== null ? ' / '.$activeT
 echo 'Route:           '.($result['route'] ?? 'repository-development').PHP_EOL;
 echo 'Semantic owner:  '.($result['semantic_owner'] ?? 'resolve-before-write').PHP_EOL;
 echo 'New surface:     '.($result['new_surface_default'] ?? 'extend_existing').PHP_EOL;
+echo 'Connectivity:    '.($result['connectivity']['status'] ?? 'unavailable').PHP_EOL;
 
 echo PHP_EOL.'Authorities'.PHP_EOL;
 foreach ($authorities as $authority) {
@@ -286,6 +364,16 @@ foreach ($selectedSkills as $skill) {
 echo PHP_EOL.'Focused checks'.PHP_EOL;
 foreach ($result['focused_checks'] as $check) {
     echo '  - '.$check.PHP_EOL;
+}
+
+if (($result['connectivity']['status'] ?? null) === 'fresh') {
+    echo PHP_EOL.'Source connectivity'.PHP_EOL;
+    foreach ($result['connectivity']['metrics'] ?? [] as $key => $value) {
+        echo '  '.str_pad((string) $key, 30).': '.(string) $value.PHP_EOL;
+    }
+} else {
+    echo PHP_EOL.'Source connectivity snapshot'.PHP_EOL;
+    echo '  Refresh: '.($result['connectivity']['refresh_command'] ?? './songchart artisan project:intelligence --write').PHP_EOL;
 }
 
 if ($includeHygiene && is_array($result['hygiene'] ?? null)) {
