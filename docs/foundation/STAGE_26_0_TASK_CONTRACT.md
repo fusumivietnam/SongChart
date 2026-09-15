@@ -2,9 +2,9 @@
 
 ## Status
 
-Active planning/implementation contract for the post-Stage-25 product-coherence workstream. The live work lease is branch `stage-26-authority-product-coherence`. Stage 25 remains the accepted baseline until Stage 26 passes repository-owned closure and is human-promoted.
+Active planning/implementation contract for the post-Stage-25 product-coherence workstream. The live work lease is branch `stage-26-authority-product-coherence`. Stage 25 remains the accepted stage baseline until Stage 26 passes repository-owned closure and is human-promoted.
 
-The first bounded tranche is `26.0A — Authority Drift Closure`. Later tranches are declared here so dependencies are explicit, but they are not implicitly accepted and must not be implemented ahead of evidence.
+`26.0A — Authority Drift Closure` is accepted from Auto Closure run 608 on source head `587f9490afaee4d77fdf8a50aba8680e17c26926` with effective prepared head `a6175258072bba18c53083401344758ee76be9f4`. The current bounded tranche is `26.0B — Executable UI Contract Closure`. Later tranches remain declared for dependency visibility only and must not be implemented ahead of evidence.
 
 ## Goal
 
@@ -40,28 +40,31 @@ Minimality must not weaken security, trust-boundary validation, data integrity, 
 
 ### 26.0A — Authority Drift Closure
 
+Accepted.
+
+Delivered:
+
+- reconciled `docs/project/engineering/system-intersection-map.json` with accepted Stage 22.2 data-spine reality without overclaiming generalized coverage;
+- removed stale Stage-specific future wording from current external-system decisions after accepted Stages 24/25;
+- audited design/route authority against `routes/web.php` and `docs/project/domain/route-authority.json`, then made current design owners consume `/development/design-system` rather than the retired `/ui-preview*` alias;
+- extended the existing route-authority verifier to guard recurring canonical design-system reference drift;
+- retained intentional `partial` capability states instead of falsely promoting them.
+
+Acceptance evidence: Auto Closure run 608 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head `a6175258072bba18c53083401344758ee76be9f4`.
+
+### 26.0B — Executable UI Contract Closure
+
 Current bounded tranche.
 
 Scope:
 
-- reconcile `docs/project/engineering/system-intersection-map.json` with accepted Stage 22.2 data-spine reality without overclaiming generalized coverage;
-- remove stale Stage-specific future wording from current external-system decisions after accepted Stages 24/25;
-- audit design/route authority against `routes/web.php` and `docs/project/domain/route-authority.json`, then make current design owners consume `/development/design-system` rather than the retired `/ui-preview*` alias;
-- identify any remaining current-state registry statement that incorrectly points at an already-accepted stage as unfinished work;
-- extend an existing verifier only if the same drift class is demonstrably recurring and machine-checkable.
-
-Acceptance outcome: current authority describes current repository reality; historical evidence remains historical; no stale current-state statement falsely reopens accepted work or reintroduces retired route aliases.
-
-### 26.0B — Executable UI Contract Closure
-
-Not active until 26.0A is accepted.
-
-Candidate scope:
-
 - inventory existing semantic tokens, shared components, canonical design-system patterns and representative layouts;
 - close only demonstrated gaps needed to make page implementation consume existing design authority consistently;
 - prefer extending current machine-readable UI contracts over introducing parallel registries;
-- add visual/browser evidence only for representative surfaces where current coverage is insufficient.
+- add visual/browser evidence only for representative surfaces where current coverage is insufficient;
+- keep Blade/Livewire and the current design-system route family unless a concrete implementation gap proves they are insufficient.
+
+Acceptance outcome: representative page implementations can consume one coherent executable UI contract without page-specific visual invention or a new frontend/design-system subsystem.
 
 ### 26.0C — Canonical Product Screens
 
@@ -98,6 +101,8 @@ Validate responsive/accessibility/browser evidence, verify no page-level design 
 - `routes/web.php`
 - `docs/ui/DESIGN_AUTHORITY.md`
 - `docs/ui/PHASE_3_UI_PREVIEW.md`
+- owning public/admin design contracts
+- existing semantic tokens/shared Blade components and design-system inventory
 - existing route/UI/design contracts and verification consumers
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
 
@@ -107,27 +112,21 @@ Stage 26 introduces no package or runtime dependency. Exact installed versions r
 
 ### Official external sources
 
-No external product or provider is required to implement 26.0A. Laravel, PHP, PostgreSQL and browser documentation remain upstream references only where an existing repository contract needs clarification. Figma, Grafana Cloud, Google Search Console, Bing Webmaster, IndexNow and other external systems remain governed by `docs/project/engineering/external-systems-registry.json`; Stage 26.0A does not promote any of them into a new runtime dependency.
+No external product or provider is required for 26.0B. Laravel/Blade/Livewire, browser and accessibility documentation remain upstream references only where an existing repository contract needs clarification. Figma remains governed by `docs/project/engineering/external-systems-registry.json` and is used only when an accepted design node materially improves bounded design-to-code work; it is not a prerequisite or application dependency.
 
 ### Native capability assessment
 
-The repository already contains the required owners for this tranche: machine-readable stage authority, system-intersection authority, external-system governance, route authority, Design Authority, canonical development design-system routes, generated project state, impact analysis and exact-head Auto Closure. The identified problem is stale or inconsistent authority text, not missing infrastructure. Existing repository capabilities are therefore sufficient.
+The repository already contains semantic tokens, shared Blade components, public/admin design contracts, the canonical `/development/design-system` inventory, route authority, browser/visual verification and Blade/Livewire runtime capability. The 26.0B task is therefore an inventory-and-gap-closure exercise, not a mandate to build a new design system or frontend runtime.
 
 ### Custom implementation justification
 
-SongChart-specific work is limited to reconciling repository-owned contracts that upstream frameworks cannot know: whether a stage is accepted, whether a partial edge is intentionally bounded, which external-system decision remains current, and which design/route authority is active. No generic drift platform, new registry layer or external dependency is justified for 26.0A unless repeated evidence later proves the existing verifiers cannot enforce a recurring invariant.
+SongChart-specific implementation is justified only for concrete gaps between the current executable UI and existing SongChart contracts. Reuse and extension of existing tokens/components/patterns comes first. A new abstraction is not introduced unless at least several real consumers share the same semantics and the existing owners cannot express the requirement cleanly.
 
 ## Activation baseline
 
-Stage 26 work begins from accepted `main` merge commit `d25dc667173bb47256a21db430b3c8e3ccd02212`, after Stage 25 acceptance, roadmap refresh merge, repository housekeeping, and a fresh local canonical verification reported as:
+Stage 26 began from accepted `main` merge commit `d25dc667173bb47256a21db430b3c8e3ccd02212`. Tranche 26.0B begins only after accepted 26.0A evidence from Auto Closure run 608 was recorded in `stage-plan.json`.
 
-```text
-Candidate verification contract passed.
-[SongChart verify] Canonical verification PASSED.
-[SongChart verify] PASSED.
-```
-
-No active product-stage branch existed when `stage-26-authority-product-coherence` was created. Dependabot maintenance PRs remain separate dependency-governance work and do not own Stage 26 product source.
+Dependabot maintenance PRs remain separate dependency-governance work and do not own Stage 26 product source.
 
 ## Tests and verification
 
@@ -141,8 +140,8 @@ Use the existing repository workflow:
 ./songchart verify
 ```
 
-Focused verification is used while implementing 26.0A. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority, route-authority consistency and generated-state consistency remain mandatory quality gates for this contract.
+Focused verification is used while implementing 26.0B. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority, route-authority consistency, design-contract consistency and generated-state consistency remain mandatory quality gates for this contract.
 
 ## Handoff rule
 
-Only `26.0A` is currently actionable. Do not begin `26.0B` merely because it is listed here. First prove that authority drift is closed on the current tree and that any remaining `partial` state reflects an intentional bounded capability rather than stale stage wording.
+Only `26.0B` is currently actionable. Do not begin `26.0C` merely because it is listed here. First inventory the current executable UI, reuse what already satisfies the authority, close only demonstrated contract gaps, and prove representative browser/visual evidence where current coverage is insufficient.
