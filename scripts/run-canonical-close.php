@@ -21,6 +21,7 @@ if ($stageCount !== 1) {
 foreach ($steps as $step) {
     if ($step === '@stage:verify') {
         fwrite(STDOUT, '[SongChart close] Reusing exact-head CHECK evidence for stage verification.'.PHP_EOL);
+
         continue;
     }
 
