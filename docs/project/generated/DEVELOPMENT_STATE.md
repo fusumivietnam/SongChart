@@ -4,21 +4,21 @@
 
 ## Current stage
 
-- Stage `23.0 — Public Product UX`
-- Status: `accepted`
+- Stage `24.0 — Operational Intelligence`
+- Status: `implementing`
 - Accepted through: `23.0`
-- Task contract: `docs/foundation/STAGE_23_0_TASK_CONTRACT.md`
+- Task contract: `docs/foundation/STAGE_24_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `23.0A` — `ACCEPTED` — Discovery and search product shell
-- `23.0B` — `ACCEPTED` — Canonical entity detail experience
-- `23.0C` — `ACCEPTED` — Persisted chart and provenance UX
-- `23.0D` — `ACCEPTED` — Mobile, accessibility, performance and stage closure
+- `24.0A` — `IMPLEMENTING` — Runtime telemetry baseline
+- `24.0B` — `PLANNED` — Provider and data-pipeline health
+- `24.0C` — `PLANNED` — Scale scorecard and decision thresholds
+- `24.0D` — `PLANNED` — External observability evaluation and stage closure
 
 ## Next bounded tranche
 
-- `unknown`
+- `24.0B — Provider and data-pipeline health`
 
 ## Live work lease
 
