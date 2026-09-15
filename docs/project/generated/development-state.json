@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "53ee3bb5055aaadd7276de97a3df94dc0b16df15a25db9c8d4eeeba98808d1ab",
+    "source_fingerprint": "56d4ca61beb02fad25c9c50a729b0a5d15e207de3e4fb24dcba1397bc59662d0",
     "current_stage": {
         "id": "25.0",
         "title": "Global Delivery & Scale",
@@ -22,7 +22,7 @@
         },
         {
             "id": "25.0B",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Database connection and read scaling",
             "goals": [
                 "classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas",
@@ -32,7 +32,7 @@
         },
         {
             "id": "25.0C",
-            "status": "planned",
+            "status": "implementing",
             "title": "Regional resilience and traffic control",
             "goals": [
                 "evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured evidence",
@@ -51,7 +51,7 @@
             ]
         }
     ],
-    "next_tranche": "25.0C",
+    "next_tranche": "25.0D",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -60,6 +60,6 @@
         "candidate-verification.json": "6a4a3c6d6dcaa4d8a5c7795c425d0f115501af7b5f1a753e23739da0fe4e8d64",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "0f7978406802f5887e906ef65339f894ff6b7747b252ffe3b064ce6c59a2ffac"
+        "docs/project/engineering/stage-plan.json": "e5e6758950729219094a843b0a9995439cc2d99c9c55346e486d9659fc78f318"
     }
 }
