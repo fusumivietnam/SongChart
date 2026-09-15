@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "25.0",
-  "active_tranche": "26.0A",
+  "active_tranche": "26.0B",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -173,12 +173,19 @@
       "effective_prepared_head": "7c8f07167fe3e48345de7bbd47ca7d8cbc631afa",
       "verification_run": 34977446255,
       "verification": "Auto Closure run 575 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation and final exact-head revalidation. External observability evaluation accepted decision deferred_no_demonstrated_gap with privacy, retention, cost/cardinality and exit/fallback controls and no external APM production dependency."
+    },
+    "26.0A": {
+      "title": "Authority Drift Closure",
+      "source_head": "587f9490afaee4d77fdf8a50aba8680e17c26926",
+      "effective_prepared_head": "a6175258072bba18c53083401344758ee76be9f4",
+      "verification_run": 35007694574,
+      "verification": "Auto Closure run 608 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head a6175258072bba18c53083401344758ee76be9f4. Authority drift closure preserved intentional partial capability boundaries and canonicalized the development design-system route family without adding a parallel subsystem."
     }
   },
   "stage_progress": [
     {
       "id": "26.0A",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Authority Drift Closure",
       "goals": [
         "reconcile stale current-state authority with accepted Stage 22-25 repository reality",
@@ -188,7 +195,7 @@
     },
     {
       "id": "26.0B",
-      "status": "planned",
+      "status": "implementing",
       "title": "Executable UI Contract Closure",
       "goals": [
         "reuse existing semantic tokens, components and canonical design-system patterns",
@@ -217,7 +224,7 @@
       ]
     }
   ],
-  "next_tranche": "26.0B",
+  "next_tranche": "26.0C",
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "d25dc667173bb47256a21db430b3c8e3ccd02212",
