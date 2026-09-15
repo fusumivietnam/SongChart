@@ -1,36 +1,115 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "policy": {
     "no_unbounded_relations": true,
     "budgets_are_measured_on_postgresql": true,
     "do_not_guess_hard_limits_without_representative_fixture": true,
     "n_plus_one_regressions_require_request_level_query_evidence": true
   },
+  "read_scaling": {
+    "default_connection": "pgsql",
+    "optional_read_connection": "pgsql_read",
+    "automatic_read_routing": false,
+    "primary_authority": "PostgreSQL 18 primary remains authoritative for writes and consistency-sensitive reads.",
+    "fallback": "pgsql_read must remain optional and may resolve to primary-equivalent configuration; callers must be able to fall back to pgsql without changing domain semantics.",
+    "promotion_rule": "Do not activate pooling, Hyperdrive-equivalent acceleration or replicas without accepted connection-saturation or query-latency evidence.",
+    "classifications": {
+      "primary_required": "Writes, admin/operator decisions, provenance-sensitive reads and read-after-write flows stay on primary.",
+      "replica_eligible": "Public, provider-neutral reads that tolerate bounded replication lag may opt into pgsql_read only after accepted evidence and explicit activation.",
+      "insufficient_evidence": "Remain on primary until evidence proves an optimization is needed."
+    }
+  },
   "surfaces": {
     "admin.extensions.index": {
       "read_model": "app/Application/Admin/Queries/ExtensionReadModel.php",
-      "status": "registered-awaiting-representative-baseline"
+      "status": "registered-awaiting-representative-baseline",
+      "read_scaling": "primary_required"
     },
     "admin.extensions.show": {
       "read_model": "app/Application/Admin/Queries/ExtensionReadModel.php",
-      "status": "registered-awaiting-representative-baseline"
+      "status": "registered-awaiting-representative-baseline",
+      "read_scaling": "primary_required"
     },
     "admin.dashboard": {
       "read_model": "app/Support/Admin/AdminDashboardSnapshot.php",
-      "status": "registered-awaiting-representative-baseline"
+      "status": "registered-awaiting-representative-baseline",
+      "read_scaling": "primary_required"
     },
     "admin.catalog": {
       "read_model": "app/Support/Admin/CatalogAdministration.php",
-      "status": "registered-awaiting-representative-baseline"
+      "status": "registered-awaiting-representative-baseline",
+      "read_scaling": "primary_required"
     },
     "admin.providers": {
       "read_model": "app/Support/Admin/ProviderOperationsConsole.php",
-      "status": "registered-awaiting-representative-baseline"
+      "status": "registered-awaiting-representative-baseline",
+      "read_scaling": "primary_required"
     },
     "operations.intelligence": {
       "read_model": "app/Application/Operations/Queries/OperationalIntelligenceReadModel.php",
       "status": "bounded-cli-probe",
-      "note": "On-demand operator surface only; never executed from an HTTP request."
+      "note": "On-demand operator surface only; never executed from an HTTP request.",
+      "read_scaling": "primary_required"
+    },
+    "public.catalog": {
+      "read_model": "app/Application/Catalog/Queries/PublicCatalogReadModel.php",
+      "status": "replica-eligible-disabled-pending-evidence",
+      "read_scaling": "replica_eligible"
+    },
+    "public.entity-passport": {
+      "read_model": "app/Application/Catalog/Queries/EntityPassportReadModel.php",
+      "status": "replica-eligible-disabled-pending-evidence",
+      "read_scaling": "replica_eligible"
+    },
+    "public.provider-destination": {
+      "read_model": "app/Application/Catalog/Queries/PublicProviderDestinationReadModel.php",
+      "status": "replica-eligible-disabled-pending-evidence",
+      "read_scaling": "replica_eligible"
+    },
+    "public.relationship": {
+      "read_model": "app/Application/Catalog/Queries/PublicRelationshipReadModel.php",
+      "status": "replica-eligible-disabled-pending-evidence",
+      "read_scaling": "replica_eligible"
+    },
+    "public.sitemap": {
+      "read_model": "app/Application/Catalog/Queries/PublicSitemap.php",
+      "status": "replica-eligible-disabled-pending-evidence",
+      "read_scaling": "replica_eligible"
+    },
+    "public.recording-media": {
+      "read_model": "app/Application/Catalog/Queries/RecordingMediaExperience.php",
+      "status": "replica-eligible-disabled-pending-evidence",
+      "read_scaling": "replica_eligible"
+    },
+    "public.chart": {
+      "read_model": "app/Application/Chart/Queries/PublicChartProjection.php",
+      "status": "replica-eligible-disabled-pending-evidence",
+      "read_scaling": "replica_eligible"
+    },
+    "chart.recording-data-trace": {
+      "read_model": "app/Application/Chart/Queries/RecordingDataTrace.php",
+      "status": "provenance-sensitive-primary",
+      "read_scaling": "primary_required"
+    },
+    "discovery.channel": {
+      "read_model": "app/Application/Discovery/Queries/GetDiscoveryChannel.php",
+      "status": "insufficient-evidence-primary",
+      "read_scaling": "insufficient_evidence"
+    },
+    "discovery.projection": {
+      "read_model": "app/Application/Discovery/Queries/GetDiscoveryProjection.php",
+      "status": "insufficient-evidence-primary",
+      "read_scaling": "insufficient_evidence"
+    },
+    "discovery.surface": {
+      "read_model": "app/Application/Discovery/Queries/GetDiscoverySurface.php",
+      "status": "insufficient-evidence-primary",
+      "read_scaling": "insufficient_evidence"
+    },
+    "discovery.channels": {
+      "read_model": "app/Application/Discovery/Queries/ListDiscoveryChannels.php",
+      "status": "insufficient-evidence-primary",
+      "read_scaling": "insufficient_evidence"
     }
   }
 }
