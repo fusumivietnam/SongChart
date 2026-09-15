@@ -22,7 +22,7 @@ Read:
 
 `docs/ui/AI_DESIGN_HARNESS.md`
 
-External design skills such as Impeccable are advisory only. They must operate below this authority and the owning public/admin design contract, and they do not create release or canonical verification authority.
+External design guidance is advisory only. It must operate below this authority and the owning public/admin design contract, and it does not create release or canonical verification authority.
 
 ## Priority order
 
@@ -57,8 +57,7 @@ New UI work must build on the components under `resources/views/components/ui/`.
 
 ## Phase 3 UI inventory
 
-The governed living inventory is documented in `docs/ui/PHASE_3_UI_PREVIEW.md` and rendered under `/ui-preview`. Reusable patterns must appear there before broad feature-page adoption.
-
+The governed living inventory is documented in `docs/ui/PHASE_3_UI_PREVIEW.md` and rendered under the canonical development design-system family at `/development/design-system`. Reusable patterns must appear there before broad feature-page adoption. The former `/ui-preview*` compatibility surface is retired and must not be reintroduced.
 
 ## Phase 4 search vertical slice
 
