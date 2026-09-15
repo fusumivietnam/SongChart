@@ -9,7 +9,7 @@
             <p class="mx-auto mt-5 max-w-2xl text-lg text-[var(--sc-text-secondary)]">Tìm đúng nghệ sĩ, bản thu, phát hành, phiên bản hoặc tác phẩm; sau đó mở điểm đến chính thức trên provider phù hợp.</p>
         </div>
 
-        <div class="mx-auto mt-9 max-w-4xl rounded-[var(--sc-radius-panel)] border border-[var(--sc-border)] bg-white p-5 shadow-[var(--sc-shadow-float)] md:p-7">
+        <div class="mx-auto mt-9 max-w-4xl rounded-[var(--sc-radius-panel)] border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] p-5 shadow-[var(--sc-shadow-float)] md:p-7">
             <x-search.form hero />
             @if($examples !== [])
                 <div class="mt-4 flex flex-wrap items-center gap-2 text-sm text-[var(--sc-text-secondary)]">
@@ -71,7 +71,7 @@
             <p class="mt-3 max-w-2xl leading-7 text-[var(--sc-text-secondary)]">{{ $editorial['description'] }}</p>
             @if($editorial['items'] !== [])
                 <div class="mt-5 flex flex-wrap gap-2">
-                    @foreach($editorial['items'] as $item)<span class="rounded-full border border-[var(--sc-primary-border)] bg-white px-3 py-2 text-sm font-semibold">{{ $item }}</span>@endforeach
+                    @foreach($editorial['items'] as $item)<span class="rounded-full border border-[var(--sc-primary-border)] bg-[var(--sc-bg-surface)] px-3 py-2 text-sm font-semibold">{{ $item }}</span>@endforeach
                 </div>
             @endif
             <a href="{{ $editorial['url'] }}" class="mt-6 inline-flex min-h-11 items-center font-semibold text-[var(--sc-primary)]">Mở bộ sưu tập <span class="ml-2" aria-hidden="true">→</span></a>
