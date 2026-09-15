@@ -12,26 +12,44 @@ it('keeps product telemetry bounded, privacy-minimized and consumer-owned', func
         ->and($contract['defaults']['raw_ip_allowed'])->toBeFalse()
         ->and($contract['defaults']['raw_user_agent_allowed'])->toBeFalse()
         ->and($contract['defaults']['request_payload_capture_allowed'])->toBeFalse()
+        ->and($contract['defaults']['user_identifier_allowed'])->toBeFalse()
+        ->and($contract['defaults']['session_identifier_allowed'])->toBeFalse()
+        ->and($contract['defaults']['query_value_allowed'])->toBeFalse()
         ->and($contract['defaults']['external_analytics_dependency'])->toBeFalse()
-        ->and($contract['storage_decision'])->toBe('deferred_until_consumer_and_retention_evidence');
+        ->and($contract['storage_decision'])->toBe('daily_aggregate_only_no_user_or_query_level_rows');
 
     foreach (['search.performed', 'search.zero_result'] as $eventName) {
         $event = $contract['events'][$eventName] ?? null;
 
         expect($event)->toBeArray()
-            ->and($event['status'])->toBe('approved_contract_only')
+            ->and($event['status'])->toBe('active_aggregate_only')
             ->and($event['producer'])->not->toBeEmpty()
             ->and($event['purpose'])->not->toBeEmpty()
-            ->and($event['pii_class'])->not->toBeEmpty()
+            ->and($event['pii_class'])->toBe('anonymous_aggregate_no_user_or_query_identifier')
             ->and($event['allowed_fields'])->toBeArray()->not->toBeEmpty()
-            ->and($event['forbidden_fields'])->toContain('raw_ip', 'raw_user_agent', 'full_request_payload')
-            ->and($event['retention'])->toBe('not_yet_activated')
+            ->and($event['forbidden_fields'])->toContain(
+                'query',
+                'normalized_query',
+                'query_hash',
+                'user_id',
+                'session_id',
+                'raw_ip',
+                'raw_user_agent',
+                'full_request_payload',
+            )
+            ->and($event['retention'])->not->toBeEmpty()
             ->and($event['consumer'])->not->toBeEmpty()
             ->and($event['primary_metric'])->not->toBeEmpty();
     }
+
+    expect($contract['persistence']['owner'])->toBe('product-telemetry')
+        ->and($contract['persistence']['table'])->toBe('product_search_daily_aggregates')
+        ->and($contract['persistence']['raw_event_rows'])->toBeFalse()
+        ->and($contract['persistence']['disable_switch'])->not->toBeEmpty()
+        ->and($contract['persistence']['degradation'])->not->toBeEmpty();
 });
 
-it('does not silently promote speculative product events', function (): void {
+it('does not silently promote speculative product events or tracking dimensions', function (): void {
     $contract = json_decode(
         (string) file_get_contents(base_path('docs/project/product/product-event-contract.json')),
         true,
@@ -45,13 +63,22 @@ it('does not silently promote speculative product events', function (): void {
         ->and($contract['events']['favorite.removed']['status'])->toBe('deferred_until_favorites_mvp_exists')
         ->and($contract['events']['collection.updated']['status'])->toBe('deferred_until_user_collections_mvp_exists');
 
-    expect($contract['activation_gate']['required_before_persistence'])
+    expect($contract['future_expansion_gate']['requires_new_review_for'])
         ->toContain(
-            'explicit retention window',
-            'normalized-query privacy policy',
-            'repository-owned persistence owner',
-            'derived metric consumer',
-            'PostgreSQL-backed verification',
-            'disable/degradation path',
+            'query-level demand evidence',
+            'user or anonymous identifiers',
+            'session linkage',
+            'entity-level view history',
+            'external analytics delivery',
+            'new retention-sensitive dimensions',
         );
+});
+
+it('keeps the search controller on the application recorder boundary', function (): void {
+    $controller = (string) file_get_contents(app_path('Http/Controllers/Search/SearchController.php'));
+
+    expect($controller)
+        ->toContain('RecordSearchProductSignal')
+        ->not->toContain('DB::')
+        ->not->toContain('product_search_daily_aggregates');
 });
