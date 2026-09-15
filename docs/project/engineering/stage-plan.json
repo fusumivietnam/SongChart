@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "25.0",
-  "active_tranche": "26.0C",
+  "active_tranche": "26.0D",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -188,6 +188,14 @@
       "verification_run": 35009685568,
       "visual_evidence_run": 35009685441,
       "verification": "Auto Closure run 622 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head feccec439e6419c50da85252dcb06649c660fa02. Browser Review Evidence run 17 captured and uploaded SHA-bound desktop/mobile screenshots on the same exact head. Executable UI ownership now follows the real Blade tree, representative public/admin surfaces consume approved semantic tokens, and recurring drift is guarded by existing architecture verification without introducing a parallel design-system subsystem."
+    },
+    "26.0C": {
+      "title": "Canonical Product Screens",
+      "source_head": "a9f4cb145f9682225628a622b4d3870c65caf5da",
+      "effective_prepared_head": "a9f4cb145f9682225628a622b4d3870c65caf5da",
+      "verification_run": 35010644441,
+      "visual_evidence_run": 35010644186,
+      "verification": "Auto Closure run 629 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head a9f4cb145f9682225628a622b4d3870c65caf5da. Browser Review Evidence run 24 captured and uploaded SHA-bound desktop/mobile screenshots on the same exact head. Canonical chart and admin review/list surfaces now consume approved semantic tokens while compliant search, entity and account surfaces were deliberately reused without redesign."
     }
   },
   "stage_progress": [
@@ -213,7 +221,7 @@
     },
     {
       "id": "26.0C",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Canonical Product Screens",
       "goals": [
         "prove shared design authority on representative public and admin screens",
@@ -223,7 +231,7 @@
     },
     {
       "id": "26.0D",
-      "status": "planned",
+      "status": "implementing",
       "title": "Product-Coherence Closure",
       "goals": [
         "close remaining representative responsive and accessibility drift",
@@ -232,7 +240,7 @@
       ]
     }
   ],
-  "next_tranche": "26.0D",
+  "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "d25dc667173bb47256a21db430b3c8e3ccd02212",
