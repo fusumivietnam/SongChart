@@ -57,6 +57,12 @@ jobs:
   tests-postgres:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      result_status: ${{ steps.postgres_result.outputs.status }}
+      result_phase: ${{ steps.postgres_result.outputs.phase }}
+      result_failure_class: ${{ steps.postgres_result.outputs.failure_class }}
+      result_failed_test: ${{ steps.postgres_result.outputs.failed_test }}
+      result_evidence_path: ${{ steps.postgres_result.outputs.evidence_path }}
     services:
       postgres:
         image: postgres:18.4-bookworm
@@ -86,9 +92,9 @@ jobs:
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
-      DB_DATABASE: songchart_ci_development
       DB_USERNAME: songchart_test
       DB_PASSWORD: songchart_test_only
+      SONGCHART_DEVELOPMENT_DATABASE: songchart_ci_development
       TEST_PGSQL_HOST: 127.0.0.1
       TEST_PGSQL_PORT: 5432
       TEST_PGSQL_DATABASE: songchart_test
@@ -118,7 +124,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
       - run: composer install --no-interaction --prefer-dist --no-progress
-      - run: composer test:postgres
+      - name: Run PostgreSQL test lane
+        id: postgres_tests
+        run: composer test:postgres
       - name: Summarize PostgreSQL failure
         if: failure()
         shell: bash
@@ -151,6 +159,41 @@ jobs:
           path: storage/logs/postgres-test-last-failure.log
           if-no-files-found: warn
           retention-days: 7
+      - name: Publish PostgreSQL machine result
+        id: postgres_result
+        if: always()
+        shell: bash
+        env:
+          TEST_OUTCOME: ${{ steps.postgres_tests.outcome }}
+        run: |
+          result='storage/logs/postgres-test-result.json'
+          if [ -f "$result" ]; then
+            status="$(jq -r '.status // "unknown"' "$result")"
+            phase="$(jq -r '.phase // "unknown"' "$result")"
+            failure_class="$(jq -r '.failure_class // ""' "$result")"
+            failed_test="$(jq -r '.failed_test // ""' "$result")"
+            evidence_path="$(jq -r '.evidence_path // ""' "$result")"
+          elif [ "$TEST_OUTCOME" = success ]; then
+            status=passed
+            phase=test
+            failure_class=''
+            failed_test=''
+            evidence_path=''
+          else
+            status=failed
+            phase=setup
+            failure_class=job-setup
+            failed_test=''
+            evidence_path=''
+          fi
+
+          {
+            echo "status=$status"
+            echo "phase=$phase"
+            echo "failure_class=$failure_class"
+            echo "failed_test=$failed_test"
+            echo "evidence_path=$evidence_path"
+          } >> "$GITHUB_OUTPUT"
 
   browser-smoke:
     runs-on: ubuntu-latest
@@ -299,13 +342,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Write machine failure classification
+      - name: Write unified machine verification result
         id: classify
         shell: bash
         env:
           QUALITY: ${{ needs.quality.result }}
           QUALITY_PREVERIFIED: ${{ inputs.quality_preverified }}
           POSTGRES: ${{ needs.tests-postgres.result }}
+          POSTGRES_STATUS: ${{ needs.tests-postgres.outputs.result_status }}
+          POSTGRES_PHASE: ${{ needs.tests-postgres.outputs.result_phase }}
+          POSTGRES_FAILURE_CLASS: ${{ needs.tests-postgres.outputs.result_failure_class }}
+          POSTGRES_FAILED_TEST: ${{ needs.tests-postgres.outputs.result_failed_test }}
+          POSTGRES_EVIDENCE_PATH: ${{ needs.tests-postgres.outputs.result_evidence_path }}
           BROWSER: ${{ needs.browser-smoke.result }}
           FRONTEND: ${{ needs.frontend-build.result }}
         run: |
@@ -326,26 +374,47 @@ jobs:
             classification="$(IFS=,; echo "${failures[*]}")"
           fi
 
-          cat > ci-failure-classification.json <<JSON
-          {
-            "schema_version": 1,
-            "exact_sha": "$SONGCHART_CI_SHA",
-            "run_id": "${{ github.run_id }}",
-            "run_attempt": "${{ github.run_attempt }}",
-            "quality": "$quality_effective",
-            "postgres": "$POSTGRES",
-            "browser": "$BROWSER",
-            "frontend": "$FRONTEND",
-            "classification": "$classification"
-          }
-          JSON
+          jq -n \
+            --arg exact_sha "$SONGCHART_CI_SHA" \
+            --arg run_id "${{ github.run_id }}" \
+            --arg run_attempt "${{ github.run_attempt }}" \
+            --arg quality "$quality_effective" \
+            --arg postgres "$POSTGRES" \
+            --arg postgres_status "${POSTGRES_STATUS:-unknown}" \
+            --arg postgres_phase "${POSTGRES_PHASE:-unknown}" \
+            --arg postgres_failure_class "${POSTGRES_FAILURE_CLASS:-}" \
+            --arg postgres_failed_test "${POSTGRES_FAILED_TEST:-}" \
+            --arg postgres_evidence_path "${POSTGRES_EVIDENCE_PATH:-}" \
+            --arg browser "$BROWSER" \
+            --arg frontend "$FRONTEND" \
+            --arg classification "$classification" \
+            '{
+              schema_version: 2,
+              exact_sha: $exact_sha,
+              run_id: $run_id,
+              run_attempt: $run_attempt,
+              lanes: {
+                quality: {status: $quality},
+                postgres: {
+                  status: $postgres,
+                  machine_status: $postgres_status,
+                  phase: $postgres_phase,
+                  failure_class: (if $postgres_failure_class == "" then null else $postgres_failure_class end),
+                  failed_test: (if $postgres_failed_test == "" then null else $postgres_failed_test end),
+                  evidence_path: (if $postgres_evidence_path == "" then null else $postgres_evidence_path end)
+                },
+                browser: {status: $browser},
+                frontend: {status: $frontend}
+              },
+              classification: $classification
+            }' > songchart-verification-result.json
 
           {
-            echo '## Exact-head verification classification'
+            echo '## Exact-head verification result'
             echo
             echo "- SHA: $SONGCHART_CI_SHA"
             echo "- Quality: $quality_effective"
-            echo "- PostgreSQL: $POSTGRES"
+            echo "- PostgreSQL: $POSTGRES (${POSTGRES_PHASE:-unknown}/${POSTGRES_FAILURE_CLASS:-none})"
             echo "- Browser: $BROWSER"
             echo "- Frontend: $FRONTEND"
             echo "- Classification: $classification"
@@ -353,11 +422,11 @@ jobs:
 
           echo "classification=$classification" >> "$GITHUB_OUTPUT"
 
-      - name: Preserve bounded machine classification
+      - name: Preserve unified machine verification result
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ci-classification-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
-          path: ci-failure-classification.json
+          name: songchart-verification-result-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}
+          path: songchart-verification-result.json
           retention-days: 7
 
       - name: Write accepted-main provenance
