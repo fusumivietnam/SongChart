@@ -11,14 +11,14 @@
 
 ## Stage progress
 
-- `25.0A` — `IMPLEMENTING` — Edge delivery and cache policy baseline
-- `25.0B` — `PLANNED` — Database connection and read scaling
+- `25.0A` — `ACCEPTED` — Edge delivery and cache policy baseline
+- `25.0B` — `IMPLEMENTING` — Database connection and read scaling
 - `25.0C` — `PLANNED` — Regional resilience and traffic control
 - `25.0D` — `PLANNED` — External APM evaluation and stage closure
 
 ## Next bounded tranche
 
-- `25.0B`
+- `25.0C`
 
 ## Live work lease
 
