@@ -4,10 +4,10 @@
     "id": "25.0",
     "title": "Global Delivery & Scale",
     "task_contract": "docs/foundation/STAGE_25_0_TASK_CONTRACT.md",
-    "status": "implementing"
+    "status": "accepted"
   },
-  "accepted_through": "24.0",
-  "active_tranche": "25.0D",
+  "accepted_through": "25.0",
+  "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -52,6 +52,13 @@
       "verification": "Auto Closure run 520 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 6cb48bddf6101e7d55a933fa808d0e97a854e63d.",
       "accepted_main_sha": "d5eb48fd36ae3796de55201adbbf75c6d8ee99f4",
       "accepted_main_workflow_run": 34925210011
+    },
+    "25.0": {
+      "title": "Global Delivery & Scale",
+      "source_head": "f950a736d396fcc60e86bc8776abee4462e78bdc",
+      "effective_prepared_head": "7c8f07167fe3e48345de7bbd47ca7d8cbc631afa",
+      "verification_run": 34977446255,
+      "verification": "Auto Closure run 575 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 7c8f07167fe3e48345de7bbd47ca7d8cbc631afa. External APM remains deferred_no_demonstrated_gap and all scale infrastructure remains evidence-gated and human-controlled."
     }
   },
   "accepted_tranche_evidence": {
@@ -159,6 +166,13 @@
       "effective_prepared_head": "82901e8b3dd64753ff79358aac77e7af3f7d2b0c",
       "verification_run": 34972809650,
       "verification": "Auto Closure run 568 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact 25.0C source head. Regional resilience remains evidence-gated with side-effect-free health semantics, mutation-safe retry policy, direct DNS-to-Caddy failback and Envoy deferred."
+    },
+    "25.0D": {
+      "title": "External APM evaluation and stage closure",
+      "source_head": "f950a736d396fcc60e86bc8776abee4462e78bdc",
+      "effective_prepared_head": "7c8f07167fe3e48345de7bbd47ca7d8cbc631afa",
+      "verification_run": 34977446255,
+      "verification": "Auto Closure run 575 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation and final exact-head revalidation. External observability evaluation accepted decision deferred_no_demonstrated_gap with privacy, retention, cost/cardinality and exit/fallback controls and no external APM production dependency."
     }
   },
   "stage_progress": [
@@ -194,7 +208,7 @@
     },
     {
       "id": "25.0D",
-      "status": "implementing",
+      "status": "accepted",
       "title": "External APM evaluation and stage closure",
       "goals": [
         "evaluate external APM only against demonstrated Stage 24/25 observability gaps",
