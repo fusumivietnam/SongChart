@@ -4,7 +4,7 @@
 
 Implementing. Stage 25 is activated from accepted `main` SHA `d5eb48fd36ae3796de55201adbbf75c6d8ee99f4` after Stage 24 PR #36 was merged and accepted-main workflow run `34925210011` passed quality, PostgreSQL 18, frontend build, desktop/mobile browser smoke and accepted-main provenance classification.
 
-Active tranche: `25.0A` — Edge delivery and cache policy baseline.
+Active tranche: `25.0B` — Database connection and read scaling.
 
 ## Goal
 
@@ -31,6 +31,8 @@ Use the Stage 24 operational-intelligence scorecard to decide, with measurable e
 
 ### 25.0A — Edge delivery and cache policy baseline
 
+Accepted on exact-head Auto Closure evidence recorded in `docs/project/engineering/stage-plan.json`.
+
 - classify public routes/assets by cacheability, freshness, invalidation and bypass requirements;
 - map Stage 24 latency/cache evidence to measurable thresholds for edge/CDN investigation;
 - define a provider-neutral edge delivery profile that keeps direct Caddy delivery valid;
@@ -39,10 +41,14 @@ Use the Stage 24 operational-intelligence scorecard to decide, with measurable e
 
 ### 25.0B — Database connection and read scaling
 
+Implementing.
+
 - classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas;
 - define consistency and failback rules that keep PostgreSQL primary authoritative;
 - use connection saturation/query-latency evidence before promoting connection or replica infrastructure;
-- preserve canonical writes and consistency-sensitive reads on the primary path.
+- preserve canonical writes and consistency-sensitive reads on the primary path;
+- keep `pgsql` as the default connection and expose `pgsql_read` only as an explicit optional boundary whose unset configuration resolves to the primary endpoint;
+- keep replica/read-endpoint activation disabled until accepted evidence exists; no transparent or automatic read routing is introduced in this tranche.
 
 ### 25.0C — Regional resilience and traffic control
 
@@ -60,6 +66,8 @@ Use the Stage 24 operational-intelligence scorecard to decide, with measurable e
 
 Stage 25 acceptance requires a repository-owned edge/cache policy with safe bypass/invalidation semantics; metric-backed thresholds for edge, database and regional scaling investigations; explicit primary/replica consistency rules; provider-neutral failure/fallback behavior; no speculative Workers/Hyperdrive/load-balancer/Envoy/APM dependency; security/privacy preservation; tests/verifiers for policy classification; and exact-head Auto Closure on the final stage head.
 
+For 25.0B specifically, acceptance requires explicit read-path classification in `docs/project/performance/query-budget-contract.json`, primary/default ownership in `config/database.php` and `docs/project/stack/runtime-environments.json`, safe primary-equivalent fallback for the optional read connection, no automatic read routing, and repository verification that these boundaries remain aligned.
+
 ## Authority and official sources
 
 ### Repository authorities
@@ -74,6 +82,7 @@ Stage 25 acceptance requires a repository-owned edge/cache policy with safe bypa
 - Stage 24 operational-intelligence configuration/read model and accepted scorecard semantics
 - `docs/project/performance/performance-contracts.json`
 - `docs/project/performance/query-budget-contract.json`
+- `docs/project/stack/runtime-environments.json`
 - `docs/project/engineering/verification-topology.json`
 - `docs/project/engineering/verification-command-surface.json`
 - `docs/project/docs/OFFICIAL_SOURCE_POLICY.md`
@@ -122,4 +131,4 @@ Activation must pass repository-owned quality verification before implementation
 
 ## Handoff
 
-Stage 25 begins with `25.0A — Edge delivery and cache policy baseline`. Repository authority and live GitHub state remain authoritative over chat memory. One Stage 25 umbrella branch owns overlapping Stage 25 source until an accepted synchronization/closure point.
+Stage 25 continues with `25.0B — Database connection and read scaling`. Repository authority and live GitHub state remain authoritative over chat memory. One Stage 25 umbrella branch owns overlapping Stage 25 source until an accepted synchronization/closure point.
