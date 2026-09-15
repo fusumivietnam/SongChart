@@ -4,10 +4,10 @@
     "id": "26.0",
     "title": "Authority & Product Design Coherence",
     "task_contract": "docs/foundation/STAGE_26_0_TASK_CONTRACT.md",
-    "status": "implementing"
+    "status": "accepted"
   },
-  "accepted_through": "25.0",
-  "active_tranche": "26.0D",
+  "accepted_through": "26.0",
+  "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -59,6 +59,14 @@
       "effective_prepared_head": "7c8f07167fe3e48345de7bbd47ca7d8cbc631afa",
       "verification_run": 34977446255,
       "verification": "Auto Closure run 575 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 7c8f07167fe3e48345de7bbd47ca7d8cbc631afa. External APM remains deferred_no_demonstrated_gap and all scale infrastructure remains evidence-gated and human-controlled."
+    },
+    "26.0": {
+      "title": "Authority & Product Design Coherence",
+      "source_head": "0043580bd9a9319dccd4cb14f4eb4f106ab14e45",
+      "effective_prepared_head": "0043580bd9a9319dccd4cb14f4eb4f106ab14e45",
+      "verification_run": 35014245532,
+      "visual_evidence_run": 35014245514,
+      "verification": "Auto Closure run 634 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 0043580bd9a9319dccd4cb14f4eb4f106ab14e45. Browser Review Evidence run 29 passed desktop/mobile account and admin accessibility checks and uploaded SHA-bound screenshots on the same exact head. Stage 26 closed authority drift, executable UI contract gaps and representative product-screen coherence without adding a parallel design system or frontend runtime."
     }
   },
   "accepted_tranche_evidence": {
@@ -196,6 +204,14 @@
       "verification_run": 35010644441,
       "visual_evidence_run": 35010644186,
       "verification": "Auto Closure run 629 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head a9f4cb145f9682225628a622b4d3870c65caf5da. Browser Review Evidence run 24 captured and uploaded SHA-bound desktop/mobile screenshots on the same exact head. Canonical chart and admin review/list surfaces now consume approved semantic tokens while compliant search, entity and account surfaces were deliberately reused without redesign."
+    },
+    "26.0D": {
+      "title": "Product-Coherence Closure",
+      "source_head": "0043580bd9a9319dccd4cb14f4eb4f106ab14e45",
+      "effective_prepared_head": "0043580bd9a9319dccd4cb14f4eb4f106ab14e45",
+      "verification_run": 35014245532,
+      "visual_evidence_run": 35014245514,
+      "verification": "Auto Closure run 634 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 0043580bd9a9319dccd4cb14f4eb4f106ab14e45. Browser Review Evidence run 29 passed account and canonical-admission desktop/mobile accessibility assertions and uploaded SHA-bound screenshots. The new evidence exposed one real admin topbar role-label contrast defect, which was closed with the existing --admin-text-secondary semantic token; no new UI or test subsystem was introduced."
     }
   },
   "stage_progress": [
@@ -231,7 +247,7 @@
     },
     {
       "id": "26.0D",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Product-Coherence Closure",
       "goals": [
         "close remaining representative responsive and accessibility drift",
