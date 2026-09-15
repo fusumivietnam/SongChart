@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "96317e090855105f63eff59e4f8cd2df48cb2ac8b1d8adb6e5d6aebce6e00b09",
+    "source_fingerprint": "92d1505af8ffd5d307618c066d23395eb298bed2674cfa4e55521d3c3f83ff36",
     "current_stage": {
         "id": "26.0",
         "title": "Authority & Product Design Coherence",
@@ -12,7 +12,7 @@
     "stage_progress": [
         {
             "id": "26.0A",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Authority Drift Closure",
             "goals": [
                 "reconcile stale current-state authority with accepted Stage 22-25 repository reality",
@@ -22,7 +22,7 @@
         },
         {
             "id": "26.0B",
-            "status": "planned",
+            "status": "implementing",
             "title": "Executable UI Contract Closure",
             "goals": [
                 "reuse existing semantic tokens, components and canonical design-system patterns",
@@ -51,7 +51,7 @@
             ]
         }
     ],
-    "next_tranche": "26.0B",
+    "next_tranche": "26.0C",
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -60,6 +60,6 @@
         "candidate-verification.json": "ca41488c57745cb916d39fd6a852b81e334e7f8c59ba60e3555a21a30bed0e81",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "6d46bcf06ffe56ae0d9667631ed235e60a0df7aa77a0fb47e2b0f0f003c1f348"
+        "docs/project/engineering/stage-plan.json": "1c0a65db5689c3f331851383eacd0cd316bb91aa207e85e974fd3c5d106fbc90"
     }
 }
