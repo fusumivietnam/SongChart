@@ -1,13 +1,13 @@
 {
   "schema_version": 11,
   "current_stage": {
-    "id": "26.0",
-    "title": "Authority & Product Design Coherence",
-    "task_contract": "docs/foundation/STAGE_26_0_TASK_CONTRACT.md",
-    "status": "accepted"
+    "id": "27.0",
+    "title": "Product Signals & Retention",
+    "task_contract": "docs/foundation/STAGE_27_0_TASK_CONTRACT.md",
+    "status": "implementing"
   },
   "accepted_through": "26.0",
-  "active_tranche": null,
+  "active_tranche": "27.0A",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -216,53 +216,53 @@
   },
   "stage_progress": [
     {
-      "id": "26.0A",
-      "status": "accepted",
-      "title": "Authority Drift Closure",
+      "id": "27.0A",
+      "status": "implementing",
+      "title": "Minimal Product Event Contract",
       "goals": [
-        "reconcile stale current-state authority with accepted Stage 22-25 repository reality",
-        "preserve intentional partial capability states without falsely reopening accepted stage work",
-        "remove stale stage-specific external-system decisions while keeping evidence-gated boundaries"
+        "define only product signals with demonstrated producer and measurable consumer ownership",
+        "separate product telemetry from canonical music-domain and privileged audit authority",
+        "establish privacy, retention, sampling and persistence gates before raw event storage is allowed"
       ]
     },
     {
-      "id": "26.0B",
-      "status": "accepted",
-      "title": "Executable UI Contract Closure",
+      "id": "27.0B",
+      "status": "planned",
+      "title": "Favorites & Collections Closure",
       "goals": [
-        "reuse existing semantic tokens, components and canonical design-system patterns",
-        "close only demonstrated executable design-contract gaps",
-        "avoid parallel design-system or frontend-framework authority"
+        "audit MVP user-value ownership before adding persistence or UI",
+        "reuse existing account/catalog boundaries where possible",
+        "avoid recommendation or community scope"
       ]
     },
     {
-      "id": "26.0C",
-      "status": "accepted",
-      "title": "Canonical Product Screens",
+      "id": "27.0C",
+      "status": "planned",
+      "title": "Recent & Local State",
       "goals": [
-        "prove shared design authority on representative public and admin screens",
-        "reuse compliant existing screens before redesign",
-        "preserve Blade and Livewire as the default frontend stack"
+        "add recent searches/views only when telemetry and privacy semantics justify them",
+        "prefer bounded local/browser state where server durability is not required",
+        "define governed anonymous-to-account behavior before sync"
       ]
     },
     {
-      "id": "26.0D",
-      "status": "accepted",
-      "title": "Product-Coherence Closure",
+      "id": "27.0D",
+      "status": "planned",
+      "title": "Retention Measurement Closure",
       "goals": [
-        "close remaining representative responsive and accessibility drift",
-        "record browser and visual evidence where current coverage is insufficient",
-        "close Stage 26 through existing exact-head verification ownership"
+        "derive measurable return-value metrics from accepted product signals",
+        "close retention evidence without recommendation or notification overreach",
+        "close Stage 27 through existing exact-head verification ownership"
       ]
     }
   ],
-  "next_tranche": null,
+  "next_tranche": "27.0B",
   "next_stage_outline": null,
   "activation_evidence": {
-    "accepted_main_sha": "d25dc667173bb47256a21db430b3c8e3ccd02212",
-    "stage_26_branch": "stage-26-authority-product-coherence",
-    "stage_26_pull_request": 48,
-    "baseline_verification": "Local candidate and canonical verification passed before Stage 26 activation."
+    "accepted_main_sha": "8acc393af6e91eaf3b096f7ce749ea39e340ad69",
+    "stage_27_branch": "stage-27-product-signals-retention",
+    "stage_27_pull_request": 49,
+    "baseline": "Stage 26 accepted and merged before Stage 27 activation; 27.0A is the only actionable tranche."
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
