@@ -7,7 +7,7 @@ $root = dirname(__DIR__);
 /** @return array<string, mixed> */
 function readJsonFile(string $path): array
 {
-    if (! is_file($path)) {
+    if (is_file($path) === false) {
         return [];
     }
 
@@ -30,7 +30,7 @@ function gitLines(string $root, string $command): array
 function skillFiles(string $root, string $relativeRoot): array
 {
     $base = $root.'/'.$relativeRoot;
-    if (! is_dir($base)) {
+    if (is_dir($base) === false) {
         return [];
     }
 
@@ -38,7 +38,7 @@ function skillFiles(string $root, string $relativeRoot): array
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS));
 
     foreach ($iterator as $file) {
-        if (! $file->isFile()) {
+        if ($file->isFile() === false) {
             continue;
         }
 
@@ -78,13 +78,13 @@ function hygieneSnapshot(string $root, array $contract, string $currentStage): a
     $skillDrift = [];
 
     foreach ($projectionRoots as $projectionRoot) {
-        if (! is_string($projectionRoot)) {
+        if (is_string($projectionRoot) === false) {
             continue;
         }
 
         $projection = skillFiles($root, $projectionRoot);
         foreach ($canonicalSkills as $path => $hash) {
-            if (! array_key_exists($path, $projection)) {
+            if (array_key_exists($path, $projection) === false) {
                 $skillDrift[] = $projectionRoot.'/'.$path.' missing';
             } elseif ($projection[$path] !== $hash) {
                 $skillDrift[] = $projectionRoot.'/'.$path.' differs';
@@ -115,9 +115,10 @@ function hygieneSnapshot(string $root, array $contract, string $currentStage): a
         foreach (['retirement_queue', 'automation_backlog'] as $section) {
             $entries = is_array($consolidation[$section] ?? null) ? $consolidation[$section] : [];
             foreach ($entries as $entry) {
-                if (! is_array($entry)) {
+                if (is_array($entry) === false) {
                     continue;
                 }
+
                 $phase = $entry['phase'] ?? $entry['target_phase'] ?? null;
                 if (is_string($phase) && preg_match('/(?:^|\D)19(?:\.|\+|\D|$)/', $phase) === 1) {
                     $id = is_string($entry['id'] ?? null) ? $entry['id'] : 'unknown';
@@ -159,7 +160,7 @@ for ($i = 0, $count = count($args); $i < $count; $i++) {
     }
     if ($arg === '--intent') {
         $i++;
-        if (! isset($args[$i])) {
+        if (isset($args[$i]) === false) {
             fwrite(STDERR, "Missing value after --intent.\n");
             exit(2);
         }
@@ -190,7 +191,7 @@ $bestScore = 0;
 
 $routes = is_array($contract['intent_routes'] ?? null) ? $contract['intent_routes'] : [];
 foreach ($routes as $route) {
-    if (! is_array($route)) {
+    if (is_array($route) === false) {
         continue;
     }
 
@@ -212,9 +213,10 @@ $skillRegistry = is_array($contract['skill_registry']['skills'] ?? null) ? $cont
 $selectedSkills = is_array($bestRoute['skills'] ?? null) ? $bestRoute['skills'] : [];
 $skillAuthorities = [];
 foreach ($selectedSkills as $skill) {
-    if (! is_string($skill)) {
+    if (is_string($skill) === false) {
         continue;
     }
+
     $definition = is_array($skillRegistry[$skill] ?? null) ? $skillRegistry[$skill] : [];
     $required = is_array($definition['required_authorities'] ?? null) ? $definition['required_authorities'] : [];
     foreach ($required as $authority) {
