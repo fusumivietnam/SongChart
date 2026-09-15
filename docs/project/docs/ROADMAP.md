@@ -138,6 +138,85 @@ Roadmap hậu Stage 25 ưu tiên đóng các vòng phản hồi thay vì thêm s
 6. Trust loop: provenance/staleness/conflict → report/review → correction → higher trust.
 7. Operations loop: signal → deterministic recommendation → human action → measured outcome → better future decision.
 8. Experiment/learning loop: hypothesis → bounded variant → measurement → rollout/revert decision.
+9. Reactivation loop: persistent user intent → meaningful entity/chart/data change → bounded notification → return visit → stronger intent/retention evidence.
+10. Destination-health loop: outbound failure/staleness/user report → validation/replacement queue → healthier provider destinations → higher outbound success/trust.
+11. Cost/value loop: provider/AI/infrastructure spend → measurable useful outcome → retain/optimize/defer decision → improved unit economics.
+12. Authority-improvement loop: drift/ambiguity detected → owning authority corrected → compiler/verifier/context regenerated → fewer future inconsistencies and agent mistakes.
+
+### Flywheel control contract
+
+Một flywheel chỉ được coi là implemented khi có đủ các mắt xích sau; việc chỉ có event hoặc dashboard không được coi là closure:
+
+1. **Trigger** — sự kiện/tình huống khởi động vòng lặp được định nghĩa rõ.
+2. **Evidence** — input/signal có schema, provenance và authority boundary.
+3. **Decision/priority** — rule hoặc governed process biến evidence thành next action; AI không được tự trở thành business authority.
+4. **Action** — hành động có owner, idempotency/retry semantics và human gate khi cần.
+5. **Outcome** — kết quả được đo bằng metric trước/sau hoặc success/failure state.
+6. **Feedback** — outcome quay trở lại priority/policy/product decision cho vòng tiếp theo.
+7. **Cost/risk guardrail** — quota, latency, privacy, abuse, notification fatigue hoặc infrastructure cost có boundary tương ứng.
+8. **Exit/degradation path** — loop có thể tắt/degrade mà không làm hỏng canonical product hoặc core availability.
+
+Mỗi accepted flywheel implementation phải khai báo tối thiểu:
+
+- owner/capability;
+- source events/snapshots;
+- primary metric + guardrail metrics;
+- action sink/queue;
+- evaluation window;
+- success threshold hoặc insufficient-evidence semantics;
+- privacy/retention classification nếu có user telemetry;
+- dependency/failure fallback;
+- verification evidence.
+
+### Flywheel coverage map
+
+Các loop không độc lập; roadmap phải ưu tiên nối chúng thành một hệ thống thay vì tối ưu từng vòng riêng lẻ:
+
+```text
+Organic/direct visitor
+        ↓
+Search / discovery ───────────────→ Retention ───────────→ Reactivation
+        │                              │                       │
+        ├→ zero-result → Demand ───────┤                       │
+        │                  │           │                       │
+        │                  ↓           │                       │
+        │             Data quality ←───┘                       │
+        │                  │                                   │
+        │                  ↓                                   │
+        │             Canonical graph                          │
+        │                  │                                   │
+        │        ┌─────────┴──────────┐                        │
+        │        ↓                    ↓                        │
+        │    Public/SEO           Destinations ─→ health loop  │
+        │        │                    │                        │
+        │        ↓                    ↓                        │
+        └──── Growth loop       Provider evidence              │
+                                  │                            │
+                                  ↓                            │
+                          Provider efficiency                  │
+                                  │                            │
+                                  └──── cost/value ────────────┘
+
+All product/data/provider/system signals
+        ↓
+Operations/decision loop
+        ↓
+Experiment/learning
+        ↓
+measured changes back into product/data/policy
+
+All authorities/contracts
+        ↓
+Drift detection
+        ↓
+Authority-improvement loop
+        ↓
+Compiler/verifier/generated context
+        ↓
+safer future development and AI-agent work
+```
+
+Flywheel metrics không được tối ưu cục bộ nếu gây hại vòng khác. Ví dụ tăng notification click-through không được đánh đổi bằng notification fatigue; tăng provider freshness không được đánh đổi bằng quota exhaustion; tăng SEO landing volume không được đánh đổi bằng low-quality/fabricated public data.
 
 ## Foundation research priorities
 
@@ -157,3 +236,5 @@ Nghiên cứu/phát triển theo thứ tự ưu tiên, không mặc định thà
 - New authority phải giảm ambiguity/drift hoặc tạo executable enforcement; không tạo thêm documentation layer trùng lặp.
 - UX/page implementation phải consume approved tokens/components/patterns/layouts thay vì tự phát minh design direction cục bộ.
 - Product/data/operations changes phải ưu tiên đóng feedback loops và đo outcome thay vì thêm feature rời rạc.
+- Flywheel closure phải tuân theo Flywheel Control Contract; không chấp nhận loop chỉ có telemetry nhưng không có action/outcome/feedback hoặc chỉ có action nhưng không đo được effect.
+- Cross-flywheel guardrails ưu tiên system-level outcome hơn local metric optimization.
