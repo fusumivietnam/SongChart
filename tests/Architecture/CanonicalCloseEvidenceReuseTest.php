@@ -26,5 +26,5 @@ it('reuses exact-head stage evidence only inside auto closure close', function (
         ->and($shell)->toContain('php scripts/run-canonical-close.php')
         ->and($shell)->toContain('composer canonical:verify')
         ->and($adapter)->toContain("if (\$step === '@stage:verify')")
-        ->and($adapter)->toContain("['composer', 'run-script', \$script, '--no-interaction']");
+        ->and($adapter)->toContain("['composer', '--no-interaction', 'run-script', \$script]");
 });
