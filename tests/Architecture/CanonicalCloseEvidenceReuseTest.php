@@ -22,7 +22,7 @@ it('reuses exact-head stage evidence only inside auto closure close', function (
         ->and($autoClosure)->toContain('needs:')
         ->and($autoClosure)->toContain('- verify')
         ->and($compose)->toContain('SONGCHART_VERIFICATION_MODE: "${SONGCHART_VERIFICATION_MODE:-full}"')
-        ->and($shell)->toContain("mode=\"${SONGCHART_VERIFICATION_MODE:-full}\"")
+        ->and($shell)->toContain('mode="${SONGCHART_VERIFICATION_MODE:-full}"')
         ->and($shell)->toContain('php scripts/run-canonical-close.php')
         ->and($shell)->toContain('composer canonical:verify')
         ->and($adapter)->toContain("if (\$step === '@stage:verify')")
