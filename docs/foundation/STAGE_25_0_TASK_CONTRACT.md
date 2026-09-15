@@ -4,7 +4,7 @@
 
 Implementing. Stage 25 is activated from accepted `main` SHA `d5eb48fd36ae3796de55201adbbf75c6d8ee99f4` after Stage 24 PR #36 was merged and accepted-main workflow run `34925210011` passed quality, PostgreSQL 18, frontend build, desktop/mobile browser smoke and accepted-main provenance classification.
 
-Active tranche: `25.0B` — Database connection and read scaling.
+Active tranche: `25.0C` — Regional resilience and traffic control.
 
 ## Goal
 
@@ -41,7 +41,7 @@ Accepted on exact-head Auto Closure evidence recorded in `docs/project/engineeri
 
 ### 25.0B — Database connection and read scaling
 
-Implementing.
+Accepted on Auto Closure run `34971975078` (#564), with source head `425b70761449c16a6ff101d926760a52495d9f45` and effective prepared head `eec3b25b5a365ab3814c9cb87e248b233360bb26`.
 
 - classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas;
 - define consistency and failback rules that keep PostgreSQL primary authoritative;
@@ -52,8 +52,13 @@ Implementing.
 
 ### 25.0C — Regional resilience and traffic control
 
+Implementing.
+
 - evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured latency/availability/provider-failure evidence;
 - define health, drain, retry and failover semantics before any routing automation;
+- keep the current single-region/direct DNS-to-Caddy Compose topology as the default and failback profile until evidence justifies another topology;
+- require health checks to be side-effect-free and distinguish application availability from dependency degradation;
+- prohibit automatic cross-region database writes, hidden retry loops for mutations, and routing automation that can duplicate application/domain behavior;
 - keep Envoy deferred unless repository evidence proves one of its explicit trigger requirements.
 
 ### 25.0D — External APM evaluation and stage closure
@@ -67,6 +72,8 @@ Implementing.
 Stage 25 acceptance requires a repository-owned edge/cache policy with safe bypass/invalidation semantics; metric-backed thresholds for edge, database and regional scaling investigations; explicit primary/replica consistency rules; provider-neutral failure/fallback behavior; no speculative Workers/Hyperdrive/load-balancer/Envoy/APM dependency; security/privacy preservation; tests/verifiers for policy classification; and exact-head Auto Closure on the final stage head.
 
 For 25.0B specifically, acceptance requires explicit read-path classification in `docs/project/performance/query-budget-contract.json`, primary/default ownership in `config/database.php` and `docs/project/stack/runtime-environments.json`, safe primary-equivalent fallback for the optional read connection, no automatic read routing, and repository verification that these boundaries remain aligned.
+
+For 25.0C specifically, acceptance requires repository-owned regional/traffic-control decision semantics with evidence states, side-effect-free health and drain rules, mutation-safe retry policy, explicit failback to the accepted direct Caddy/Compose topology, no automatic routing or infrastructure mutation, and an explicit Envoy deferral unless a declared trigger becomes true.
 
 ## Authority and official sources
 
@@ -101,7 +108,7 @@ SongChart already has Caddy TLS/static delivery, Laravel HTTP/cache primitives, 
 
 ### Custom implementation justification
 
-SongChart-specific work is limited to policy and decision composition that upstream products cannot know: route cacheability/freshness classes, canonical/provenance-sensitive bypass rules, evidence thresholds, primary/replica eligibility, fallback semantics and provider-neutral scale decisions. Stage 25 must prefer configuration/read-model/verifier changes over custom network infrastructure.
+SongChart-specific work is limited to policy and decision composition that upstream products cannot know: route cacheability/freshness classes, canonical/provenance-sensitive bypass rules, evidence thresholds, primary/replica eligibility, regional/failure semantics, fallback behavior and provider-neutral scale decisions. Stage 25 must prefer configuration/read-model/verifier changes over custom network infrastructure.
 
 ## Activation evidence
 
@@ -131,4 +138,4 @@ Activation must pass repository-owned quality verification before implementation
 
 ## Handoff
 
-Stage 25 continues with `25.0B — Database connection and read scaling`. Repository authority and live GitHub state remain authoritative over chat memory. One Stage 25 umbrella branch owns overlapping Stage 25 source until an accepted synchronization/closure point.
+Stage 25 continues with `25.0C — Regional resilience and traffic control`. Repository authority and live GitHub state remain authoritative over chat memory. One Stage 25 umbrella branch owns overlapping Stage 25 source until an accepted synchronization/closure point.
