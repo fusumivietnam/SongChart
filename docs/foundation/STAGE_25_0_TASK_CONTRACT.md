@@ -4,7 +4,7 @@
 
 Implementing. Stage 25 is activated from accepted `main` SHA `d5eb48fd36ae3796de55201adbbf75c6d8ee99f4` after Stage 24 PR #36 was merged and accepted-main workflow run `34925210011` passed quality, PostgreSQL 18, frontend build, desktop/mobile browser smoke and accepted-main provenance classification.
 
-Active tranche: `25.0C` — Regional resilience and traffic control.
+Active tranche: `25.0D` — External APM evaluation and stage closure.
 
 ## Goal
 
@@ -52,7 +52,7 @@ Accepted on Auto Closure run `34971975078` (#564), with source head `425b7076144
 
 ### 25.0C — Regional resilience and traffic control
 
-Implementing.
+Accepted on Auto Closure run `34972809650` (#568), source head `82901e8b3dd64753ff79358aac77e7af3f7d2b0c`.
 
 - evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured latency/availability/provider-failure evidence;
 - define health, drain, retry and failover semantics before any routing automation;
@@ -63,8 +63,12 @@ Implementing.
 
 ### 25.0D — External APM evaluation and stage closure
 
+Implementing.
+
 - evaluate Sentry/external APM or equivalent only against demonstrated Stage 24/25 observability gaps;
 - record value, privacy/retention, operational cost and exit/fallback behavior for any adoption decision;
+- retain `deferred_no_demonstrated_gap` while the current repository-owned evidence baseline remains sufficient;
+- introduce no external APM package, agent, sidecar, proxy, credential, network dependency or automatic infrastructure mutation without separately accepted evidence;
 - close Stage 25 through exact-head quality, PostgreSQL, frontend, browser, classification, canonical CLOSE and exact-tree evidence.
 
 ## Acceptance criteria
@@ -75,6 +79,8 @@ For 25.0B specifically, acceptance requires explicit read-path classification in
 
 For 25.0C specifically, acceptance requires repository-owned regional/traffic-control decision semantics with evidence states, side-effect-free health and drain rules, mutation-safe retry policy, explicit failback to the accepted direct Caddy/Compose topology, no automatic routing or infrastructure mutation, and an explicit Envoy deferral unless a declared trigger becomes true.
 
+For 25.0D specifically, acceptance requires a repository-owned external-observability evaluation that records the demonstrated-gap trigger, expected operational value, privacy/retention constraints, cost/cardinality controls and vendor exit/fallback semantics; absent a demonstrated gap, external APM remains deferred and must not become a production dependency.
+
 ## Authority and official sources
 
 ### Repository authorities
@@ -84,6 +90,7 @@ For 25.0C specifically, acceptance requires repository-owned regional/traffic-co
 - `docs/project/docs/ROADMAP.md`
 - `docs/project/docs/OBSERVABILITY.md`
 - `docs/operations/PRODUCTION_TOPOLOGY.md`
+- `docs/operations/external-observability-evaluation.md`
 - `docs/project/stack/production-service-baseline.json`
 - `docs/project/engineering/external-systems-registry.json`
 - Stage 24 operational-intelligence configuration/read model and accepted scorecard semantics
@@ -138,4 +145,4 @@ Activation must pass repository-owned quality verification before implementation
 
 ## Handoff
 
-Stage 25 continues with `25.0C — Regional resilience and traffic control`. Repository authority and live GitHub state remain authoritative over chat memory. One Stage 25 umbrella branch owns overlapping Stage 25 source until an accepted synchronization/closure point.
+Stage 25 continues with `25.0D — External APM evaluation and stage closure`. Repository authority and live GitHub state remain authoritative over chat memory. One Stage 25 umbrella branch owns overlapping Stage 25 source until final accepted closure and merge.
