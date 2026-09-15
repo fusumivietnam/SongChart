@@ -26,6 +26,11 @@
     "admin.providers": {
       "read_model": "app/Support/Admin/ProviderOperationsConsole.php",
       "status": "registered-awaiting-representative-baseline"
+    },
+    "operations.intelligence": {
+      "read_model": "app/Application/Operations/Queries/OperationalIntelligenceReadModel.php",
+      "status": "bounded-cli-probe",
+      "note": "On-demand operator surface only; never executed from an HTTP request."
     }
   }
 }
