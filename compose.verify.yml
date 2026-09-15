@@ -46,6 +46,7 @@ services:
       TEST_PGSQL_USERNAME: songchart_verify
       TEST_PGSQL_PASSWORD: songchart_verify_test_only
       SONGCHART_DEVELOPMENT_DATABASE: songchart_development
+      SONGCHART_VERIFICATION_MODE: "${SONGCHART_VERIFICATION_MODE:-full}"
       CACHE_STORE: array
       SESSION_DRIVER: array
       QUEUE_CONNECTION: redis

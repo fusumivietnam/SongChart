@@ -88,7 +88,7 @@
         },
         "verification-topology": {
             "source": "docs/project/engineering/verification-topology.json",
-            "fingerprint": "33530964a3456382ef69878884e16febdb38a0dded376a396b7300097197e76c",
+            "fingerprint": "216552d934e1f5c8e9c375639fc1394eb3fe277ad3b88a140235b36812fd257d",
             "consumers": [
                 "composer.json",
                 "docs/project/stack/release-pipeline-contract.json",
@@ -236,7 +236,7 @@
         },
         "verification-consumer-graph": {
             "source": "docs/project/engineering/verification-consumer-graph.json",
-            "fingerprint": "9e70404ddc0c5ddad0378666a2fffb8c89978e8a0d4e10725016251238f71026",
+            "fingerprint": "6f71765fcef30359143cc12d01b8395d851964e212613ce25261e28d673f37aa",
             "consumers": [
                 "app/Support/Engineering/RepositoryContractResolver.php",
                 "scripts/verify-repository-contract-compiler.php",
@@ -1123,6 +1123,16 @@
             ]
         },
         {
+            "target": "tests/Architecture/CanonicalCloseEvidenceReuseTest.php",
+            "rule": "verification-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "verification-topology",
+                "verification-command-surface",
+                "impact-test-map"
+            ]
+        },
+        {
             "target": "tests/Architecture/CatalogModelGuardrailTest.php",
             "rule": "catalog",
             "classification": "behavioral",
@@ -1687,5 +1697,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "44527ff9b3d8b2a988600958fc14aa241574482cf73963f3a0a8b45ca2216d02"
+    "graph_fingerprint": "8b8a90329c8c82e8a6861575550285d76b29b7457c75e5f5eab92c2f7ed9384c"
 }

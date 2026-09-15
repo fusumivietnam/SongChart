@@ -51,6 +51,33 @@ if (is_array($canonicalExpected) && count(array_keys($canonicalExpected, '@stage
     $errors[] = 'canonical:verify must call @stage:verify exactly once.';
 }
 
+$evidenceReuse = $topology['evidence_reuse'] ?? null;
+$ciClose = $topology['lanes']['ci_close'] ?? null;
+if (! is_array($evidenceReuse)
+    || ($evidenceReuse['enabled'] ?? null) !== true
+    || ($evidenceReuse['reusable_lane'] ?? null) !== 'stage'
+    || ($evidenceReuse['consumer'] ?? null) !== 'ci_close'
+) {
+    $errors[] = 'Exact-head CI evidence reuse topology is incomplete.';
+}
+if (! is_array($ciClose)
+    || ($ciClose['owner'] ?? null) !== 'scripts/run-canonical-close.php'
+    || ($ciClose['source_lane'] ?? null) !== 'canonical'
+    || ($ciClose['reuse_step'] ?? null) !== '@stage:verify'
+) {
+    $errors[] = 'ci_close must derive canonical-only closure from the canonical topology.';
+}
+
+$canonicalClose = (string) file_get_contents($root.'/scripts/run-canonical-close.php');
+foreach (['verification-topology.json', "'@stage:verify'", 'composer', 'run-script'] as $required) {
+    if (! str_contains($canonicalClose, $required)) {
+        $errors[] = "Canonical close adapter is missing required evidence-reuse behavior [{$required}].";
+    }
+}
+if (str_contains($canonicalClose, 'canonical_steps') || str_contains($canonicalClose, 'stage_steps')) {
+    $errors[] = 'Canonical close adapter must consume verification topology rather than duplicate release-pipeline step lists.';
+}
+
 $canonicalShell = (string) file_get_contents($root.'/scripts/canonical-verify.sh');
 if (substr_count($canonicalShell, 'composer canonical:verify') !== 1) {
     $errors[] = 'Canonical shell must call composer canonical:verify exactly once.';
@@ -63,6 +90,11 @@ foreach (['composer release:verify', 'composer stage:verify', 'composer quality:
 foreach (['composer install --no-interaction --prefer-dist --no-progress', 'npm ci --no-audit --no-fund', 'composer quality:normalize'] as $required) {
     if (! str_contains($canonicalShell, $required)) {
         $errors[] = "Canonical shell is missing preparation step [{$required}].";
+    }
+}
+foreach (['SONGCHART_VERIFICATION_MODE', '$mode', 'php scripts/run-canonical-close.php'] as $requiredCloseMode) {
+    if (! str_contains($canonicalShell, $requiredCloseMode)) {
+        $errors[] = "Canonical shell is missing close-mode behavior [{$requiredCloseMode}].";
     }
 }
 
@@ -88,4 +120,4 @@ if ($errors !== []) {
     exit(1);
 }
 
-fwrite(STDOUT, "Verification topology passed: impact/focused/quality/stage/canonical ownership is non-duplicative.\n");
+fwrite(STDOUT, "Verification topology passed: impact/focused/quality/stage/canonical ownership is non-duplicative with exact-head CI evidence reuse.\n");

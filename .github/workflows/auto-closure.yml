@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: songchart-auto-closure-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   prepare:
@@ -140,6 +140,7 @@ jobs:
       pull-requests: read
     env:
       SONGCHART_CLOSE_SHA: ${{ needs.prepare.outputs.effective_sha }}
+      SONGCHART_VERIFICATION_MODE: close
     steps:
       - name: Checkout verified exact SHA
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -159,7 +160,7 @@ jobs:
           test "$current_head" = "$SONGCHART_CLOSE_SHA"
           test "$(git rev-parse HEAD)" = "$SONGCHART_CLOSE_SHA"
 
-      - name: CLOSE — governed canonical verification
+      - name: CLOSE — governed canonical-only verification
         run: ./songchart verify
 
       - name: Prove canonical verification preserved exact tree
@@ -203,7 +204,7 @@ jobs:
             echo '- PREPARE: generated project context + derived development state reconciled'
             echo '- QUALITY: governance/static verification passed before runtime lanes started'
             echo '- CHECK: PostgreSQL + browser + frontend passed'
-            echo '- CLOSE: canonical verification passed without tracked-tree mutation'
+            echo '- CLOSE: canonical-only release/runtime verification passed by reusing exact-head CHECK evidence'
             if [ "$SONGCHART_PR_DRAFT" = 'true' ]; then
               echo '- PR state: draft; promote via GitHub UI or an authorized connector'
             else

@@ -73,7 +73,7 @@
     },
     {
       "id": "verification-governance",
-      "targets": ["scripts/verify-verification-*.php", "scripts/verify-test-taxonomy.php", "scripts/verify-code-generation-guardrails.php", "tests/Architecture/Verification*.php", "tests/Architecture/TestAuthorityCodeGenerationGuardrailsTest.php"],
+      "targets": ["scripts/verify-verification-*.php", "scripts/verify-test-taxonomy.php", "scripts/verify-code-generation-guardrails.php", "tests/Architecture/Verification*.php", "tests/Architecture/CanonicalCloseEvidenceReuseTest.php", "tests/Architecture/TestAuthorityCodeGenerationGuardrailsTest.php"],
       "classification": "declarative",
       "semantic_authorities": ["verification-topology", "verification-command-surface", "impact-test-map"]
     },

@@ -87,7 +87,11 @@ $requiredWorkflowFragments = [
     "permissions:\n  contents: read",
     'concurrency:',
     'cancel-in-progress: true',
-    'ci-failure-classification.json',
+    'SONGCHART_DEVELOPMENT_DATABASE: songchart_ci_development',
+    'Publish PostgreSQL machine result',
+    'POSTGRES_PHASE: ${{ needs.tests-postgres.outputs.result_phase }}',
+    'songchart-verification-result.json',
+    'songchart-verification-result-${{ env.SONGCHART_CI_SHA }}-${{ github.run_attempt }}',
     'quality-governance',
     'database-runtime',
     'frontend-build',
@@ -99,6 +103,10 @@ foreach ($requiredWorkflowFragments as $fragment) {
     if (! is_string($workflow) || ! str_contains($workflow, $fragment)) {
         $errors[] = 'GitHub Actions feedback-loop contract is missing: '.str_replace("\n", ' / ', $fragment);
     }
+}
+
+if (is_string($workflow) && str_contains($workflow, 'DB_DATABASE: songchart_ci_development')) {
+    $errors[] = 'Reusable PostgreSQL lane must keep development identity separate from the effective test DB_DATABASE.';
 }
 
 if (is_string($workflow)) {
@@ -151,6 +159,8 @@ $requiredAutoClosureFragments = [
     'uses: ./.github/workflows/tests.yml',
     'target_sha: ${{ needs.prepare.outputs.effective_sha }}',
     'quality_preverified: true',
+    'SONGCHART_VERIFICATION_MODE: close',
+    'CLOSE — governed canonical-only verification',
     'run: ./songchart verify',
     'test -z "$(git status --porcelain --untracked-files=no)"',
     'Capture PR promotion state',
