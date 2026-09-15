@@ -1,9 +1,20 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "release_authority": {
     "php_major_minor": "8.5",
     "postgres_major": 18,
-    "database": "pgsql"
+    "database": "pgsql",
+    "read_connection": "pgsql_read",
+    "read_connection_activation": "optional-explicit-disabled-by-default"
+  },
+  "database_scaling": {
+    "primary_connection": "pgsql",
+    "optional_read_connection": "pgsql_read",
+    "automatic_read_routing": false,
+    "primary_is_authoritative": true,
+    "read_connection_fallback": "When DB_READ_* is absent, pgsql_read resolves to the primary DB_* endpoint; this is configuration compatibility, not replica activation.",
+    "activation_gate": "A distinct read endpoint requires accepted connection-saturation or query-latency evidence plus explicit read-path classification in docs/project/performance/query-budget-contract.json.",
+    "write_rule": "Writes and consistency-sensitive reads never switch away from pgsql through Stage 25 policy automation."
   },
   "profiles": {
     "canonical-test": {
@@ -54,6 +65,8 @@
     "production": {
       "app_env": "production",
       "db_connection": "pgsql",
+      "read_connection": "pgsql_read",
+      "read_connection_mode": "explicit-opt-in-only",
       "redis_required": true,
       "queue_connection": "redis",
       "cache_store": "redis",
