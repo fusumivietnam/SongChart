@@ -12,13 +12,13 @@
 ## Stage progress
 
 - `26.0A` — `ACCEPTED` — Authority Drift Closure
-- `26.0B` — `IMPLEMENTING` — Executable UI Contract Closure
-- `26.0C` — `PLANNED` — Canonical Product Screens
+- `26.0B` — `ACCEPTED` — Executable UI Contract Closure
+- `26.0C` — `IMPLEMENTING` — Canonical Product Screens
 - `26.0D` — `PLANNED` — Product-Coherence Closure
 
 ## Next bounded tranche
 
-- `26.0C`
+- `26.0D`
 
 ## Live work lease
 
