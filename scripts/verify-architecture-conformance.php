@@ -124,6 +124,33 @@ foreach ([
     }
 }
 
+$chartSurface = (string) file_get_contents($root.'/resources/views/charts/show.blade.php');
+foreach (['bg-white', '--sc-surface-subtle', 'emerald-', 'amber-', 'slate-'] as $chartDriftSignal) {
+    if (str_contains($chartSurface, $chartDriftSignal)) {
+        $errors[] = "Canonical chart surface contains non-semantic or invalid token signal [{$chartDriftSignal}].";
+    }
+}
+foreach (['--sc-bg-surface', '--sc-bg-subtle', '--sc-success-soft', '--sc-warning-soft'] as $requiredChartToken) {
+    if (str_contains($chartSurface, $requiredChartToken) === false) {
+        $errors[] = "Canonical chart surface must consume semantic token [{$requiredChartToken}].";
+    }
+}
+
+foreach ([
+    'resources/views/admin/canonical-admissions/index.blade.php',
+    'resources/views/admin/canonical-admissions/show.blade.php',
+] as $representativeAdminReviewView) {
+    $adminReviewSource = (string) file_get_contents($root.'/'.$representativeAdminReviewView);
+    if (str_contains($adminReviewSource, 'slate-')) {
+        $errors[] = "Representative admin review surface [{$representativeAdminReviewView}] bypasses semantic admin tokens with slate palette classes.";
+    }
+    foreach (['--admin-text-secondary', '--admin-border'] as $requiredReviewToken) {
+        if (str_contains($adminReviewSource, $requiredReviewToken) === false) {
+            $errors[] = "Representative admin review surface [{$representativeAdminReviewView}] must consume semantic token [{$requiredReviewToken}].";
+        }
+    }
+}
+
 $dataBoundary = json_decode(
     (string) file_get_contents($root.'/docs/project/domain/application-data-boundary.json'),
     true,
