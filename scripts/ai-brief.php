@@ -152,10 +152,12 @@ for ($i = 0, $count = count($args); $i < $count; $i++) {
     $arg = $args[$i];
     if ($arg === '--json') {
         $json = true;
+
         continue;
     }
     if ($arg === '--hygiene') {
         $includeHygiene = true;
+
         continue;
     }
     if ($arg === '--intent') {
@@ -165,6 +167,7 @@ for ($i = 0, $count = count($args); $i < $count; $i++) {
             exit(2);
         }
         $intent = $args[$i];
+
         continue;
     }
     if (str_starts_with($arg, '--')) {
@@ -176,7 +179,7 @@ for ($i = 0, $count = count($args); $i < $count; $i++) {
 }
 
 if ($intent === '') {
-    fwrite(STDERR, "Usage: ./songchart ai brief --intent <text> [--json] [--hygiene]\n");
+    fwrite(STDERR, "Usage: php scripts/ai-brief.php --intent <text> [--json] [--hygiene]\n");
     exit(2);
 }
 
