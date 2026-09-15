@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "24.0",
-  "active_tranche": "25.0B",
+  "active_tranche": "25.0C",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -145,6 +145,13 @@
       "effective_prepared_head": "00f1513a74be191c0d34b59aedbd0ebf7008a9c9",
       "verification_run": 34941886006,
       "verification": "Auto Closure run 532 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact 25.0A source head."
+    },
+    "25.0B": {
+      "title": "Database connection and read scaling",
+      "source_head": "425b70761449c16a6ff101d926760a52495d9f45",
+      "effective_prepared_head": "eec3b25b5a365ab3814c9cb87e248b233360bb26",
+      "verification_run": 34971975078,
+      "verification": "Auto Closure run 564 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head eec3b25b5a365ab3814c9cb87e248b233360bb26. Primary PostgreSQL remains authoritative; optional read routing remains explicit and evidence-gated."
     }
   },
   "stage_progress": [
@@ -160,7 +167,7 @@
     },
     {
       "id": "25.0B",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Database connection and read scaling",
       "goals": [
         "classify read paths eligible for connection pooling, Hyperdrive-equivalent acceleration or replicas",
@@ -170,7 +177,7 @@
     },
     {
       "id": "25.0C",
-      "status": "planned",
+      "status": "implementing",
       "title": "Regional resilience and traffic control",
       "goals": [
         "evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured evidence",
@@ -189,7 +196,7 @@
       ]
     }
   ],
-  "next_tranche": "25.0C",
+  "next_tranche": "25.0D",
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "d5eb48fd36ae3796de55201adbbf75c6d8ee99f4",
