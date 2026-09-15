@@ -12,11 +12,11 @@
     "This contract routes existing authorities; it does not replace domain, stack, security, provider, UI, release or stage authorities."
   ],
   "orientation": {
-    "command": "./songchart ai brief --intent <text> --json",
+    "command": "php scripts/ai-brief.php --intent <text> --json",
     "live_state": "./songchart ai status --json",
     "generated_context": "docs/project/generated/project-context.json",
     "stage_authority": "docs/project/engineering/stage-plan.json",
-    "rule": "Use the brief to reduce search space, then read the returned semantic authorities before writing."
+    "rule": "Use the brief to reduce search space, then read the returned semantic authorities before writing. Keep task-scoped routing behind the Project Kernel instead of adding a public CLI alias until a broader operator use case requires one."
   },
   "new_surface_admission": {
     "ordered_questions": [
