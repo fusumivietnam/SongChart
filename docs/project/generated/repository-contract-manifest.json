@@ -281,7 +281,7 @@
         },
         "application-data-boundary": {
             "source": "docs/project/domain/application-data-boundary.json",
-            "fingerprint": "b4dc78517329a9630c08deb1e4a999aa95f91be8fa37c8c52694ef7779b77b09",
+            "fingerprint": "6daad100ca04cd8b7734feebf9bc884f3da2cfbaad06993cf24bc3974eafe7df",
             "consumers": [
                 "app/Application/Admin/Queries/ExtensionReadModel.php",
                 "app/Http/Controllers/Admin/ExtensionController.php",
@@ -301,7 +301,7 @@
         },
         "query-budget": {
             "source": "docs/project/performance/query-budget-contract.json",
-            "fingerprint": "46e6478b96393d9a19685f123ac7f15697da738fe3d78c91fd5802435c6dfebe",
+            "fingerprint": "48193ab60e6b786e658f0e922af29f1463ad87871811228b4eb0f601aaf3b01c",
             "consumers": [
                 "docs/project/domain/application-data-boundary.json",
                 "scripts/verify-architecture-conformance.php",
@@ -1697,5 +1697,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "8b8a90329c8c82e8a6861575550285d76b29b7457c75e5f5eab92c2f7ed9384c"
+    "graph_fingerprint": "af0f01cfe0b5971340b3e094531fe8da1ed0b26f7aec77f3f483b14b38fb0423"
 }
