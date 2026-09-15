@@ -1,9 +1,17 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "active",
   "purpose": "Canonical contract for derived architecture/use-case/source-evolution graphs consumed by AI, developers and Admin Development Intelligence.",
   "node_types": ["use_case", "route", "controller", "action", "service", "job", "event", "listener", "model", "table", "interface", "class", "provider", "package", "test"],
   "edge_types": ["route_to", "calls", "depends_on", "dispatches", "listens_to", "extends", "implements", "uses_trait", "reads", "writes", "outbound_to", "covered_by", "belongs_to_use_case"],
+  "lifecycle_states": ["active", "framework_owned", "infrastructure", "specialized", "legacy_supported", "retiring", "orphan_candidate", "unclassified"],
+  "connectivity": {
+    "goal": "Every SongChart application surface is traceable to a semantic owner/use case or is explicitly classified as framework, infrastructure, specialized, legacy or retiring.",
+    "generated_fields": ["semantic_owner", "lifecycle", "inbound_edges", "outbound_edges"],
+    "orphan_candidate_rule": "A SongChart-owned application class with zero inbound graph edges and no entrypoint/framework/infrastructure classification is reviewable as an orphan candidate; detection never deletes source automatically.",
+    "closure_metrics": ["application_nodes", "owned_application_nodes", "orphan_candidate_nodes", "unclassified_nodes", "route_to_use_case_coverage", "job_to_use_case_coverage"],
+    "mutation_rule": "Connectivity snapshots are derived from source and contracts. Do not hand-maintain per-class graph metadata merely to satisfy the graph."
+  },
   "views": {
     "business": "Use-case/journey graph with implementation details hidden.",
     "developer": "Route -> controller/action -> async/domain/persistence/provider graph.",
@@ -27,7 +35,9 @@
   "incremental_scope_hints": {
     "routes/**": ["route", "controller", "use_case"],
     "app/Http/**": ["route", "controller", "action", "authorization"],
-    "app/Jobs/**": ["job", "queue"],
+    "app/Application/**": ["use_case", "action", "service", "class"],
+    "app/Domain/**": ["use_case", "service", "class"],
+    "app/Jobs/**": ["job", "queue", "use_case"],
     "app/Events/**": ["event", "listener"],
     "app/Listeners/**": ["event", "listener"],
     "app/Models/**": ["model", "table"],
