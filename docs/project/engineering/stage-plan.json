@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "24.0",
-  "active_tranche": "25.0C",
+  "active_tranche": "25.0D",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -152,6 +152,13 @@
       "effective_prepared_head": "eec3b25b5a365ab3814c9cb87e248b233360bb26",
       "verification_run": 34971975078,
       "verification": "Auto Closure run 564 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head eec3b25b5a365ab3814c9cb87e248b233360bb26. Primary PostgreSQL remains authoritative; optional read routing remains explicit and evidence-gated."
+    },
+    "25.0C": {
+      "title": "Regional resilience and traffic control",
+      "source_head": "82901e8b3dd64753ff79358aac77e7af3f7d2b0c",
+      "effective_prepared_head": "82901e8b3dd64753ff79358aac77e7af3f7d2b0c",
+      "verification_run": 34972809650,
+      "verification": "Auto Closure run 568 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact 25.0C source head. Regional resilience remains evidence-gated with side-effect-free health semantics, mutation-safe retry policy, direct DNS-to-Caddy failback and Envoy deferred."
     }
   },
   "stage_progress": [
@@ -177,7 +184,7 @@
     },
     {
       "id": "25.0C",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Regional resilience and traffic control",
       "goals": [
         "evaluate multi-instance delivery, load balancing, regional placement and circuit breaking against measured evidence",
@@ -187,7 +194,7 @@
     },
     {
       "id": "25.0D",
-      "status": "planned",
+      "status": "implementing",
       "title": "External APM evaluation and stage closure",
       "goals": [
         "evaluate external APM only against demonstrated Stage 24/25 observability gaps",
@@ -196,7 +203,7 @@
       ]
     }
   ],
-  "next_tranche": "25.0D",
+  "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "d5eb48fd36ae3796de55201adbbf75c6d8ee99f4",
