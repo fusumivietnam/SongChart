@@ -8,29 +8,29 @@ $topology = json_decode((string) file_get_contents($topologyPath), true, 512, JS
 $steps = $topology['lanes']['canonical']['ordered_steps'] ?? null;
 
 if (! is_array($steps)) {
-    fwrite(STDERR, "Canonical verification topology is missing ordered_steps.\n");
+    fwrite(STDERR, 'Canonical verification topology is missing ordered_steps.'.PHP_EOL);
     exit(1);
 }
 
 $stageCount = count(array_keys($steps, '@stage:verify', true));
 if ($stageCount !== 1) {
-    fwrite(STDERR, "Canonical verification topology must contain @stage:verify exactly once before CI evidence can be reused.\n");
+    fwrite(STDERR, 'Canonical verification topology must contain @stage:verify exactly once before CI evidence can be reused.'.PHP_EOL);
     exit(1);
 }
 
 foreach ($steps as $step) {
     if ($step === '@stage:verify') {
-        fwrite(STDOUT, "[SongChart close] Reusing exact-head CHECK evidence for stage verification.\n");
+        fwrite(STDOUT, '[SongChart close] Reusing exact-head CHECK evidence for stage verification.'.PHP_EOL);
         continue;
     }
 
     if (! is_string($step) || ! str_starts_with($step, '@') || str_contains($step, ' ')) {
-        fwrite(STDERR, "Unsupported canonical close step [".(is_scalar($step) ? (string) $step : gettype($step))."].\n");
+        fwrite(STDERR, 'Unsupported canonical close step ['.(is_scalar($step) ? (string) $step : gettype($step)).'].'.PHP_EOL);
         exit(1);
     }
 
     $script = substr($step, 1);
-    fwrite(STDOUT, "[SongChart close] Running {$script}.\n");
+    fwrite(STDOUT, '[SongChart close] Running '.$script.'.'.PHP_EOL);
     $process = proc_open(
         ['composer', '--no-interaction', 'run-script', $script],
         [STDIN, STDOUT, STDERR],
@@ -39,9 +39,9 @@ foreach ($steps as $step) {
     );
 
     if (! is_resource($process) || proc_close($process) !== 0) {
-        fwrite(STDERR, "Canonical close step failed [{$script}].\n");
+        fwrite(STDERR, 'Canonical close step failed ['.$script.'].'.PHP_EOL);
         exit(1);
     }
 }
 
-fwrite(STDOUT, "[SongChart close] Canonical-only closure PASSED.\n");
+fwrite(STDOUT, '[SongChart close] Canonical-only closure PASSED.'.PHP_EOL);
