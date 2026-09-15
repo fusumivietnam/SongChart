@@ -83,7 +83,9 @@ Validate responsive/accessibility/browser evidence, verify no page-level design 
 - New provider, AI runtime, CDN, multi-region, APM or data-platform adoption.
 - Rewriting historical task contracts or validation records.
 
-## Repository authorities
+## Authority and official sources
+
+### Repository authorities
 
 - `PROJECT_AUTHORITY.md`
 - `AGENTS.md`
@@ -95,6 +97,22 @@ Validate responsive/accessibility/browser evidence, verify no page-level design 
 - `docs/ui/PHASE_3_UI_PREVIEW.md`
 - existing route/UI/design contracts and verification consumers
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
+
+### Installed versions
+
+Stage 26 introduces no package or runtime dependency. Exact installed versions remain lockfile-owned. The accepted runtime baseline remains PHP 8.5, Laravel 13, PostgreSQL 18, Redis, Caddy, Livewire, Node 24 and the repository-owned Docker verification topology.
+
+### Official external sources
+
+No external product or provider is required to implement 26.0A. Laravel, PHP, PostgreSQL and browser documentation remain upstream references only where an existing repository contract needs clarification. Figma, Grafana Cloud, Google Search Console, Bing Webmaster, IndexNow and other external systems remain governed by `docs/project/engineering/external-systems-registry.json`; Stage 26.0A does not promote any of them into a new runtime dependency.
+
+### Native capability assessment
+
+The repository already contains the required owners for this tranche: machine-readable stage authority, system-intersection authority, external-system governance, route authority, Design Authority, `/ui-preview`, generated project state, impact analysis and exact-head Auto Closure. The identified problem is stale or inconsistent authority text, not missing infrastructure. Existing repository capabilities are therefore sufficient.
+
+### Custom implementation justification
+
+SongChart-specific work is limited to reconciling repository-owned contracts that upstream frameworks cannot know: whether a stage is accepted, whether a partial edge is intentionally bounded, which external-system decision remains current, and which design/route authority is active. No generic drift platform, new registry layer or external dependency is justified for 26.0A unless repeated evidence later proves the existing verifiers cannot enforce a recurring invariant.
 
 ## Activation baseline
 
@@ -108,7 +126,7 @@ Candidate verification contract passed.
 
 No active product-stage branch existed when `stage-26-authority-product-coherence` was created. Dependabot maintenance PRs remain separate dependency-governance work and do not own Stage 26 product source.
 
-## Verification ownership
+## Tests and verification
 
 Use the existing repository workflow:
 
@@ -120,7 +138,7 @@ Use the existing repository workflow:
 ./songchart verify
 ```
 
-Use focused verification while implementing 26.0A; require exact-head Auto Closure before tranche acceptance/promotion. Generated authority must be reconciled by its existing owner rather than edited manually.
+Focused verification is used while implementing 26.0A. Exact-head Auto Closure is required before tranche acceptance/promotion. Generated authority is reconciled by its existing generator owner rather than edited manually. Official-source governance, candidate-stage identity, repository-state authority and generated-state consistency remain mandatory quality gates for this contract.
 
 ## Handoff rule
 
