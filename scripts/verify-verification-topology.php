@@ -92,7 +92,7 @@ foreach (['composer install --no-interaction --prefer-dist --no-progress', 'npm 
         $errors[] = "Canonical shell is missing preparation step [{$required}].";
     }
 }
-foreach (['SONGCHART_VERIFICATION_MODE', "mode\" == 'close'", 'php scripts/run-canonical-close.php'] as $requiredCloseMode) {
+foreach (['SONGCHART_VERIFICATION_MODE', '$mode', 'php scripts/run-canonical-close.php'] as $requiredCloseMode) {
     if (! str_contains($canonicalShell, $requiredCloseMode)) {
         $errors[] = "Canonical shell is missing close-mode behavior [{$requiredCloseMode}].";
     }
