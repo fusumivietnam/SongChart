@@ -9,10 +9,10 @@ Before making or recommending UI changes, read in order:
 1. `PROJECT_AUTHORITY.md` and `AGENTS.md`
 2. `docs/ui/DESIGN_AUTHORITY.md`
 3. the owning public/admin design contract
-4. existing shared components, tokens and `/ui-preview` patterns
+4. existing shared components, tokens and `/development/design-system` patterns
 5. `docs/ui/AI_DESIGN_HARNESS.md`
 
-SongChart authority always wins over generic external design guidance.
+The former `/ui-preview*` compatibility surface is retired. SongChart authority always wins over generic external design guidance.
 
 ## Impeccable vocabulary
 
