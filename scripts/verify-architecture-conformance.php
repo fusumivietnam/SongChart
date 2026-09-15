@@ -147,19 +147,19 @@ if (($readScaling['default_connection'] ?? null) !== 'pgsql'
 
 $allowedReadClassifications = ['primary_required', 'replica_eligible', 'insufficient_evidence'];
 foreach ((array) ($queryBudget['surfaces'] ?? []) as $surface => $definition) {
-    if (! is_array($definition)) {
+    if (is_array($definition) === false) {
         $errors[] = "Query budget surface [{$surface}] must be an object.";
 
         continue;
     }
 
     $classification = $definition['read_scaling'] ?? null;
-    if (! is_string($classification) || ! in_array($classification, $allowedReadClassifications, true)) {
+    if (is_string($classification) === false || in_array($classification, $allowedReadClassifications, true) === false) {
         $errors[] = "Query budget surface [{$surface}] has invalid read-scaling classification.";
     }
 
     $readModel = $definition['read_model'] ?? null;
-    if (is_string($readModel) && $readModel !== '' && ! is_file($root.'/'.$readModel)) {
+    if (is_string($readModel) && $readModel !== '' && is_file($root.'/'.$readModel) === false) {
         $errors[] = "Query budget surface [{$surface}] references missing read model [{$readModel}].";
     }
 }
@@ -183,12 +183,12 @@ $databaseConfig = (string) file_get_contents($root.'/config/database.php');
 foreach ([
     "'default' => env('DB_CONNECTION', 'pgsql')",
     "'pgsql_read' => [",
-    "DB_READ_HOST",
-    "DB_READ_DATABASE",
-    "DB_READ_USERNAME",
-    "DB_READ_PASSWORD",
+    'DB_READ_HOST',
+    'DB_READ_DATABASE',
+    'DB_READ_USERNAME',
+    'DB_READ_PASSWORD',
 ] as $requiredDatabaseToken) {
-    if (! str_contains($databaseConfig, $requiredDatabaseToken)) {
+    if (str_contains($databaseConfig, $requiredDatabaseToken) === false) {
         $errors[] = "Database config is missing Stage 25 read-scaling token [{$requiredDatabaseToken}].";
     }
 }
