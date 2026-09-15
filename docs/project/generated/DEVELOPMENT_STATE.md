@@ -5,20 +5,20 @@
 ## Current stage
 
 - Stage `24.0 — Operational Intelligence`
-- Status: `implementing`
-- Accepted through: `23.0`
+- Status: `accepted`
+- Accepted through: `24.0`
 - Task contract: `docs/foundation/STAGE_24_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `24.0A` — `IMPLEMENTING` — Runtime telemetry baseline
-- `24.0B` — `PLANNED` — Provider and data-pipeline health
-- `24.0C` — `PLANNED` — Scale scorecard and decision thresholds
-- `24.0D` — `PLANNED` — External observability evaluation and stage closure
+- `24.0A` — `ACCEPTED` — Runtime telemetry baseline
+- `24.0B` — `ACCEPTED` — Provider and data-pipeline health
+- `24.0C` — `ACCEPTED` — Scale scorecard and decision thresholds
+- `24.0D` — `ACCEPTED` — External observability evaluation and stage closure
 
 ## Next bounded tranche
 
-- `24.0B — Provider and data-pipeline health`
+- `unknown`
 
 ## Live work lease
 
