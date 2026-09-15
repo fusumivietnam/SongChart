@@ -4,10 +4,10 @@
     "id": "24.0",
     "title": "Operational Intelligence",
     "task_contract": "docs/foundation/STAGE_24_0_TASK_CONTRACT.md",
-    "status": "implementing"
+    "status": "accepted"
   },
-  "accepted_through": "23.0",
-  "active_tranche": "24.0A",
+  "accepted_through": "24.0",
+  "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -43,6 +43,13 @@
       "effective_prepared_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
       "verification_run": 34798952416,
       "verification": "Auto Closure run 479 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke with accessibility checks and SHA-bound visual evidence, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
+    },
+    "24.0": {
+      "title": "Operational Intelligence",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Auto Closure run 518 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact implementation head. The authored closure head must pass a fresh exact-head Auto Closure before merge."
     }
   },
   "accepted_tranche_evidence": {
@@ -101,12 +108,40 @@
       "effective_prepared_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
       "verification_run": 34798952416,
       "verification": "Auto Closure run 479 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke with WCAG-sensitive Axe coverage and SHA-bound visual evidence, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
+    },
+    "24.0A": {
+      "title": "Runtime telemetry baseline",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; runtime telemetry composition, unavailable semantics and read-only boundaries passed repository-owned quality and canonical verification."
+    },
+    "24.0B": {
+      "title": "Provider and data-pipeline health",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; provider sync, import and quarantine evidence composition passed PostgreSQL and canonical verification without moving provider evidence into canonical identity authority."
+    },
+    "24.0C": {
+      "title": "Scale scorecard and decision thresholds",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; measurable thresholds, insufficient-evidence semantics and disabled automatic infrastructure mutation passed repository-owned verification."
+    },
+    "24.0D": {
+      "title": "External observability evaluation and stage closure",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; external APM remained deferred without a demonstrated gap and Stage 24 passed canonical CLOSE, exact-tree preservation and ready-to-promote."
     }
   },
   "stage_progress": [
     {
       "id": "24.0A",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Runtime telemetry baseline",
       "goals": [
         "inventory and converge existing Pulse, Horizon and runtime evidence ownership",
@@ -116,7 +151,7 @@
     },
     {
       "id": "24.0B",
-      "status": "planned",
+      "status": "accepted",
       "title": "Provider and data-pipeline health",
       "goals": [
         "compose provider failures, freshness, ingestion/import and quarantine health without moving provider evidence into canonical authority",
@@ -125,7 +160,7 @@
     },
     {
       "id": "24.0C",
-      "status": "planned",
+      "status": "accepted",
       "title": "Scale scorecard and decision thresholds",
       "goals": [
         "compose runtime, queue, database, cache, provider and search visibility evidence into a measurable scale scorecard",
@@ -134,7 +169,7 @@
     },
     {
       "id": "24.0D",
-      "status": "planned",
+      "status": "accepted",
       "title": "External observability evaluation and stage closure",
       "goals": [
         "evaluate external observability only against demonstrated internal gaps and security/cost constraints",
@@ -142,10 +177,7 @@
       ]
     }
   ],
-  "next_tranche": {
-    "id": "24.0B",
-    "title": "Provider and data-pipeline health"
-  },
+  "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "18cf355aff62afca35fe600483dc14ad02c4a0c3",
