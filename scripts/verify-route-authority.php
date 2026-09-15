@@ -153,6 +153,7 @@ foreach ($viewRoots as $viewRoot) {
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($viewRoot, FilesystemIterator::SKIP_DOTS));
     foreach ($iterator as $file) {
         if ($file->isFile() === false || preg_match('/\.(php|blade\.php)$/', $file->getFilename()) !== 1) {
+
             continue;
         }
         $source = (string) file_get_contents($file->getPathname());
