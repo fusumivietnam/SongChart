@@ -1,56 +1,42 @@
 # Technology Stack
 
+This page is a human-readable overview. Current dependency and capability authority lives in `docs/project/stack/package-registry.json`, `docs/project/stack/stack-manifest.json`, the dependency manifests, and their lockfiles. Do not duplicate package inventories or exact resolved versions here.
+
 ## Runtime
 
-- PHP 8.4 as the project baseline.
+- PHP 8.5.
 - Laravel 13.
+- PostgreSQL 18.x; major 18 is the release-authoritative database baseline.
+- Redis for queue/cache runtime.
+- Node.js 24 for frontend build and browser tooling.
 - Composer 2.
-- Node.js current LTS for asset tooling.
-- Vite.
 
 ## Application
 
-- Blade for page composition.
-- Livewire 4 for interactive server-driven components.
-- Alpine.js for small client-side behavior.
+- Blade for server-rendered page composition.
+- Livewire 4 for meaningful server-backed interaction.
+- Alpine.js for local, ephemeral client-side state.
 - Tailwind CSS 4.2 with semantic design tokens.
 - Laravel Fortify for authentication backend.
-- Laravel Socialite for approved OAuth providers.
-- Laravel Sanctum only when a first-party API is actually required.
+- Laravel HTTP client for provider transport unless an approved capability owner replaces it.
 
-## Data
+## Operations
 
-- PostgreSQL 18.x; major 18 is the release-authoritative database baseline.
-- Redis for queue/cache in production; database queue may be used locally initially.
-- Laravel Scout abstraction.
-- Meilisearch introduced only after database search becomes a measured bottleneck.
-- Object storage only for first-party images/files.
+- Laravel Horizon is the primary Redis queue supervisor and queue-operations surface.
+- Laravel Pulse provides application-level operational observability.
+- Vite owns frontend asset compilation.
+- Docker Compose is the primary Linux/WSL2 development runtime and canonical verification runtime.
+- GitHub Codespaces is the supported remote development adapter over the same repository/runtime contract.
+- Native Windows execution and Laragon are retired execution paths.
 
 ## Quality
 
-- Pest.
-- Laravel Pint.
-- Larastan/PHPStan.
-- Rector for controlled upgrades.
-- GitHub Actions.
-- Conventional Commits.
-- Dependabot or Renovate.
+- Pest 4 for unit, feature, architecture, and browser verification.
+- Laravel Pint for formatting.
+- Larastan/PHPStan for static analysis.
+- GitHub Actions Auto Closure for exact-head PR verification.
+- Repository verification topology and generated authority remain governed by their machine-readable contracts.
 
-## Observability
+## Ownership
 
-- Structured application logs.
-- Laravel Pulse for application-level visibility where appropriate.
-- Error tracking service selected before production.
-- Provider request metrics: latency, status, quota and error category.
-
-## Local development
-
-Laragon:
-- Apache or Nginx.
-- PHP 8.4.
-- PostgreSQL.
-- Redis optional.
-- Mailpit.
-- HTTPS local domain preferred.
-
-Docker is optional and must not become a prerequisite during initial development.
+Use `docs/project/stack/STACK_OVERVIEW.md` and `docs/project/stack/CAPABILITY_OWNERSHIP.md` before changing a stack owner. Prefer Laravel/framework or existing approved capability owners before adding custom infrastructure or dependencies.
