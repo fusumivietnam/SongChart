@@ -4,21 +4,21 @@
 
 ## Current stage
 
-- Stage `24.0 — Operational Intelligence`
-- Status: `accepted`
+- Stage `25.0 — Global Delivery & Scale`
+- Status: `implementing`
 - Accepted through: `24.0`
-- Task contract: `docs/foundation/STAGE_24_0_TASK_CONTRACT.md`
+- Task contract: `docs/foundation/STAGE_25_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `24.0A` — `ACCEPTED` — Runtime telemetry baseline
-- `24.0B` — `ACCEPTED` — Provider and data-pipeline health
-- `24.0C` — `ACCEPTED` — Scale scorecard and decision thresholds
-- `24.0D` — `ACCEPTED` — External observability evaluation and stage closure
+- `25.0A` — `IMPLEMENTING` — Edge delivery and cache policy baseline
+- `25.0B` — `PLANNED` — Database connection and read scaling
+- `25.0C` — `PLANNED` — Regional resilience and traffic control
+- `25.0D` — `PLANNED` — External APM evaluation and stage closure
 
 ## Next bounded tranche
 
-- `unknown`
+- `25.0B`
 
 ## Live work lease
 
