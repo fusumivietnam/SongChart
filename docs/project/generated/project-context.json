@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "5dd50cc4170b60a8d4e4780028a6d9d8051a0f43b2fd2b1000f9d8cba26ae0cb",
+    "source_fingerprint": "0ee3c1af00e5c7f07986fccdb1d3e20b4c877eb7dc1778eacefbadb7a4dc140d",
     "candidate": {
         "stage": "23.0",
         "candidate": "v1",
@@ -1051,7 +1051,7 @@
     "source_hashes": {
         "app/Console/Commands/ProjectIntelligenceCommand.php": "527a7a842c3c59e7693835fa6012edc4af91f40710a3b8b5a80a3b1679b14bef",
         "compose.dev.yml": "693b9c94517ceac6c9e257d44f444fa045a5a1e806247704a5c8761970eab3af",
-        "compose.verify.yml": "c7c159febd2de52e39399a2741bf2da49432a1a1c5c7c39a3fc34842dfdd81fc",
+        "compose.verify.yml": "075a78e92ba512f3a1346c84a1f3ab35777b6c7330a3cf1625afb91ef824b041",
         "composer.json": "746d53779bb79341621aba94abed1f5a3107a3b322a6db1a62a8f2c6c3c7ec7c",
         "composer.lock": "b63317f16db0f9c19dbc241ad4bf964f552048ebde15a73d9e28c1c366e938af",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
@@ -1099,7 +1099,7 @@
         "docs/project/engineering/technology-watchlist.json": "a488a10b0f37b3be92b7be6a775454dd2a21006a57e81fab637200eb5b084c1b",
         "docs/project/engineering/use-case-contract.schema.json": "eddc2071d4f58c6e86fae9a87a687a591f597a82b032bd6c1df8bd6eec9ec2f0",
         "docs/project/engineering/verification-command-surface.json": "64fa57a5a66bf2f8a75e6baee8095002b3ad5696ee0306f6bc2d4a4b9d93ceb2",
-        "docs/project/engineering/verification-topology.json": "2e77d2926cc3212c4276bc45a64da0f68d4ff3b278286e04629f294c0d9aeb4a",
+        "docs/project/engineering/verification-topology.json": "f62b608aa22a3e508cb7e6313d3897bd488a60b57b073c90e009801ef82f377f",
         "docs/project/release/versioning-policy.json": "c4ebec8bf9a9dfb791a46f9532b428e15e647a045588d3bca004c85c59971ffe",
         "docs/project/stack/release-pipeline-contract.json": "03f1d0ef8e0c0c275f922d6e846b480d05b415d548b7bd6122501e5d0c85d4b4",
         "docs/project/stack/runtime-environments.json": "fc5fe4c02cfb7a03157d64e395dd16e4807fcd7fc53155bdf634a8b49123a449",
