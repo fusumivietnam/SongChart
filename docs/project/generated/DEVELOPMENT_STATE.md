@@ -13,12 +13,12 @@
 
 - `25.0A` — `ACCEPTED` — Edge delivery and cache policy baseline
 - `25.0B` — `ACCEPTED` — Database connection and read scaling
-- `25.0C` — `IMPLEMENTING` — Regional resilience and traffic control
-- `25.0D` — `PLANNED` — External APM evaluation and stage closure
+- `25.0C` — `ACCEPTED` — Regional resilience and traffic control
+- `25.0D` — `IMPLEMENTING` — External APM evaluation and stage closure
 
 ## Next bounded tranche
 
-- `25.0D`
+- `unknown`
 
 ## Live work lease
 

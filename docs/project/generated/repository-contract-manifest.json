@@ -1263,6 +1263,15 @@
             ]
         },
         {
+            "target": "tests/Architecture/DocumentationStage25ExternalObservabilityContractTest.php",
+            "rule": "ai-doc-governance",
+            "classification": "declarative",
+            "semantic_authorities": [
+                "ai-development-protocol",
+                "repository-compiler"
+            ]
+        },
+        {
             "target": "tests/Architecture/DomainContractRegistryTest.php",
             "rule": "schema-domain",
             "classification": "declarative",
@@ -1697,5 +1706,5 @@
             ]
         }
     ],
-    "graph_fingerprint": "bc57b52fab6b95626f4b65db080e6168e2b972eb437511d78abd6c9d1c035e66"
+    "graph_fingerprint": "eab20ee1c0f9f5fc3b4f876beed449e69946efadbbe1fd802c488d01a4dd9e30"
 }
