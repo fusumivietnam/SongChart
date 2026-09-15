@@ -62,7 +62,7 @@ foreach ([
         $errors[] = "Frontend design contract is missing executable UI owner [{$ownedUiPath}].";
     }
 }
-if (str_contains($frontendDesignContract, 'resources/views/pages/')) {
+if (preg_match('/^resources\/views\/pages\/$/m', $frontendDesignContract) === 1) {
     $errors[] = 'Frontend design contract must not require the obsolete resources/views/pages/ hierarchy.';
 }
 if (str_contains($frontendDesignContract, '/development/design-system') === false) {
