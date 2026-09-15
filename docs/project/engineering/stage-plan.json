@@ -1,12 +1,12 @@
 {
   "schema_version": 11,
   "current_stage": {
-    "id": "23.0",
-    "title": "Public Product UX",
-    "task_contract": "docs/foundation/STAGE_23_0_TASK_CONTRACT.md",
+    "id": "24.0",
+    "title": "Operational Intelligence",
+    "task_contract": "docs/foundation/STAGE_24_0_TASK_CONTRACT.md",
     "status": "accepted"
   },
-  "accepted_through": "23.0",
+  "accepted_through": "24.0",
   "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
@@ -43,6 +43,13 @@
       "effective_prepared_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
       "verification_run": 34798952416,
       "verification": "Auto Closure run 479 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke with accessibility checks and SHA-bound visual evidence, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact source head."
+    },
+    "24.0": {
+      "title": "Operational Intelligence",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Auto Closure run 518 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on the exact implementation head. The authored closure head must pass a fresh exact-head Auto Closure before merge."
     }
   },
   "accepted_tranche_evidence": {
@@ -101,55 +108,82 @@
       "effective_prepared_head": "fd538b0659296836a9c06d2cf3b19a34f8499493",
       "verification_run": 34798952416,
       "verification": "Auto Closure run 479 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke with WCAG-sensitive Axe coverage and SHA-bound visual evidence, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on the exact source head."
+    },
+    "24.0A": {
+      "title": "Runtime telemetry baseline",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; runtime telemetry composition, unavailable semantics and read-only boundaries passed repository-owned quality and canonical verification."
+    },
+    "24.0B": {
+      "title": "Provider and data-pipeline health",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; provider sync, import and quarantine evidence composition passed PostgreSQL and canonical verification without moving provider evidence into canonical identity authority."
+    },
+    "24.0C": {
+      "title": "Scale scorecard and decision thresholds",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; measurable thresholds, insufficient-evidence semantics and disabled automatic infrastructure mutation passed repository-owned verification."
+    },
+    "24.0D": {
+      "title": "External observability evaluation and stage closure",
+      "source_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "effective_prepared_head": "a7bc052933d4e2f86403db7317ab7a2a392360bc",
+      "verification_run": 34924143552,
+      "verification": "Accepted as part of Stage 24 exact-head Auto Closure run 518; external APM remained deferred without a demonstrated gap and Stage 24 passed canonical CLOSE, exact-tree preservation and ready-to-promote."
     }
   },
   "stage_progress": [
     {
-      "id": "23.0A",
+      "id": "24.0A",
       "status": "accepted",
-      "title": "Discovery and search product shell",
+      "title": "Runtime telemetry baseline",
       "goals": [
-        "align homepage discovery and search results with the approved search-first information hierarchy",
-        "preserve canonical search URL, filter and ranking ownership while making entity context and provenance legible",
-        "improve empty, partial and degraded public states without inventing results or ranking evidence",
-        "preserve desktop and mobile visual-review screenshots through the existing browser-smoke owner"
+        "inventory and converge existing Pulse, Horizon and runtime evidence ownership",
+        "define one operational metric vocabulary with explicit freshness and unavailable semantics",
+        "reuse bounded read-only Project Kernel/Admin/CLI surfaces without request-time source scans"
       ]
     },
     {
-      "id": "23.0B",
+      "id": "24.0B",
       "status": "accepted",
-      "title": "Canonical entity detail experience",
+      "title": "Provider and data-pipeline health",
       "goals": [
-        "refine canonical entity detail around shared identity, facts, relationships, provenance and provider destinations",
-        "preserve stable canonical URLs, metadata ownership and provider-neutral identity"
+        "compose provider failures, freshness, ingestion/import and quarantine health without moving provider evidence into canonical authority",
+        "define stable operational failure classes and timestamps for degraded data pipelines"
       ]
     },
     {
-      "id": "23.0C",
+      "id": "24.0C",
       "status": "accepted",
-      "title": "Persisted chart and provenance UX",
+      "title": "Scale scorecard and decision thresholds",
       "goals": [
-        "present persisted chart observations with metric semantics, provenance and freshness",
-        "distinguish unavailable evidence from valid zero or empty chart state"
+        "compose runtime, queue, database, cache, provider and search visibility evidence into a measurable scale scorecard",
+        "require metric thresholds and expected improvement before recommending infrastructure changes"
       ]
     },
     {
-      "id": "23.0D",
+      "id": "24.0D",
       "status": "accepted",
-      "title": "Mobile, accessibility, performance and stage closure",
+      "title": "External observability evaluation and stage closure",
       "goals": [
-        "normalize responsive public behavior and WCAG 2.2 AA-sensitive interactions",
-        "protect server-rendered primary metadata and close Stage 23 through exact-head repository verification"
+        "evaluate external observability only against demonstrated internal gaps and security/cost constraints",
+        "close Stage 24 through existing exact-head verification and canonical closure ownership"
       ]
     }
   ],
   "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
-    "accepted_main_sha": "84e05bed2cff63d5172e64b599e2f7e9d79971c5",
-    "accepted_main_workflow_run": 34624409179,
-    "stage_22_pull_request": 30,
-    "stage_23_branch": "stage-23-public-product-ux"
+    "accepted_main_sha": "18cf355aff62afca35fe600483dc14ad02c4a0c3",
+    "accepted_main_workflow_run": 34921198032,
+    "stage_23_pull_request": 35,
+    "stage_24_branch": "stage-24-operational-intelligence"
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",

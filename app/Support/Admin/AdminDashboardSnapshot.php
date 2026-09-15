@@ -9,12 +9,17 @@ use App\Models\ExtensionOperation;
 use App\Models\Provider;
 use App\Models\ProviderSyncRun;
 use App\Support\Engineering\ProjectIntelligenceSnapshotReader;
+use App\Support\Operations\OperationalIntelligenceSnapshot;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class AdminDashboardSnapshot
 {
-    public function __construct(private readonly ProjectIntelligenceSnapshotReader $projectIntelligence) {}
+    public function __construct(
+        private readonly ProjectIntelligenceSnapshotReader $projectIntelligence,
+        private readonly OperationalIntelligenceSnapshot $operationalIntelligence,
+    ) {}
 
     /** @return array<string, mixed> */
     public function build(): array
@@ -32,6 +37,10 @@ final class AdminDashboardSnapshot
         $failedImports = DB::table('provider_import_runs')->whereIn('status', ['failed', 'completed_with_errors'])->count();
         $quarantinedItems = DB::table('provider_import_items')->where('status', 'quarantined')->count();
         $openIdentityConflicts = DB::table('identity_conflict_reviews')->whereIn('status', ['open', 'deferred'])->count();
+        $latestFinishedAt = $recentSyncs->pluck('finished_at')->filter()->first();
+        $providerSyncAgeMinutes = $latestFinishedAt instanceof CarbonInterface
+            ? (int) $latestFinishedAt->diffInMinutes(now())
+            : null;
 
         return [
             'metrics' => [
@@ -101,6 +110,18 @@ final class AdminDashboardSnapshot
             'recentOperations' => $recentOperations,
             'systemNotices' => $this->systemNotices($providers, $recentSyncs),
             'developmentIntelligence' => $this->projectIntelligence->latest(),
+            'operationalIntelligence' => $this->operationalIntelligence->build([
+                'database_probe_ms' => null,
+                'queue_depth' => null,
+                'pulse_slow_events_15m' => null,
+                'cache_hit_ratio' => null,
+                'provider_sync_failures_24h' => $failedSyncs,
+                'provider_sync_age_minutes' => $providerSyncAgeMinutes,
+                'provider_import_failures_24h' => $failedImports,
+                'quarantined_items' => $quarantinedItems,
+                'open_identity_conflicts' => $openIdentityConflicts,
+                'search_visibility' => null,
+            ]),
         ];
     }
 

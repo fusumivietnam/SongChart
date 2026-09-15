@@ -1,51 +1,50 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "3513f18c69e0a211cdb4bc084121e460ac895e37c7c880ad8c9aed9f8d376119",
+    "source_fingerprint": "454e14298f5ac4ced9a796b6f27c153ea8915e6204b0d8c023d99ec2171db015",
     "current_stage": {
-        "id": "23.0",
-        "title": "Public Product UX",
-        "task_contract": "docs/foundation/STAGE_23_0_TASK_CONTRACT.md",
+        "id": "24.0",
+        "title": "Operational Intelligence",
+        "task_contract": "docs/foundation/STAGE_24_0_TASK_CONTRACT.md",
         "status": "accepted"
     },
-    "accepted_through": "23.0",
+    "accepted_through": "24.0",
     "stage_progress": [
         {
-            "id": "23.0A",
+            "id": "24.0A",
             "status": "accepted",
-            "title": "Discovery and search product shell",
+            "title": "Runtime telemetry baseline",
             "goals": [
-                "align homepage discovery and search results with the approved search-first information hierarchy",
-                "preserve canonical search URL, filter and ranking ownership while making entity context and provenance legible",
-                "improve empty, partial and degraded public states without inventing results or ranking evidence",
-                "preserve desktop and mobile visual-review screenshots through the existing browser-smoke owner"
+                "inventory and converge existing Pulse, Horizon and runtime evidence ownership",
+                "define one operational metric vocabulary with explicit freshness and unavailable semantics",
+                "reuse bounded read-only Project Kernel/Admin/CLI surfaces without request-time source scans"
             ]
         },
         {
-            "id": "23.0B",
+            "id": "24.0B",
             "status": "accepted",
-            "title": "Canonical entity detail experience",
+            "title": "Provider and data-pipeline health",
             "goals": [
-                "refine canonical entity detail around shared identity, facts, relationships, provenance and provider destinations",
-                "preserve stable canonical URLs, metadata ownership and provider-neutral identity"
+                "compose provider failures, freshness, ingestion/import and quarantine health without moving provider evidence into canonical authority",
+                "define stable operational failure classes and timestamps for degraded data pipelines"
             ]
         },
         {
-            "id": "23.0C",
+            "id": "24.0C",
             "status": "accepted",
-            "title": "Persisted chart and provenance UX",
+            "title": "Scale scorecard and decision thresholds",
             "goals": [
-                "present persisted chart observations with metric semantics, provenance and freshness",
-                "distinguish unavailable evidence from valid zero or empty chart state"
+                "compose runtime, queue, database, cache, provider and search visibility evidence into a measurable scale scorecard",
+                "require metric thresholds and expected improvement before recommending infrastructure changes"
             ]
         },
         {
-            "id": "23.0D",
+            "id": "24.0D",
             "status": "accepted",
-            "title": "Mobile, accessibility, performance and stage closure",
+            "title": "External observability evaluation and stage closure",
             "goals": [
-                "normalize responsive public behavior and WCAG 2.2 AA-sensitive interactions",
-                "protect server-rendered primary metadata and close Stage 23 through exact-head repository verification"
+                "evaluate external observability only against demonstrated internal gaps and security/cost constraints",
+                "close Stage 24 through existing exact-head verification and canonical closure ownership"
             ]
         }
     ],
@@ -55,9 +54,9 @@
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "7d206d77236b5cde71ab8b0951dc45fa532fed88ba275d32c35cf80159eef9ca",
+        "candidate-verification.json": "de723ed6cdaff4243ab6b16bec84c1844da6b2d682733ebb31e0ee29c9a4ef67",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "b0332ba49f6f2e8503631b72610ffca8001248d127901309e1b62a2be57e912a"
+        "docs/project/engineering/stage-plan.json": "a8e267a42cfe99e13d13233cee48aa97b5527845ce4c71c6552b87d6e00177b8"
     }
 }

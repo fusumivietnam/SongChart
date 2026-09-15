@@ -32,6 +32,7 @@
     "app/Application/Admin/Queries/ExtensionReadModel.php",
     "app/Application/Catalog/Queries/PublicRelationshipReadModel.php",
     "app/Application/Catalog/Queries/PublicProviderDestinationReadModel.php",
+    "app/Application/Operations/Queries/OperationalIntelligenceReadModel.php",
     "app/Support/Admin/AdminDashboardSnapshot.php",
     "app/Support/Admin/AdminInformationArchitecture.php",
     "app/Support/Admin/CatalogAdministration.php",

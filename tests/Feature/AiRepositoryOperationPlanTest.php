@@ -12,13 +12,18 @@ it('exposes a projection-only repository operation plan with explicit human writ
     expect($process->isSuccessful())->toBeTrue($process->getErrorOutput());
 
     $state = json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR);
+    $stagePlan = json_decode(
+        (string) file_get_contents(base_path('docs/project/engineering/stage-plan.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
     $plan = $state['control_plane']['repository_operation_plan'];
     $resume = $state['control_plane']['resume_workflow'];
 
     expect(in_array($plan['status'], ['ready_for_human_review', 'blocked'], true))->toBeTrue()
         ->and($plan['source'])->toBe('control_plane.operation_bundles + control_plane.resume_workflow')
-        ->and($plan['stage'])->toBe('23.0')
-        ->and($plan['active_tranche'])->toBeNull()
+        ->and($plan['stage'])->toBe($stagePlan['current_stage']['id'])
+        ->and($plan['active_tranche'])->toBe($stagePlan['active_tranche'] ?? null)
         ->and($plan['branch'])->toBe($resume['branch'])
         ->and($plan['head_sha'])->toBe($resume['head_sha'])
         ->and($plan['human_approval_required_for_writes'])->toBeTrue()
@@ -49,7 +54,7 @@ it('exposes a projection-only repository operation plan with explicit human writ
 });
 
 it('does not leak secrets through the repository operation plan', function (): void {
-    $secret = 'songchart-stage-23-operation-plan-secret';
+    $secret = 'songchart-repository-operation-plan-secret';
     $process = new Process(['bash', base_path('scripts/ai-status.sh'), '--json'], base_path(), [
         'DB_PASSWORD' => $secret,
         'YOUTUBE_API_KEY' => $secret,
