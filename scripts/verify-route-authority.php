@@ -31,19 +31,19 @@ foreach ($authority['retired_route_names'] ?? [] as $name) {
 foreach ($authority['canonical_design_system_route_names'] ?? [] as $name) {
     $suffix = str_replace('development.design-system.', '', (string) $name);
     if ($suffix === 'index') {
-        if (! str_contains($routes, "->name('index')")) {
+        if (!str_contains($routes, "->name('index')")) {
             $errors[] = 'Canonical development design-system index route is missing.';
         }
 
         continue;
     }
-    if (! str_contains($routes, "->name('{$suffix}')")) {
+    if (!str_contains($routes, "->name('{$suffix}')")) {
         $errors[] = "Canonical design-system route name is missing: {$name}.";
     }
 }
 
 $edge = $authority['edge_delivery'] ?? null;
-if (! is_array($edge)) {
+if (!is_array($edge)) {
     $errors[] = 'Edge delivery policy is missing from route authority.';
 } else {
     if (($edge['provider_mode'] ?? null) !== 'provider_neutral') {
@@ -65,14 +65,14 @@ if (! is_array($edge)) {
     $protectedPrefixes = ['/account', '/admin', '/development', '/search'];
     $classes = $edge['classes'] ?? [];
     foreach ($classes as $className => $class) {
-        if (! is_array($class)) {
+        if (!is_array($class)) {
             $errors[] = "Edge delivery class {$className} must be an object.";
             continue;
         }
 
         $sharedCache = $class['shared_cache'] ?? null;
         $patterns = $class['patterns'] ?? [];
-        if (! in_array($sharedCache, ['eligible', 'eligible_if_anonymous', 'bypass'], true)) {
+        if (!in_array($sharedCache, ['eligible', 'eligible_if_anonymous', 'bypass'], true)) {
             $errors[] = "Edge delivery class {$className} has an invalid shared_cache mode.";
         }
 
@@ -86,11 +86,11 @@ if (! is_array($edge)) {
             }
 
             foreach (['edge_ttl_seconds', 'invalidation'] as $required) {
-                if (! array_key_exists($required, $class)) {
+                if (!array_key_exists($required, $class)) {
                     $errors[] = "Shared-cache class {$className} is missing {$required}.";
                 }
             }
-            if (isset($class['edge_ttl_seconds']) && (! is_int($class['edge_ttl_seconds']) || $class['edge_ttl_seconds'] < 0)) {
+            if (isset($class['edge_ttl_seconds']) && (!is_int($class['edge_ttl_seconds']) || $class['edge_ttl_seconds'] < 0)) {
                 $errors[] = "Shared-cache class {$className} has an invalid edge_ttl_seconds value.";
             }
             if (($class['invalidation'] ?? []) === []) {
@@ -102,7 +102,7 @@ if (! is_array($edge)) {
     $privateClass = $classes['private_or_mutating'] ?? [];
     $privatePatterns = $privateClass['patterns'] ?? [];
     foreach (['/account*', '/admin*', '/development*'] as $requiredPattern) {
-        if (! in_array($requiredPattern, $privatePatterns, true)) {
+        if (!in_array($requiredPattern, $privatePatterns, true)) {
             $errors[] = "Private edge bypass is missing {$requiredPattern}.";
         }
     }
@@ -111,37 +111,37 @@ if (! is_array($edge)) {
     }
 
     $searchClass = $classes['dynamic_search'] ?? [];
-    if (($searchClass['shared_cache'] ?? null) !== 'bypass' || ! in_array('/search*', $searchClass['patterns'] ?? [], true)) {
+    if (($searchClass['shared_cache'] ?? null) !== 'bypass' || !in_array('/search*', $searchClass['patterns'] ?? [], true)) {
         $errors[] = 'Dynamic search must bypass shared cache until a bounded cache-key policy is accepted.';
     }
 
     $bypass = $edge['mandatory_bypass'] ?? [];
-    if (! in_array('Authorization', $bypass['request_headers_present'] ?? [], true)) {
+    if (!in_array('Authorization', $bypass['request_headers_present'] ?? [], true)) {
         $errors[] = 'Authorization-header requests must bypass shared cache.';
     }
-    if (! in_array('songchart_session', $bypass['cookies_present'] ?? [], true)) {
+    if (!in_array('songchart_session', $bypass['cookies_present'] ?? [], true)) {
         $errors[] = 'Session-cookie requests must bypass shared cache.';
     }
-    if (! in_array('Set-Cookie', $bypass['response_headers'] ?? [], true)) {
+    if (!in_array('Set-Cookie', $bypass['response_headers'] ?? [], true)) {
         $errors[] = 'Set-Cookie responses must bypass shared cache.';
     }
 
     $threshold = $edge['decision_thresholds']['investigate_edge_delivery'] ?? [];
     $signals = array_column($threshold['stage_24_signals_any'] ?? [], 'metric');
     foreach (['pulse_slow_events_15m', 'cache_hit_ratio'] as $metric) {
-        if (! in_array($metric, $signals, true)) {
+        if (!in_array($metric, $signals, true)) {
             $errors[] = "Edge investigation threshold must consume Stage 24 metric {$metric}.";
         }
     }
     foreach (['public_request_volume_baseline', 'public_p95_latency_baseline', 'origin_request_rate_baseline'] as $requiredEvidence) {
-        if (! in_array($requiredEvidence, $threshold['required_before_adoption'] ?? [], true)) {
+        if (!in_array($requiredEvidence, $threshold['required_before_adoption'] ?? [], true)) {
             $errors[] = "Edge adoption evidence is missing {$requiredEvidence}.";
         }
     }
 
     $config = (string) file_get_contents($configPath);
     foreach ($signals as $metric) {
-        if (! str_contains($config, "'{$metric}'")) {
+        if (!str_contains($config, "'{$metric}'")) {
             $errors[] = "Edge decision references unknown operational metric {$metric}.";
         }
     }
@@ -151,7 +151,7 @@ $viewRoots = [$root.'/resources/views', $root.'/tests'];
 foreach ($viewRoots as $viewRoot) {
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($viewRoot, FilesystemIterator::SKIP_DOTS));
     foreach ($iterator as $file) {
-        if (! $file->isFile() || ! preg_match('/\.(php|blade\.php)$/', $file->getFilename())) {
+        if (!$file->isFile() || !preg_match('/\.(php|blade\.php)$/', $file->getFilename())) {
             continue;
         }
         $source = (string) file_get_contents($file->getPathname());
