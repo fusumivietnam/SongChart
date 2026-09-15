@@ -8,6 +8,7 @@ This index lists active documentation ownership. Legacy stage records are migrat
 - `docs/START_HERE.md` — reading/routing entry point.
 - `docs/ATLAS.md` — private human-readable system map linking product, source, database, runtime, AI/MCP and delivery; orientation aid, not semantic authority.
 - `docs/DOCUMENTATION_GOVERNANCE.md` — documentation lifecycle and ownership.
+- `docs/project/engineering/ai-control-plane-contract.json` — task-scoped AI routing, code placement, skill projection, dependency-update and repository-hygiene policy.
 - `docs/project/engineering/stage-plan.json` — authored current-stage semantics.
 - `docs/project/generated/development-state.json` — generated current-state machine projection.
 - `docs/project/DEVELOPMENT_STATE.md` — compatibility pointer only.
@@ -44,6 +45,7 @@ This index lists active documentation ownership. Legacy stage records are migrat
 
 ### Engineering
 - `docs/project/engineering/ai-development-contract.json`
+- `docs/project/engineering/ai-control-plane-contract.json`
 - `docs/project/engineering/project-knowledge.json`
 - `docs/project/engineering/project-kernel-contract.json`
 - `docs/project/engineering/architecture-graph-contract.json`
