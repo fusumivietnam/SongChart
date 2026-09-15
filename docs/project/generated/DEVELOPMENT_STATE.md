@@ -5,8 +5,8 @@
 ## Current stage
 
 - Stage `26.0 — Authority & Product Design Coherence`
-- Status: `implementing`
-- Accepted through: `25.0`
+- Status: `accepted`
+- Accepted through: `26.0`
 - Task contract: `docs/foundation/STAGE_26_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -14,7 +14,7 @@
 - `26.0A` — `ACCEPTED` — Authority Drift Closure
 - `26.0B` — `ACCEPTED` — Executable UI Contract Closure
 - `26.0C` — `ACCEPTED` — Canonical Product Screens
-- `26.0D` — `IMPLEMENTING` — Product-Coherence Closure
+- `26.0D` — `ACCEPTED` — Product-Coherence Closure
 
 ## Next bounded tranche
 
