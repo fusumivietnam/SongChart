@@ -2,7 +2,7 @@
 
 ## Status
 
-Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. `27.0A — Minimal Product Event Contract` and `27.0B — Favorites & Collections Closure` are accepted. This contract now authorizes only `27.0C — Recent & Local State` until exact-head verification accepts it.
+Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. `27.0A — Minimal Product Event Contract`, `27.0B — Favorites & Collections Closure` and `27.0C — Recent & Local State` are accepted. This contract now authorizes only `27.0D — Retention Measurement & Stage Closure` until exact-head verification accepts it.
 
 ## Goal
 
@@ -34,8 +34,9 @@ Minimality must not weaken privacy, abuse resistance, canonical authority, data 
 7. Event payloads prefer stable SongChart identifiers and coarse enums over copied canonical records or arbitrary request blobs.
 8. Derived metrics/snapshots are preferred over feeding raw event streams directly to AI.
 9. Stage 27.0A accepted aggregate-only search signals. Stage 27.0B accepted the minimum authenticated saved-entity/user-library primitive and preserved canonical catalog collections as separate authority.
-10. Stage 27.0C must prefer bounded browser-local state over server persistence when the return-loop value does not require account durability or cross-device sync.
-11. No recommendation graph, public playlists/community, visitor chatbot, experimentation platform, warehouse or streaming system is authorized by this contract.
+10. Stage 27.0C accepted bounded browser-local recent state without server identity, sync or telemetry expansion.
+11. 27.0D must not label search-volume change, saved-item count or browser-local recent state as D1/D7 retention. Retention remains `insufficient_evidence` unless accepted telemetry can establish a governed return cohort.
+12. No recommendation graph, public playlists/community, visitor chatbot, experimentation platform, warehouse or streaming system is authorized by this contract.
 
 ## Tranches
 
@@ -74,26 +75,36 @@ Acceptance evidence is owned by `docs/project/engineering/stage-plan.json` and A
 
 ### 27.0C — Recent & Local State
 
-Active implementation target.
+Accepted.
 
-Evaluate recently viewed/recent searches and anonymous local state only where they improve the return loop without unnecessary server retention.
+Accepted implementation:
 
-Required 27.0C closure:
+- recent searches and canonical entities are kept browser-local using the existing Alpine runtime and `localStorage`;
+- each recent-state group is capped at 8 items and expires after 30 days;
+- only minimum reopen fields are stored and URLs must remain same-origin relative paths;
+- storage failure degrades safely and users can explicitly clear the local state;
+- no anonymous server identifier, fingerprinting, account sync, cross-device merge or product telemetry expansion was introduced;
+- browser verification proves bounded retention, expiry, safe URL handling and explicit clearing.
 
-- audit current search/entity/account surfaces for an existing recent-state owner before adding code;
-- prefer browser-local state when server durability, account ownership and cross-device synchronization are not required;
-- keep recent state bounded by a small item cap and explicit expiry/age semantics;
-- store only the minimum client-side fields required to reopen a search or canonical entity; do not copy full canonical records or request payloads;
-- do not create anonymous server identifiers, fingerprinting, background sync or cross-device merge semantics;
-- do not convert local recent state into product telemetry merely because it exists;
-- make clear that clearing browser/site storage removes anonymous local history;
-- reuse existing Blade/Alpine/frontend runtime and route helpers; add no state-management package or analytics SDK;
-- expose only a minimal return-loop interaction when it is supported by current public UX;
-- add focused tests/verification for bounded retention, expiry and safe rendering behavior where repository ownership can exercise them deterministically.
+Acceptance evidence is owned by `docs/project/engineering/stage-plan.json` and Auto Closure run 707.
 
 ### 27.0D — Retention Measurement & Stage Closure
 
-Deferred. Define bounded return/retention metrics from accepted signals; no recommendation or notification expansion without evidence.
+Active implementation target.
+
+Define only measurements supported by accepted evidence and close Stage 27 without inventing retention semantics.
+
+Required 27.0D closure:
+
+- expose a bounded read model over the accepted aggregate search table for search volume, zero-result count/rate and average results per search;
+- give those metrics a concrete read-only operator consumer using the existing Admin System surface rather than creating a second analytics dashboard;
+- keep the reporting window bounded and deterministic;
+- represent D1/D7 or cohort retention as `insufficient_evidence` because accepted telemetry contains no user/session linkage;
+- do not infer retention from aggregate search growth, saved-item counts or browser-local history;
+- do not activate `favorite.*`, `entity.viewed` or other deferred signals merely to manufacture a retention metric;
+- any future cohort retention requires a new explicit privacy/retention review before user, anonymous or session linkage may be persisted;
+- add focused tests for aggregate math, window filtering, empty evidence and `insufficient_evidence` semantics;
+- close Stage 27 only after exact-head Auto Closure passes on the final source head.
 
 ## Explicit non-goals
 
@@ -104,7 +115,8 @@ Deferred. Define bounded return/retention metrics from accepted signals; no reco
 - Recommendation/community/native-app/visitor-AI work.
 - Autonomous product mutation based on telemetry.
 - Reusing canonical catalog `collections` as authenticated user-library persistence.
-- Anonymous server-side recent-history tables, device fingerprinting or cross-device recent-state synchronization in 27.0C.
+- Anonymous server-side recent-history tables, device fingerprinting or cross-device recent-state synchronization.
+- Claiming D1/D7/cohort retention from anonymous daily search aggregates.
 
 ## Authority and official sources
 
@@ -150,8 +162,8 @@ Use existing SongChart ownership rather than a second telemetry/user-state test 
 ./songchart verify
 ```
 
-Architecture tests must prove contract/privacy/authority boundaries. PostgreSQL tests must prove schema, user ownership, duplicate/idempotent semantics and deletion behavior for any durable user-state persistence. Existing browser/account coverage should be extended only when a user-visible interaction is introduced. For 27.0C, browser-local state must remain bounded and expire safely without creating server-side anonymous history. Exact-head Auto Closure remains the acceptance gate.
+Architecture tests must prove contract/privacy/authority boundaries. PostgreSQL tests must prove any durable persistence and aggregate reporting semantics. Existing browser/admin coverage should be extended only when required by a user-visible interaction. For 27.0D, tests must prove aggregate math and that unsupported cohort retention remains explicitly unavailable. Exact-head Auto Closure remains the acceptance gate.
 
 ## Handoff rule
 
-Implement only `27.0C`. Reuse existing capabilities where they fit. Do not begin 27.0D until 27.0C has accepted evidence. Do not broaden 27.0C into server-side anonymous tracking, cross-device sync, recommendations, notifications or community features.
+Implement only `27.0D`. Reuse the existing product aggregate table and Admin System surface. Do not add identity/session linkage, activate deferred events, recommendations, notifications or external analytics to force a retention number. Stage 27 closes only after 27.0D exact-head acceptance evidence is recorded.
