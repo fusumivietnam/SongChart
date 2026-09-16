@@ -2,7 +2,7 @@
 
 ## Status
 
-Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. This contract authorizes only the first tranche, `27.0A — Minimal Product Event Contract`, until exact-head verification accepts it.
+Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. `27.0A — Minimal Product Event Contract` is accepted; this contract now authorizes only `27.0B — Favorites & Collections Closure` until exact-head verification accepts it.
 
 ## Goal
 
@@ -33,51 +33,52 @@ Minimality must not weaken privacy, abuse resistance, canonical authority, data 
 6. Anonymous identifiers, if required, must be bounded and privacy-classified; Stage 27 does not authorize cross-device fingerprinting.
 7. Event payloads prefer stable SongChart identifiers and coarse enums over copied canonical records or arbitrary request blobs.
 8. Derived metrics/snapshots are preferred over feeding raw event streams directly to AI.
-9. Stage 27.0A is taxonomy/contract/storage/producer proof only. Favorites/collections closure, recent history, anonymous-to-account merge and retention optimization remain later tranches.
+9. Stage 27.0A accepted aggregate-only search signals. Stage 27.0B may add only the minimum authenticated favorites/user-collection behavior justified by current MVP scope and must not reuse canonical catalog collections as user-owned state.
 10. No recommendation graph, public playlists/community, visitor chatbot, experimentation platform, warehouse or streaming system is authorized by this contract.
 
 ## Tranches
 
 ### 27.0A — Minimal Product Event Contract
 
-Active implementation target.
+Accepted.
 
-Initial candidate event vocabulary, subject to repository audit before implementation:
+Accepted implementation:
 
-- `search.performed`
-- `search.zero_result`
-- `entity.viewed`
-- `relationship.clicked`
-- `provider.clicked`
-- `favorite.added`
-- `favorite.removed`
-- `collection.updated`
+- `search.performed` and `search.zero_result` are the only active product signals;
+- persistence is aggregate-only and first-page-only in `product_search_daily_aggregates`;
+- grouping is limited to day + entity type filter + sort order;
+- no raw event rows, query text/hash, user id, session id, IP, user agent, cookie value or request payload are stored;
+- pagination, empty searches and disabled telemetry are excluded;
+- PostgreSQL native `INSERT ... ON CONFLICT` performs atomic increments;
+- telemetry write failure must not fail public search;
+- `entity.viewed`, relationship/provider clicks and favorites/collections signals remain deferred until their producer/consumer ownership is demonstrated.
 
-Do not implement a candidate event merely because it appears in this list. A producer and measurable consumer must exist or be part of the same bounded tranche.
-
-Required closure for each implemented event:
-
-- stable event name and schema/version;
-- producer location and trigger semantics;
-- actor/anonymous semantics;
-- canonical entity reference semantics where relevant;
-- purpose and owning metric;
-- PII/privacy class;
-- retention and deletion behavior;
-- sampling/deduplication/idempotency semantics where relevant;
-- consumer/query or derived metric proof;
-- PostgreSQL-backed verification when persistence is activated.
-
-Current contract decision:
-
-- `search.performed` and `search.zero_result` are approved at contract level because the search flow exposes a stable application boundary and measurable demand/zero-result metrics;
-- `entity.viewed` remains candidate-only until a concrete metric/action consumer is demonstrated;
-- relationship/provider click and favorites/collections events remain deferred until corresponding producer/consumer ownership exists;
-- contract approval alone does not authorize persistence.
+Acceptance evidence is owned by `docs/project/engineering/stage-plan.json` and Auto Closure run 657.
 
 ### 27.0B — Favorites & Collections Closure
 
-Deferred until 27.0A is accepted. Audit current MVP behavior first; close only demonstrated persistence/product gaps and attach signal producers from the accepted event contract.
+Active implementation target.
+
+Audit current MVP behavior first; close only demonstrated persistence/product gaps and attach signal producers only when the accepted product-event contract has a real producer and metric consumer.
+
+Current audit findings:
+
+- MVP scope explicitly includes favorites and user collections;
+- the existing `collections` table/model belongs to the canonical catalog and has no user ownership; it must not be repurposed as user-library state;
+- public `/collections` routes/catalog surfaces therefore remain canonical catalog behavior, not authenticated user collections;
+- no current repository implementation was found for authenticated favorites/user collections.
+
+Required 27.0B closure:
+
+- define a distinct user-state owner that does not weaken canonical catalog authority;
+- prefer one minimal saved-item/favorite primitive before introducing arbitrary playlist/community semantics;
+- reuse existing authenticated account/application boundaries;
+- authorize only stable canonical SongChart entity references that current product surfaces can resolve safely;
+- define duplicate/idempotent add/remove semantics and user ownership enforcement;
+- define deletion behavior when the user/account is removed and safe behavior when a referenced canonical entity becomes unavailable;
+- expose only the minimum account/public interaction needed for MVP value;
+- add `favorite.added` / `favorite.removed` signals only if the producer and a measurable retention/product consumer are implemented in the same tranche;
+- do not create recommendation ranking, sharing, follows, comments, collaborative playlists or public community scope.
 
 ### 27.0C — Recent/Local State
 
@@ -95,6 +96,7 @@ Deferred. Define bounded return/retention metrics from accepted signals; no reco
 - Copying raw HTTP requests, headers, IP addresses, user agents or arbitrary search text into durable telemetry without an explicit privacy/product need.
 - Recommendation/community/native-app/visitor-AI work.
 - Autonomous product mutation based on telemetry.
+- Reusing canonical catalog `collections` as authenticated user-library persistence.
 
 ## Authority and official sources
 
@@ -104,9 +106,12 @@ Deferred. Define bounded return/retention metrics from accepted signals; no reco
 - `AGENTS.md`
 - `docs/project/engineering/stage-plan.json`
 - `docs/project/docs/ROADMAP.md`
+- `docs/project/docs/SCOPE.md`
+- `docs/project/docs/ARCHITECTURE.md`
 - `docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md`
 - `docs/project/product/product-event-contract.json`
 - current search/entity/chart/account implementation and tests
+- canonical catalog collection model/schema/routes
 - privileged-audit authority and `docs/operations/privileged-audit.md`
 
 ### Installed versions
@@ -115,19 +120,19 @@ Use repository lockfiles and `composer.json` as executable version authority. St
 
 ### Official external sources
 
-No external analytics provider is required for 27.0A. If a framework/package behavior question becomes material, consult the version-matched official Laravel/PHP/PostgreSQL documentation before custom implementation. No third-party analytics documentation is authoritative for SongChart product-event semantics.
+No external analytics provider is required for Stage 27. If a framework/package behavior question becomes material, consult the version-matched official Laravel/PHP/PostgreSQL documentation before custom implementation. No third-party analytics documentation is authoritative for SongChart product-event or user-library semantics.
 
 ### Native capability assessment
 
-Before adding storage or abstractions, inspect existing Laravel events/listeners, application services, request/session/auth context, PostgreSQL tables/indexes, queues, cache and repository verification consumers. Prefer existing Laravel/PHP/PostgreSQL capability when it satisfies the contract. `spatie/laravel-activitylog` is explicitly excluded as a product-telemetry owner because its accepted authority is privileged/business audit.
+Before adding storage or abstractions, inspect existing Laravel authentication, policies, Eloquent relationships, application services, PostgreSQL tables/indexes, queues, cache and repository verification consumers. Prefer existing Laravel/PHP/PostgreSQL capability when it satisfies the contract. `spatie/laravel-activitylog` is explicitly excluded as a product-telemetry owner because its accepted authority is privileged/business audit.
 
 ### Custom implementation justification
 
-Custom telemetry code is allowed only when the repository lacks a suitable non-audit owner and the implementation is smaller than adopting an external analytics/event platform. Any custom recorder/storage must be typed, bounded, disable-able, privacy-classified, PostgreSQL-verifiable and attached to a named metric consumer. No generic event bus is justified by 27.0A.
+Custom telemetry or user-state code is allowed only when the repository lacks a suitable owner and the implementation is smaller than adopting an external platform or generalized subsystem. Any custom recorder/storage must be typed, bounded, disable-able where appropriate, privacy-classified, PostgreSQL-verifiable and attached to a named product use case. No generic event bus, social graph or playlist platform is justified by Stage 27.
 
 ## Tests and verification
 
-Use existing SongChart ownership rather than a second telemetry test framework:
+Use existing SongChart ownership rather than a second telemetry/user-state test framework:
 
 ```bash
 ./songchart ai status --json
@@ -137,8 +142,8 @@ Use existing SongChart ownership rather than a second telemetry test framework:
 ./songchart verify
 ```
 
-Focused architecture tests must prove contract/privacy/authority boundaries. If persistence is later activated inside 27.0A, focused PostgreSQL tests must additionally prove schema, retention/deletion behavior and derived metric consumption. Exact-head Auto Closure remains the acceptance gate.
+Architecture tests must prove contract/privacy/authority boundaries. PostgreSQL tests must prove schema, user ownership, duplicate/idempotent semantics and deletion behavior for any 27.0B persistence. Existing browser/account coverage should be extended only when a user-visible interaction is introduced. Exact-head Auto Closure remains the acceptance gate.
 
 ## Handoff rule
 
-Implement only `27.0A`. Reuse existing capabilities where they fit. Do not begin 27.0B–27.0D until 27.0A has accepted evidence. Persistence remains deferred until every activation gate in `docs/project/product/product-event-contract.json` is satisfied.
+Implement only `27.0B`. Reuse existing capabilities where they fit. Do not begin 27.0C–27.0D until 27.0B has accepted evidence. Do not broaden 27.0B into recommendations, community features, public playlists or canonical catalog collection redesign.
