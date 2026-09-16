@@ -3,7 +3,10 @@
 declare(strict_types=1);
 
 use App\Application\ProductSignals\RecordSearchProductSignal;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+
+uses(RefreshDatabase::class);
 
 it('aggregates first-page search and zero-result signals without user-level data', function (): void {
     config(['product-signals.search.enabled' => true]);
