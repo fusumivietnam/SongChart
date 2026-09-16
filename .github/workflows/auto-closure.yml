@@ -216,5 +216,6 @@ jobs:
             fi
             echo '- Human gate: merge this exact PR head in GitHub'
             echo '- Sticky PR dashboard / owner notification: updated by authorized ChatGPT/GitHub connector automation'
-            echo '- Any new source commit invalidates this evidence and restarts auto closure; stale source runs are cancelled automatically.'
+            echo '- Any new commit invalidates this evidence and restarts auto closure'
+            echo '- Stale source-head runs are cancelled automatically; generated-authority refreshes are isolated from source-run concurrency.'
           } >> "$GITHUB_STEP_SUMMARY"
