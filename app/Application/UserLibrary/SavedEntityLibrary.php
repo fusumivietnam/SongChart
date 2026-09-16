@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UserLibrary;
 
+use App\Domain\Catalog\Enums\EntityType;
 use App\Models\User;
 use App\Models\UserSavedEntity;
 use App\Support\Catalog\PublicEntityUrl;
@@ -21,7 +22,7 @@ final class SavedEntityLibrary
             ->latest('created_at')
             ->get()
             ->map(function (UserSavedEntity $saved): array {
-                $type = $saved->entity_type;
+                $type = EntityType::from((string) $saved->getAttribute('entity_type'));
                 $modelClass = $type->modelClass();
                 $entity = $modelClass::query()->find($saved->entity_id);
 
@@ -37,7 +38,7 @@ final class SavedEntityLibrary
 
                 $slug = (string) $entity->getAttribute($this->contracts->slugField($type));
                 $title = (string) $entity->getAttribute($this->contracts->displayField($type));
-                $artistType = $type->value === 'artist' ? (string) ($entity->getAttribute('artist_type') ?? '') : null;
+                $artistType = $type === EntityType::Artist ? (string) ($entity->getAttribute('artist_type') ?? '') : null;
 
                 return [
                     'type' => $type,
