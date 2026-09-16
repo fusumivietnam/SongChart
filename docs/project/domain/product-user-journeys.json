@@ -84,7 +84,7 @@
     },
     "member.manage_library": {
       "actor": "authenticated_active_verified_user",
-      "status": "stage-27-foundation",
+      "status": "implemented-foundation",
       "goal": "Save canonical music entities into a private personal library and remove them later without mutating canonical catalog state.",
       "route_names": [
         "account.saved.index",
@@ -97,6 +97,7 @@
         "idempotent save semantics",
         "private account-scoped read model"
       ],
+      "stage_20_gaps": [],
       "stage_27_constraints": [
         "Canonical collections remain catalog/editorial state and are never reused as user-library persistence.",
         "Saved-library records remain private account state and never alter provider-neutral canonical identity.",
