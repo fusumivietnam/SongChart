@@ -6,7 +6,7 @@ it('keeps recent discovery state browser-local bounded and safe', function (): v
     visit('/search')
         ->assertSee('Bắt đầu bằng một từ khóa')
         ->assertScript(
-            "(() => { const store = window.Alpine.store('recentState'); store.clear(); for (let i = 0; i < 12; i += 1) { store.addSearch({ query: `Query ${i}`, type: 'all', sort: 'relevance', url: `/search?q=Query+${i}` }); } return store.searches.length === 8 && store.searches[0].query === 'Query 11' && store.searches[7].query === 'Query 4'; })()",
+            "(() => { const store = window.Alpine.store('recentState'); store.clear(); for (let i = 0; i < 12; i += 1) { store.addSearch({ query: 'Query ' + i, type: 'all', sort: 'relevance', url: '/search?q=Query+' + i }); } return store.searches.length === 8 && store.searches[0].query === 'Query 11' && store.searches[7].query === 'Query 4'; })()",
             true,
         )
         ->assertScript(
