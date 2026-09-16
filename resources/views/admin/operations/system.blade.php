@@ -83,6 +83,23 @@
     @endcan
 </section>
 
+<section class="mt-8" aria-labelledby="product-signals-heading">
+    <div class="mb-4">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Product signals · {{ $productSignals['window_days'] }} ngày</p>
+        <h2 id="product-signals-heading" class="mt-1 text-xl font-bold">Nhu cầu & chất lượng tìm kiếm</h2>
+        <p class="mt-1 max-w-3xl text-sm leading-6 text-slate-500">Chỉ dùng aggregate đã được phê duyệt. Không có query text, user id, session id hoặc fingerprint.</p>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-admin-section="product-signals">
+        <x-ui.card><p class="text-sm text-slate-500">Lượt tìm kiếm</p><p class="mt-2 text-xl font-bold">{{ number_format($productSignals['search_count']) }}</p></x-ui.card>
+        <x-ui.card><p class="text-sm text-slate-500">Không có kết quả</p><p class="mt-2 text-xl font-bold">{{ number_format($productSignals['zero_result_count']) }}</p></x-ui.card>
+        <x-ui.card><p class="text-sm text-slate-500">Zero-result rate</p><p class="mt-2 text-xl font-bold">{{ number_format($productSignals['zero_result_rate'] * 100, 1) }}%</p></x-ui.card>
+        <x-ui.card><p class="text-sm text-slate-500">Kết quả TB / search</p><p class="mt-2 text-xl font-bold">{{ number_format($productSignals['average_results_per_search'], 2) }}</p></x-ui.card>
+    </div>
+    <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950" data-retention-status="{{ $productSignals['retention_status'] }}">
+        <strong>Retention: {{ $productSignals['retention_status'] }}.</strong> {{ $productSignals['retention_reason'] }}
+    </div>
+</section>
+
 <section class="mt-8" aria-labelledby="system-health-heading">
     <div class="mb-4"><h2 id="system-health-heading" class="text-xl font-bold">Sức khỏe hệ thống</h2><p class="mt-1 text-sm text-slate-500">Thông tin runtime read-only phục vụ chẩn đoán vận hành.</p></div>
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" data-admin-section="system-health">@foreach($checks as $check)<x-ui.card><p class="text-sm text-slate-500">{{ $check['label'] }}</p><p class="mt-2 text-xl font-bold">{{ $check['value'] }}</p><p class="mt-2 text-xs uppercase tracking-wide text-slate-400">{{ $check['state'] }}</p></x-ui.card>@endforeach</div>

@@ -4,17 +4,17 @@
 
 ## Current stage
 
-- Stage `26.0 — Authority & Product Design Coherence`
+- Stage `27.0 — Product Signals & Retention`
 - Status: `accepted`
-- Accepted through: `26.0`
-- Task contract: `docs/foundation/STAGE_26_0_TASK_CONTRACT.md`
+- Accepted through: `27.0`
+- Task contract: `docs/foundation/STAGE_27_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `26.0A` — `ACCEPTED` — Authority Drift Closure
-- `26.0B` — `ACCEPTED` — Executable UI Contract Closure
-- `26.0C` — `ACCEPTED` — Canonical Product Screens
-- `26.0D` — `ACCEPTED` — Product-Coherence Closure
+- `27.0A` — `ACCEPTED` — Minimal Product Event Contract
+- `27.0B` — `ACCEPTED` — Favorites & Collections Closure
+- `27.0C` — `ACCEPTED` — Recent & Local State
+- `27.0D` — `ACCEPTED` — Retention Measurement Closure
 
 ## Next bounded tranche
 

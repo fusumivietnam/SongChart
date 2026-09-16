@@ -1,53 +1,53 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "f211a63bc4bd864c26a159f9703d1f27968dd5dea69da273fdc3c5a820b48d61",
+    "source_fingerprint": "03fc44b14de8b5fce69d64d6c646c7d738e1255c2bdb3280414c81a9510713d2",
     "current_stage": {
-        "id": "26.0",
-        "title": "Authority & Product Design Coherence",
-        "task_contract": "docs/foundation/STAGE_26_0_TASK_CONTRACT.md",
+        "id": "27.0",
+        "title": "Product Signals & Retention",
+        "task_contract": "docs/foundation/STAGE_27_0_TASK_CONTRACT.md",
         "status": "accepted"
     },
-    "accepted_through": "26.0",
+    "accepted_through": "27.0",
     "stage_progress": [
         {
-            "id": "26.0A",
+            "id": "27.0A",
             "status": "accepted",
-            "title": "Authority Drift Closure",
+            "title": "Minimal Product Event Contract",
             "goals": [
-                "reconcile stale current-state authority with accepted Stage 22-25 repository reality",
-                "preserve intentional partial capability states without falsely reopening accepted stage work",
-                "remove stale stage-specific external-system decisions while keeping evidence-gated boundaries"
+                "define only product signals with demonstrated producer and measurable consumer ownership",
+                "separate product telemetry from canonical music-domain and privileged audit authority",
+                "establish privacy, retention, sampling and persistence gates before raw event storage is allowed"
             ]
         },
         {
-            "id": "26.0B",
+            "id": "27.0B",
             "status": "accepted",
-            "title": "Executable UI Contract Closure",
+            "title": "Favorites & Collections Closure",
             "goals": [
-                "reuse existing semantic tokens, components and canonical design-system patterns",
-                "close only demonstrated executable design-contract gaps",
-                "avoid parallel design-system or frontend-framework authority"
+                "audit MVP user-value ownership before adding persistence or UI",
+                "reuse existing account/catalog boundaries where possible",
+                "avoid recommendation or community scope"
             ]
         },
         {
-            "id": "26.0C",
+            "id": "27.0C",
             "status": "accepted",
-            "title": "Canonical Product Screens",
+            "title": "Recent & Local State",
             "goals": [
-                "prove shared design authority on representative public and admin screens",
-                "reuse compliant existing screens before redesign",
-                "preserve Blade and Livewire as the default frontend stack"
+                "add recent searches/views only when telemetry and privacy semantics justify them",
+                "prefer bounded local/browser state where server durability is not required",
+                "define governed anonymous-to-account behavior before sync"
             ]
         },
         {
-            "id": "26.0D",
+            "id": "27.0D",
             "status": "accepted",
-            "title": "Product-Coherence Closure",
+            "title": "Retention Measurement Closure",
             "goals": [
-                "close remaining representative responsive and accessibility drift",
-                "record browser and visual evidence where current coverage is insufficient",
-                "close Stage 26 through existing exact-head verification ownership"
+                "derive measurable return-value metrics from accepted product signals",
+                "close retention evidence without recommendation or notification overreach",
+                "close Stage 27 through existing exact-head verification ownership"
             ]
         }
     ],
@@ -57,9 +57,9 @@
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "ca41488c57745cb916d39fd6a852b81e334e7f8c59ba60e3555a21a30bed0e81",
+        "candidate-verification.json": "591b046cf2812313e2b90425aabe9258a9ad630dd00901111412730020f45ce8",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "d5c74d3cda91329b4723c9ea62b1bcb8e61746b3c01fa95b2baa5577606b37e9"
+        "docs/project/engineering/stage-plan.json": "00bd55c0c74c5c25fa34ae07c8114370e00d0020b47c8b53a168f1ed5f8c5216"
     }
 }

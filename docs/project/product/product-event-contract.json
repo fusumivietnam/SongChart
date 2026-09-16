@@ -1,0 +1,157 @@
+{
+  "schema_version": 2,
+  "authority": "product_telemetry_contract",
+  "purpose": "Define the minimum governed product signals and derived measurements needed to evaluate demonstrated SongChart product outcomes without turning telemetry into canonical music-domain truth, privileged audit or invented retention evidence.",
+  "storage_decision": "daily_aggregate_only_no_user_or_query_level_rows",
+  "defaults": {
+    "canonical_authority": false,
+    "raw_ip_allowed": false,
+    "raw_user_agent_allowed": false,
+    "request_payload_capture_allowed": false,
+    "user_identifier_allowed": false,
+    "session_identifier_allowed": false,
+    "query_value_allowed": false,
+    "external_analytics_dependency": false
+  },
+  "events": {
+    "search.performed": {
+      "status": "active_aggregate_only",
+      "producer": "app/Http/Controllers/Search/SearchController.php after BuildSearchPage returns a valid non-empty first-page result",
+      "purpose": "Measure actual first-page search volume and provide the denominator for zero-result rate.",
+      "pii_class": "anonymous_aggregate_no_user_or_query_identifier",
+      "allowed_fields": [
+        "day",
+        "entity_type_filter",
+        "sort_order",
+        "result_count"
+      ],
+      "forbidden_fields": [
+        "query",
+        "normalized_query",
+        "query_hash",
+        "user_id",
+        "session_id",
+        "raw_ip",
+        "raw_user_agent",
+        "cookie_value",
+        "session_payload",
+        "full_request_payload"
+      ],
+      "retention": "indefinite_anonymous_aggregate_only; any new dimension reopens privacy_and_retention_review",
+      "sampling": "100_percent_first_page_non_empty_searches",
+      "consumer": "admin_system_product_signal_summary",
+      "primary_metric": "search_count",
+      "guardrail": "pagination is excluded so page navigation does not inflate search demand"
+    },
+    "search.zero_result": {
+      "status": "active_aggregate_only",
+      "producer": "app/Http/Controllers/Search/SearchController.php when BuildSearchPage returns zero selected-filter results for a valid non-empty first-page query",
+      "purpose": "Measure the share of searches that return no results without retaining the query or actor.",
+      "pii_class": "anonymous_aggregate_no_user_or_query_identifier",
+      "allowed_fields": [
+        "day",
+        "entity_type_filter",
+        "sort_order"
+      ],
+      "forbidden_fields": [
+        "query",
+        "normalized_query",
+        "query_hash",
+        "user_id",
+        "session_id",
+        "raw_ip",
+        "raw_user_agent",
+        "cookie_value",
+        "session_payload",
+        "full_request_payload"
+      ],
+      "retention": "indefinite_anonymous_aggregate_only; query-level demand evidence is deferred to Stage 28 or another explicit privacy-governed authority",
+      "sampling": "100_percent_first_page_non_empty_searches",
+      "consumer": "admin_system_product_signal_summary",
+      "primary_metric": "zero_result_rate",
+      "guardrail": "aggregate evidence may guide later product work but cannot identify unmet queries or mutate canonical data"
+    },
+    "entity.viewed": {
+      "status": "candidate_not_approved",
+      "producer": "app/Http/Controllers/Search/EntityController.php after canonical entity resolution succeeds",
+      "purpose": "Potentially measure public entity exposure, but no accepted downstream metric/action currently requires persistence.",
+      "decision": "defer_until_consumer_is_demonstrated"
+    },
+    "relationship.clicked": {
+      "status": "deferred_no_demonstrated_producer_consumer"
+    },
+    "provider.clicked": {
+      "status": "deferred_no_demonstrated_producer_consumer"
+    },
+    "favorite.added": {
+      "status": "deferred_mvp_exists_but_no_accepted_measurement_consumer"
+    },
+    "favorite.removed": {
+      "status": "deferred_mvp_exists_but_no_accepted_measurement_consumer"
+    },
+    "collection.updated": {
+      "status": "deferred_no_named_user_collections_mvp"
+    }
+  },
+  "persistence": {
+    "owner": "product-telemetry",
+    "table": "product_search_daily_aggregates",
+    "granularity": "day + entity_type_filter + sort_order",
+    "raw_event_rows": false,
+    "degradation": "telemetry write failure is reported but must not fail public search",
+    "disable_switch": "config('product-signals.search.enabled')"
+  },
+  "derived_measurements": {
+    "consumer": "app/Application/ProductSignals/ProductSignalSummary.php rendered on existing Admin System surface",
+    "default_window_days": 28,
+    "maximum_window_days": 90,
+    "available": [
+      "search_count",
+      "zero_result_count",
+      "zero_result_rate",
+      "average_results_per_search"
+    ],
+    "retention": {
+      "status": "insufficient_evidence",
+      "unsupported_metrics": [
+        "d1_retention",
+        "d7_retention",
+        "cohort_return_rate"
+      ],
+      "reason": "Accepted telemetry intentionally contains no user/session/anonymous linkage, so return cohorts cannot be established.",
+      "forbidden_proxies": [
+        "aggregate_search_growth",
+        "saved_item_count",
+        "browser_local_recent_state"
+      ],
+      "reopen_gate": "Any true cohort retention metric requires explicit privacy/retention authority before persisting user, session or anonymous linkage."
+    }
+  },
+  "future_expansion_gate": {
+    "requires_new_review_for": [
+      "query-level demand evidence",
+      "user or anonymous identifiers",
+      "session linkage",
+      "entity-level view history",
+      "external analytics delivery",
+      "new retention-sensitive dimensions",
+      "cohort retention measurement"
+    ],
+    "rule": "Stage 27 aggregate approval does not authorize raw-event, user-level or session-linked tracking."
+  },
+  "stage_27_scope": {
+    "active_events": [
+      "search.performed",
+      "search.zero_result"
+    ],
+    "deferred_events": [
+      "entity.viewed",
+      "relationship.clicked",
+      "provider.clicked",
+      "favorite.added",
+      "favorite.removed",
+      "collection.updated"
+    ],
+    "rule": "No deferred event becomes active without a demonstrated producer, measurable consumer and updated privacy/retention authority."
+  }
+}

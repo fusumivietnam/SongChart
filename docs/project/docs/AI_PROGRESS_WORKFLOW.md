@@ -32,6 +32,56 @@ flowchart LR
 - The sticky PR comment is a projection only. It must never become repository authority.
 - `docs/project/generated/*` must not store volatile GitHub run, PR, notification or exact-head state.
 
+## Branch lifecycle
+
+Use one umbrella branch and one umbrella PR per active stage unless a genuinely independent semantic owner requires isolated work. Do not create a branch per tranche by default.
+
+Normal lifecycle:
+
+```text
+accepted main
+    ↓
+stage-N branch + draft umbrella PR
+    ↓
+tranche A implementation
+    ↓
+exact-head verification + accepted tranche checkpoint
+    ↓
+tranche B/C/... on the same branch
+    ↓
+final stage acceptance metadata
+    ↓
+exact-head closure
+    ↓
+ready-for-review / human merge
+    ↓
+accepted main
+```
+
+Rules:
+
+- only one active writer owns overlapping stage source at a time;
+- a new tranche starts only after the previous tranche has accepted exact-head evidence;
+- accepted tranche evidence is recorded in stage authority, not represented by extra long-lived branches;
+- do not merge partial tranche branches into `main` merely to reduce branch length;
+- if unrelated emergency/hotfix work must occur, branch it independently from `main` and reconcile it explicitly before continuing the umbrella stage;
+- resolve live PR/head state before every mutation; never rely on stale chat memory for the branch head.
+
+## CI concurrency and generated authority
+
+A new human/agent source commit on the same PR makes an older source-head closure obsolete. SongChart Auto Closure therefore cancels stale source-head runs automatically.
+
+PREPARE may create and push a generated-authority commit after QUALITY succeeds. That generated push is not a new semantic source change and must not cancel the source run that created it or start a second full closure. Auto Closure therefore separates source and `github-actions[bot]` concurrency groups and skips full closure jobs for the generated refresh event.
+
+The effective prepared SHA remains the verification authority when PREPARE generated a commit. Exact-head CHECK, canonical CLOSE and ready-to-promote all bind to that effective SHA.
+
+Do not optimize CI by weakening these invariants. In particular:
+
+- do not replace exact-head verification with branch-tip assumptions;
+- do not allow generated files to be edited manually;
+- do not skip PostgreSQL/browser/frontend owners solely to save minutes unless impact authority explicitly proves the lane is irrelevant;
+- prefer cache/reuse/concurrency improvements over removing verification ownership.
+
 ## Sticky PR dashboard
 
 An authorized ChatGPT/GitHub connector task maintains exactly one top-level PR comment containing:
@@ -76,6 +126,7 @@ Do not notify for:
 - package installation progress;
 - every individual test;
 - generated-authority commits;
+- stale source runs cancelled because a newer source head superseded them;
 - normal queued/running transitions that do not change the owner decision.
 
 ## Daily owner workflow
@@ -103,7 +154,7 @@ Routine CI progression should not require repeated `continue` messages.
 
 For longer execution sessions, prefer ChatGPT Work with the GitHub connector when available. Give one bounded instruction such as:
 
-> Continue Stage 21 on the existing umbrella PR. Follow repository authority, repair self-correctable CI failures, keep the sticky progress dashboard current, and stop only for a genuine owner decision or consequential merge gate.
+> Continue the active stage on the existing umbrella PR. Follow repository authority, repair self-correctable CI failures, keep the sticky progress dashboard current, and stop only for a genuine owner decision or consequential merge gate.
 
 Eligible ChatGPT Work accounts can create event-triggered GitHub tasks for supported PR activity. When available, prefer that webhook trigger over polling. Until the event trigger is configured, the SongChart progress watcher may use a low-frequency condition watch and only notify on meaningful state transitions.
 
@@ -112,6 +163,8 @@ Eligible ChatGPT Work accounts can create event-triggered GitHub tasks for suppo
 Progress publishing is observability, not verification authority. Dashboard update failures must not turn a green source/verification run red.
 
 A verification failure remains a real workflow failure. The connector/task should project that failure into the sticky dashboard as `blocked` on its next meaningful check.
+
+A cancelled source run is not a failure when a newer source commit superseded it. The newer exact-head run becomes the only acceptance candidate.
 
 ## Security
 

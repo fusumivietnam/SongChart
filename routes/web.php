@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Catalog\Enums\EntityType;
 use App\Http\Controllers\Account\AccountController;
+use App\Http\Controllers\Account\UserSavedEntityController;
 use App\Http\Controllers\Admin\CanonicalAdmissionController;
 use App\Http\Controllers\Admin\CatalogController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -64,6 +65,13 @@ Route::middleware(['auth', 'active', 'verified'])
         Route::get('/', [AccountController::class, 'overview'])->name('overview');
         Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
         Route::get('/security', [AccountController::class, 'security'])->name('security');
+        Route::get('/saved', [UserSavedEntityController::class, 'index'])->name('saved.index');
+        Route::post('/saved/{type}/{id}', [UserSavedEntityController::class, 'store'])
+            ->where(['type' => EntityType::routePattern(), 'id' => app(DomainContractRegistry::class)->adminUlidPattern()])
+            ->name('saved.store');
+        Route::delete('/saved/{type}/{id}', [UserSavedEntityController::class, 'destroy'])
+            ->where(['type' => EntityType::routePattern(), 'id' => app(DomainContractRegistry::class)->adminUlidPattern()])
+            ->name('saved.destroy');
     });
 
 Route::middleware(['auth', 'active', 'verified', 'can:access-admin', 'two-factor.confirmed'])

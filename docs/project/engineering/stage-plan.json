@@ -1,12 +1,12 @@
 {
   "schema_version": 11,
   "current_stage": {
-    "id": "26.0",
-    "title": "Authority & Product Design Coherence",
-    "task_contract": "docs/foundation/STAGE_26_0_TASK_CONTRACT.md",
+    "id": "27.0",
+    "title": "Product Signals & Retention",
+    "task_contract": "docs/foundation/STAGE_27_0_TASK_CONTRACT.md",
     "status": "accepted"
   },
-  "accepted_through": "26.0",
+  "accepted_through": "27.0",
   "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
@@ -67,6 +67,14 @@
       "verification_run": 35014245532,
       "visual_evidence_run": 35014245514,
       "verification": "Auto Closure run 634 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 0043580bd9a9319dccd4cb14f4eb4f106ab14e45. Browser Review Evidence run 29 passed desktop/mobile account and admin accessibility checks and uploaded SHA-bound screenshots on the same exact head. Stage 26 closed authority drift, executable UI contract gaps and representative product-screen coherence without adding a parallel design system or frontend runtime."
+    },
+    "27.0": {
+      "title": "Product Signals & Retention",
+      "source_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "effective_prepared_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "verification_run": 35125850074,
+      "visual_evidence_run": 35125849773,
+      "verification": "Auto Closure run 723 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd. Browser Review Evidence run 46 also passed on the same exact head. Stage 27 established aggregate-only search product signals, authenticated saved-entity user value, bounded browser-local recent state and an Admin System product-signal read model while preserving D1/D7/cohort retention as insufficient_evidence because accepted telemetry contains no user/session linkage. Final closure also fixes the product-signal day boundary to use the Laravel application clock rather than the PostgreSQL server clock and locks that ownership with a deterministic timezone-boundary regression test."
     }
   },
   "accepted_tranche_evidence": {
@@ -212,57 +220,86 @@
       "verification_run": 35014245532,
       "visual_evidence_run": 35014245514,
       "verification": "Auto Closure run 634 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 0043580bd9a9319dccd4cb14f4eb4f106ab14e45. Browser Review Evidence run 29 passed account and canonical-admission desktop/mobile accessibility assertions and uploaded SHA-bound screenshots. The new evidence exposed one real admin topbar role-label contrast defect, which was closed with the existing --admin-text-secondary semantic token; no new UI or test subsystem was introduced."
+    },
+    "27.0A": {
+      "title": "Minimal Product Event Contract",
+      "source_head": "193875ab5e5b06c70efcfe00c8b8c19503e548c7",
+      "effective_prepared_head": "27563931473dd25c00474f174f3c4c810356f099",
+      "verification_run": 35039491746,
+      "verification": "Auto Closure run 657 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 27563931473dd25c00474f174f3c4c810356f099. The accepted implementation records only aggregate-only first-page search signals with no raw event rows, query text/hash, user/session identifiers, IP, user agent or request payload storage."
+    },
+    "27.0B": {
+      "title": "Favorites & Collections Closure",
+      "source_head": "55b7e1a498bde0ed70343fc0be25ee8927ff1383",
+      "effective_prepared_head": "55b7e1a498bde0ed70343fc0be25ee8927ff1383",
+      "verification_run": 35110138347,
+      "verification": "Auto Closure run 699 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 55b7e1a498bde0ed70343fc0be25ee8927ff1383. The accepted implementation adds a separate authenticated user-library saved-entity primitive with canonical entity references, user-scoped ownership, idempotent add/remove behavior and private account read-model/UI while preserving canonical collections as catalog authority and excluding recommendation/community scope."
+    },
+    "27.0C": {
+      "title": "Recent & Local State",
+      "source_head": "6317b0e46f64240002db7ee819e24d30418cacb0",
+      "effective_prepared_head": "6317b0e46f64240002db7ee819e24d30418cacb0",
+      "verification_run": 35112887782,
+      "verification": "Auto Closure run 707 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke including bounded recent-state checks, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 6317b0e46f64240002db7ee819e24d30418cacb0. The accepted implementation keeps recent search/entity state browser-local with an 8-item cap per group, 30-day expiry, same-origin relative URLs, graceful storage failure and explicit local clearing, with no anonymous server identity, account sync or telemetry expansion."
+    },
+    "27.0D": {
+      "title": "Retention Measurement Closure",
+      "source_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "effective_prepared_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "verification_run": 35125850074,
+      "visual_evidence_run": 35125849773,
+      "verification": "Auto Closure run 723 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd. Browser Review Evidence run 46 passed on the same exact head. The accepted implementation exposes bounded aggregate search demand/quality metrics through ProductSignalSummary on the existing Admin System surface and truthfully keeps D1/D7/cohort retention at insufficient_evidence with no user/session linkage or invented proxy. The final closure also binds aggregate day/timestamps to the application clock so product-signal reporting cannot split at the database-server timezone boundary."
     }
   },
   "stage_progress": [
     {
-      "id": "26.0A",
+      "id": "27.0A",
       "status": "accepted",
-      "title": "Authority Drift Closure",
+      "title": "Minimal Product Event Contract",
       "goals": [
-        "reconcile stale current-state authority with accepted Stage 22-25 repository reality",
-        "preserve intentional partial capability states without falsely reopening accepted stage work",
-        "remove stale stage-specific external-system decisions while keeping evidence-gated boundaries"
+        "define only product signals with demonstrated producer and measurable consumer ownership",
+        "separate product telemetry from canonical music-domain and privileged audit authority",
+        "establish privacy, retention, sampling and persistence gates before raw event storage is allowed"
       ]
     },
     {
-      "id": "26.0B",
+      "id": "27.0B",
       "status": "accepted",
-      "title": "Executable UI Contract Closure",
+      "title": "Favorites & Collections Closure",
       "goals": [
-        "reuse existing semantic tokens, components and canonical design-system patterns",
-        "close only demonstrated executable design-contract gaps",
-        "avoid parallel design-system or frontend-framework authority"
+        "audit MVP user-value ownership before adding persistence or UI",
+        "reuse existing account/catalog boundaries where possible",
+        "avoid recommendation or community scope"
       ]
     },
     {
-      "id": "26.0C",
+      "id": "27.0C",
       "status": "accepted",
-      "title": "Canonical Product Screens",
+      "title": "Recent & Local State",
       "goals": [
-        "prove shared design authority on representative public and admin screens",
-        "reuse compliant existing screens before redesign",
-        "preserve Blade and Livewire as the default frontend stack"
+        "add recent searches/views only when telemetry and privacy semantics justify them",
+        "prefer bounded local/browser state where server durability is not required",
+        "define governed anonymous-to-account behavior before sync"
       ]
     },
     {
-      "id": "26.0D",
+      "id": "27.0D",
       "status": "accepted",
-      "title": "Product-Coherence Closure",
+      "title": "Retention Measurement Closure",
       "goals": [
-        "close remaining representative responsive and accessibility drift",
-        "record browser and visual evidence where current coverage is insufficient",
-        "close Stage 26 through existing exact-head verification ownership"
+        "derive measurable return-value metrics from accepted product signals",
+        "close retention evidence without recommendation or notification overreach",
+        "close Stage 27 through existing exact-head verification ownership"
       ]
     }
   ],
   "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
-    "accepted_main_sha": "d25dc667173bb47256a21db430b3c8e3ccd02212",
-    "stage_26_branch": "stage-26-authority-product-coherence",
-    "stage_26_pull_request": 48,
-    "baseline_verification": "Local candidate and canonical verification passed before Stage 26 activation."
+    "accepted_main_sha": "8acc393af6e91eaf3b096f7ce749ea39e340ad69",
+    "stage_27_branch": "stage-27-product-signals-retention",
+    "stage_27_pull_request": 49,
+    "baseline": "Stage 26 accepted and merged before Stage 27 activation; Stage 27.0A through 27.0D are accepted and Stage 27 is closed pending human promotion of PR #49."
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",

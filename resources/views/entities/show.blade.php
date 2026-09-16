@@ -27,7 +27,16 @@
 <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
 @endpush
 @section('content')
-<div class="sc-container py-8 md:py-12" data-entity-type="{{ $entity['type'] }}" data-entity-slug="{{ $entity['slug'] }}">
+<div
+    class="sc-container py-8 md:py-12"
+    data-entity-type="{{ $entity['type'] }}"
+    data-entity-slug="{{ $entity['slug'] }}"
+    data-songchart-recent-entity
+    data-recent-title="{{ $entity['title'] }}"
+    data-recent-label="{{ $entity['label'] }}"
+    data-recent-type="{{ $entity['type'] }}"
+    data-recent-url="{{ request()->getRequestUri() }}"
+>
     <nav aria-label="Breadcrumb" class="text-sm text-[var(--sc-text-secondary)]">
         <a href="{{ route('home') }}">Trang chủ</a>
         <span aria-hidden="true">/</span>
@@ -35,6 +44,10 @@
         <span aria-hidden="true">/</span>
         <span aria-current="page">{{ $entity['title'] }}</span>
     </nav>
+
+    @if(session('status') === 'saved-entity-added')
+        <x-ui.alert variant="success" class="mt-5">Đã lưu vào tài khoản. <a class="font-semibold underline" href="{{ route('account.saved.index') }}">Xem nội dung đã lưu</a>.</x-ui.alert>
+    @endif
 
     <header class="mt-7 rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] p-5 shadow-[var(--sc-shadow-card)] md:p-7">
         <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
@@ -52,6 +65,12 @@
                 <h1 id="entity-title" class="mt-3 break-words text-4xl font-bold tracking-tight md:text-5xl">{{ $entity['title'] }}</h1>
                 <p class="mt-3 text-lg leading-7 text-[var(--sc-text-secondary)]">{{ $entity['context'] }}</p>
                 <p class="mt-2 text-sm text-[var(--sc-text-muted)]">{{ $entity['meta'] }}</p>
+                @auth
+                    <form class="mt-5" method="POST" action="{{ route('account.saved.store', ['type' => $entity['type'], 'id' => $entity['canonical_id']]) }}">
+                        @csrf
+                        <x-ui.button type="submit" variant="secondary">Lưu vào tài khoản</x-ui.button>
+                    </form>
+                @endauth
             </div>
         </div>
     </header>

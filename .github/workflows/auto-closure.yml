@@ -12,13 +12,16 @@ on:
 permissions:
   contents: read
 
+# Source-head runs for the same PR supersede older source-head runs. A PREPARE-generated
+# authority push is isolated in a separate concurrency group and its jobs are skipped,
+# so it cannot cancel the source run that produced the effective prepared SHA.
 concurrency:
-  group: songchart-auto-closure-${{ github.event.pull_request.number }}
-  cancel-in-progress: false
+  group: songchart-auto-closure-${{ github.event.pull_request.number }}-${{ github.actor == 'github-actions[bot]' && 'generated' || 'source' }}
+  cancel-in-progress: true
 
 jobs:
   prepare:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -117,6 +120,7 @@ jobs:
             echo '- PREPARE / QUALITY: passed'
             echo '- PostgreSQL / browser / frontend: running next'
             echo '- Canonical CLOSE: waiting'
+            echo '- New source commits cancel obsolete source-head runs; generated-authority refreshes do not start a second closure.'
             echo '- Sticky PR dashboard and owner notifications are connector/task-owned; Actions remains read-only toward PR UI state.'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -213,4 +217,5 @@ jobs:
             echo '- Human gate: merge this exact PR head in GitHub'
             echo '- Sticky PR dashboard / owner notification: updated by authorized ChatGPT/GitHub connector automation'
             echo '- Any new commit invalidates this evidence and restarts auto closure'
+            echo '- Stale source-head runs are cancelled automatically; generated-authority refreshes are isolated from source-run concurrency.'
           } >> "$GITHUB_STEP_SUMMARY"
