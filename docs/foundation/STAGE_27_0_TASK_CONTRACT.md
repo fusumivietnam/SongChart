@@ -2,7 +2,7 @@
 
 ## Status
 
-Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. `27.0A — Minimal Product Event Contract` is accepted; this contract now authorizes only `27.0B — Favorites & Collections Closure` until exact-head verification accepts it.
+Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. `27.0A — Minimal Product Event Contract` and `27.0B — Favorites & Collections Closure` are accepted. This contract now authorizes only `27.0C — Recent & Local State` until exact-head verification accepts it.
 
 ## Goal
 
@@ -33,8 +33,9 @@ Minimality must not weaken privacy, abuse resistance, canonical authority, data 
 6. Anonymous identifiers, if required, must be bounded and privacy-classified; Stage 27 does not authorize cross-device fingerprinting.
 7. Event payloads prefer stable SongChart identifiers and coarse enums over copied canonical records or arbitrary request blobs.
 8. Derived metrics/snapshots are preferred over feeding raw event streams directly to AI.
-9. Stage 27.0A accepted aggregate-only search signals. Stage 27.0B may add only the minimum authenticated favorites/user-collection behavior justified by current MVP scope and must not reuse canonical catalog collections as user-owned state.
-10. No recommendation graph, public playlists/community, visitor chatbot, experimentation platform, warehouse or streaming system is authorized by this contract.
+9. Stage 27.0A accepted aggregate-only search signals. Stage 27.0B accepted the minimum authenticated saved-entity/user-library primitive and preserved canonical catalog collections as separate authority.
+10. Stage 27.0C must prefer bounded browser-local state over server persistence when the return-loop value does not require account durability or cross-device sync.
+11. No recommendation graph, public playlists/community, visitor chatbot, experimentation platform, warehouse or streaming system is authorized by this contract.
 
 ## Tranches
 
@@ -57,32 +58,38 @@ Acceptance evidence is owned by `docs/project/engineering/stage-plan.json` and A
 
 ### 27.0B — Favorites & Collections Closure
 
+Accepted.
+
+Accepted implementation:
+
+- authenticated saved-item state has a distinct `user-library` owner and does not reuse canonical catalog `collections`;
+- stable canonical SongChart entity references are used for saved items;
+- add/remove semantics are user-scoped and idempotent;
+- user deletion cascades saved state, while missing canonical references degrade safely in the account read model;
+- the existing authenticated account shell and public entity surfaces are reused for the minimum MVP interaction;
+- no recommendation ranking, sharing, follows, comments, collaborative playlists or public community scope was introduced;
+- `favorite.added` / `favorite.removed` product signals remain deferred because no accepted measurable consumer requires them yet.
+
+Acceptance evidence is owned by `docs/project/engineering/stage-plan.json` and Auto Closure run 699.
+
+### 27.0C — Recent & Local State
+
 Active implementation target.
 
-Audit current MVP behavior first; close only demonstrated persistence/product gaps and attach signal producers only when the accepted product-event contract has a real producer and metric consumer.
+Evaluate recently viewed/recent searches and anonymous local state only where they improve the return loop without unnecessary server retention.
 
-Current audit findings:
+Required 27.0C closure:
 
-- MVP scope explicitly includes favorites and user collections;
-- the existing `collections` table/model belongs to the canonical catalog and has no user ownership; it must not be repurposed as user-library state;
-- public `/collections` routes/catalog surfaces therefore remain canonical catalog behavior, not authenticated user collections;
-- no current repository implementation was found for authenticated favorites/user collections.
-
-Required 27.0B closure:
-
-- define a distinct user-state owner that does not weaken canonical catalog authority;
-- prefer one minimal saved-item/favorite primitive before introducing arbitrary playlist/community semantics;
-- reuse existing authenticated account/application boundaries;
-- authorize only stable canonical SongChart entity references that current product surfaces can resolve safely;
-- define duplicate/idempotent add/remove semantics and user ownership enforcement;
-- define deletion behavior when the user/account is removed and safe behavior when a referenced canonical entity becomes unavailable;
-- expose only the minimum account/public interaction needed for MVP value;
-- add `favorite.added` / `favorite.removed` signals only if the producer and a measurable retention/product consumer are implemented in the same tranche;
-- do not create recommendation ranking, sharing, follows, comments, collaborative playlists or public community scope.
-
-### 27.0C — Recent/Local State
-
-Deferred. Evaluate recently viewed/recent searches and anonymous local state only where it improves the return loop without unnecessary server retention.
+- audit current search/entity/account surfaces for an existing recent-state owner before adding code;
+- prefer browser-local state when server durability, account ownership and cross-device synchronization are not required;
+- keep recent state bounded by a small item cap and explicit expiry/age semantics;
+- store only the minimum client-side fields required to reopen a search or canonical entity; do not copy full canonical records or request payloads;
+- do not create anonymous server identifiers, fingerprinting, background sync or cross-device merge semantics;
+- do not convert local recent state into product telemetry merely because it exists;
+- make clear that clearing browser/site storage removes anonymous local history;
+- reuse existing Blade/Alpine/frontend runtime and route helpers; add no state-management package or analytics SDK;
+- expose only a minimal return-loop interaction when it is supported by current public UX;
+- add focused tests/verification for bounded retention, expiry and safe rendering behavior where repository ownership can exercise them deterministically.
 
 ### 27.0D — Retention Measurement & Stage Closure
 
@@ -93,10 +100,11 @@ Deferred. Define bounded return/retention metrics from accepted signals; no reco
 - Google Analytics, Segment, Mixpanel, Amplitude or another analytics SaaS by default.
 - Kafka, RabbitMQ, event streaming, warehouse or ETL platform.
 - Reusing privileged audit as product analytics.
-- Copying raw HTTP requests, headers, IP addresses, user agents or arbitrary search text into durable telemetry without an explicit privacy/product need.
+- Copying raw HTTP requests, headers, IP addresses, user agents or arbitrary search text into durable server telemetry without an explicit privacy/product need.
 - Recommendation/community/native-app/visitor-AI work.
 - Autonomous product mutation based on telemetry.
 - Reusing canonical catalog `collections` as authenticated user-library persistence.
+- Anonymous server-side recent-history tables, device fingerprinting or cross-device recent-state synchronization in 27.0C.
 
 ## Authority and official sources
 
@@ -142,8 +150,8 @@ Use existing SongChart ownership rather than a second telemetry/user-state test 
 ./songchart verify
 ```
 
-Architecture tests must prove contract/privacy/authority boundaries. PostgreSQL tests must prove schema, user ownership, duplicate/idempotent semantics and deletion behavior for any 27.0B persistence. Existing browser/account coverage should be extended only when a user-visible interaction is introduced. Exact-head Auto Closure remains the acceptance gate.
+Architecture tests must prove contract/privacy/authority boundaries. PostgreSQL tests must prove schema, user ownership, duplicate/idempotent semantics and deletion behavior for any durable user-state persistence. Existing browser/account coverage should be extended only when a user-visible interaction is introduced. For 27.0C, browser-local state must remain bounded and expire safely without creating server-side anonymous history. Exact-head Auto Closure remains the acceptance gate.
 
 ## Handoff rule
 
-Implement only `27.0B`. Reuse existing capabilities where they fit. Do not begin 27.0C–27.0D until 27.0B has accepted evidence. Do not broaden 27.0B into recommendations, community features, public playlists or canonical catalog collection redesign.
+Implement only `27.0C`. Reuse existing capabilities where they fit. Do not begin 27.0D until 27.0C has accepted evidence. Do not broaden 27.0C into server-side anonymous tracking, cross-device sync, recommendations, notifications or community features.
