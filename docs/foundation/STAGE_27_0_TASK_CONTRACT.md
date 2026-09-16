@@ -2,7 +2,7 @@
 
 ## Status
 
-Bounded post-Stage-26 task contract. Stage 26 is the accepted baseline. `27.0A — Minimal Product Event Contract`, `27.0B — Favorites & Collections Closure` and `27.0C — Recent & Local State` are accepted. This contract now authorizes only `27.0D — Retention Measurement & Stage Closure` until exact-head verification accepts it.
+Accepted and closed. Stage 26 remains the accepted baseline that Stage 27 extended. `27.0A — Minimal Product Event Contract`, `27.0B — Favorites & Collections Closure`, `27.0C — Recent & Local State` and `27.0D — Retention Measurement & Stage Closure` are accepted. Stage 27 has no active tranche; subsequent work requires a new repository-authored activation after human promotion of PR #49.
 
 ## Goal
 
@@ -35,7 +35,7 @@ Minimality must not weaken privacy, abuse resistance, canonical authority, data 
 8. Derived metrics/snapshots are preferred over feeding raw event streams directly to AI.
 9. Stage 27.0A accepted aggregate-only search signals. Stage 27.0B accepted the minimum authenticated saved-entity/user-library primitive and preserved canonical catalog collections as separate authority.
 10. Stage 27.0C accepted bounded browser-local recent state without server identity, sync or telemetry expansion.
-11. 27.0D must not label search-volume change, saved-item count or browser-local recent state as D1/D7 retention. Retention remains `insufficient_evidence` unless accepted telemetry can establish a governed return cohort.
+11. Stage 27.0D accepted bounded aggregate demand/quality measurements while explicitly keeping D1/D7/cohort retention at `insufficient_evidence`; search-volume change, saved-item count and browser-local recent state are not retention proxies.
 12. No recommendation graph, public playlists/community, visitor chatbot, experimentation platform, warehouse or streaming system is authorized by this contract.
 
 ## Tranches
@@ -90,21 +90,22 @@ Acceptance evidence is owned by `docs/project/engineering/stage-plan.json` and A
 
 ### 27.0D — Retention Measurement & Stage Closure
 
-Active implementation target.
+Accepted.
 
-Define only measurements supported by accepted evidence and close Stage 27 without inventing retention semantics.
+Accepted implementation:
 
-Required 27.0D closure:
+- `ProductSignalSummary` exposes a bounded read model over accepted `product_search_daily_aggregates` evidence;
+- the reporting window defaults to 28 days and is bounded to 1–90 days;
+- available measurements are search volume, zero-result count/rate and average results per search;
+- the existing Admin System surface is the concrete read-only operator consumer; no second analytics dashboard was introduced;
+- retention status/reason are rendered from the read model so the operator surface does not create a second semantic authority;
+- D1/D7/cohort retention remains `insufficient_evidence` because accepted telemetry intentionally contains no user/session/anonymous linkage;
+- aggregate search growth, saved-item count and browser-local recent state are explicitly forbidden as retention proxies;
+- `favorite.*`, `entity.viewed` and other deferred events remain inactive because no accepted measurement consumer requires them;
+- focused feature/architecture tests cover aggregate math, bounded windows, empty evidence, unsupported retention semantics, Admin System consumption and future cohort-review gates;
+- no external analytics SaaS, warehouse, streaming platform, recommendation or notification scope was introduced.
 
-- expose a bounded read model over the accepted aggregate search table for search volume, zero-result count/rate and average results per search;
-- give those metrics a concrete read-only operator consumer using the existing Admin System surface rather than creating a second analytics dashboard;
-- keep the reporting window bounded and deterministic;
-- represent D1/D7 or cohort retention as `insufficient_evidence` because accepted telemetry contains no user/session linkage;
-- do not infer retention from aggregate search growth, saved-item counts or browser-local history;
-- do not activate `favorite.*`, `entity.viewed` or other deferred signals merely to manufacture a retention metric;
-- any future cohort retention requires a new explicit privacy/retention review before user, anonymous or session linkage may be persisted;
-- add focused tests for aggregate math, window filtering, empty evidence and `insufficient_evidence` semantics;
-- close Stage 27 only after exact-head Auto Closure passes on the final source head.
+Acceptance evidence is owned by `docs/project/engineering/stage-plan.json`, Auto Closure run 718 (`35124421340`) on exact head `eaaf11468d9b561d71de5a85c5086efd28e63c5a`, and Browser Review Evidence run 41 (`35124421021`) on the same exact head.
 
 ## Explicit non-goals
 
@@ -162,8 +163,8 @@ Use existing SongChart ownership rather than a second telemetry/user-state test 
 ./songchart verify
 ```
 
-Architecture tests must prove contract/privacy/authority boundaries. PostgreSQL tests must prove any durable persistence and aggregate reporting semantics. Existing browser/admin coverage should be extended only when required by a user-visible interaction. For 27.0D, tests must prove aggregate math and that unsupported cohort retention remains explicitly unavailable. Exact-head Auto Closure remains the acceptance gate.
+Architecture tests prove contract/privacy/authority boundaries. PostgreSQL tests prove durable persistence and aggregate reporting semantics. Existing browser/admin coverage is extended only where required by user-visible interaction. Stage 27 exact-head implementation closure passed Auto Closure run 718; the acceptance-state authority commit must also pass repository-owned verification before PR #49 is promoted.
 
 ## Handoff rule
 
-Implement only `27.0D`. Reuse the existing product aggregate table and Admin System surface. Do not add identity/session linkage, activate deferred events, recommendations, notifications or external analytics to force a retention number. Stage 27 closes only after 27.0D exact-head acceptance evidence is recorded.
+Stage 27 is closed. Do not add identity/session linkage, activate deferred events, recommendations, notifications or external analytics under the Stage 27 authority. Human promotion of PR #49 remains separate. Any Stage 28 or later work requires a new repository-authored activation after the accepted Stage 27 state is promoted; roadmap research alone must not reopen or mutate this closed contract.
