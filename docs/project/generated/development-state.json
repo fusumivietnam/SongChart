@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "bb11901f9e1300ddd3449e7f808e7987ed7b59cf9b92f84b2a4cf02544093dfe",
+    "source_fingerprint": "b53bb0bbead8d2c0d170f8b706f9253e5825135da6f76d12ecc3ed537fa1705a",
     "current_stage": {
         "id": "27.0",
         "title": "Product Signals & Retention",
@@ -32,7 +32,7 @@
         },
         {
             "id": "27.0C",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Recent & Local State",
             "goals": [
                 "add recent searches/views only when telemetry and privacy semantics justify them",
@@ -42,7 +42,7 @@
         },
         {
             "id": "27.0D",
-            "status": "planned",
+            "status": "implementing",
             "title": "Retention Measurement Closure",
             "goals": [
                 "derive measurable return-value metrics from accepted product signals",
@@ -51,7 +51,7 @@
             ]
         }
     ],
-    "next_tranche": "27.0D",
+    "next_tranche": null,
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -60,6 +60,6 @@
         "candidate-verification.json": "591b046cf2812313e2b90425aabe9258a9ad630dd00901111412730020f45ce8",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "6d73940dca2d4db0ec09af2d4d2ca4ea3d7f5e56ce526937fe3530594d340f26"
+        "docs/project/engineering/stage-plan.json": "93cbadcd367091ab4c1d272ac08e7e653a5581ce79d493a9e07769b797957f75"
     }
 }

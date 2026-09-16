@@ -13,12 +13,12 @@
 
 - `27.0A` — `ACCEPTED` — Minimal Product Event Contract
 - `27.0B` — `ACCEPTED` — Favorites & Collections Closure
-- `27.0C` — `IMPLEMENTING` — Recent & Local State
-- `27.0D` — `PLANNED` — Retention Measurement Closure
+- `27.0C` — `ACCEPTED` — Recent & Local State
+- `27.0D` — `IMPLEMENTING` — Retention Measurement Closure
 
 ## Next bounded tranche
 
-- `27.0D`
+- `unknown`
 
 ## Live work lease
 
