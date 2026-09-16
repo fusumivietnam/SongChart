@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "26.0",
-  "active_tranche": "27.0C",
+  "active_tranche": "27.0D",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -226,6 +226,13 @@
       "effective_prepared_head": "55b7e1a498bde0ed70343fc0be25ee8927ff1383",
       "verification_run": 35110138347,
       "verification": "Auto Closure run 699 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 55b7e1a498bde0ed70343fc0be25ee8927ff1383. The accepted implementation adds a separate authenticated user-library saved-entity primitive with canonical entity references, user-scoped ownership, idempotent add/remove behavior and private account read-model/UI while preserving canonical collections as catalog authority and excluding recommendation/community scope."
+    },
+    "27.0C": {
+      "title": "Recent & Local State",
+      "source_head": "6317b0e46f64240002db7ee819e24d30418cacb0",
+      "effective_prepared_head": "6317b0e46f64240002db7ee819e24d30418cacb0",
+      "verification_run": 35112887782,
+      "verification": "Auto Closure run 707 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke including bounded recent-state checks, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 6317b0e46f64240002db7ee819e24d30418cacb0. The accepted implementation keeps recent search/entity state browser-local with an 8-item cap per group, 30-day expiry, same-origin relative URLs, graceful storage failure and explicit local clearing, with no anonymous server identity, account sync or telemetry expansion."
     }
   },
   "stage_progress": [
@@ -251,7 +258,7 @@
     },
     {
       "id": "27.0C",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Recent & Local State",
       "goals": [
         "add recent searches/views only when telemetry and privacy semantics justify them",
@@ -261,7 +268,7 @@
     },
     {
       "id": "27.0D",
-      "status": "planned",
+      "status": "implementing",
       "title": "Retention Measurement Closure",
       "goals": [
         "derive measurable return-value metrics from accepted product signals",
@@ -270,13 +277,13 @@
       ]
     }
   ],
-  "next_tranche": "27.0D",
+  "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "8acc393af6e91eaf3b096f7ce749ea39e340ad69",
     "stage_27_branch": "stage-27-product-signals-retention",
     "stage_27_pull_request": 49,
-    "baseline": "Stage 26 accepted and merged before Stage 27 activation; 27.0A and 27.0B are accepted and 27.0C is the only actionable tranche."
+    "baseline": "Stage 26 accepted and merged before Stage 27 activation; 27.0A, 27.0B and 27.0C are accepted and 27.0D is the only actionable tranche."
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
