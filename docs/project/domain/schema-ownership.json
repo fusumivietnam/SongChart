@@ -62,6 +62,7 @@
     "release_groups": "domain-contracts",
     "provider_destinations": "operational-contracts",
     "enrichment_attempts": "operational-contracts",
-    "product_search_daily_aggregates": "product-telemetry"
+    "product_search_daily_aggregates": "product-telemetry",
+    "user_saved_entities": "user-library"
   }
 }
