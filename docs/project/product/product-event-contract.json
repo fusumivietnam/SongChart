@@ -1,7 +1,7 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "authority": "product_telemetry_contract",
-  "purpose": "Define the minimum governed product signals needed to measure demonstrated SongChart product outcomes without turning telemetry into canonical music-domain truth or privileged audit.",
+  "purpose": "Define the minimum governed product signals and derived measurements needed to evaluate demonstrated SongChart product outcomes without turning telemetry into canonical music-domain truth, privileged audit or invented retention evidence.",
   "storage_decision": "daily_aggregate_only_no_user_or_query_level_rows",
   "defaults": {
     "canonical_authority": false,
@@ -39,7 +39,7 @@
       ],
       "retention": "indefinite_anonymous_aggregate_only; any new dimension reopens privacy_and_retention_review",
       "sampling": "100_percent_first_page_non_empty_searches",
-      "consumer": "search_volume_and_zero_result_rate",
+      "consumer": "admin_system_product_signal_summary",
       "primary_metric": "search_count",
       "guardrail": "pagination is excluded so page navigation does not inflate search demand"
     },
@@ -67,8 +67,8 @@
       ],
       "retention": "indefinite_anonymous_aggregate_only; query-level demand evidence is deferred to Stage 28 or another explicit privacy-governed authority",
       "sampling": "100_percent_first_page_non_empty_searches",
-      "consumer": "zero_result_rate",
-      "primary_metric": "zero_result_search_count",
+      "consumer": "admin_system_product_signal_summary",
+      "primary_metric": "zero_result_rate",
       "guardrail": "aggregate evidence may guide later product work but cannot identify unmet queries or mutate canonical data"
     },
     "entity.viewed": {
@@ -84,13 +84,13 @@
       "status": "deferred_no_demonstrated_producer_consumer"
     },
     "favorite.added": {
-      "status": "deferred_until_favorites_mvp_exists"
+      "status": "deferred_mvp_exists_but_no_accepted_measurement_consumer"
     },
     "favorite.removed": {
-      "status": "deferred_until_favorites_mvp_exists"
+      "status": "deferred_mvp_exists_but_no_accepted_measurement_consumer"
     },
     "collection.updated": {
-      "status": "deferred_until_user_collections_mvp_exists"
+      "status": "deferred_no_named_user_collections_mvp"
     }
   },
   "persistence": {
@@ -101,6 +101,32 @@
     "degradation": "telemetry write failure is reported but must not fail public search",
     "disable_switch": "config('product-signals.search.enabled')"
   },
+  "derived_measurements": {
+    "consumer": "app/Application/ProductSignals/ProductSignalSummary.php rendered on existing Admin System surface",
+    "default_window_days": 28,
+    "maximum_window_days": 90,
+    "available": [
+      "search_count",
+      "zero_result_count",
+      "zero_result_rate",
+      "average_results_per_search"
+    ],
+    "retention": {
+      "status": "insufficient_evidence",
+      "unsupported_metrics": [
+        "d1_retention",
+        "d7_retention",
+        "cohort_return_rate"
+      ],
+      "reason": "Accepted telemetry intentionally contains no user/session/anonymous linkage, so return cohorts cannot be established.",
+      "forbidden_proxies": [
+        "aggregate_search_growth",
+        "saved_item_count",
+        "browser_local_recent_state"
+      ],
+      "reopen_gate": "Any true cohort retention metric requires explicit privacy/retention authority before persisting user, session or anonymous linkage."
+    }
+  },
   "future_expansion_gate": {
     "requires_new_review_for": [
       "query-level demand evidence",
@@ -108,11 +134,12 @@
       "session linkage",
       "entity-level view history",
       "external analytics delivery",
-      "new retention-sensitive dimensions"
+      "new retention-sensitive dimensions",
+      "cohort retention measurement"
     ],
-    "rule": "Stage 27.0A aggregate approval does not authorize raw-event or user-level tracking."
+    "rule": "Stage 27 aggregate approval does not authorize raw-event, user-level or session-linked tracking."
   },
-  "stage_27_0a_scope": {
+  "stage_27_scope": {
     "active_events": [
       "search.performed",
       "search.zero_result"
