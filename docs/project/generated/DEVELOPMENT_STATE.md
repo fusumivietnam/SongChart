@@ -11,14 +11,14 @@
 
 ## Stage progress
 
-- `27.0A` — `IMPLEMENTING` — Minimal Product Event Contract
-- `27.0B` — `PLANNED` — Favorites & Collections Closure
+- `27.0A` — `ACCEPTED` — Minimal Product Event Contract
+- `27.0B` — `IMPLEMENTING` — Favorites & Collections Closure
 - `27.0C` — `PLANNED` — Recent & Local State
 - `27.0D` — `PLANNED` — Retention Measurement Closure
 
 ## Next bounded tranche
 
-- `27.0B`
+- `27.0C`
 
 ## Live work lease
 
