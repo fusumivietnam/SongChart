@@ -18,6 +18,8 @@ final class RecordSearchProductSignal
 
         $resultCount = max(0, (int) ($result['total'] ?? 0));
         $zeroResultCount = $resultCount === 0 ? 1 : 0;
+        $recordedAt = now();
+        $timestamp = $recordedAt->format('Y-m-d H:i:s');
 
         try {
             DB::statement(
@@ -32,23 +34,31 @@ final class RecordSearchProductSignal
                     created_at,
                     updated_at
                 ) VALUES (
-                    CURRENT_DATE,
+                    ?,
                     ?,
                     ?,
                     1,
                     ?,
                     ?,
-                    CURRENT_TIMESTAMP,
-                    CURRENT_TIMESTAMP
+                    ?,
+                    ?
                 )
                 ON CONFLICT (day, entity_type_filter, sort_order)
                 DO UPDATE SET
                     search_count = product_search_daily_aggregates.search_count + 1,
                     zero_result_count = product_search_daily_aggregates.zero_result_count + EXCLUDED.zero_result_count,
                     result_count_sum = product_search_daily_aggregates.result_count_sum + EXCLUDED.result_count_sum,
-                    updated_at = CURRENT_TIMESTAMP
+                    updated_at = EXCLUDED.updated_at
                 SQL,
-                [$entityType, $sortOrder, $zeroResultCount, $resultCount],
+                [
+                    $recordedAt->toDateString(),
+                    $entityType,
+                    $sortOrder,
+                    $zeroResultCount,
+                    $resultCount,
+                    $timestamp,
+                    $timestamp,
+                ],
             );
         } catch (Throwable $exception) {
             report($exception);
