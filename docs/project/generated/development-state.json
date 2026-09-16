@@ -1,14 +1,14 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "b53bb0bbead8d2c0d170f8b706f9253e5825135da6f76d12ecc3ed537fa1705a",
+    "source_fingerprint": "450566851b402781d4c36f0eb40360365bc02ec1c6da6c84d6a0fe3b7e010c91",
     "current_stage": {
         "id": "27.0",
         "title": "Product Signals & Retention",
         "task_contract": "docs/foundation/STAGE_27_0_TASK_CONTRACT.md",
-        "status": "implementing"
+        "status": "accepted"
     },
-    "accepted_through": "26.0",
+    "accepted_through": "27.0",
     "stage_progress": [
         {
             "id": "27.0A",
@@ -42,7 +42,7 @@
         },
         {
             "id": "27.0D",
-            "status": "implementing",
+            "status": "accepted",
             "title": "Retention Measurement Closure",
             "goals": [
                 "derive measurable return-value metrics from accepted product signals",
@@ -60,6 +60,6 @@
         "candidate-verification.json": "591b046cf2812313e2b90425aabe9258a9ad630dd00901111412730020f45ce8",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "93cbadcd367091ab4c1d272ac08e7e653a5581ce79d493a9e07769b797957f75"
+        "docs/project/engineering/stage-plan.json": "fe2773f2aafa6e7227c606bda9185ba8667b6952f46618b13a30dc079a818eb7"
     }
 }

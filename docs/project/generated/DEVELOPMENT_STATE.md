@@ -5,8 +5,8 @@
 ## Current stage
 
 - Stage `27.0 — Product Signals & Retention`
-- Status: `implementing`
-- Accepted through: `26.0`
+- Status: `accepted`
+- Accepted through: `27.0`
 - Task contract: `docs/foundation/STAGE_27_0_TASK_CONTRACT.md`
 
 ## Stage progress
@@ -14,7 +14,7 @@
 - `27.0A` — `ACCEPTED` — Minimal Product Event Contract
 - `27.0B` — `ACCEPTED` — Favorites & Collections Closure
 - `27.0C` — `ACCEPTED` — Recent & Local State
-- `27.0D` — `IMPLEMENTING` — Retention Measurement Closure
+- `27.0D` — `ACCEPTED` — Retention Measurement Closure
 
 ## Next bounded tranche
 
