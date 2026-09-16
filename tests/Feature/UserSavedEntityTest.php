@@ -17,8 +17,8 @@ it('saves a canonical entity idempotently for one user', function (): void {
     $artist = Artist::factory()->create();
     $action = app(SaveEntity::class);
 
-    $first = $action->save($user, EntityType::Artist, (string) $artist->getKey());
-    $second = $action->save($user, EntityType::Artist, (string) $artist->getKey());
+    $first = $action->add($user, EntityType::Artist, (string) $artist->getKey());
+    $second = $action->add($user, EntityType::Artist, (string) $artist->getKey());
 
     expect($second->getKey())->toBe($first->getKey())
         ->and(UserSavedEntity::query()->count())->toBe(1)
@@ -32,7 +32,7 @@ it('keeps removal scoped to the owning user', function (): void {
     $artist = Artist::factory()->create();
     $action = app(SaveEntity::class);
 
-    $saved = $action->save($owner, EntityType::Artist, (string) $artist->getKey());
+    $saved = $action->add($owner, EntityType::Artist, (string) $artist->getKey());
     $action->remove($other, EntityType::Artist, (string) $artist->getKey());
 
     expect(UserSavedEntity::query()->find($saved->getKey()))->not->toBeNull();
@@ -45,7 +45,7 @@ it('keeps removal scoped to the owning user', function (): void {
 it('deletes saved state when the owning account is deleted', function (): void {
     $user = User::factory()->create();
     $artist = Artist::factory()->create();
-    $saved = app(SaveEntity::class)->save($user, EntityType::Artist, (string) $artist->getKey());
+    $saved = app(SaveEntity::class)->add($user, EntityType::Artist, (string) $artist->getKey());
 
     $user->delete();
 
@@ -55,7 +55,7 @@ it('deletes saved state when the owning account is deleted', function (): void {
 it('refuses to save an entity that is not canonical', function (): void {
     $user = User::factory()->create();
 
-    expect(fn () => app(SaveEntity::class)->save($user, EntityType::Artist, '01K5ZZZZZZZZZZZZZZZZZZZZZZ'))
+    expect(fn () => app(SaveEntity::class)->add($user, EntityType::Artist, '01K5ZZZZZZZZZZZZZZZZZZZZZZ'))
         ->toThrow(ModelNotFoundException::class);
 });
 
@@ -85,8 +85,8 @@ it('shows only the current users saved canonical entities', function (): void {
     $visible = Artist::factory()->create(['name' => 'Visible Saved Artist']);
     $hidden = Artist::factory()->create(['name' => 'Other Saved Artist']);
 
-    app(SaveEntity::class)->save($user, EntityType::Artist, (string) $visible->getKey());
-    app(SaveEntity::class)->save($other, EntityType::Artist, (string) $hidden->getKey());
+    app(SaveEntity::class)->add($user, EntityType::Artist, (string) $visible->getKey());
+    app(SaveEntity::class)->add($other, EntityType::Artist, (string) $hidden->getKey());
 
     $this->actingAs($user)
         ->get(route('account.saved.index'))
@@ -99,7 +99,7 @@ it('does not let one account remove another accounts saved entity', function ():
     $owner = User::factory()->create();
     $other = User::factory()->create();
     $artist = Artist::factory()->create();
-    $saved = app(SaveEntity::class)->save($owner, EntityType::Artist, (string) $artist->getKey());
+    $saved = app(SaveEntity::class)->add($owner, EntityType::Artist, (string) $artist->getKey());
 
     $this->actingAs($other)
         ->delete(route('account.saved.destroy', [
