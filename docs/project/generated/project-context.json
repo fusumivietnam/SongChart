@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "653919184f653bf7988370837bc4fc252e795abbe06ef2c98eb38a6910fa8a65",
+    "source_fingerprint": "c8647795ea7e163b13520dc6bc876b19842e709a031cf377d8b0ac2654e2b568",
     "candidate": {
         "stage": "26.0",
         "candidate": "v1",
@@ -16,11 +16,11 @@
     "installed_versions": {
         "larastan/larastan": "v3.10.0",
         "laravel/boost": "v2.7.0",
-        "laravel/framework": "v13.25.0",
+        "laravel/framework": "v13.31.0",
         "laravel/pulse": "v1.8.0",
         "livewire/livewire": "v4.3.5",
         "pestphp/pest": "v4.7.7",
-        "spatie/laravel-activitylog": "5.1.0"
+        "spatie/laravel-activitylog": "5.1.1"
     },
     "docker": {
         "development_compose": "compose.dev.yml",
@@ -1053,7 +1053,7 @@
         "compose.dev.yml": "693b9c94517ceac6c9e257d44f444fa045a5a1e806247704a5c8761970eab3af",
         "compose.verify.yml": "075a78e92ba512f3a1346c84a1f3ab35777b6c7330a3cf1625afb91ef824b041",
         "composer.json": "746d53779bb79341621aba94abed1f5a3107a3b322a6db1a62a8f2c6c3c7ec7c",
-        "composer.lock": "b63317f16db0f9c19dbc241ad4bf964f552048ebde15a73d9e28c1c366e938af",
+        "composer.lock": "8096bb0cf7517e94fe2c6822d536f521f3f9d15b46e1a8fdc5271409db3bed09",
         "database/migrations/0001_01_01_000000_create_users_table.php": "b470c9a8c49828d081b112c84f2939f5051c6079d9892a0ac005dd42d3144ff1",
         "database/migrations/0001_01_01_000001_create_cache_table.php": "2c938a40dd1bdd0f99455359a1369df0b46352276e1549bddb8cdcd483bcdfe7",
         "database/migrations/0001_01_01_000002_create_jobs_table.php": "5cdfae12c862dc18e1f865182aa8467afb9abe8f1a6a3045a085df6a89c41d01",
