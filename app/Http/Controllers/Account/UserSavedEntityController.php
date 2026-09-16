@@ -31,7 +31,7 @@ final class UserSavedEntityController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $action->save($user, EntityType::from($type), $id);
+        $action->add($user, EntityType::from($type), $id);
 
         return back()->with('status', 'saved-entity-added');
     }
