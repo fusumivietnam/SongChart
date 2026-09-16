@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Application\ProductSignals\RecordSearchProductSignal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
@@ -33,6 +34,29 @@ it('aggregates first-page search and zero-result signals without user-level data
 
     expect($columns)
         ->not->toContain('query', 'normalized_query', 'user_id', 'session_id', 'ip_address', 'user_agent');
+});
+
+it('uses the application clock for the aggregate day instead of the database server clock', function (): void {
+    config(['product-signals.search.enabled' => true]);
+
+    $this->travelTo(Carbon::parse('2030-01-02 00:05:00', config('app.timezone')));
+
+    try {
+        app(RecordSearchProductSignal::class)
+            ->record('beatles', 'artist', 'relevance', 1, ['total' => 3]);
+
+        $row = DB::table('product_search_daily_aggregates')
+            ->where('entity_type_filter', 'artist')
+            ->where('sort_order', 'relevance')
+            ->first();
+
+        expect($row)->not->toBeNull()
+            ->and((string) $row->day)->toBe('2030-01-02')
+            ->and((string) $row->created_at)->toStartWith('2030-01-02 00:05:00')
+            ->and((string) $row->updated_at)->toStartWith('2030-01-02 00:05:00');
+    } finally {
+        $this->travelBack();
+    }
 });
 
 it('does not count pagination, empty searches or disabled telemetry', function (): void {
