@@ -102,10 +102,12 @@ Accepted implementation:
 - D1/D7/cohort retention remains `insufficient_evidence` because accepted telemetry intentionally contains no user/session/anonymous linkage;
 - aggregate search growth, saved-item count and browser-local recent state are explicitly forbidden as retention proxies;
 - `favorite.*`, `entity.viewed` and other deferred events remain inactive because no accepted measurement consumer requires them;
+- aggregate day and timestamps use the Laravel application clock rather than PostgreSQL server `CURRENT_DATE` / `CURRENT_TIMESTAMP`, preventing product-signal day splits when application and database timezones cross midnight at different instants;
+- a deterministic future-clock regression test locks application-clock ownership independently of the database server's real date;
 - focused feature/architecture tests cover aggregate math, bounded windows, empty evidence, unsupported retention semantics, Admin System consumption and future cohort-review gates;
 - no external analytics SaaS, warehouse, streaming platform, recommendation or notification scope was introduced.
 
-Acceptance evidence is owned by `docs/project/engineering/stage-plan.json`, Auto Closure run 718 (`35124421340`) on exact head `eaaf11468d9b561d71de5a85c5086efd28e63c5a`, and Browser Review Evidence run 41 (`35124421021`) on the same exact head.
+Acceptance evidence is owned by `docs/project/engineering/stage-plan.json`, Auto Closure run 723 (`35125850074`) on exact head `ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd`, and Browser Review Evidence run 46 (`35125849773`) on the same exact head.
 
 ## Explicit non-goals
 
@@ -163,7 +165,7 @@ Use existing SongChart ownership rather than a second telemetry/user-state test 
 ./songchart verify
 ```
 
-Architecture tests prove contract/privacy/authority boundaries. PostgreSQL tests prove durable persistence and aggregate reporting semantics. Existing browser/admin coverage is extended only where required by user-visible interaction. Stage 27 exact-head implementation closure passed Auto Closure run 718; the acceptance-state authority commit must also pass repository-owned verification before PR #49 is promoted.
+Architecture tests prove contract/privacy/authority boundaries. PostgreSQL tests prove durable persistence and aggregate reporting semantics. Existing browser/admin coverage is extended only where required by user-visible interaction. Final Stage 27 implementation closure, including the application-clock boundary fix, passed Auto Closure run 723; the final acceptance-state authority commit must also pass repository-owned verification before PR #49 is promoted.
 
 ## Handoff rule
 
