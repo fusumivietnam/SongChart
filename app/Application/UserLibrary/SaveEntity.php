@@ -16,7 +16,7 @@ final class SaveEntity
         $modelClass = $type->modelClass();
 
         if (! $modelClass::query()->whereKey($entityId)->exists()) {
-            throw (new ModelNotFoundException())->setModel($modelClass, [$entityId]);
+            throw (new ModelNotFoundException)->setModel($modelClass, [$entityId]);
         }
 
         return UserSavedEntity::query()->firstOrCreate([
