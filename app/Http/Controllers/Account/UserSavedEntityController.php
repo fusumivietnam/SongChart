@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Account;
 
-use App\Application\UserLibrary\SaveEntity;
 use App\Application\UserLibrary\SavedEntityLibrary;
+use App\Application\UserLibrary\SaveEntity;
 use App\Domain\Catalog\Enums\EntityType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
