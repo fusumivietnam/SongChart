@@ -70,11 +70,11 @@
     },
     "27.0": {
       "title": "Product Signals & Retention",
-      "source_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
-      "effective_prepared_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
-      "verification_run": 35124421340,
-      "visual_evidence_run": 35124421021,
-      "verification": "Auto Closure run 718 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head eaaf11468d9b561d71de5a85c5086efd28e63c5a. Browser Review Evidence run 41 also passed on the same exact head. Stage 27 established aggregate-only search product signals, authenticated saved-entity user value, bounded browser-local recent state and an Admin System product-signal read model while preserving D1/D7/cohort retention as insufficient_evidence because accepted telemetry contains no user/session linkage."
+      "source_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "effective_prepared_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "verification_run": 35125850074,
+      "visual_evidence_run": 35125849773,
+      "verification": "Auto Closure run 723 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd. Browser Review Evidence run 46 also passed on the same exact head. Stage 27 established aggregate-only search product signals, authenticated saved-entity user value, bounded browser-local recent state and an Admin System product-signal read model while preserving D1/D7/cohort retention as insufficient_evidence because accepted telemetry contains no user/session linkage. Final closure also fixes the product-signal day boundary to use the Laravel application clock rather than the PostgreSQL server clock and locks that ownership with a deterministic timezone-boundary regression test."
     }
   },
   "accepted_tranche_evidence": {
@@ -244,11 +244,11 @@
     },
     "27.0D": {
       "title": "Retention Measurement Closure",
-      "source_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
-      "effective_prepared_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
-      "verification_run": 35124421340,
-      "visual_evidence_run": 35124421021,
-      "verification": "Auto Closure run 718 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head eaaf11468d9b561d71de5a85c5086efd28e63c5a. Browser Review Evidence run 41 passed on the same exact head. The accepted implementation exposes bounded aggregate search demand/quality metrics through ProductSignalSummary on the existing Admin System surface and truthfully keeps D1/D7/cohort retention at insufficient_evidence with no user/session linkage or invented proxy."
+      "source_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "effective_prepared_head": "ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd",
+      "verification_run": 35125850074,
+      "visual_evidence_run": 35125849773,
+      "verification": "Auto Closure run 723 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd. Browser Review Evidence run 46 passed on the same exact head. The accepted implementation exposes bounded aggregate search demand/quality metrics through ProductSignalSummary on the existing Admin System surface and truthfully keeps D1/D7/cohort retention at insufficient_evidence with no user/session linkage or invented proxy. The final closure also binds aggregate day/timestamps to the application clock so product-signal reporting cannot split at the database-server timezone boundary."
     }
   },
   "stage_progress": [
