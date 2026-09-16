@@ -2,7 +2,6 @@
 @php
 $items = [
     ['key' => 'overview', 'label' => 'Tổng quan', 'route' => 'account.overview'],
-    ['key' => 'saved', 'label' => 'Đã lưu', 'route' => 'account.saved.index'],
     ['key' => 'profile', 'label' => 'Hồ sơ', 'route' => 'account.profile'],
     ['key' => 'security', 'label' => 'Bảo mật', 'route' => 'account.security'],
 ];
