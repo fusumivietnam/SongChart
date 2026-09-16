@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "b05b644cf77946d15a95b82acaaf7d14ed3a3d93427101ab610f1512fe584166",
+    "source_fingerprint": "dfdb779f74eff959d995271584c55aeaab98e8301ccaa4a8c1efd02c01bba02c",
     "candidate": {
         "stage": "27.0",
         "candidate": "v1",
@@ -1027,6 +1027,18 @@
                 ],
                 "owner": "extension-runtime-schema"
             },
+            "user_saved_entities": {
+                "migration": "2026_09_16_000200_create_user_saved_entities_table.php",
+                "columns": [
+                    "id",
+                    "user_id",
+                    "entity_type",
+                    "entity_id",
+                    "created_at",
+                    "updated_at"
+                ],
+                "owner": "user-library"
+            },
             "users": {
                 "migration": "0001_01_01_000000_create_users_table.php",
                 "columns": [
@@ -1097,10 +1109,11 @@
         "database/migrations/2026_09_09_000100_create_chart_snapshots_table.php": "91b0db0abc04fe0e7ebdaebc9763bd53333a54f13c8aa2aaa2b544745d7a17e4",
         "database/migrations/2026_09_09_000200_create_chart_metric_observations_table.php": "b3be48a4d1dedaa571bc7342eff02b7406beb8025652c38ca9bc2e7197ee924a",
         "database/migrations/2026_09_16_000100_create_product_search_daily_aggregates.php": "b22661bf62632bb8226bcf84c73bb90a3735f1cacd7999011ec60b0f5c363013",
+        "database/migrations/2026_09_16_000200_create_user_saved_entities_table.php": "a391eb8ef9ddd52568e75df9ec5294eb6734c4bb31de808f90c2acef464b818d",
         "database/seeders/CatalogFixtureSeeder.php": "12b429b04d0a8bfa0f4b111e8dd77de28c965db344ccfd27ebf336614c516fdc",
         "database/seeders/DatabaseSeeder.php": "43a3008e8b4d406822b3e5ff2e8e9a48ec1ab1e56b2f2c863bc651984b50489f",
         "database/seeders/ProviderRegistrySeeder.php": "1337fd46a76721466ed147b24e808cb0b632dc45fbcbaa742b79c8d699e684d3",
-        "docs/project/domain/schema-ownership.json": "fc4ab45f619fae24fa67d117e281f9fadb04479b62a69232e92552a9a7e5bd4c",
+        "docs/project/domain/schema-ownership.json": "4493da577baacd9bff1b341b3b02b71b9c0c534dafd6486f3a7bbd9e7a7c8e54",
         "docs/project/engineering/AI_DEVELOPMENT_PROTOCOL.md": "b0278efd3ac42af6e2ef1952d384f743a830ea6b478a0e7ec37f5744ea2b8792",
         "docs/project/engineering/PROJECT_CONTEXT_AUTHORITY.md": "7f3c88ae9068fe3141c6214c9ac1c41c5df4467a387298b6b26c3b72ecba008d",
         "docs/project/engineering/ai-development-contract.json": "ce79b069eaada91dafe01db5fff59c6b07fcc419bd5af3a8c21a07c1c9fb1a14",
