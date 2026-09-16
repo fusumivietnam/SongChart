@@ -1,7 +1,7 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "450566851b402781d4c36f0eb40360365bc02ec1c6da6c84d6a0fe3b7e010c91",
+    "source_fingerprint": "03fc44b14de8b5fce69d64d6c646c7d738e1255c2bdb3280414c81a9510713d2",
     "current_stage": {
         "id": "27.0",
         "title": "Product Signals & Retention",
@@ -60,6 +60,6 @@
         "candidate-verification.json": "591b046cf2812313e2b90425aabe9258a9ad630dd00901111412730020f45ce8",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "fe2773f2aafa6e7227c606bda9185ba8667b6952f46618b13a30dc079a818eb7"
+        "docs/project/engineering/stage-plan.json": "00bd55c0c74c5c25fa34ae07c8114370e00d0020b47c8b53a168f1ed5f8c5216"
     }
 }
