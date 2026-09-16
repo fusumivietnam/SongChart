@@ -82,6 +82,27 @@
         "Do not invent social/follow/recommendation persistence until a separately accepted journey owns it."
       ]
     },
+    "member.manage_library": {
+      "actor": "authenticated_active_verified_user",
+      "status": "stage-27-foundation",
+      "goal": "Save canonical music entities into a private personal library and remove them later without mutating canonical catalog state.",
+      "route_names": [
+        "account.saved.index",
+        "account.saved.store",
+        "account.saved.destroy"
+      ],
+      "required_domain_capabilities": [
+        "user ownership",
+        "canonical entity reference",
+        "idempotent save semantics",
+        "private account-scoped read model"
+      ],
+      "stage_27_constraints": [
+        "Canonical collections remain catalog/editorial state and are never reused as user-library persistence.",
+        "Saved-library records remain private account state and never alter provider-neutral canonical identity.",
+        "Named user collections, sharing, follows, comments, community and recommendation graphs are outside this tranche."
+      ]
+    },
     "editor.ingest_and_admit": {
       "actor": "authorized_editor_or_admin",
       "status": "implemented-foundation",
@@ -140,6 +161,7 @@
     "Social graph",
     "Visitor-facing AI assistant",
     "Full Stage 23 public UX redesign",
-    "Provider-specific canonical entities"
+    "Provider-specific canonical entities",
+    "Named or shared user collections in Stage 27.0B"
   ]
 }
