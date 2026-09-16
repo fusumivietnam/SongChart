@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 final class SaveEntity
 {
-    public function save(User $user, EntityType $type, string $entityId): UserSavedEntity
+    public function add(User $user, EntityType $type, string $entityId): UserSavedEntity
     {
         $modelClass = $type->modelClass();
 
