@@ -36,6 +36,10 @@
         <span aria-current="page">{{ $entity['title'] }}</span>
     </nav>
 
+    @if(session('status') === 'saved-entity-added')
+        <x-ui.alert variant="success" class="mt-5">Đã lưu vào tài khoản. <a class="font-semibold underline" href="{{ route('account.saved.index') }}">Xem nội dung đã lưu</a>.</x-ui.alert>
+    @endif
+
     <header class="mt-7 rounded-[var(--sc-radius-card)] border border-[var(--sc-border)] bg-[var(--sc-bg-surface)] p-5 shadow-[var(--sc-shadow-card)] md:p-7">
         <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
             <div class="grid h-28 w-28 shrink-0 place-items-center rounded-[var(--sc-radius-card)] bg-[var(--sc-primary-soft)] text-4xl font-bold text-[var(--sc-primary)]" aria-hidden="true">{{ mb_substr($entity['title'],0,1) }}</div>
@@ -52,6 +56,12 @@
                 <h1 id="entity-title" class="mt-3 break-words text-4xl font-bold tracking-tight md:text-5xl">{{ $entity['title'] }}</h1>
                 <p class="mt-3 text-lg leading-7 text-[var(--sc-text-secondary)]">{{ $entity['context'] }}</p>
                 <p class="mt-2 text-sm text-[var(--sc-text-muted)]">{{ $entity['meta'] }}</p>
+                @auth
+                    <form class="mt-5" method="POST" action="{{ route('account.saved.store', ['type' => $entity['type'], 'id' => $entity['canonical_id']]) }}">
+                        @csrf
+                        <x-ui.button type="submit" variant="secondary">Lưu vào tài khoản</x-ui.button>
+                    </form>
+                @endauth
             </div>
         </div>
     </header>
