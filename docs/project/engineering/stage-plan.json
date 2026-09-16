@@ -7,7 +7,7 @@
     "status": "implementing"
   },
   "accepted_through": "26.0",
-  "active_tranche": "27.0B",
+  "active_tranche": "27.0C",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -219,6 +219,13 @@
       "effective_prepared_head": "27563931473dd25c00474f174f3c4c810356f099",
       "verification_run": 35039491746,
       "verification": "Auto Closure run 657 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 27563931473dd25c00474f174f3c4c810356f099. The accepted implementation records only aggregate-only first-page search signals with no raw event rows, query text/hash, user/session identifiers, IP, user agent or request payload storage."
+    },
+    "27.0B": {
+      "title": "Favorites & Collections Closure",
+      "source_head": "55b7e1a498bde0ed70343fc0be25ee8927ff1383",
+      "effective_prepared_head": "55b7e1a498bde0ed70343fc0be25ee8927ff1383",
+      "verification_run": 35110138347,
+      "verification": "Auto Closure run 699 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 55b7e1a498bde0ed70343fc0be25ee8927ff1383. The accepted implementation adds a separate authenticated user-library saved-entity primitive with canonical entity references, user-scoped ownership, idempotent add/remove behavior and private account read-model/UI while preserving canonical collections as catalog authority and excluding recommendation/community scope."
     }
   },
   "stage_progress": [
@@ -234,7 +241,7 @@
     },
     {
       "id": "27.0B",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Favorites & Collections Closure",
       "goals": [
         "audit MVP user-value ownership before adding persistence or UI",
@@ -244,7 +251,7 @@
     },
     {
       "id": "27.0C",
-      "status": "planned",
+      "status": "implementing",
       "title": "Recent & Local State",
       "goals": [
         "add recent searches/views only when telemetry and privacy semantics justify them",
@@ -263,13 +270,13 @@
       ]
     }
   ],
-  "next_tranche": "27.0C",
+  "next_tranche": "27.0D",
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "8acc393af6e91eaf3b096f7ce749ea39e340ad69",
     "stage_27_branch": "stage-27-product-signals-retention",
     "stage_27_pull_request": 49,
-    "baseline": "Stage 26 accepted and merged before Stage 27 activation; 27.0A is accepted and 27.0B is the only actionable tranche."
+    "baseline": "Stage 26 accepted and merged before Stage 27 activation; 27.0A and 27.0B are accepted and 27.0C is the only actionable tranche."
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
