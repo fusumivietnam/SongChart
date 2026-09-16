@@ -77,7 +77,7 @@ it('keeps product telemetry bounded, privacy-minimized and consumer-owned', func
         flags: JSON_THROW_ON_ERROR,
     );
 
-    expect($contract['schema_version'])->toBe(1)
+    expect($contract['schema_version'])->toBe(2)
         ->and($contract['authority'])->toBe('product_telemetry_contract')
         ->and($contract['defaults']['canonical_authority'])->toBeFalse()
         ->and($contract['defaults']['raw_ip_allowed'])->toBeFalse()
@@ -117,7 +117,16 @@ it('keeps product telemetry bounded, privacy-minimized and consumer-owned', func
         ->and($contract['persistence']['table'])->toBe('product_search_daily_aggregates')
         ->and($contract['persistence']['raw_event_rows'])->toBeFalse()
         ->and($contract['persistence']['disable_switch'])->not->toBeEmpty()
-        ->and($contract['persistence']['degradation'])->not->toBeEmpty();
+        ->and($contract['persistence']['degradation'])->not->toBeEmpty()
+        ->and($contract['derived_measurements']['consumer'])->toContain('ProductSignalSummary.php')
+        ->and($contract['derived_measurements']['default_window_days'])->toBe(28)
+        ->and($contract['derived_measurements']['maximum_window_days'])->toBe(90)
+        ->and($contract['derived_measurements']['retention']['status'])->toBe('insufficient_evidence')
+        ->and($contract['derived_measurements']['retention']['forbidden_proxies'])->toContain(
+            'aggregate_search_growth',
+            'saved_item_count',
+            'browser_local_recent_state',
+        );
 });
 
 it('does not silently promote speculative product events or tracking dimensions', function (): void {
@@ -130,9 +139,9 @@ it('does not silently promote speculative product events or tracking dimensions'
     expect($contract['events']['entity.viewed']['status'])->toBe('candidate_not_approved')
         ->and($contract['events']['relationship.clicked']['status'])->toBe('deferred_no_demonstrated_producer_consumer')
         ->and($contract['events']['provider.clicked']['status'])->toBe('deferred_no_demonstrated_producer_consumer')
-        ->and($contract['events']['favorite.added']['status'])->toBe('deferred_until_favorites_mvp_exists')
-        ->and($contract['events']['favorite.removed']['status'])->toBe('deferred_until_favorites_mvp_exists')
-        ->and($contract['events']['collection.updated']['status'])->toBe('deferred_until_user_collections_mvp_exists');
+        ->and($contract['events']['favorite.added']['status'])->toBe('deferred_mvp_exists_but_no_accepted_measurement_consumer')
+        ->and($contract['events']['favorite.removed']['status'])->toBe('deferred_mvp_exists_but_no_accepted_measurement_consumer')
+        ->and($contract['events']['collection.updated']['status'])->toBe('deferred_no_named_user_collections_mvp');
 
     expect($contract['future_expansion_gate']['requires_new_review_for'])
         ->toContain(
@@ -142,6 +151,7 @@ it('does not silently promote speculative product events or tracking dimensions'
             'entity-level view history',
             'external analytics delivery',
             'new retention-sensitive dimensions',
+            'cohort retention measurement',
         );
 });
 
