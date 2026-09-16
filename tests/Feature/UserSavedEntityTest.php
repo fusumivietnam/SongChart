@@ -110,3 +110,16 @@ it('does not let one account remove another accounts saved entity', function ():
 
     expect(UserSavedEntity::query()->find($saved->getKey()))->not->toBeNull();
 });
+
+it('shows the save entry point only to authenticated users on entity detail', function (): void {
+    $artist = Artist::factory()->create(['slug' => 'saved-entry-point-artist']);
+
+    $this->get(route('artists.show', ['slug' => $artist->slug]))
+        ->assertOk()
+        ->assertDontSee('Lưu vào tài khoản');
+
+    $this->actingAs(User::factory()->create())
+        ->get(route('artists.show', ['slug' => $artist->slug]))
+        ->assertOk()
+        ->assertSee('Lưu vào tài khoản');
+});
