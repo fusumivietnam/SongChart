@@ -4,10 +4,10 @@
     "id": "27.0",
     "title": "Product Signals & Retention",
     "task_contract": "docs/foundation/STAGE_27_0_TASK_CONTRACT.md",
-    "status": "implementing"
+    "status": "accepted"
   },
-  "accepted_through": "26.0",
-  "active_tranche": "27.0D",
+  "accepted_through": "27.0",
+  "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -67,6 +67,14 @@
       "verification_run": 35014245532,
       "visual_evidence_run": 35014245514,
       "verification": "Auto Closure run 634 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 0043580bd9a9319dccd4cb14f4eb4f106ab14e45. Browser Review Evidence run 29 passed desktop/mobile account and admin accessibility checks and uploaded SHA-bound screenshots on the same exact head. Stage 26 closed authority drift, executable UI contract gaps and representative product-screen coherence without adding a parallel design system or frontend runtime."
+    },
+    "27.0": {
+      "title": "Product Signals & Retention",
+      "source_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
+      "effective_prepared_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
+      "verification_run": 35124421340,
+      "visual_evidence_run": 35124421021,
+      "verification": "Auto Closure run 718 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head eaaf11468d9b561d71de5a85c5086efd28e63c5a. Browser Review Evidence run 41 also passed on the same exact head. Stage 27 established aggregate-only search product signals, authenticated saved-entity user value, bounded browser-local recent state and an Admin System product-signal read model while preserving D1/D7/cohort retention as insufficient_evidence because accepted telemetry contains no user/session linkage."
     }
   },
   "accepted_tranche_evidence": {
@@ -233,6 +241,14 @@
       "effective_prepared_head": "6317b0e46f64240002db7ee819e24d30418cacb0",
       "verification_run": 35112887782,
       "verification": "Auto Closure run 707 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke including bounded recent-state checks, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head 6317b0e46f64240002db7ee819e24d30418cacb0. The accepted implementation keeps recent search/entity state browser-local with an 8-item cap per group, 30-day expiry, same-origin relative URLs, graceful storage failure and explicit local clearing, with no anonymous server identity, account sync or telemetry expansion."
+    },
+    "27.0D": {
+      "title": "Retention Measurement Closure",
+      "source_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
+      "effective_prepared_head": "eaaf11468d9b561d71de5a85c5086efd28e63c5a",
+      "verification_run": 35124421340,
+      "visual_evidence_run": 35124421021,
+      "verification": "Auto Closure run 718 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head eaaf11468d9b561d71de5a85c5086efd28e63c5a. Browser Review Evidence run 41 passed on the same exact head. The accepted implementation exposes bounded aggregate search demand/quality metrics through ProductSignalSummary on the existing Admin System surface and truthfully keeps D1/D7/cohort retention at insufficient_evidence with no user/session linkage or invented proxy."
     }
   },
   "stage_progress": [
@@ -268,7 +284,7 @@
     },
     {
       "id": "27.0D",
-      "status": "implementing",
+      "status": "accepted",
       "title": "Retention Measurement Closure",
       "goals": [
         "derive measurable return-value metrics from accepted product signals",
@@ -283,7 +299,7 @@
     "accepted_main_sha": "8acc393af6e91eaf3b096f7ce749ea39e340ad69",
     "stage_27_branch": "stage-27-product-signals-retention",
     "stage_27_pull_request": 49,
-    "baseline": "Stage 26 accepted and merged before Stage 27 activation; 27.0A, 27.0B and 27.0C are accepted and 27.0D is the only actionable tranche."
+    "baseline": "Stage 26 accepted and merged before Stage 27 activation; Stage 27.0A through 27.0D are accepted and Stage 27 is closed pending human promotion of PR #49."
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
