@@ -7,7 +7,14 @@
 <meta name="robots" content="noindex,follow">
 @endpush
 @section('content')
-<div class="sc-container py-8 md:py-12">
+<div
+    class="sc-container py-8 md:py-12"
+    data-songchart-recent-search
+    data-recent-query="{{ $query }}"
+    data-recent-type="{{ $type }}"
+    data-recent-sort="{{ $sort }}"
+    data-recent-url="{{ request()->getRequestUri() }}"
+>
     <nav aria-label="Breadcrumb" class="text-sm text-[var(--sc-text-secondary)]"><a href="{{ route('home') }}">Trang chủ</a> <span aria-hidden="true">/</span> Tìm kiếm</nav>
 
     <header class="mt-6 max-w-3xl">
@@ -26,6 +33,58 @@
 
     @if($query==='')
         <div class="mt-10"><x-ui.empty-state title="Bắt đầu bằng một từ khóa" description="Tìm nghệ sĩ, bản thu, album, phiên bản, tác phẩm hoặc bộ sưu tập trong canonical catalog." /></div>
+
+        <section
+            class="mt-6"
+            aria-labelledby="recent-discovery-title"
+            x-data
+            x-cloak
+            x-show="$store.recentState.ready && ($store.recentState.searches.length > 0 || $store.recentState.entities.length > 0)"
+        >
+            <x-ui.card>
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <p class="sc-caption">LOCAL RETURN LOOP</p>
+                        <h2 id="recent-discovery-title" class="mt-1 text-xl font-bold">Quay lại nội dung gần đây</h2>
+                        <p class="mt-2 max-w-2xl text-sm leading-6 text-[var(--sc-text-secondary)]">Lịch sử này chỉ được lưu trong trình duyệt hiện tại, tối đa 8 mục mỗi nhóm và tự hết hạn sau 30 ngày. Không đồng bộ lên tài khoản hay máy chủ.</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="min-h-11 shrink-0 rounded-[var(--sc-radius-control)] px-3 py-2 text-sm font-semibold text-[var(--sc-text-secondary)] hover:text-[var(--sc-primary)]"
+                        x-on:click="$store.recentState.clear()"
+                    >Xóa lịch sử cục bộ</button>
+                </div>
+
+                <div class="mt-5 grid gap-6 lg:grid-cols-2">
+                    <div x-show="$store.recentState.searches.length > 0">
+                        <h3 class="text-sm font-bold uppercase tracking-wide text-[var(--sc-text-secondary)]">Tìm kiếm gần đây</h3>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <template x-for="item in $store.recentState.searches" x-bind:key="`${item.query}:${item.type}:${item.sort}`">
+                                <a
+                                    class="inline-flex min-h-11 items-center rounded-full bg-[var(--sc-bg-subtle)] px-3 py-2 text-sm font-semibold hover:text-[var(--sc-primary)]"
+                                    x-bind:href="item.url"
+                                    x-text="item.query"
+                                ></a>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div x-show="$store.recentState.entities.length > 0">
+                        <h3 class="text-sm font-bold uppercase tracking-wide text-[var(--sc-text-secondary)]">Đã xem gần đây</h3>
+                        <ul class="mt-3 space-y-2">
+                            <template x-for="item in $store.recentState.entities" x-bind:key="item.url">
+                                <li>
+                                    <a class="block min-h-11 rounded-[var(--sc-radius-control)] px-3 py-2 hover:bg-[var(--sc-bg-subtle)]" x-bind:href="item.url">
+                                        <span class="block font-semibold" x-text="item.title"></span>
+                                        <span class="mt-0.5 block text-xs text-[var(--sc-text-muted)]" x-text="item.label"></span>
+                                    </a>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            </x-ui.card>
+        </section>
     @elseif($result['total_all']===0)
         <div class="mt-10"><x-ui.empty-state :title="'Không tìm thấy “'.$query.'”'" description="Hãy kiểm tra chính tả, dùng từ khóa rộng hơn hoặc thử một tên canonical khác.">
             <x-slot:actions><x-ui.button variant="secondary" :href="route('search',['q'=>$query,'type'=>'all'])">Tìm trong tất cả</x-ui.button><x-ui.button variant="ghost" href="mailto:content@songchart.test?subject=Missing%20content">Báo thiếu nội dung</x-ui.button></x-slot:actions>
