@@ -95,8 +95,8 @@
         <x-ui.card><p class="text-sm text-slate-500">Zero-result rate</p><p class="mt-2 text-xl font-bold">{{ number_format($productSignals['zero_result_rate'] * 100, 1) }}%</p></x-ui.card>
         <x-ui.card><p class="text-sm text-slate-500">Kết quả TB / search</p><p class="mt-2 text-xl font-bold">{{ number_format($productSignals['average_results_per_search'], 2) }}</p></x-ui.card>
     </div>
-    <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
-        <strong>Retention: insufficient evidence.</strong> D1/D7 retention không được suy diễn từ search volume. Telemetry hiện không có user/session linkage; muốn đo retention thật phải mở lại privacy/retention authority trước khi thêm dữ liệu định danh hoặc liên kết phiên.
+    <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950" data-retention-status="{{ $productSignals['retention_status'] }}">
+        <strong>Retention: {{ $productSignals['retention_status'] }}.</strong> {{ $productSignals['retention_reason'] }}
     </div>
 </section>
 
