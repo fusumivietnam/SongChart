@@ -103,8 +103,32 @@ Chuyển Admin từ subsystem navigation sang prioritized operational work khi e
 
 - Candidate low-risk tasks: operator digest, provider/data-gap summary, conflict clustering, editorial suggestions, quota/scale explanation.
 - AI đọc typed snapshots/derived evidence, không có arbitrary raw database authority.
-- Model router cho phép local/free model với task đơn giản và strong cloud model cho cross-system reasoning khi justified.
-- Visitor-facing AI assistant chỉ triển khai khi product evidence cho thấy conversational discovery tạo giá trị; bắt đầu read-only, retrieval-grounded, có citation/provenance và cost controls.
+- RAG phải là retrieval projection trên repository/canonical evidence, không trở thành authority song song. Ưu tiên thứ tự `structured retrieval → lexical/alias retrieval → semantic retrieval → typed evidence pack → model router` thay vì mặc định vector similarity là truth.
+- Canonical PostgreSQL/read models/snapshots giữ quyền sở hữu dữ liệu; vector/embedding index nếu được mở chỉ là rebuildable projection có stable entity IDs, provenance, freshness, authority/confidence metadata và bounded corpus ownership.
+- Product/operational/engineering corpus phải tách boundary; visitor-facing retrieval chỉ được đọc public-approved canonical/provenance evidence, không được thấy quarantine/raw provider/internal admin evidence.
+- Model router cho phép deterministic/no-model path cho entity facts, local/free model cho summarize/classify đơn giản và strong cloud model cho cross-system reasoning khi justified.
+- RAG write path bị cấm trực tiếp: model chỉ tạo answer/proposal; mọi canonical mutation phải đi qua governed application command + validation + human gate tương ứng.
+- Visitor-facing AI assistant chỉ triển khai khi product evidence cho thấy conversational discovery tạo giá trị; bắt đầu read-only, retrieval-grounded, có citation/provenance, privacy boundary và cost controls.
+
+#### Governed RAG progression
+
+RAG không được mở như một subsystem độc lập trước khi evidence/read-model foundation đủ. Hướng triển khai mục tiêu:
+
+1. **RAG-0 — deterministic retrieval:** intent → canonical entity/read model/snapshot → grounded answer, không cần vector DB hoặc LLM cho factual queries đơn giản.
+2. **RAG-1 — internal grounded assistant:** typed evidence packs cho operator/editor/data-gap/provider-conflict use cases; local model được ưu tiên khi đủ chất lượng.
+3. **RAG-2 — semantic projection:** chỉ thêm embeddings/`pgvector`/hybrid ranking khi lexical/structured retrieval không đáp ứng một use case đo được; PostgreSQL-native capability được ưu tiên trước dedicated vector infrastructure.
+4. **RAG-3 — visitor assistant:** public-only corpus, citation/provenance và cost/privacy guardrails; chỉ mở khi telemetry chứng minh conversational discovery có return value.
+5. **RAG-4 — governed AI actions:** AI có thể đề xuất action nhưng không tự mutate canonical/product truth; human/authority gate vẫn sở hữu mutation.
+
+### 10. Governed intelligence & adaptive assistance
+
+Chỉ mở sau khi telemetry, demand/data-quality, provider economy và decision/outcome feedback đã có evidence đủ mạnh.
+
+- Hợp nhất typed evidence/snapshots thành governed intelligence surfaces thay vì cho model arbitrary database access.
+- Query/intent routing phải ưu tiên deterministic rules cho factual/domain paths; semantic/model routing chỉ dùng khi tạo measurable value.
+- RAG evaluation phải đo retrieval precision/coverage, citation correctness, stale-evidence rate, unsupported-answer rate, latency và cost trước khi mở rộng model autonomy.
+- Local/cloud model routing là implementation choice, không phải business authority; core product correctness không phụ thuộc model availability.
+- Adaptive recommendations/automation chỉ mở khi outcome feedback + guardrail + rollback/degradation path đã accepted.
 
 ## Evidence-gated / explicitly deferred directions
 
@@ -112,6 +136,7 @@ Các capability sau không được coi là thiếu foundation và không đư�
 
 - CDN/Workers/Hyperdrive/replicas/multi-region/load balancing/external APM ngoài các trigger Stage 24/25 đã accepted.
 - Microservices, Kubernetes, event-streaming platform, dedicated graph database và data warehouse nếu chưa có measurable pressure/use case.
+- Dedicated vector database/semantic-search service nếu PostgreSQL-native structured/lexical/`pgvector` retrieval chưa chứng minh thiếu capability hoặc scale.
 - Native mobile apps nếu retention/native-only value chưa được chứng minh.
 - Recommendation graph, public playlists và comments/community trước khi telemetry/retention foundation chứng minh nhu cầu.
 - Visitor AI hoặc autonomous production mutation trước khi có explicit authority, safety/cost boundary và measured value.
@@ -132,6 +157,7 @@ Roadmap hậu Stage 26 ưu tiên đóng các vòng phản hồi thay vì thêm s
 10. Destination-health loop: outbound failure/staleness/user report → validation/replacement queue → healthier provider destinations → higher outbound success/trust.
 11. Cost/value loop: provider/AI/infrastructure spend → measurable useful outcome → retain/optimize/defer decision → improved unit economics.
 12. Authority-improvement loop: drift/ambiguity detected → owning authority corrected → compiler/verifier/context regenerated → fewer future inconsistencies and agent mistakes.
+13. Grounded-intelligence loop: governed evidence → retrieval/evidence pack → answer/recommendation → citation/outcome evaluation → retrieval/routing improvement without mutating source authority.
 
 ### Flywheel control contract
 
@@ -195,6 +221,18 @@ Experiment/learning
         ↓
 measured changes back into product/data/policy
 
+Governed canonical/read-model/snapshot evidence
+        ↓
+Structured/lexical/semantic retrieval
+        ↓
+Typed evidence pack + model routing
+        ↓
+Grounded answer/recommendation + citation
+        ↓
+Evaluation/outcome feedback
+        ↓
+retrieval/routing improvement (not authority mutation)
+
 All authorities/contracts
         ↓
 Drift detection
@@ -213,8 +251,8 @@ Flywheel metrics không được tối ưu cục bộ nếu gây hại vòng kh�
 Nghiên cứu/phát triển theo thứ tự ưu tiên, không mặc định thành stage:
 
 - P0: capability registry, event taxonomy, freshness/evidence policy và authority-improvement automation trên baseline drift detection đã accepted.
-- P1: data-quality contract, decision/outcome authority, privacy/data-lifecycle classification, internal boundary/dependency authority.
-- P2: cost authority, feature-flag lifecycle, experiment authority, unified authority graph/contract compiler.
+- P1: data-quality contract, decision/outcome authority, privacy/data-lifecycle classification, internal boundary/dependency authority; typed evidence-pack contract và retrieval-corpus boundary cho future RAG.
+- P2: cost authority, feature-flag lifecycle, experiment authority, unified authority graph/contract compiler; retrieval/model evaluation contract, hybrid-ranking evidence và local/cloud model routing khi có use case.
 
 ## Quy tắc roadmap
 
@@ -223,6 +261,8 @@ Nghiên cứu/phát triển theo thứ tự ưu tiên, không mặc định thà
 - Provider data là evidence/reference, không phải schema/canonical authority.
 - Scale/infrastructure adoption phải chỉ ra metric/threshold và expected improvement.
 - AI availability không được trở thành prerequisite cho core product/monitoring/data correctness.
+- RAG/vector/embedding index chỉ là rebuildable retrieval projection; canonical/read-model/snapshot authority vẫn thuộc repository-owned data contracts.
+- Structured/deterministic retrieval phải được đánh giá trước lexical/semantic/model retrieval; không dùng LLM cho factual query nếu typed read path đã đủ.
 - New authority phải giảm ambiguity/drift hoặc tạo executable enforcement; không tạo thêm documentation layer trùng lặp.
 - UX/page implementation phải consume approved tokens/components/patterns/layouts thay vì tự phát minh design direction cục bộ.
 - Product/data/operations changes phải ưu tiên đóng feedback loops và đo outcome thay vì thêm feature rời rạc.
