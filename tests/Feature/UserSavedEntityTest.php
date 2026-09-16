@@ -58,3 +58,55 @@ it('refuses to save an entity that is not canonical', function (): void {
     expect(fn () => app(SaveEntity::class)->save($user, EntityType::Artist, '01K5ZZZZZZZZZZZZZZZZZZZZZZ'))
         ->toThrow(ModelNotFoundException::class);
 });
+
+it('requires an authenticated verified active account for the saved library', function (): void {
+    $this->get(route('account.saved.index'))
+        ->assertRedirect(route('login'));
+});
+
+it('stores the same canonical entity only once through the account route', function (): void {
+    $user = User::factory()->create();
+    $artist = Artist::factory()->create();
+    $parameters = ['type' => EntityType::Artist->value, 'id' => (string) $artist->getKey()];
+
+    $this->actingAs($user)->post(route('account.saved.store', $parameters))->assertRedirect();
+    $this->actingAs($user)->post(route('account.saved.store', $parameters))->assertRedirect();
+
+    expect(UserSavedEntity::query()
+        ->where('user_id', $user->getKey())
+        ->where('entity_type', EntityType::Artist->value)
+        ->where('entity_id', $artist->getKey())
+        ->count())->toBe(1);
+});
+
+it('shows only the current users saved canonical entities', function (): void {
+    $user = User::factory()->create();
+    $other = User::factory()->create();
+    $visible = Artist::factory()->create(['name' => 'Visible Saved Artist']);
+    $hidden = Artist::factory()->create(['name' => 'Other Saved Artist']);
+
+    app(SaveEntity::class)->save($user, EntityType::Artist, (string) $visible->getKey());
+    app(SaveEntity::class)->save($other, EntityType::Artist, (string) $hidden->getKey());
+
+    $this->actingAs($user)
+        ->get(route('account.saved.index'))
+        ->assertOk()
+        ->assertSee('Visible Saved Artist')
+        ->assertDontSee('Other Saved Artist');
+});
+
+it('does not let one account remove another accounts saved entity', function (): void {
+    $owner = User::factory()->create();
+    $other = User::factory()->create();
+    $artist = Artist::factory()->create();
+    $saved = app(SaveEntity::class)->save($owner, EntityType::Artist, (string) $artist->getKey());
+
+    $this->actingAs($other)
+        ->delete(route('account.saved.destroy', [
+            'type' => EntityType::Artist->value,
+            'id' => (string) $artist->getKey(),
+        ]))
+        ->assertRedirect();
+
+    expect(UserSavedEntity::query()->find($saved->getKey()))->not->toBeNull();
+});
