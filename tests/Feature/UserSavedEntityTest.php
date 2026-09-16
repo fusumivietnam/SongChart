@@ -7,8 +7,8 @@ use App\Domain\Catalog\Enums\EntityType;
 use App\Models\Catalog\Artist;
 use App\Models\User;
 use App\Models\UserSavedEntity;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
