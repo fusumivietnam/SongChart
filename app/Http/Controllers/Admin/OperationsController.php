@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Application\ProductSignals\ProductSignalSummary;
 use App\Contracts\Providers\Rate\ProviderRatePolicyRegistry;
 use App\Contracts\Providers\Rate\ProviderRequestGate;
 use App\Http\Controllers\Controller;
@@ -145,6 +146,7 @@ final class OperationsController extends Controller
         ProviderOperationsConsole $console,
         ProviderRuntimeConfiguration $runtimeConfiguration,
         ProviderCredentialResolver $credentials,
+        ProductSignalSummary $productSignals,
     ): View {
         $providerData = $console->providers([]);
 
@@ -153,6 +155,7 @@ final class OperationsController extends Controller
             'providers' => $providerData['providers'],
             'runtimeConfiguration' => $runtimeConfiguration,
             'youtubeCredentialCount' => $credentials->configuredCount('youtube', 'api_key'),
+            'productSignals' => $productSignals->forDays(),
         ]);
     }
 }
