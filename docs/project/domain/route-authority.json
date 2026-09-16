@@ -4,7 +4,7 @@
   "purpose": "Canonical HTTP route families, retired compatibility surfaces, and provider-neutral edge delivery/cache policy.",
   "canonical_families": {
     "public_catalog": ["/", "/robots.txt", "/sitemap.xml", "/search", "/charts/{chart}", "/artists", "/artists/{slug}", "/groups", "/groups/{slug}", "/release-groups/{slug}", "/releases", "/releases/{slug}", "/recordings", "/recordings/{slug}", "/works", "/works/{slug}", "/versions/{slug}", "/collections", "/collections/{slug}"],
-    "account": ["/account", "/account/profile", "/account/security"],
+    "account": ["/account", "/account/profile", "/account/security", "/account/saved", "/account/saved/{type}/{id}"],
     "admin": ["/admin", "/admin/catalog", "/admin/providers", "/admin/providers/{provider}/configuration", "/admin/imports", "/admin/imports/preview", "/admin/imports/search", "/admin/imports/select", "/admin/imports/preview/execute", "/admin/quarantine", "/admin/identity-conflicts", "/admin/users", "/admin/system", "/admin/audit", "/admin/extensions"],
     "development": ["/development/status", "/development/providers/musicbrainz/artists/import", "/development/design-system", "/development/design-system/shell/frontend", "/development/design-system/shell/admin", "/development/design-system/concepts", "/development/design-system/concepts/{concept}"]
   },
