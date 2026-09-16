@@ -22,7 +22,10 @@ final class SavedEntityLibrary
             ->latest('created_at')
             ->get()
             ->map(function (UserSavedEntity $saved): array {
-                $type = EntityType::from((string) $saved->getAttribute('entity_type'));
+                $rawType = $saved->getAttribute('entity_type');
+                $type = $rawType instanceof EntityType
+                    ? $rawType
+                    : EntityType::from((string) $rawType);
                 $modelClass = $type->modelClass();
                 $entity = $modelClass::query()->find($saved->entity_id);
 
