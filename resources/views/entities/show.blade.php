@@ -27,7 +27,16 @@
 <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
 @endpush
 @section('content')
-<div class="sc-container py-8 md:py-12" data-entity-type="{{ $entity['type'] }}" data-entity-slug="{{ $entity['slug'] }}">
+<div
+    class="sc-container py-8 md:py-12"
+    data-entity-type="{{ $entity['type'] }}"
+    data-entity-slug="{{ $entity['slug'] }}"
+    data-songchart-recent-entity
+    data-recent-title="{{ $entity['title'] }}"
+    data-recent-label="{{ $entity['label'] }}"
+    data-recent-type="{{ $entity['type'] }}"
+    data-recent-url="{{ request()->getRequestUri() }}"
+>
     <nav aria-label="Breadcrumb" class="text-sm text-[var(--sc-text-secondary)]">
         <a href="{{ route('home') }}">Trang chủ</a>
         <span aria-hidden="true">/</span>
