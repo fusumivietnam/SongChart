@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "27.0",
-  "active_tranche": "28.0B",
+  "active_tranche": "28.0C",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -256,6 +256,13 @@
       "effective_prepared_head": "02f9d7bb5d84205f9aa06388f3271f3049a2bc7c",
       "verification_run": 35170846085,
       "verification": "Auto Closure run 732 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 02f9d7bb5d84205f9aa06388f3271f3049a2bc7c. Stage 28.0A confirmed executable launch-surface ownership, closed Stage 28 activation/candidate-contract governance drift, and classified semantic/UX/UI/provider expansion as post-launch or insufficient-evidence unless it blocks a primary flow."
+    },
+    "28.0B": {
+      "title": "Production Safety & Recovery Closure",
+      "source_head": "f7839832e1a1e4c870199cb876bcb1dde22edd49",
+      "effective_prepared_head": "f7839832e1a1e4c870199cb876bcb1dde22edd49",
+      "verification_run": 35171738521,
+      "verification": "Auto Closure run 738 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head f7839832e1a1e4c870199cb876bcb1dde22edd49. Stage 28.0B reused the existing production control plane, locked backup/isolated restore/security-smoke invariants with executable regression coverage, and closed the demonstrated upgrade-safety gap by gracefully terminating a running Horizon master before replacing the release artifact."
     }
   },
   "stage_progress": [
@@ -271,7 +278,7 @@
     },
     {
       "id": "28.0B",
-      "status": "active",
+      "status": "accepted",
       "title": "Production Safety & Recovery Closure",
       "goals": [
         "reuse Stage 19 deployment, health, queue, rollback and backup/restore ownership",
@@ -281,7 +288,7 @@
     },
     {
       "id": "28.0C",
-      "status": "planned",
+      "status": "active",
       "title": "Discoverability & Public Trust Minimum",
       "goals": [
         "verify Stage 18.3 canonical URLs, robots, sitemap and structured metadata against release reality",
@@ -300,7 +307,7 @@
       ]
     }
   ],
-  "next_tranche": "28.0C",
+  "next_tranche": "28.0D",
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "5db0b6377997d146d86b4fd8c5aedd0a66c189a3",
