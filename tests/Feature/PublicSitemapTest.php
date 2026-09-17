@@ -21,6 +21,7 @@ it('publishes only canonical public surfaces in the sitemap', function (): void 
         ->assertOk()
         ->assertHeader('content-type', 'application/xml; charset=UTF-8')
         ->assertSee('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', false)
+        ->assertSee('/privacy', false)
         ->assertSee('/groups/daft-punk', false)
         ->assertSee('/releases/discovery', false)
         ->assertSee('/recordings/one-more-time', false)
