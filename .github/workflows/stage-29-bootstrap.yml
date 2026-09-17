@@ -1,0 +1,124 @@
+name: Stage 29 Bootstrap
+
+on:
+  push:
+    branches:
+      - stage-29-delivery-velocity-roadmap-automation
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage-29-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  activate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: stage-29-delivery-velocity-roadmap-automation
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Activate Stage 29 while preserving accepted history
+        shell: bash
+        run: |
+          python3 <<'PY'
+          import json
+          from pathlib import Path
+
+          plan_path = Path('docs/project/engineering/stage-plan.json')
+          plan = json.loads(plan_path.read_text())
+
+          if plan.get('current_stage', {}).get('id') == '29.0':
+              raise SystemExit(0)
+
+          plan['current_stage'] = {
+              'id': '29.0',
+              'title': 'Delivery Velocity & Roadmap Automation',
+              'task_contract': 'docs/foundation/STAGE_29_0_TASK_CONTRACT.md',
+              'status': 'active',
+          }
+          plan['accepted_through'] = '28.0'
+          plan['active_tranche'] = '29.0A'
+          plan['stage_progress'] = [
+              {
+                  'id': '29.0A',
+                  'status': 'active',
+                  'title': 'Fast Inner Loop',
+                  'goals': [
+                      'run existing impact-selected verification on normal Draft PR pushes',
+                      'prepare generated authority ephemerally without pushing generated commits',
+                      'cancel obsolete fast checks when the source head advances',
+                  ],
+              },
+              {
+                  'id': '29.0B',
+                  'status': 'planned',
+                  'title': 'Explicit Promotion Closure',
+                  'goals': [
+                      'reserve full exact-head closure for the Draft-to-Ready promotion boundary',
+                      'rerun full closure after later non-draft source commits',
+                      'preserve current PREPARE, PostgreSQL, browser, frontend and canonical owners',
+                  ],
+              },
+              {
+                  'id': '29.0C',
+                  'status': 'planned',
+                  'title': 'Compiled Roadmap Runtime State',
+                  'goals': [
+                      'separate strategic candidates from active execution authority',
+                      'derive runtime delivery state from authored intent plus exact-head evidence',
+                      'surface the projection through the existing Delivery Kernel status facade',
+                  ],
+              },
+              {
+                  'id': '29.0D',
+                  'status': 'planned',
+                  'title': 'Workflow & Authority Closure',
+                  'goals': [
+                      'lock orchestration and roadmap-state boundaries with regression coverage',
+                      'prove full closure remains equivalent at promotion time',
+                      'accept Stage 29 without automatic merge or deployment',
+                  ],
+              },
+          ]
+          plan['next_tranche'] = '29.0B'
+          plan['next_stage_outline'] = None
+          plan['activation_evidence'] = {
+              'accepted_main_sha': 'b29483c4e15cac95129ae99806c0fcc670fb2ffe',
+              'accepted_main_workflow_run': 35190428504,
+              'stage_29_branch': 'stage-29-delivery-velocity-roadmap-automation',
+              'baseline': 'Stage 28 accepted, merged and post-merge verified before Stage 29 activation. Stage 29 changes delivery orchestration and roadmap projections without weakening canonical verification.',
+          }
+
+          plan_path.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + '\n')
+
+          candidate_path = Path('candidate-verification.json')
+          candidate = json.loads(candidate_path.read_text())
+          candidate['stage'] = '29.0'
+          candidate['candidate'] = 'v1'
+          candidate['closure_ready'] = False
+          candidate['environment'] = 'not_run'
+          candidate['verified_at'] = None
+          candidate['evidence'] = None
+          for key in candidate.get('gates', {}):
+              candidate['gates'][key] = 'not_run'
+          candidate_path.write_text(json.dumps(candidate, indent=4) + '\n')
+          PY
+
+      - name: Commit activation once
+        shell: bash
+        run: |
+          if git diff --quiet -- docs/project/engineering/stage-plan.json candidate-verification.json; then
+            echo 'Stage 29 already activated.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/project/engineering/stage-plan.json candidate-verification.json
+          git commit -m 'chore: activate Stage 29 delivery velocity'
+          git push origin HEAD:stage-29-delivery-velocity-roadmap-automation
