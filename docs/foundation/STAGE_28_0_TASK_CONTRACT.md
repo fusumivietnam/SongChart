@@ -2,7 +2,7 @@
 
 ## Status
 
-Active on the single `stage-28-launch-readiness` work lease from accepted `main@5db0b6377997d146d86b4fd8c5aedd0a66c189a3`. `docs/project/engineering/stage-plan.json` owns activation state and currently points to this contract with `28.0A — Launch Surface Audit & Critical Flow Closure` active. Stage 27 remains the accepted baseline.
+Active on the single `stage-28-launch-readiness` work lease from accepted `main@5db0b6377997d146d86b4fd8c5aedd0a66c189a3`. `docs/project/engineering/stage-plan.json` owns activation state. Tranches 28.0A and 28.0B are accepted; 28.0C has passed exact-head Auto Closure and is awaiting batched authority promotion into 28.0D. Stage 27 remains the accepted baseline.
 
 ## Goal
 
@@ -45,7 +45,7 @@ The following do not block launch by default: copywriting polish, terminology cl
 
 ### 28.0A — Launch Surface Audit & Critical Flow Closure
 
-Active.
+Accepted.
 
 Goals:
 
@@ -58,6 +58,8 @@ Goals:
 
 ### 28.0B — Production Safety & Recovery Closure
 
+Accepted.
+
 Goals:
 
 - reuse Stage 19 production topology, health, deployment, queue/scheduler and backup/restore ownership;
@@ -67,6 +69,8 @@ Goals:
 
 ### 28.0C — Discoverability & Public Trust Minimum
 
+Exact-head verification passed; authority promotion is intentionally batched with 28.0D activation to avoid a redundant full-closure cycle.
+
 Goals:
 
 - verify canonical URLs, robots, sitemap, public metadata/social presentation and structured-data behavior already owned by Stage 18.3;
@@ -75,6 +79,8 @@ Goals:
 - keep search-engine integrations and growth analytics evidence-gated.
 
 ### 28.0D — Production Candidate & Launch Closure
+
+Next tranche.
 
 Goals:
 
