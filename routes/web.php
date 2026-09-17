@@ -39,6 +39,7 @@ use App\Support\DomainContracts\DomainContractRegistry;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::view('/privacy', 'privacy')->name('privacy');
 Route::get('/robots.txt', RobotsController::class)->name('robots');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/search', SearchController::class)->name('search');
