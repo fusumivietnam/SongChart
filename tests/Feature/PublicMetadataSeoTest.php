@@ -80,3 +80,14 @@ it('keeps search and filtered catalog pages out of the index while preserving ca
         ->assertOk()
         ->assertSee('content="index,follow,max-image-preview:large"', false);
 });
+
+it('publishes a canonical privacy disclosure matching active product data boundaries', function (): void {
+    $this->get('/privacy')
+        ->assertOk()
+        ->assertSee('<link rel="canonical" href="'.route('privacy').'">', false)
+        ->assertSee('<meta name="robots" content="index,follow,max-image-preview:large">', false)
+        ->assertSee('Recent activity on this device')
+        ->assertSee('Aggregate product signals')
+        ->assertSee('does not store raw search queries')
+        ->assertSee('not used to create an anonymous server-side identity');
+});
