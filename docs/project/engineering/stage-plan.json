@@ -7,7 +7,7 @@
     "status": "active"
   },
   "accepted_through": "27.0",
-  "active_tranche": "28.0A",
+  "active_tranche": "28.0B",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -249,12 +249,19 @@
       "verification_run": 35125850074,
       "visual_evidence_run": 35125849773,
       "verification": "Auto Closure run 723 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd. Browser Review Evidence run 46 passed on the same exact head. The accepted implementation exposes bounded aggregate search demand/quality metrics through ProductSignalSummary on the existing Admin System surface and truthfully keeps D1/D7/cohort retention at insufficient_evidence with no user/session linkage or invented proxy. The final closure also binds aggregate day/timestamps to the application clock so product-signal reporting cannot split at the database-server timezone boundary."
+    },
+    "28.0A": {
+      "title": "Launch Surface Audit & Critical Flow Closure",
+      "source_head": "bff86d0f5753fc538b00e0b61384d048443ba268",
+      "effective_prepared_head": "02f9d7bb5d84205f9aa06388f3271f3049a2bc7c",
+      "verification_run": 35170846085,
+      "verification": "Auto Closure run 732 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on effective prepared head 02f9d7bb5d84205f9aa06388f3271f3049a2bc7c. Stage 28.0A confirmed executable launch-surface ownership, closed Stage 28 activation/candidate-contract governance drift, and classified semantic/UX/UI/provider expansion as post-launch or insufficient-evidence unless it blocks a primary flow."
     }
   },
   "stage_progress": [
     {
       "id": "28.0A",
-      "status": "active",
+      "status": "accepted",
       "title": "Launch Surface Audit & Critical Flow Closure",
       "goals": [
         "inventory executable visitor and operator launch surfaces from repository authority",
@@ -264,7 +271,7 @@
     },
     {
       "id": "28.0B",
-      "status": "planned",
+      "status": "active",
       "title": "Production Safety & Recovery Closure",
       "goals": [
         "reuse Stage 19 deployment, health, queue, rollback and backup/restore ownership",
@@ -293,7 +300,7 @@
       ]
     }
   ],
-  "next_tranche": "28.0B",
+  "next_tranche": "28.0C",
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "5db0b6377997d146d86b4fd8c5aedd0a66c189a3",
