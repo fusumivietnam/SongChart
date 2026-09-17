@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   fast-check:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -83,5 +83,6 @@ jobs:
             echo "- Source PR SHA: $SOURCE_SHA"
             echo "- Effective ephemeral SHA: $(git rev-parse HEAD)"
             echo '- Owner: existing impact resolver + impact verification executor'
-            echo '- Full PostgreSQL/browser/canonical closure is intentionally deferred to explicit promotion closure.'
+            echo '- Generated authority is prepared ephemerally and never pushed by the fast lane.'
+            echo '- Full PostgreSQL/browser/canonical closure is deferred until the PR leaves Draft.'
           } >> "$GITHUB_STEP_SUMMARY"
