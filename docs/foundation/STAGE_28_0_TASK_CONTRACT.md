@@ -105,7 +105,40 @@ Stage 28 must verify these capabilities against launch reality rather than re-im
 - New analytics SaaS by default.
 - Infrastructure scale promotion without accepted evidence.
 
-## Verification
+## Authority and official sources
+
+### Repository authorities
+
+- `PROJECT_AUTHORITY.md`
+- `AGENTS.md`
+- `docs/project/engineering/stage-plan.json`
+- `docs/project/docs/ROADMAP.md`
+- `docs/project/docs/SCOPE.md`
+- `docs/project/docs/ARCHITECTURE.md`
+- `docs/project/docs/URL_SEO.md`
+- `docs/operations/PRODUCTION_TOPOLOGY.md`
+- `docs/operations/edge-delivery-policy.md`
+- `docs/project/domain/route-authority.json`
+- `candidate-verification.json`
+- existing launch-relevant application routes, tests and verification scripts
+
+### Installed versions
+
+Repository lockfiles, `composer.json`, `package.json` and container definitions are executable version authority. Stage 28 assumes the accepted Laravel 13 / PHP 8.5 / PostgreSQL 18 baseline and adds no package by default.
+
+### Official external sources
+
+No new external platform documentation is required to activate Stage 28. If a concrete launch blocker depends on Laravel, PostgreSQL, Caddy, Redis, Horizon, Pulse or another installed dependency, use the version-matched official upstream documentation for that dependency before introducing custom behavior. Third-party blog posts, chat context and generic deployment advice are not SongChart launch authority.
+
+### Native capability assessment
+
+Before adding code or infrastructure, inspect the accepted SongChart owners first: Laravel routing/auth/policies/queues/scheduler, PostgreSQL migrations and data boundaries, Redis/Horizon runtime ownership, existing Caddy/Docker production topology, Stage 18.3 SEO controllers/read models, Stage 19 backup/restore and deployment commands, Stage 24 operational read models, and existing browser/Auto Closure verification. Reuse these capabilities when they satisfy the blocker.
+
+### Custom implementation justification
+
+Custom Stage 28 code is allowed only for a demonstrated launch blocker that cannot be closed by configuration, existing application behavior or an accepted repository owner. Any custom implementation must be the smallest bounded change, attach to an existing owner, include focused regression coverage, preserve rollback/degradation behavior and avoid creating a second control plane, provider system, SEO system, analytics stack or deployment authority.
+
+## Tests and verification
 
 Use the repository-owned path only:
 
@@ -117,7 +150,7 @@ Use the repository-owned path only:
 ./songchart verify
 ```
 
-GitHub Auto Closure remains the exact-head acceptance authority. Browser evidence is added only for representative launch-critical surfaces. Production promotion is not implied by source acceptance.
+GitHub Auto Closure remains the exact-head acceptance authority. Browser evidence is added only for representative launch-critical surfaces. Production promotion is not implied by source acceptance. Focused launch verification must reuse existing Feature/Architecture/Browser ownership and add tests only where a demonstrated blocker lacks regression coverage.
 
 ## Handoff rule
 
