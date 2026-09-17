@@ -1,12 +1,13 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "name": "SongChart Delivery Kernel",
   "principles": {
     "public_facade_only": true,
     "existing_verifiers_remain_authoritative": true,
     "new_verifier_requires_generic_contract_gap": true,
     "promotion_unit_owns_branch": true,
-    "state_is_compiled_not_reinvented": true
+    "state_is_compiled_not_reinvented": true,
+    "runtime_facts_are_not_authored_progress": true
   },
   "risk_classes": {
     "R1": {"name": "identity", "description": "Semantic ownership, canonical identity and duplicate meaning drift."},
@@ -25,16 +26,38 @@
   },
   "lifecycle": ["PLANNED", "IMPLEMENTING", "CHECKED", "CLOSED", "CI_VERIFIED", "ACCEPTED", "RELEASED"],
   "facade": {
-    "status": "Read-only Git and delivery-kernel state summary.",
+    "status": "Read-only Git, roadmap and delivery-kernel state summary.",
     "plan": "Delegate planning to the existing repository impact resolver.",
     "check": "Delegate focused verification to the existing impact verification owner.",
     "close": "Existing canonical closure owner; no kernel reimplementation.",
-    "promote": "Read-only exact-tree readiness preflight; GitHub remains merge/CI authority.",
+    "promote": "Read-only exact-tree readiness preflight; GitHub Ready-for-review plus CI remain promotion authority.",
     "doctor": "Existing AI/runtime diagnostic owner."
+  },
+  "ci_lanes": {
+    "fast_pr": {
+      "workflow": ".github/workflows/pr-fast.yml",
+      "gate_profile": "G2",
+      "trigger": "draft-or-non-draft pull-request opened/reopened/synchronize source commits",
+      "delegate": "./songchart impact --verify",
+      "generated_authority": "ephemeral-only",
+      "push_generated_authority": false,
+      "full_runtime_lanes": false
+    },
+    "promotion_closure": {
+      "workflow": ".github/workflows/auto-closure.yml",
+      "gate_profile": "G4",
+      "trigger": "pull request non-draft boundary; Ready-for-review starts closure and later non-draft synchronize invalidates/reruns it",
+      "delegate": "./songchart verify",
+      "full_runtime_lanes": ["quality", "postgresql-18", "browser-smoke", "frontend-build", "canonical-close"],
+      "exact_head_required": true
+    }
   },
   "github_auto_closure": {
     "workflow": ".github/workflows/auto-closure.yml",
-    "role": "Automatic PREPARE, CHECK and CLOSE orchestration for same-repository pull requests.",
+    "role": "Promotion-only PREPARE, full CHECK and CLOSE orchestration for same-repository non-draft pull requests.",
+    "draft_pr_full_closure": false,
+    "ready_for_review_is_promotion_boundary": true,
+    "non_draft_synchronize_reruns_closure": true,
     "prepare_generated_authority": true,
     "prepare_may_commit_only_generated_authority": true,
     "prepare_must_reject_other_mutations": true,
@@ -47,8 +70,17 @@
     "auto_ready_after_closure": false,
     "promotion_handoff_read_only": true,
     "auto_merge": false,
-    "human_gate": "Promote/merge the exact verified PR head in GitHub or through an authorized connector. Any new commit invalidates closure evidence and reruns automation.",
+    "human_gate": "Move the bounded implementation PR to Ready for review to request G4 closure; after exact-head evidence passes, accept authored stage/tranche state and merge explicitly. Any later non-draft source commit invalidates and reruns closure.",
     "fork_write_execution_allowed": false
+  },
+  "roadmap_state": {
+    "strategic_narrative": "docs/project/docs/ROADMAP.md",
+    "candidate_registry": "docs/project/engineering/roadmap-registry.json",
+    "execution_authority": "docs/project/engineering/stage-plan.json",
+    "compiler": "scripts/roadmap-state.php",
+    "runtime_authority": "git-and-github-runtime",
+    "candidate_auto_activation": false,
+    "authored_acceptance_required": true
   },
   "github_mobile_control_plane": {
     "workflow": ".github/workflows/songchart-mobile.yml",
