@@ -1,4 +1,4 @@
-name: SongChart Auto Closure
+name: SongChart Promotion Closure
 
 on:
   pull_request:
@@ -7,21 +7,21 @@ on:
     types:
       - opened
       - reopened
+      - ready_for_review
       - synchronize
 
 permissions:
   contents: read
 
-# Source-head runs for the same PR supersede older source-head runs. A PREPARE-generated
-# authority push is isolated in a separate concurrency group and its jobs are skipped,
-# so it cannot cancel the source run that produced the effective prepared SHA.
+# Draft PRs are implementation work leases. Full G4 closure starts only when the PR is
+# non-draft. Any later source synchronize while non-draft invalidates and reruns closure.
 concurrency:
-  group: songchart-auto-closure-${{ github.event.pull_request.number }}-${{ github.actor == 'github-actions[bot]' && 'generated' || 'source' }}
+  group: songchart-promotion-closure-${{ github.event.pull_request.number }}-${{ github.actor == 'github-actions[bot]' && 'generated' || 'source' }}
   cancel-in-progress: true
 
 jobs:
   prepare:
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'github-actions[bot]'
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'github-actions[bot]' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -76,7 +76,6 @@ jobs:
             echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add docs/project/generated
@@ -104,24 +103,19 @@ jobs:
           printf 'effective_sha=%s\n' "$effective_sha" >> "$GITHUB_OUTPUT"
           printf 'Effective exact SHA: %s\n' "$effective_sha"
 
-      - name: Progress summary — prepared
+      - name: Promotion boundary summary
         env:
           EXACT_SHA: ${{ steps.result.outputs.effective_sha }}
         run: |
-          stage="$(jq -r '.current_stage.id' docs/project/engineering/stage-plan.json)"
-          stage_title="$(jq -r '.current_stage.title' docs/project/engineering/stage-plan.json)"
-          tranche="$(jq -r '.active_tranche // "none"' docs/project/engineering/stage-plan.json)"
           {
-            echo '## SongChart progress — runtime verification'
+            echo '## SongChart promotion closure'
             echo
-            echo "- Stage: ${stage} — ${stage_title}"
-            echo "- Active tranche: ${tranche}"
             echo "- Exact SHA: ${EXACT_SHA}"
+            echo '- PR state: non-draft promotion boundary'
             echo '- PREPARE / QUALITY: passed'
             echo '- PostgreSQL / browser / frontend: running next'
             echo '- Canonical CLOSE: waiting'
-            echo '- New source commits cancel obsolete source-head runs; generated-authority refreshes do not start a second closure.'
-            echo '- Sticky PR dashboard and owner notifications are connector/task-owned; Actions remains read-only toward PR UI state.'
+            echo '- Any later non-draft source commit invalidates this evidence and reruns closure.'
           } >> "$GITHUB_STEP_SUMMARY"
 
   verify:
@@ -191,31 +185,13 @@ jobs:
           current_head="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .head.sha)"
           test "$current_head" = "$SONGCHART_PROMOTION_SHA"
 
-      - name: Capture PR promotion state
-        id: promotion
-        run: |
-          is_draft="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .draft)"
-          printf 'is_draft=%s\n' "$is_draft" >> "$GITHUB_OUTPUT"
-
       - name: Promotion summary
-        env:
-          SONGCHART_PR_DRAFT: ${{ steps.promotion.outputs.is_draft }}
         run: |
           {
             echo '## Ready to promote'
             echo
             echo "- Exact SHA: $SONGCHART_PROMOTION_SHA"
-            echo '- PREPARE: generated project context + derived development state reconciled'
-            echo '- QUALITY: governance/static verification passed before runtime lanes started'
-            echo '- CHECK: PostgreSQL + browser + frontend passed'
-            echo '- CLOSE: canonical-only release/runtime verification passed by reusing exact-head CHECK evidence'
-            if [ "$SONGCHART_PR_DRAFT" = 'true' ]; then
-              echo '- PR state: draft; promote via GitHub UI or an authorized connector'
-            else
-              echo '- PR state: already ready for review'
-            fi
-            echo '- Human gate: merge this exact PR head in GitHub'
-            echo '- Sticky PR dashboard / owner notification: updated by authorized ChatGPT/GitHub connector automation'
-            echo '- Any new commit invalidates this evidence and restarts auto closure'
-            echo '- Stale source-head runs are cancelled automatically; generated-authority refreshes are isolated from source-run concurrency.'
+            echo '- Fast inner-loop evidence is superseded by full G4 closure on this exact head.'
+            echo '- PREPARE/QUALITY, PostgreSQL 18, browser smoke, frontend build and canonical CLOSE passed.'
+            echo '- Human gate: accept authored stage/tranche state, then merge this exact PR head.'
           } >> "$GITHUB_STEP_SUMMARY"
