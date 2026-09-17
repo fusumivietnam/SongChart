@@ -1,0 +1,87 @@
+name: SongChart PR Fast Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+
+concurrency:
+  group: songchart-pr-fast-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  fast-check:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Checkout exact PR source head
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2 / 2.37.2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, curl, dom, intl, mbstring, pcntl, pdo_pgsql, redis, sockets, xml, zip
+          coverage: none
+
+      - name: Cache Composer downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install locked PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare deterministic authority ephemerally
+        run: |
+          php scripts/project-context.php --write-source
+          php scripts/project-state.php --write-source
+          php scripts/compile-repository-contracts.php --refresh-check
+          git diff --check
+          unexpected="$(git status --porcelain --untracked-files=all | grep -vE '^.. docs/project/generated(/|$)' || true)"
+          if [ -n "$unexpected" ]; then
+            printf '%s\n' 'Unexpected fast-check PREPARE mutation:' "$unexpected" >&2
+            exit 1
+          fi
+          if [ -n "$(git status --porcelain -- docs/project/generated)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add docs/project/generated
+            git commit -m 'chore: ephemeral generated authority for fast check'
+          fi
+
+      - name: Prepare Docker development configuration
+        run: cp .env.docker.example .env.docker
+
+      - name: Run impact-selected verification
+        env:
+          SONGCHART_IMPACT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: ./songchart impact --verify
+
+      - name: Summarize fast verification
+        if: always()
+        run: |
+          {
+            echo '## SongChart fast PR verification'
+            echo
+            echo "- Source PR SHA: $SOURCE_SHA"
+            echo "- Effective ephemeral SHA: $(git rev-parse HEAD)"
+            echo '- Owner: existing impact resolver + impact verification executor'
+            echo '- Full PostgreSQL/browser/canonical closure is intentionally deferred to explicit promotion closure.'
+          } >> "$GITHUB_STEP_SUMMARY"
