@@ -4,10 +4,10 @@
     "id": "28.0",
     "title": "Launch Readiness & Production Cutover",
     "task_contract": "docs/foundation/STAGE_28_0_TASK_CONTRACT.md",
-    "status": "active"
+    "status": "accepted"
   },
-  "accepted_through": "27.0",
-  "active_tranche": "28.0C",
+  "accepted_through": "28.0",
+  "active_tranche": null,
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -75,6 +75,13 @@
       "verification_run": 35125850074,
       "visual_evidence_run": 35125849773,
       "verification": "Auto Closure run 723 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head ca5a351cb536e18f5fd0adf0eced25a84c5dc3bd. Browser Review Evidence run 46 also passed on the same exact head. Stage 27 established aggregate-only search product signals, authenticated saved-entity user value, bounded browser-local recent state and an Admin System product-signal read model while preserving D1/D7/cohort retention as insufficient_evidence because accepted telemetry contains no user/session linkage. Final closure also fixes the product-signal day boundary to use the Laravel application clock rather than the PostgreSQL server clock and locks that ownership with a deterministic timezone-boundary regression test."
+    },
+    "28.0": {
+      "title": "Launch Readiness & Production Cutover",
+      "source_head": "d96cb1456769d6fe60ac9828442b22bf385001e2",
+      "effective_prepared_head": "d96cb1456769d6fe60ac9828442b22bf385001e2",
+      "verification_run": 35179282011,
+      "verification": "Auto Closure run 747 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation and ready-to-promote on exact production-candidate head d96cb1456769d6fe60ac9828442b22bf385001e2. Stage 28 closed demonstrated launch blockers only, reused accepted production/SEO/product/provider authorities, added bounded public data-use disclosure, and kept production promotion human-controlled."
     }
   },
   "accepted_tranche_evidence": {
@@ -263,6 +270,20 @@
       "effective_prepared_head": "f7839832e1a1e4c870199cb876bcb1dde22edd49",
       "verification_run": 35171738521,
       "verification": "Auto Closure run 738 passed PREPARE/QUALITY, PostgreSQL 18, production frontend build, desktop/mobile browser smoke, exact-head classification, canonical CLOSE, exact-tree preservation, final exact-head revalidation and ready-to-promote on exact head f7839832e1a1e4c870199cb876bcb1dde22edd49. Stage 28.0B reused the existing production control plane, locked backup/isolated restore/security-smoke invariants with executable regression coverage, and closed the demonstrated upgrade-safety gap by gracefully terminating a running Horizon master before replacing the release artifact."
+    },
+    "28.0C": {
+      "title": "Discoverability & Public Trust Minimum",
+      "source_head": "d96cb1456769d6fe60ac9828442b22bf385001e2",
+      "effective_prepared_head": "d96cb1456769d6fe60ac9828442b22bf385001e2",
+      "verification_run": 35179282011,
+      "verification": "Auto Closure run 747 revalidated the complete 28.0C source on exact head d96cb1456769d6fe60ac9828442b22bf385001e2 after the public privacy/data-use surface, frontend trust navigation, sitemap inclusion and canonical disclosure tests were added. PREPARE/QUALITY, PostgreSQL 18, frontend build, desktop/mobile browser smoke, canonical CLOSE and ready-to-promote all passed."
+    },
+    "28.0D": {
+      "title": "Production Candidate & Launch Closure",
+      "source_head": "d96cb1456769d6fe60ac9828442b22bf385001e2",
+      "effective_prepared_head": "d96cb1456769d6fe60ac9828442b22bf385001e2",
+      "verification_run": 35179282011,
+      "verification": "Auto Closure run 747 is the production-candidate closure evidence for Stage 28. It passed the full exact-head repository closure stack with no remaining demonstrated launch blocker; production promotion remains an explicit human action and does not follow automatically from source acceptance."
     }
   },
   "stage_progress": [
@@ -288,7 +309,7 @@
     },
     {
       "id": "28.0C",
-      "status": "active",
+      "status": "accepted",
       "title": "Discoverability & Public Trust Minimum",
       "goals": [
         "verify Stage 18.3 canonical URLs, robots, sitemap and structured metadata against release reality",
@@ -298,7 +319,7 @@
     },
     {
       "id": "28.0D",
-      "status": "planned",
+      "status": "accepted",
       "title": "Production Candidate & Launch Closure",
       "goals": [
         "run production-equivalent exact-head verification on the release candidate",
@@ -307,7 +328,7 @@
       ]
     }
   ],
-  "next_tranche": "28.0D",
+  "next_tranche": null,
   "next_stage_outline": null,
   "activation_evidence": {
     "accepted_main_sha": "5db0b6377997d146d86b4fd8c5aedd0a66c189a3",
