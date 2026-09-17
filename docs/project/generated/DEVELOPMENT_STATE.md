@@ -11,14 +11,14 @@
 
 ## Stage progress
 
-- `28.0A` — `ACTIVE` — Launch Surface Audit & Critical Flow Closure
-- `28.0B` — `PLANNED` — Production Safety & Recovery Closure
+- `28.0A` — `ACCEPTED` — Launch Surface Audit & Critical Flow Closure
+- `28.0B` — `ACTIVE` — Production Safety & Recovery Closure
 - `28.0C` — `PLANNED` — Discoverability & Public Trust Minimum
 - `28.0D` — `PLANNED` — Production Candidate & Launch Closure
 
 ## Next bounded tranche
 
-- `28.0B`
+- `28.0C`
 
 ## Live work lease
 
