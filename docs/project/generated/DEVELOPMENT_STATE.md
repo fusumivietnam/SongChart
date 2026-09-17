@@ -5,20 +5,20 @@
 ## Current stage
 
 - Stage `28.0 — Launch Readiness & Production Cutover`
-- Status: `active`
-- Accepted through: `27.0`
+- Status: `accepted`
+- Accepted through: `28.0`
 - Task contract: `docs/foundation/STAGE_28_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
 - `28.0A` — `ACCEPTED` — Launch Surface Audit & Critical Flow Closure
 - `28.0B` — `ACCEPTED` — Production Safety & Recovery Closure
-- `28.0C` — `ACTIVE` — Discoverability & Public Trust Minimum
-- `28.0D` — `PLANNED` — Production Candidate & Launch Closure
+- `28.0C` — `ACCEPTED` — Discoverability & Public Trust Minimum
+- `28.0D` — `ACCEPTED` — Production Candidate & Launch Closure
 
 ## Next bounded tranche
 
-- `28.0D`
+- `unknown`
 
 ## Live work lease
 

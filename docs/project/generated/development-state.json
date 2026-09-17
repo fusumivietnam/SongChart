@@ -1,14 +1,14 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "b87dcff209f1bee216f6208a6fac01241a22d3763812e51358951cf1ebc78944",
+    "source_fingerprint": "4b59a2135619b60951873547e4374107b833332822f7e0d37b84b0dfb0e95d0c",
     "current_stage": {
         "id": "28.0",
         "title": "Launch Readiness & Production Cutover",
         "task_contract": "docs/foundation/STAGE_28_0_TASK_CONTRACT.md",
-        "status": "active"
+        "status": "accepted"
     },
-    "accepted_through": "27.0",
+    "accepted_through": "28.0",
     "stage_progress": [
         {
             "id": "28.0A",
@@ -32,7 +32,7 @@
         },
         {
             "id": "28.0C",
-            "status": "active",
+            "status": "accepted",
             "title": "Discoverability & Public Trust Minimum",
             "goals": [
                 "verify Stage 18.3 canonical URLs, robots, sitemap and structured metadata against release reality",
@@ -42,7 +42,7 @@
         },
         {
             "id": "28.0D",
-            "status": "planned",
+            "status": "accepted",
             "title": "Production Candidate & Launch Closure",
             "goals": [
                 "run production-equivalent exact-head verification on the release candidate",
@@ -51,7 +51,7 @@
             ]
         }
     ],
-    "next_tranche": "28.0D",
+    "next_tranche": null,
     "work_lease_policy": {
         "authority": "live Git branch + GitHub pull request",
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
@@ -60,6 +60,6 @@
         "candidate-verification.json": "a869f27f94f50a03741d8e99bb644b46b36c40a1a59c81e7a8d8d88c4583c250",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "438fa8c28a6a7ebd25b92c58ad0e2cf943441e13e383b73aad92e2f0dba84f94"
+        "docs/project/engineering/stage-plan.json": "9f6e3aa6b3c06c764056f41dc4dd6289a024b4340c204ae3eff0c4f087b11de9"
     }
 }
