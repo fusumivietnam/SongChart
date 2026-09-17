@@ -22,6 +22,7 @@ final class PublicSitemap
     {
         $urls = [
             route('home'),
+            route('privacy'),
             route('artists.index'),
             route('groups.index'),
             route('releases.index'),

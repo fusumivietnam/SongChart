@@ -25,7 +25,22 @@ it('keeps production release provenance transport recovery and operator boundari
         ->toContain('SONGCHART_MIN_MEMORY_MB')
         ->toContain('SONGCHART_MIN_DISK_MB')
         ->toContain('External PostgreSQL requires DB_SSLMODE=require, verify-ca, or verify-full.')
-        ->toContain('External Redis requires REDIS_SCHEME=tls.');
+        ->toContain('External Redis requires REDIS_SCHEME=tls.')
+        ->toContain('restore_drill(){')
+        ->toContain('songchart-restore-drill-')
+        ->toContain('pg_restore --no-owner --no-privileges')
+        ->toContain('select count(*) from migrations')
+        ->toContain('php artisan migrate:status --no-ansi')
+        ->toContain('Restore drill PASSED.')
+        ->toContain('smoke(){')
+        ->toContain('curl --fail --silent --show-error --location')
+        ->toContain('X-Content-Type-Options')
+        ->toContain('X-Frame-Options')
+        ->toContain('Referrer-Policy')
+        ->toContain('Strict-Transport-Security')
+        ->toContain('Public Server response header must be removed.')
+        ->toContain('migrate --force --no-ansi')
+        ->toContain('horizon:terminate');
 
     expect($env)
         ->toContain('SONGCHART_RELEASE_CHANNEL=local')

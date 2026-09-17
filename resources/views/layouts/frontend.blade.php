@@ -37,6 +37,12 @@
 @endif
 <x-shell.frontend-header :active="$activeNav ?? null" />
 <main id="main-content" class="sc-frontend-main" tabindex="-1">{{ $slot ?? '' }}@yield('content')</main>
+<footer class="border-t border-[var(--sc-border-subtle)] bg-[var(--sc-bg-surface)]">
+    <div class="sc-container flex flex-col gap-2 py-6 text-sm text-[var(--sc-text-secondary)] sm:flex-row sm:items-center sm:justify-between">
+        <p>SongChart · canonical music information and governed listening destinations.</p>
+        <a class="font-semibold text-[var(--sc-text-primary)] underline-offset-4 hover:underline" href="{{ route('privacy') }}">Privacy & data use</a>
+    </div>
+</footer>
 <x-shell.mobile-bottom-nav :active="$activeNav ?? null" />
 @stack('scripts')
 </body>

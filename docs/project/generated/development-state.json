@@ -1,53 +1,53 @@
 {
     "schema_version": 2,
     "generated_from_repository": true,
-    "source_fingerprint": "03fc44b14de8b5fce69d64d6c646c7d738e1255c2bdb3280414c81a9510713d2",
+    "source_fingerprint": "4b59a2135619b60951873547e4374107b833332822f7e0d37b84b0dfb0e95d0c",
     "current_stage": {
-        "id": "27.0",
-        "title": "Product Signals & Retention",
-        "task_contract": "docs/foundation/STAGE_27_0_TASK_CONTRACT.md",
+        "id": "28.0",
+        "title": "Launch Readiness & Production Cutover",
+        "task_contract": "docs/foundation/STAGE_28_0_TASK_CONTRACT.md",
         "status": "accepted"
     },
-    "accepted_through": "27.0",
+    "accepted_through": "28.0",
     "stage_progress": [
         {
-            "id": "27.0A",
+            "id": "28.0A",
             "status": "accepted",
-            "title": "Minimal Product Event Contract",
+            "title": "Launch Surface Audit & Critical Flow Closure",
             "goals": [
-                "define only product signals with demonstrated producer and measurable consumer ownership",
-                "separate product telemetry from canonical music-domain and privileged audit authority",
-                "establish privacy, retention, sampling and persistence gates before raw event storage is allowed"
+                "inventory executable visitor and operator launch surfaces from repository authority",
+                "classify findings strictly as launch_blocker, post_launch or insufficient_evidence",
+                "close only bounded defects that prevent primary launch flows"
             ]
         },
         {
-            "id": "27.0B",
+            "id": "28.0B",
             "status": "accepted",
-            "title": "Favorites & Collections Closure",
+            "title": "Production Safety & Recovery Closure",
             "goals": [
-                "audit MVP user-value ownership before adding persistence or UI",
-                "reuse existing account/catalog boundaries where possible",
-                "avoid recommendation or community scope"
+                "reuse Stage 19 deployment, health, queue, rollback and backup/restore ownership",
+                "verify production preflight, migrations, secrets and runtime dependencies",
+                "prove safe degradation and isolated recovery without a new control plane"
             ]
         },
         {
-            "id": "27.0C",
+            "id": "28.0C",
             "status": "accepted",
-            "title": "Recent & Local State",
+            "title": "Discoverability & Public Trust Minimum",
             "goals": [
-                "add recent searches/views only when telemetry and privacy semantics justify them",
-                "prefer bounded local/browser state where server durability is not required",
-                "define governed anonymous-to-account behavior before sync"
+                "verify Stage 18.3 canonical URLs, robots, sitemap and structured metadata against release reality",
+                "close only launch-critical indexability and public-trust defects",
+                "defer growth integrations and broad SEO polish until evidence exists"
             ]
         },
         {
-            "id": "27.0D",
+            "id": "28.0D",
             "status": "accepted",
-            "title": "Retention Measurement Closure",
+            "title": "Production Candidate & Launch Closure",
             "goals": [
-                "derive measurable return-value metrics from accepted product signals",
-                "close retention evidence without recommendation or notification overreach",
-                "close Stage 27 through existing exact-head verification ownership"
+                "run production-equivalent exact-head verification on the release candidate",
+                "record explicit launch/no-launch blocker evidence",
+                "close Stage 28 while keeping production promotion human-controlled"
             ]
         }
     ],
@@ -57,9 +57,9 @@
         "rule": "Never store volatile PR/head state as authored progress. AI must resolve the live branch/PR before writing; an existing active PR for the same semantic owner is resumed instead of duplicated. Stage work uses one umbrella branch while logical tranche ownership remains explicit in this plan."
     },
     "source_hashes": {
-        "candidate-verification.json": "591b046cf2812313e2b90425aabe9258a9ad630dd00901111412730020f45ce8",
+        "candidate-verification.json": "a869f27f94f50a03741d8e99bb644b46b36c40a1a59c81e7a8d8d88c4583c250",
         "docs/project/engineering/consolidation-plan.json": "13bb55e9eea151574e7017b4061b3bd0aec667b07a938eab80cd747d45df41a8",
         "docs/project/engineering/project-knowledge.json": "ea31a969a209da81955edab417dae12aed200f823b2172ba29e25d8a865a7314",
-        "docs/project/engineering/stage-plan.json": "00bd55c0c74c5c25fa34ae07c8114370e00d0020b47c8b53a168f1ed5f8c5216"
+        "docs/project/engineering/stage-plan.json": "9f6e3aa6b3c06c764056f41dc4dd6289a024b4340c204ae3eff0c4f087b11de9"
     }
 }

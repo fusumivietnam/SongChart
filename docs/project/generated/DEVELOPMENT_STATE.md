@@ -4,17 +4,17 @@
 
 ## Current stage
 
-- Stage `27.0 — Product Signals & Retention`
+- Stage `28.0 — Launch Readiness & Production Cutover`
 - Status: `accepted`
-- Accepted through: `27.0`
-- Task contract: `docs/foundation/STAGE_27_0_TASK_CONTRACT.md`
+- Accepted through: `28.0`
+- Task contract: `docs/foundation/STAGE_28_0_TASK_CONTRACT.md`
 
 ## Stage progress
 
-- `27.0A` — `ACCEPTED` — Minimal Product Event Contract
-- `27.0B` — `ACCEPTED` — Favorites & Collections Closure
-- `27.0C` — `ACCEPTED` — Recent & Local State
-- `27.0D` — `ACCEPTED` — Retention Measurement Closure
+- `28.0A` — `ACCEPTED` — Launch Surface Audit & Critical Flow Closure
+- `28.0B` — `ACCEPTED` — Production Safety & Recovery Closure
+- `28.0C` — `ACCEPTED` — Discoverability & Public Trust Minimum
+- `28.0D` — `ACCEPTED` — Production Candidate & Launch Closure
 
 ## Next bounded tranche
 
