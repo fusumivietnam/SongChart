@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "authority": "strategic-candidate-registry",
+  "narrative_source": "docs/project/docs/ROADMAP.md",
+  "execution_source": "docs/project/engineering/stage-plan.json",
+  "runtime_source": "git-and-github-runtime",
+  "promotion_rule": "Registry entries never auto-activate implementation. Activation requires explicit authored stage/tranche authority and a bounded task contract.",
+  "themes": [
+    {
+      "id": "product-telemetry",
+      "title": "Product telemetry foundation",
+      "state": "foundation_accepted",
+      "activation_gate": "Only extend telemetry when a defined consumer, metric, privacy class and retention policy exist.",
+      "depends_on": [],
+      "evidence_sources": ["docs/project/engineering/stage-plan.json", "product search aggregates"]
+    },
+    {
+      "id": "retention-user-value",
+      "title": "Retention & user-value loops",
+      "state": "foundation_accepted",
+      "activation_gate": "Promote only when persistent user intent and measurable return value justify additional retention scope.",
+      "depends_on": ["product-telemetry"],
+      "evidence_sources": ["authenticated saved entities", "browser-local recent state"]
+    },
+    {
+      "id": "demand-intelligence",
+      "title": "Demand intelligence & zero-result recovery",
+      "state": "candidate",
+      "activation_gate": "Sufficient zero-result volume or unresolved demand clusters must demonstrate a measurable product/data gap.",
+      "depends_on": ["product-telemetry"],
+      "evidence_sources": ["aggregate search signals"]
+    },
+    {
+      "id": "data-quality-trust",
+      "title": "Data quality & trust intelligence",
+      "state": "candidate",
+      "activation_gate": "Demonstrated completeness, freshness, conflict or duplicate pressure must justify a prioritized quality loop.",
+      "depends_on": ["demand-intelligence"],
+      "evidence_sources": ["canonical provenance", "conflict review", "public issue reports"]
+    },
+    {
+      "id": "provider-economy",
+      "title": "Provider evidence & quota economy",
+      "state": "candidate",
+      "activation_gate": "Provider call volume, quota pressure, upstream failures or avoidable refresh cost must be measurable before expansion.",
+      "depends_on": ["product-telemetry"],
+      "evidence_sources": ["provider operations", "quota and request-gate evidence"]
+    },
+    {
+      "id": "snapshot-edge-reuse",
+      "title": "Snapshot & client/edge reuse",
+      "state": "candidate",
+      "activation_gate": "A read-heavy surface must demonstrate repeated computation, latency or delivery pressure before new snapshot/edge scope is activated.",
+      "depends_on": ["provider-economy"],
+      "evidence_sources": ["runtime telemetry", "scale scorecard"]
+    },
+    {
+      "id": "acquisition-seo",
+      "title": "Acquisition & SEO feedback loop",
+      "state": "candidate",
+      "activation_gate": "Real crawl/index/query/CTR evidence must identify the next acquisition bottleneck after launch.",
+      "depends_on": ["product-telemetry"],
+      "evidence_sources": ["canonical metadata", "sitemap", "future search-engine evidence"]
+    },
+    {
+      "id": "operator-intelligence",
+      "title": "Operator cockpit & decision intelligence",
+      "state": "candidate",
+      "activation_gate": "Operational signals must be numerous enough that a prioritized unified action queue reduces measurable operator effort.",
+      "depends_on": ["data-quality-trust", "provider-economy"],
+      "evidence_sources": ["admin system summaries", "provider/data pipeline health"]
+    },
+    {
+      "id": "internal-product-ai",
+      "title": "Internal/product AI",
+      "state": "deferred_evidence_gated",
+      "activation_gate": "A bounded internal task must show measurable ROI over deterministic/structured retrieval before model dependency expands.",
+      "depends_on": ["operator-intelligence"],
+      "evidence_sources": ["typed read models", "governed evidence packs"]
+    },
+    {
+      "id": "governed-intelligence",
+      "title": "Governed intelligence & adaptive assistance",
+      "state": "deferred_evidence_gated",
+      "activation_gate": "Telemetry, outcome feedback, guardrails and rollback/degradation paths must all be accepted before adaptive automation expands.",
+      "depends_on": ["internal-product-ai", "data-quality-trust", "provider-economy"],
+      "evidence_sources": ["decision outcomes", "retrieval evaluation", "cost/value evidence"]
+    }
+  ]
+}
