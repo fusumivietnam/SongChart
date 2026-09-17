@@ -1,13 +1,13 @@
 {
   "schema_version": 11,
   "current_stage": {
-    "id": "28.0",
-    "title": "Launch Readiness & Production Cutover",
-    "task_contract": "docs/foundation/STAGE_28_0_TASK_CONTRACT.md",
-    "status": "accepted"
+    "id": "29.0",
+    "title": "Delivery Velocity & Roadmap Automation",
+    "task_contract": "docs/foundation/STAGE_29_0_TASK_CONTRACT.md",
+    "status": "active"
   },
   "accepted_through": "28.0",
-  "active_tranche": null,
+  "active_tranche": "29.0A",
   "accepted_stage_evidence": {
     "22.1": {
       "title": "System Intersection Map + Golden Vertical Contract",
@@ -288,54 +288,53 @@
   },
   "stage_progress": [
     {
-      "id": "28.0A",
-      "status": "accepted",
-      "title": "Launch Surface Audit & Critical Flow Closure",
+      "id": "29.0A",
+      "status": "active",
+      "title": "Fast Inner Loop",
       "goals": [
-        "inventory executable visitor and operator launch surfaces from repository authority",
-        "classify findings strictly as launch_blocker, post_launch or insufficient_evidence",
-        "close only bounded defects that prevent primary launch flows"
+        "run existing impact-selected verification on normal Draft PR pushes",
+        "prepare generated authority ephemerally without pushing generated commits",
+        "cancel obsolete fast checks when the source head advances"
       ]
     },
     {
-      "id": "28.0B",
-      "status": "accepted",
-      "title": "Production Safety & Recovery Closure",
+      "id": "29.0B",
+      "status": "planned",
+      "title": "Explicit Promotion Closure",
       "goals": [
-        "reuse Stage 19 deployment, health, queue, rollback and backup/restore ownership",
-        "verify production preflight, migrations, secrets and runtime dependencies",
-        "prove safe degradation and isolated recovery without a new control plane"
+        "reserve full exact-head closure for the Draft-to-Ready promotion boundary",
+        "rerun full closure after later non-draft source commits",
+        "preserve current PREPARE, PostgreSQL, browser, frontend and canonical owners"
       ]
     },
     {
-      "id": "28.0C",
-      "status": "accepted",
-      "title": "Discoverability & Public Trust Minimum",
+      "id": "29.0C",
+      "status": "planned",
+      "title": "Compiled Roadmap Runtime State",
       "goals": [
-        "verify Stage 18.3 canonical URLs, robots, sitemap and structured metadata against release reality",
-        "close only launch-critical indexability and public-trust defects",
-        "defer growth integrations and broad SEO polish until evidence exists"
+        "separate strategic candidates from active execution authority",
+        "derive runtime delivery state from authored intent plus exact-head evidence",
+        "surface the projection through the existing Delivery Kernel status facade"
       ]
     },
     {
-      "id": "28.0D",
-      "status": "accepted",
-      "title": "Production Candidate & Launch Closure",
+      "id": "29.0D",
+      "status": "planned",
+      "title": "Workflow & Authority Closure",
       "goals": [
-        "run production-equivalent exact-head verification on the release candidate",
-        "record explicit launch/no-launch blocker evidence",
-        "close Stage 28 while keeping production promotion human-controlled"
+        "lock orchestration and roadmap-state boundaries with regression coverage",
+        "prove full closure remains equivalent at promotion time",
+        "accept Stage 29 without automatic merge or deployment"
       ]
     }
   ],
-  "next_tranche": null,
+  "next_tranche": "29.0B",
   "next_stage_outline": null,
   "activation_evidence": {
-    "accepted_main_sha": "5db0b6377997d146d86b4fd8c5aedd0a66c189a3",
-    "accepted_main_workflow_run": 35127194621,
-    "stage_28_branch": "stage-28-launch-readiness",
-    "stage_28_pull_request": 50,
-    "baseline": "Stage 27 accepted, merged and post-merge verified before Stage 28 activation. Stage 28 is launch-first: only demonstrated production blockers may expand scope; minor semantics, UX/UI polish and optional provider work remain post-launch by default."
+    "accepted_main_sha": "b29483c4e15cac95129ae99806c0fcc670fb2ffe",
+    "accepted_main_workflow_run": 35190428504,
+    "stage_29_branch": "stage-29-delivery-velocity-roadmap-automation",
+    "baseline": "Stage 28 accepted, merged and post-merge verified before Stage 29 activation. Stage 29 changes delivery orchestration and roadmap projections without weakening canonical verification."
   },
   "work_lease": {
     "authority": "live Git branch + GitHub pull request",
