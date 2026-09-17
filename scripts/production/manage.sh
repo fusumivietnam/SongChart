@@ -283,8 +283,15 @@ doctor(){
   fi
   info 'Doctor PASSED.'
 }
+graceful_horizon_terminate(){
+  if [[ "$(compose ps --status running --services 2>/dev/null | grep -x queue || true)" == queue ]]; then
+    info 'Gracefully terminating the running Horizon master before artifact replacement.'
+    compose exec -T queue php artisan horizon:terminate --no-ansi
+  fi
+}
 up(){
   require_docker; validate_config; compose_init; start_dependencies
+  graceful_horizon_terminate
   compose up -d app queue scheduler edge
   compose ps
 }
