@@ -2,7 +2,7 @@
 
 ## Status
 
-Activation candidate on the single `stage-28-launch-readiness` work lease from accepted `main@5db0b6377997d146d86b4fd8c5aedd0a66c189a3`. Stage 27 remains the accepted baseline. Stage 28 becomes active only when `docs/project/engineering/stage-plan.json` points to this contract.
+Active on the single `stage-28-launch-readiness` work lease from accepted `main@5db0b6377997d146d86b4fd8c5aedd0a66c189a3`. `docs/project/engineering/stage-plan.json` owns activation state and currently points to this contract with `28.0A — Launch Surface Audit & Critical Flow Closure` active. Stage 27 remains the accepted baseline.
 
 ## Goal
 
@@ -45,7 +45,7 @@ The following do not block launch by default: copywriting polish, terminology cl
 
 ### 28.0A — Launch Surface Audit & Critical Flow Closure
 
-Active first tranche after repository activation.
+Active.
 
 Goals:
 
